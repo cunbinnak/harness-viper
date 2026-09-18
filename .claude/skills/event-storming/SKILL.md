@@ -8,7 +8,7 @@ description: Phương pháp event-storming cho /document — facilitate event st
 # Event Storming Skill
 
 ## Khi load
-Phương pháp **event-storming** cho `/document` (Architecture + Business). Facilitate event storming cho **MỘT domain mỗi lần**, theo candidate domains ở `docs/CAPABILITIES-MAP.md §3`. Interactive — dùng AskUserQuestion nhiều.
+Phương pháp **event-storming** cho `/document` (Architecture + Business). Facilitate event storming cho **MỘT domain mỗi lần**, theo candidate domains ở `docs/CAPABILITIES-MAP.md §3`. Interactive — hỏi bằng lời nhiều (KHÔNG dùng AskUserQuestion).
 
 Input: `docs/CAPABILITIES-MAP.md §3` (candidate domains) + `docs/PERSONAS.md` (actors).
 
@@ -37,7 +37,7 @@ Mỗi section domain:
 
 ## Flow
 - 1 lượt = 1 domain. Nhiều domain → lặp phương pháp này (mỗi lần 1 domain) tới khi mọi candidate domain có section event-storming.
-- Interactive (AskUserQuestion ≤5). Sau confirm: đủ mọi candidate domain thì tiếp phương pháp boundary-charter.
+- Interactive (hỏi bằng lời, ≤5 lượt). Sau confirm: đủ mọi candidate domain thì tiếp phương pháp boundary-charter.
 
 ## Quality checklist
 - [ ] Mỗi candidate domain (capability-map §3) có section `## Event Storming — <domain>` trong `docs/arch/OVERVIEW.md`.

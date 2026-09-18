@@ -43,7 +43,7 @@ def main() -> int:
     check(run("scripts/gate.py", ["SAI-PHASE"]) == 2, "gate.py phase lạ → exit 2")
 
     # 2. guards
-    check(run("scripts/hooks/guard_ask.py", [], "") == 0, "guard_ask (phase DOCUMENT) → allow")
+    check(run("scripts/hooks/guard_ask.py", [], "") == 2, "guard_ask → deny AskUserQuestion (mọi phase, VIPER-style)")
     check(run("scripts/hooks/guard_ds.py", [],
               '{"tool_input":{"file_path":"docs/ux/mockups/x.html","content":"a{color:#f00}"}}') == 2,
           "guard_ds hex thô mockup → deny (exit 2)")
