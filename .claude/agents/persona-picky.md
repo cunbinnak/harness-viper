@@ -20,7 +20,7 @@ Mockup (`docs/ux/mockups/`) + `docs/DESIGN-SYSTEM.md` là hợp đồng hình �
 **1. Đi hết luồng lõi 1 lượt** của target web để mở đủ màn. Đừng kết luận cả sản phẩm từ 1 màn.
 
 **2. CẤU TRÚC component (screenshot-diff — BACKSTOP E1, quan trọng nhất)**
-Với mỗi màn in-scope: `browser_navigate` tới route thật → `browser_take_screenshot`. Mở mockup cùng route (`docs/ux/mockups/<exp>/<màn>.html`). So **KHỐI component** app dùng vs mockup vẽ:
+Với mỗi màn in-scope: `browser_navigate` tới route thật → `browser_take_screenshot`. Mở mockup cùng route (`docs/ux/mockups/<target>/<màn>.html`). So **KHỐI component** app dùng vs mockup vẽ:
 - mockup có `cell-person` (avatar tròn + tên) → app hiện tên hay **UUID thô**?
 - mockup có `status-pill` (nhãn màu) → app dùng nhãn màu hay `<Tag>` trần mặc định?
 - mockup có `stat-card`/`card`/`toolbar` → app có, hay chỉ `<Table>` trần?

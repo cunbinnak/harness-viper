@@ -21,7 +21,7 @@ description: BUILD — MAIN tự code 1 wave: challenge → đọc KG → scaffo
 - `docs/feat/FEAT-*` của các AC in-scope (AC + ca biên + field kỹ thuật)
 - `docs/arch/{name}.md` của target — **đọc frontmatter lấy `kind`** (backend/web/bff/mobile) + `stack` + data/API/ranh giới (KHÔNG đọc target khác). `kind` quyết định scaffold ở đâu · skeleton kiểu gì · chạy thật ra sao.
 - **`knowledge-base/{name}.md`** nếu có → đọc hết §Invariants/§Gotchas/§Failure-modes/§Key-decisions
-- có UI → `docs/DESIGN-SYSTEM.md` + `docs/ux/mockups/<exp>/` các màn in-scope
+- có UI → `docs/DESIGN-SYSTEM.md` + `docs/ux/mockups/<target>/` các màn in-scope (mockup dựng theo wave — phải có TRƯỚC khi code UI; thiếu → quay `/document` top-up)
 - `docs/TECHSTACK.md` + skill `stack-<tên>`
 - `docs/CONVENTIONS.md` (nhỏ — error envelope · API design · đặt tên; mọi boundary theo) + `docs/SECURITY.md`
 - `docs/PERSONAS.md §ma trận vai×hành động` (để code phân quyền)

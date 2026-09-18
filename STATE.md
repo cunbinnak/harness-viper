@@ -36,8 +36,9 @@ URL production  : —
 - [ ] `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md`: frontmatter **`kind`/`stack`/`consumes`** + data model + luồng + API + §ranh-giới (**per target**)
 - [ ] `docs/TECHSTACK.md` chốt + 1 dòng lý do ở `docs/DECISIONS.md`
 - [ ] `docs/CONVENTIONS.md` + `docs/SECURITY.md` (**framework có sẵn**) — rà; chỉnh §API error-envelope/header nếu project khác default
-- [ ] Design system: có UI → `docs/DESIGN-SYSTEM.md` (token) + `docs/ux/` (SCREEN-MAP + mockups)
-      khoá TRƯỚC, Authority chốt · backend-only → marker `KHÔNG CÓ UI`
+- [ ] Design system: có UI → `docs/DESIGN-SYSTEM.md` (token) + `docs/ux/SCREEN-MAP.md` (MỌI màn, cả dự án)
+      khoá TRƯỚC · mockup **chỉ màn wave đang mở** (wave 1 lúc DOCUMENT; wave sau `/document` top-up), Authority
+      chốt · backend-only → marker `KHÔNG CÓ UI`
 - [ ] `docs/ROADMAP.md`: chia wave; mỗi wave khai **target** + **phases chạy** (BUILD,VERIFY[,SHIP])
 - [ ] Challenge DOCUMENT **PASS** (≥3 câu khó, trả lời CHỈ bằng tài liệu) — §Challenge log
 - [ ] ≥2 dòng `docs/DECISIONS.md`

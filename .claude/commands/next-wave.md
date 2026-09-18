@@ -36,6 +36,8 @@ Copy vào `archive/wave-N/` — **chép hết, không chọn lọc** ("chép doc
 3. Xoá trắng phần **wave-scoped** của `STATE.md`: gate BUILD/VERIFY + `§Findings` + 3 log → set `Wave: N+1`.
 4. **Amendment thành hiện thực** (đây là điểm định tuyến của "sửa doc = wave sau" — PROTOCOL §3):
    - **Chỉ đổi thứ tự / phạm vi wave** (không đổi nội dung FEAT) → đã chỉnh ROADMAP ở 4.1 → `/build <N+1>`.
+   - **Wave kế có màn UI chưa dựng mockup** (SCREEN-MAP đã khai từ DOCUMENT, mockup để trống — mockup dựng theo wave) →
+     `/document` top-up: dựng mockup các màn in-scope wave kế **từ token đã chốt** → **Authority chốt mockup wave đó** → `/build`.
    - **Cần FEAT / arch / capability MỚI hoặc SỬA** → `/document` (top-up): re-enter DOCUMENT → sửa **docs SỐNG** (`docs/`)
      theo `§backlog` → re-challenge → **Authority duyệt lại = re-lock scope** (đóng back-edge — chống retro F1 kẹt DRAFT).
      · Docs đã ship ở `archive/` **BẤT BIẾN** — chỉ sửa `docs/` sống. · Đổi surface đã giao phải **additive** (BACKWARD-COMPAT §1).

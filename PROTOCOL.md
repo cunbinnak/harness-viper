@@ -108,7 +108,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 | `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md` | **per target**: frontmatter `kind`(backend/web/bff/mobile)·`stack`·`consumes` + data model · luồng · API · §ranh-giới (fold hld/api/data/events/integ). BUILD nạp đúng slice |
 | `docs/CONVENTIONS.md` **(framework)** | quy ước chung + §API error-envelope/header **default** (project chỉnh nếu khác) — KHÔNG author lại |
 | `docs/SECURITY.md` **(framework)** | baseline bảo mật — tick ở PRODUCTION-READY khi SHIP |
-| `docs/DESIGN-SYSTEM.md` + `docs/ux/` | token (khoá trước) + SCREEN-MAP + mockups HTML |
+| `docs/DESIGN-SYSTEM.md` + `docs/ux/` | token (khoá trước, cả dự án) + SCREEN-MAP (mọi màn) + mockups HTML **dựng theo wave** (màn wave đang mở; wave sau `/document` top-up) |
 | `docs/ROADMAP.md` | wave plan (target + phases mỗi wave) + §backlog (amendment) |
 | `docs/DECISIONS.md` | 1 dòng/quyết định (append cả dự án, đánh dấu `(wave N)`) |
 | `docs/BACKWARD-COMPAT.md` · `docs/PRODUCTION-READY.md` | sổ hợp đồng + checklist SHIP |

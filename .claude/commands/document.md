@@ -32,7 +32,12 @@ Persona + năng lực được cấp + **ma trận vai × hành động** — m�
 ## Bước 4 — CAPABILITIES-MAP (`docs/CAPABILITIES-MAP.md`)
 `capability → outcome → FEAT`. **Mọi FEAT truy về ≥1 capability**; capability TRƯỚC feature. Cột `Wave giao` để trống (điền ở Bước 9).
 
-nhu
+## Bước 5 — FEAT (`docs/feat/FEAT-*.md`)
+Mỗi capability → ≥1 FEAT. Mỗi FEAT: **AC dạng BDD** (Given/When/Then) **gồm ca biên** (rỗng/đầy/lỗi/quyền) + **field kỹ thuật** (`enforcement` rule · `consumes_contracts` = target nào cấp API/event). Mỗi FEAT truy về ≥1 capability + ≥1 persona.
+
+## Bước 6 — Architecture (`docs/arch/`)  *(skill `technical-design`)*
+- `docs/arch/OVERVIEW.md`: topology — có target nào, ai gọi ai, ranh giới hệ.
+- `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ nằm ở đây; FEAT chỉ khai `consumes_contracts`.
 
 ## Bước 7 — TECHSTACK (`docs/TECHSTACK.md`)
 Chốt stack (khớp skill `stack-<tên>`) + **1 dòng lý do** ở `docs/DECISIONS.md`. INTAKE: giữ đúng lựa chọn của intake.
@@ -44,9 +49,11 @@ nếu project khác default → sửa thẳng file + ghi `DECISIONS.md`.
   đồng bộ bằng **contract-test** (VERIFY) + **BACKWARD-COMPAT** (SHIP). (Skill `stack-*` lo idiom CODE.)
 
 ## Bước 8 — Design system + UX  *(nếu có UI; backend-only → ghi marker `KHÔNG CÓ UI`, bỏ qua bước này)*
-Thứ tự bắt buộc: `docs/DESIGN-SYSTEM.md` (token — **khoá TRƯỚC**) → `docs/ux/SCREEN-MAP.md` (mục lục màn ↔
-boundary ↔ FEAT) → `docs/ux/mockups/<exp>/*.html` (dựng **từ token đã chốt**, mọi màn khai ở SCREEN-MAP) →
-**Authority chốt** mockup. Token là thứ **DUY NHẤT chép nguyên** sang code ở BUILD.
+Thứ tự bắt buộc: `docs/DESIGN-SYSTEM.md` (token — **khoá TRƯỚC**, cả dự án) → `docs/ux/SCREEN-MAP.md` (mục lục
+**mọi màn** ↔ target ↔ FEAT ↔ wave, cả dự án) → `docs/ux/mockups/<target>/*.html` **chỉ dựng màn in-scope
+wave đang mở** (ở DOCUMENT = wave 1; màn wave sau để trống, `/document` top-up khi `/next-wave` mở wave đó —
+vẽ tới đâu duyệt tới đó, không phí công mockup wave xa dễ đổi) → **Authority chốt mockup của wave đó**.
+Token là thứ **DUY NHẤT chép nguyên** sang code ở BUILD.
 
 ## Bước 9 — Chia wave (`docs/ROADMAP.md`)
 Bảng wave: mỗi wave khai **target** (boundary/experience) + **phases chạy** (`BUILD,VERIFY[,SHIP]`) + **AC in-scope**.
