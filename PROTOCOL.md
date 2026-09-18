@@ -132,7 +132,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 ## §6 — Gate evidence (gate.py đọc gì mỗi phase)         `TODO(Bước 4)`
 > Danh sách gate cần dựng (thu từ thiết kế command):
 > - **DOCUMENT**: doc set đủ mục · challenge PASS · ≥2 decisions · scope khoá (Authority duyệt)
-> - **BUILD**: `wave_reviewed` (**wave ≥2**: ROADMAP có `Rà lại wave N` ngày ≥ lúc mở; **wave 1 miễn**) · `make check` xanh · **đã commit** · health 200
+> - **BUILD**: `wave_reviewed` (**wave ≥2**: ROADMAP có `Rà lại wave N` ngày ≥ lúc mở; **wave 1 miễn**) · **`make check` + health 2xx qua `proof.json`** (`capture_proof.py` MÁY-sinh — gate KHÔNG tin tick tay, chống "test xanh nhờ H2"/"dev-done ≠ runnable") · **đã commit**
 > - **VERIFY**: `test-cases.md` mọi AC **PASS** + không **FAIL** · §Findings hết BLOCKER/MAJOR · dogfood xong ·
 >   **(web/mobile) BACKSTOP fidelity**: đòi bằng chứng dogfood `picky` đã screenshot-diff **cấu trúc** vs mockup (không skip — chống E1 "demo đẹp chạy xấu"). `TODO(Bść 6: format bằng chứng khi build dogfood agent)`
 > - **SHIP** (gate đọc ROADMAP `phases` — wave **không khai SHIP** thì **skip** cả nhóm — G3): prod-ready 4 nhóm · BC §3 xanh · rollback thử
@@ -169,6 +169,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 > - **guard_ask**: chặn `AskUserQuestion` từ BUILD trở đi. **CHO PHÉP** ở DOCUMENT (kể cả top-up) + **NEXT-WAVE** (go/pivot/kill) — điểm quyết định của Authority (D).
 > - **guard_bc**: chặn deploy khi BACKWARD-COMPAT §3 chưa xanh (wave ≥2). · **guard_ds**: chặn ghi mockup/token lệch design-system.
 > - **guard_archive**: chặn Write/Edit vào `archive/**` (wave đã đóng = hợp đồng bất biến — §3/§5).
+> - **guard_proof**: chặn Write/Edit vào `*proof.json` (bằng chứng runtime CHỈ `capture_proof.py` sinh — agent không giả tick).
 > - **reanchor**: SessionStart(compact) → nhồi lại §2 + STATE.
 > Agent read-only (review/persona `disallowedTools: Write/Edit`) + `test-writer` chỉ `test/` → không cần hook owned_paths/kernel-protect như harness cũ.
 ## §9 — Failure modes (FM-*)                             `TODO(Bước 4)`

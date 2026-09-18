@@ -50,7 +50,7 @@ boundary ↔ FEAT) → `docs/ux/mockups/<exp>/*.html` (dựng **từ token đã 
 
 ## Bước 9 — Chia wave (`docs/ROADMAP.md`)
 Bảng wave: mỗi wave khai **target** (boundary/experience) + **phases chạy** (`BUILD,VERIFY[,SHIP]`) + **AC in-scope**.
-**AC-cap**: mỗi wave đủ nhỏ để **một phiên BUILD của MAIN làm nổi** (MAIN-code-hết, không dev-agent). Điền cột
+**AC-cap**: mỗi wave đủ nhỏ để **một phiên BUILD của MAIN làm nổi** — **~3–4 FEAT hoặc ~15 AC / wave** (MAIN-code-hết, không dev-agent; vượt → tách wave, tránh vỡ context / lost-in-middle). Điền cột
 `Wave giao` ở CAPABILITIES-MAP. Để trống `§backlog` (amendment tương lai đổ vào đây).
 
 ## Bước 10 — Challenge DOCUMENT (luật #8 — tới khi hiểu ĐÚNG Ý AUTHOR)

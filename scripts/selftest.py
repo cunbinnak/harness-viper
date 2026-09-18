@@ -55,6 +55,9 @@ def main() -> int:
     check(run("scripts/hooks/guard_archive.py", [],
               '{"tool_input":{"file_path":"archive/wave-1/x.md","content":"x"}}') == 2,
           "guard_archive sửa archive/ → deny (exit 2)")
+    check(run("scripts/hooks/guard_proof.py", [],
+              '{"tool_input":{"file_path":"tracking/wave-1/proof.json","content":"x"}}') == 2,
+          "guard_proof sửa proof.json → deny (exit 2)")
     check(run("scripts/hooks/reanchor.py", [], "") == 0, "reanchor → exit 0")
 
     # 3. settings.json hợp lệ

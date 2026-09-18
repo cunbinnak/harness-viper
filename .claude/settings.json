@@ -77,7 +77,8 @@
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_ds.py"] },
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_archive.py"] }
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_archive.py"] },
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_proof.py"] }
         ]
       }
     ]

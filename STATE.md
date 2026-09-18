@@ -50,7 +50,7 @@ URL production  : —
 - [ ] `make dev` · `make check` · `make migrate` có thân
 - [ ] Walking skeleton: app+db lên · health 200 · 1 thao tác ghi→đọc DB được (dù xấu)
 - [ ] Luồng lõi end-to-end bấm được ở local (theo AC in-scope wave)
-- [ ] `make check` xanh
+- [ ] `make check` xanh + health 2xx → **`python scripts/capture_proof.py`** sinh `proof.json` (gate đọc, MÁY-verify không tin tick)
 - [ ] **Đã commit code** (ngoài commit khởi tạo) — build/test pass mà không commit = coi như CHƯA làm
 - [ ] Chạy thật: `docker up`, health 200 (để VERIFY có hệ mà đánh)
 

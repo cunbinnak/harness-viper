@@ -12,6 +12,7 @@ Exit: 0 qua · 1 còn thiếu · 2 sai tham số.
 """
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import sys
@@ -144,6 +145,14 @@ class Report:
 
 # ------------------------------------------------------------------ gates ----
 
+def read_proof(wave: str) -> dict | None:
+    p = ROOT / "tracking" / f"wave-{wave}" / "proof.json"
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
 def gate_document(r: Report) -> None:
     for f in ("docs/PRD.md", "docs/PERSONAS.md", "docs/CAPABILITIES-MAP.md", "docs/TECHSTACK.md"):
         r.check(filled(f), f"{f} tồn tại + điền hết (không còn {{{{)")
@@ -179,6 +188,12 @@ def gate_build(r: Report) -> None:
     else:
         r.note("wave 1 — miễn wave_reviewed (fresh từ DOCUMENT)")
     r.check(git_commit_count() >= 1, "đã có commit")
+    proof = read_proof(wave)   # bằng chứng MÁY-sinh (capture_proof.py) — không tin tick tay
+    if proof:
+        r.check(bool(proof.get("check", {}).get("ok")), "make check xanh (proof.json — máy sinh)")
+        r.check(bool(proof.get("health")) and all(h.get("ok") for h in proof["health"]), "health 2xx (proof.json)")
+    else:
+        r.check(False, "thiếu tracking/wave-N/proof.json — chạy `python scripts/capture_proof.py` (make check + health)")
     _state_checkboxes(r, "BUILD")
 
 

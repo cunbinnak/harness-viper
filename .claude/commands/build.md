@@ -64,6 +64,7 @@ boundary còn lại nối sau — không dựng đầy đủ từng cái một.
 - **Ca biên** (trong AC): xử **ngay khi làm phần liên quan**, đừng để cuối
 - **Doc wave đang mở lệch thực tế** (trong AC đã khoá — vd đổi tên field, thêm chi tiết kỹ thuật) → **sửa doc CÙNG commit** (luật #4, doc = nguồn sự thật). Thêm AC/luồng MỚI thì không → `ROADMAP §backlog`.
 - Mơ hồ → `DECISIONS.md` 1 dòng · ngoài AC → `ROADMAP §backlog` · commit nhỏ, message tiếng Việt
+- **Gặp gotcha / vá bug lúc code** (env nông · config · quirk contract · schema drift...) → **append NGAY** `knowledge-base/{name}.md` §Gotchas/§Failure-modes. Đây là **nguồn KG nhiều nhất** (lúc code mới va) — không ghi = mất, wave/rebuild sau lặp lại (retro B3).
 
 **KHÔNG** làm ở phase này: tối ưu hiệu năng · UI đẹp quá mức đủ dùng · viết test formal (để VERIFY) · tính năng "tiện tay".
 
@@ -75,7 +76,8 @@ boundary còn lại nối sau — không dựng đầy đủ từng cái một.
 ## Bước cuối — Chốt
 1. `make check` xanh
 2. **Đã commit** mọi thứ (build/test pass mà không commit = coi như CHƯA làm — đây là nguyên nhân từng mất code)
-3. `python scripts/gate.py` (phase BUILD) xanh → tick gate BUILD trong `STATE.md` → gợi ý `/verify`
+3. **`python scripts/capture_proof.py`** → sinh `tracking/wave-N/proof.json` (**make check + health THẬT** — máy verify, không tin tick tay)
+4. `python scripts/gate.py` (phase BUILD) xanh (đọc `proof.json`) → tick gate BUILD trong `STATE.md` → gợi ý `/verify`
 
 ## Ranh giới
 - Không sửa AC (`docs/feat/**`) cho dễ làm — không làm được → `STATE.md §Blocker`, báo cuối buổi
