@@ -25,7 +25,7 @@ Input: `docs/PRD.md` (vision/problem) + `docs/CAPABILITIES-MAP.md` + `docs/PERSO
 1. **Boundary identification**: group aggregates (event-storming §5) chia sẻ data/lifecycle → 1 boundary. Mỗi boundary owns data duy nhất (no overlap — verify qua boundary map).
 2. **Mission**: 1 câu "what & why" từ capability-map.
 3. **Owned data / capabilities**: từ aggregates event-storming + capability-map.
-4. **NON-NEGOTIABLES**: hỏi Architecture Authority (bằng lời).
+4. **NON-NEGOTIABLES**: hỏi Architecture Authority (AskUserQuestion).
 5. **Tổng hợp PRD**: gộp vision + capability + event-storming thành scope/NFR-số/security/metrics/glossary trong `docs/PRD.md`. KHÔNG bịa số NFR — hỏi user nếu chưa rõ.
 
 ## Quy tắc
