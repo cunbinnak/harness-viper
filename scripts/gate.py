@@ -149,6 +149,9 @@ def gate_document(r: Report) -> None:
         r.check(filled(f), f"{f} tồn tại + điền hết (không còn {{{{)")
     r.check(count_rows_glob("docs/feat", r"FEAT-.*\.md") >= 1, "≥1 docs/feat/FEAT-*.md")
     r.check(filled("docs/arch/OVERVIEW.md"), "docs/arch/OVERVIEW.md điền")
+    arch_targets = [p for p in (ROOT / "docs/arch").glob("*.md")
+                    if p.name != "OVERVIEW.md" and not p.name.startswith("TEMPLATE")]
+    r.check(len(arch_targets) >= 1, "≥1 docs/arch/{name}.md (per-target)")
     # ma trận vai×hành động — không ô trống
     matrix = table_rows(section("docs/PERSONAS.md", "§2"))
     empty = [c for row in matrix for c in row[1:] if not c]
@@ -182,7 +185,7 @@ def gate_build(r: Report) -> None:
 def gate_verify(r: Report) -> None:
     wave = state_wave()
     tc = f"tracking/wave-{wave}/test-cases.md"
-    rows = table_rows(section(tc, "2b")) or table_rows(read(tc))
+    rows = table_rows(read(tc))   # test-cases.md = 1 bảng: TC | AC | mô tả | cách chạy | kết quả | nguyên nhân
     results = [row[4].upper() for row in rows if len(row) >= 5]
     has_fail = any("FAIL" in x for x in results)
     has_pass = any("PASS" in x for x in results)

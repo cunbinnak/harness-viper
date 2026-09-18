@@ -61,6 +61,7 @@ Học được điều mới về boundary → append `knowledge-base/{name}.md`
 ## Bước 5 — Sửa tới sạch (MAIN)
 - TC **FAIL** hoặc finding **BLOCKER/MAJOR** → **MAIN sửa code** → **re-run** TC + dogfood liên quan → cập nhật
   `test-cases.md` thành PASS, đánh dấu finding đã xử.
+- **Không hội tụ** — finding mới cứ nảy sau **~3 vòng** sửa→re-test → DỪNG, ghi `STATE.md §Blocker`, báo cuối buổi (đừng sửa vô hạn — max-turns safety, học từ loop-engineering).
 - Nhỏ / ngoài scope → `docs/ROADMAP.md §backlog` (wave sau).
 - `git commit` sau mỗi fix. Học được gì mới → `knowledge-base/{boundary}.md`.
 
