@@ -1,18 +1,15 @@
-# services/
+# services/ — code sản phẩm (MAIN scaffold + commit)
 
-Thư mục **materialize** — không có service cố định lúc BOOTSTRAP.
+Trống lúc bootstrap. MAIN scaffold vào đây ở `/build` (Bước 3) theo stack skill. Chia nhóm theo `kind`
+(khai ở frontmatter `docs/arch/{name}.md`):
 
-## Quy tắc
+| Nhóm | `kind` | Stack skill |
+|---|---|---|
+| `boundaries/{name}/` | backend (API + DB) | `stack-spring-boot` · `stack-go` · `stack-fastapi` |
+| `web/{name}/` | web frontend | `stack-nextjs` |
+| `bff/{name}/` | GraphQL gateway | `stack-bff` |
+| `mobile/{name}/` | mobile app | `stack-flutter` |
 
-- Boundary định nghĩa trong `harness/SERVICE-BOUNDARY-MATRIX.json`; service folder = `services/{prefix}-{boundary}/` (prefix = `project.service_prefix`, vd. `crm-catalog`).
-- Folder con **chỉ xuất hiện** khi stage `DEV` (sub-agent scaffold ở `/start-dev`, push lên repo riêng polyrepo).
-- **Không** coi ví dụ cũ là spec thật nếu chưa có trong matrix.
-
-## Cấu trúc gợi ý (sau materialize)
-
-```
-services/{prefix}-{boundary}/
-  README.md
-  src/
-  tests/
-```
+- Mỗi target có `Makefile` riêng (thân 6 lệnh do stack skill điền); **root `Makefile` dispatch** `make -C services/<nhóm>/<name>`.
+- `services/` **được track** (fork monorepo-ish); build artifact (`node_modules`/`target`/…) trong `.gitignore`.
+- Hạ tầng dùng chung (db/redis/kafka) ở `deployment/local/docker-compose.yml`.
