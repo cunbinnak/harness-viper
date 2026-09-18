@@ -1,78 +1,57 @@
 ---
-name: dogfood
-description: "Dùng thử hệ ĐANG CHẠY bằng 6 lăng kính persona, hai đợt theo trạng thái DB — thay cho MANUAL_TEST thủ công. Ghi bug origin=manual, KHÔNG fix."
-argument-hint: "(không arg)  ·  hoặc <edge|newbie|picky|rushed|breaker|mobile> để chạy lại một vai"
-when_state: [MANUAL_TEST]
-sets_stage: MANUAL_TEST
-spawn:
-  agent: "dogfood-{lens}-agent (6 vai, 2 đợt x 3 vai)"
-  skills: [dogfood]
-gates: [{type: health_proof}]
+description: DOGFOOD — dùng thử hệ ĐANG CHẠY bằng 6 lăng kính persona, 2 đợt theo trạng thái DB. Ghi §Findings, KHÔNG fix.
 ---
+# /dogfood [<vai>] — tự dùng trước khi bảo là xong
 
-# /dogfood — "tự dùng trước khi bảo là xong"
+Là **bước dogfood của VERIFY** (Bước 4). Không arg = chạy đủ **6 vai 2 đợt**. Có arg (`/dogfood breaker`) = **chạy lại 1 vai**.
+KHÔNG đổi phase — chạy lại tuỳ ý.
 
-Stage MANUAL_TEST, sau chốt chạy test của `/run-wave`. **Không đổi stage** — chạy lại được bao nhiêu lần tuỳ ý.
+## Vì sao có
+auto-test chỉ chạy **TC đã viết** → chỉ tìm thứ ai đó đã nghĩ ra trước. Dogfood bù đúng khoảng đó:
+cảnh rỗng không nói gì · lỗi nuốt im lặng · bấm 2 lần ra 2 bản ghi · vai A chạm dữ liệu vai B · nút chính tràn màn nhỏ.
 
-## Vì sao có lệnh này
-
-Chốt chạy test của `/run-wave` chỉ chạy **test-case đã viết**, nên nó chỉ tìm được thứ ai đó đã nghĩ ra trước. MANUAL_TEST sinh ra để bù đúng khoảng đó — chỗ con người ngồi chọc vào hệ và thấy thứ không ai viết TC cho. Lệnh này tự động hoá đúng việc ngồi chọc đó, không thay thế nó.
-
-Thứ dogfood tìm được mà registry không: cảnh rỗng không nói gì · lỗi bị nuốt im lặng · bấm hai lần ra hai bản ghi · vai A chạm được dữ liệu vai B · nút chính tràn khỏi màn hình nhỏ.
-
-## Điều kiện vào (gate `health_proof`)
-
-Hệ phải **đang chạy thật** — `tracking/wave-{N}/health-proof.json` do `capture_infra_proof.py` sinh. Hệ chết → STOP, chạy lại `/run-wave` (chốt dựng chạy thật). **Không dogfood ảo**: một lượt dogfood trên hệ không chạy còn tệ hơn không chạy lượt nào, vì nó để lại vết "đã kiểm".
-
-Cần thêm, thiếu thì STOP: `docs/discovery/persona-pool.md` có **ma trận vai × hành động** (danh sách phép thử của vai `breaker`) + bảng **gán 6 vai ↔ persona + đợt**. Cả hai là output gate D1 nên bình thường đã có.
+## Điều kiện vào
+Hệ **đang chạy thật** (từ BUILD Bước 6: docker / dev server / emulator theo kind). Chết → STOP, quay `/build`.
+**Không dogfood ảo** — 1 lượt trên hệ chết còn tệ hơn không chạy (để lại vết "đã kiểm"). Cần `docs/PERSONAS.md` có
+**ma trận vai×hành động** (phép thử của `breaker`) + persona cho mỗi vai.
 
 ## Workflow
+1. Lấy URL/endpoint thật của hệ đang chạy — **không đoán**.
+2. Đọc `docs/PERSONAS.md`: persona · ma trận quyền · gán vai↔persona.
+3. **Đợt 1 (DB SẠCH)** — spawn 3 vai 1 lượt: `edge` (rỗng/lỗi) · `newbie` · `picky`.
+4. Đợi **đủ 3 vai** trả kết quả → **seed lại** `deployment/local/`.
+5. **Đợt 2 (DB CÓ DỮ LIỆU)** — spawn 3 vai 1 lượt: `rushed` · `breaker` (chạy đủ ma trận) · `mobile`.
+6. Gộp phát hiện → soi **dấu hiệu dogfood giả** → vai nào dính thì chạy lại vai đó.
+7. Agent **TRẢ VỀ** phát hiện → **MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file).
+8. Còn finding `sửa ngay` → `/verify` fix-loop. Sạch → SHIP / `/next-wave`.
 
-1. Đọc `health-proof.json` lấy URL/endpoint thật — **không đoán**.
-2. Đọc `persona-pool.md`: persona, ma trận quyền, bảng gán vai ↔ đợt. Không có bảng gán → mặc định mọi vai đóng persona chính.
-3. **Đợt 1 (DB SẠCH)** — spawn 3 vai trong MỘT lượt: `edge` · `newbie` · `picky`.
-4. **Đợi đủ 3 vai trả kết quả**, rồi **seed lại** dữ liệu mẫu.
-5. **Đợt 2 (DB CÓ DỮ LIỆU)** — spawn 3 vai trong MỘT lượt: `rushed` · `breaker` · `mobile`.
-6. Gộp phát hiện → soi **dấu hiệu dogfood giả** (skill `dogfood`) → vai nào dính thì cho chạy lại vai đó.
-7. Gộp phát hiện vào `tracking/wave-{N}/dogfood-report.md` §2 — **mỗi dòng một ô `Xử`** (`sửa ngay` · `chưa xử` · `wave sau`); ô trống = chưa ai quyết, gate đếm.
-8. Báo user tổng hợp. Còn dòng `sửa ngay` → `/run-wave` (tự sửa + chạy lại test). Sạch → `/next-wave`.
-
-Có arg (`/dogfood breaker`) → chỉ chạy lại vai đó, bỏ qua chia đợt.
-
-## Vì sao chia hai đợt
-
-Không phải để dàn tải. **Các vai dùng chung một hệ và một DB**: `breaker` đổ dữ liệu bậy và `rushed` tạo bản ghi trùng ngay giữa lúc `newbie` đang nhìn màn, nên người này thấy cảnh của người kia. Nặng nhất là **trạng thái rỗng — thứ `edge` coi là quan trọng nhất — chết ngay khi bất kỳ vai nào tạo bản ghi đầu tiên**.
-
-Ba ràng buộc cứng: tối đa **3 vai một đợt** · **không mở đợt 2 khi đợt 1 chưa xong** · **giữa hai đợt phải seed lại**.
+## Vì sao 2 đợt (KHÔNG phải dàn tải)
+Các vai dùng chung **1 hệ + 1 DB**: `breaker` đổ dữ liệu bậy, `rushed` tạo bản ghi trùng NGAY giữa lúc `newbie` nhìn màn →
+người này thấy cảnh người kia. Nặng nhất: **trạng thái rỗng (thứ `edge` coi trọng nhất) chết ngay khi vai nào tạo bản ghi đầu**.
+Ba ràng buộc **CỨNG**: ≤ **3 vai/đợt** · **không mở đợt 2 khi đợt 1 chưa xong** · **seed lại giữa 2 đợt**.
 
 ## Mỗi vai phải nhận gì
-
 | # | Nội dung | Thiếu thì |
 |---|---|---|
-| 1 | URL/endpoint thật từ health-proof | vai không thử được |
-| 2 | **Persona được giao** — chân dung + năng lực + luồng chính | vai thử như "người dùng nói chung" |
+| 1 | URL/endpoint thật | vai không thử được |
+| 2 | **Persona được giao** (chân dung + năng lực + luồng) | thử như "người dùng nói chung" |
 | 3 | Luồng lõi + AC của wave | không biết đúng/sai theo gì |
 | 4 | `breaker`: ma trận đầy đủ + tài khoản từng vai | không có danh sách phép thử |
-| 5 | `picky`: màn liên quan + `design-tokens.css` | không có gì để đối chiếu |
+| 5 | `picky`: màn liên quan + `docs/DESIGN-SYSTEM.md` token + **mockup** | không có gì đối chiếu |
 
-## Bằng chứng bộ ba — không có thì không tính
+> **`picky` đo CẢ CẤU TRÚC component vs mockup (screenshot-diff), KHÔNG chỉ màu token** — vá retro E1 (app dùng đúng màu mà cấu trúc lệch mockup).
 
+## Bằng chứng bộ ba (không có = không tính)
 ```
-Tôi đã làm    : <thao tác chính xác — URL, dữ liệu đã gõ, nút đã bấm>
-Tôi thấy      : <thứ hiện ra / mã lỗi / response thật>
-Tôi mong đợi  : <thứ lẽ ra phải xảy ra + dẫn về AC/FEAT/ô ma trận>
+Tôi đã làm   : <thao tác chính xác — URL, dữ liệu đã gõ, nút đã bấm>
+Tôi thấy     : <thứ hiện ra / mã lỗi / response thật>
+Tôi mong đợi : <thứ lẽ ra phải xảy ra + dẫn về AC/FEAT/ô ma trận>
 ```
-
-Thiếu vế đầu = suy từ code chứ chưa chạy. Vế cuối không dẫn được về tài liệu = ý kiến cá nhân, không phải bug.
+Thiếu vế đầu = suy từ code chứ chưa chạy. Vế cuối không dẫn được về tài liệu = ý kiến cá nhân, không phải finding.
 
 ## Forbidden
-
-- **KHÔNG tự fix** — ghi dòng vào §2 rồi dừng. MAIN điều phối lượt sửa để nhân quả rõ ràng.
-- **KHÔNG sửa `test-case-registry.md`** cho khớp thứ vừa thấy.
-- **KHÔNG sửa doc spec** — phase-lock chặn; sửa spec cho khớp code là đúng anti-pattern harness sinh ra để chống.
-- **KHÔNG teardown infra** — giữ UP cho lượt sửa + chạy lại test. Teardown khi hết WAVE-SEQUENCE (`/next-wave`).
-- Vai dogfood **KHÔNG hỏi user** — trả phát hiện + đề xuất, quyền quyết ở phiên chính.
-
-## Crash / resume
-
-Re-run `/dogfood` (hoặc `/dogfood <vai>`). Phát hiện đã có dòng thì không ghi lại — đối chiếu §2 trước khi append.
+- **KHÔNG tự fix** — trả finding, MAIN điều phối lượt sửa (nhân quả rõ ràng).
+- **KHÔNG sửa `test-cases.md`** cho khớp thứ vừa thấy.
+- **KHÔNG sửa doc spec** cho khớp code — đúng anti-pattern harness sinh ra để chống.
+- **KHÔNG teardown hệ** — giữ chạy cho fix-loop (teardown ở `/next-wave` khi hết wave).
+- Vai dogfood **KHÔNG hỏi Authority** — trả phát hiện + đề xuất, quyền quyết ở phiên chính.

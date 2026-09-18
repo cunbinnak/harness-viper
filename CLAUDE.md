@@ -1,184 +1,65 @@
-# ADLC Design Harness — CLAUDE.md
+# {{PROJECT_NAME}} — CLAUDE.md  (fork VIPER-style · feat/viper-adlc)
 
-> **Router file.** Đọc top-to-bottom mỗi session. Tier-A only — chi tiết → routing table.
+> **Router. Đọc top-to-bottom mỗi phiên.** Chi tiết → [PROTOCOL.md](PROTOCOL.md). Trạng thái sống → [STATE.md](STATE.md).
 
 ---
 
 ## NON-NEGOTIABLES
+1. **Đọc `STATE.md` trước khi làm** (phase · wave · gate đang mở). Không rõ đang ở đâu → `/status`.
+2. **Chuyển phase qua slash command**; **gate mỗi chốt** chặn "đi tiếp khi chưa đủ" — **chốt đỏ thì DỪNG**, báo thiếu gì, KHÔNG `force`.
+3. **Sau khoá scope (DOCUMENT): KHÔNG hỏi Authority** (BUILD trở đi) — mơ hồ → `docs/DECISIONS.md` · tắc cứng → `STATE §Blocker` · ngoài scope → `ROADMAP §backlog`. (Ngoại lệ: hành động ra-ngoài / không-đảo-ngược thì hỏi thật.)
+4. **Quyết định non-trivial → artifact NGAY** (DECISIONS/ADR/FEAT), không để trong chat.
+5. **Sửa doc đã chốt = wave sau**: `ROADMAP §backlog` → `/next-wave` → `/document` top-up. Doc wave đã ship (`archive/`) **bất biến**; đổi surface đã giao = **additive** (BACKWARD-COMPAT).
+6. **Không bypass test · không hardcode secret · code xong → git commit · artifact tạm → dọn** (luật #9).
 
-1. **Đọc `harness/STATE.json` trước mọi tool call** (hoặc xem header `[HARNESS ...]` đã được hook `UserPromptSubmit` inject).
-2. **Edit chỉ trong `owned_paths`** của `active_boundary`. PreToolUse hook block; đừng cố lách.
-3. **Stage transition CHỈ qua slash command.** KHÔNG sửa `stage` trong STATE.json bằng tay. Một lệnh được chạy **nhiều** `harness <cmd> complete` (hành lang `/run-wave` gộp 7 chốt) — thứ chặn "đi tiếp khi chưa đủ điều kiện" là **gate của từng chốt**, chạy đủ như cũ. **Chốt nào đỏ → DỪNG ngay tại đó**, báo user thiếu gì, KHÔNG bỏ qua, KHÔNG `force`.
-4. **Quyết định non-trivial → artifact ngay** (ADR / FEAT / CR / KG). Không để chỉ tồn tại trong chat.
-5. **Cross-boundary change** phải qua chốt rà chéo của `/domain` + `/approve-document` trước khi code. Sau khi wave đã ship: thay đổi = **wave sau**, không sửa tại chỗ — `/next-wave` lưu archive rồi `/domain` bổ sung + chia lại, **phần bù chen vào ngay wave kế, tính năng đã xếp lùi ra sau** (không dồn ra cuối).
-6. **Không bypass test** (`--no-verify`, skip), không hardcode secrets. **Doc upstream PHASE-LOCKED** (hook enforce, không còn honor-system): mỗi lớp doc chỉ sửa được ở stage SỞ HỮU + REVIEW — discovery/PROJECT→DISC_*, epic/journey/persona→DOMAIN (business thuần), **feat/BR→DOMAIN+DESIGN** (dual-owner: narrative/AC do DOMAIN dịch, field kỹ thuật `enforcement_location`/`consumes_contracts` do DESIGN điền — gate `todo_resolved`), adr/hld/api/data-model/ux/events/integrations→DESIGN, plans→PLAN. Muốn sửa khi đã qua stage → **LÙI** về stage sở hữu (`/domain` gọi được từ DESIGN/PLAN/REVIEW — tự chạy tiếp từ chốt đang đứng) rồi tiến lại (re-gate); sau ship → wave kế. (TEMPLATE.*/README + infra/KG/tracking/services KHÔNG khoá.)
+> Vi phạm → hook chặn (`guard_ask`/`guard_bc`/`guard_ds`). `gate.py` chỉ BÁO thiếu gì (không chặn). Chi tiết PROTOCOL §6/§8.
 
-> Vi phạm sẽ bị hook block. Refusal message tham chiếu `harness/PROTOCOL.md` § Failure Modes (FM-ID).
+## MAIN TỰ CODE
+MAIN viết **toàn bộ code sản phẩm**. Agent CHỈ để **verification** (`reviewer`/`bug-hunter`/`test-writer` — chỉ trả finding, MAIN ghi §Findings) + **dogfood** (6 persona). **Không dev-agent, không build_prompt** — spawn bằng Task tool + prompt ngắn tay.
 
----
+## HAI ĐƯỜNG VÀO
+- **interview** — ý tưởng mới → `/document` phỏng vấn Authority.
+- **intake** — tài liệu phân tích sẵn thả vào `intake/` → `/document` dịch (marker `NGUỒN: INTAKE` trong `docs/INTERVIEW.md`).
 
-## IDENTITY
-
-| Field | Value |
+## NĂM PHASE · BẢY LỆNH
+```
+DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE        (SHIP opt-in theo wave)
+```
+| Lệnh | Việc |
 |---|---|
-| Project | **ADLC Design Harness** — bộ khung orchestrator cho workflow ADLC (Architecture-Driven Lifecycle), kết hợp agent + người theo chuẩn harness |
-| Repo type | **Design repo** — chứa harness kernel + docs + plans + agents + skills + commands + tracking + knowledge-base. KHÔNG chứa code service. |
-| Strategy | **Polyrepo** — mỗi boundary scaffolded ở chốt code của `/run-wave` là 1 repo riêng (`{prefix}-{boundary}`). Service repos sống ngoài, link qua `SERVICE-BOUNDARY-MATRIX.json` field `repo_url`. |
-| Kernel stack | Python 3.14 (state engine + hooks + materialize + build_prompt) |
-| Service stack | Per-boundary, set ở DESIGN (chốt thiết kế của `/domain`, skill `technical-design`). Vd: Java 21 + Spring Boot 3.4, Node.js 22 + Apollo, React 19 + Vite, Flutter 3, … |
-| Scale | 17 states · **7 commands** · N waves · M boundaries (boundary/wave set dynamic ở chốt chia-wave của `/domain`) |
-| `services/` trong repo này | **gitignored** — chỉ working dir tạm khi sub-agent scaffold (push lên repo riêng, không track ở đây) |
+| `/document` | interview\|intake → PRD/PERSONAS/CAPABILITIES/FEAT/arch/UX → chia wave → **khoá scope** (1 lần cho dự án) |
+| `/build [<wave>]` | **MAIN code** 1 wave: challenge → đọc KG → scaffold → walking skeleton → luồng lõi → chạy thật |
+| `/verify` | auto-test (`test-cases.md`) + review 2 vai + **dogfood 6 persona** → MAIN sửa tới sạch |
+| `/ship` | *(chỉ khi wave khai SHIP)* prod-ready → deploy → smoke → thử rollback |
+| `/next-wave` | đóng wave (snapshot, **KHÔNG reset**) → **RÀ LẠI** + mở wave kế (loop engineering) |
+| `/status` | *(mọi lúc)* đang ở đâu · gate thiếu gì · chốt kế |
+| `/dogfood [<vai>]` | chạy lại dogfood (đủ 6 vai / 1 vai) |
 
-> Khi fork harness này cho project mới: Discovery D3 (`/discover D3`) sẽ derive IDENTITY (project name, prefix, scale) vào `docs/architecture/PROJECT.md` (gộp vai trò aggregate D6 của ADLC).
-
----
-
-## ADLC MAPPING — phủ ĐỦ D0-D7 (gộp single-repo)
-
-> Harness **phủ 100% intent D0-D7** của ADLC ZIP (multi-repo), nhưng **gộp** 8 ZIP-wave → 4 discovery wave + 3 stage (single-repo không có handoff cross-repo). KHÔNG drop chức năng.
-
-| ZIP wave (multi-repo) | → Harness (gộp) | Cách |
-|---|---|---|
-| D0 hypothesis | `DISC_D0` | clone |
-| D1 persona + capability | `DISC_D1` | clone |
-| D2 event-storming | `DISC_D2` | clone |
-| D3 boundary + charter + stack-ADR · **D6** aggregate (PRD/ROADMAP/SYS-ARCH/TECHSTACK) | `DISC_D3` → BOUNDARY-MAP + CHARTER + **PROJECT.md** | clone D3 + **fold D6** (stack-ADR move sang DESIGN; SYS-ARCH/TECHSTACK rải PROJECT+BOUNDARY-MAP+HLD) |
-| (ZIP `-DOMAIN` repo: FEAT/EP/BR/journey/persona + translate) | `DOMAIN_AUTHORING` | clone A1: author BUSINESS plain VN `docs/domain/` → ký → dịch sang eng `docs/architecture/` — cả ba nằm trong `/domain`. Bỏ SPECS-hub/cross-repo-sync (plumbing multi-repo); GIỮ 2-lớp business↔eng + ký + jargon-lint |
-| **D3.5** standards-enrich · **D4** contracts · **D5** full CHARTER | `DESIGN` (chốt thiết kế của `/domain`) | **gộp** → ADR (stack) + HLD (=D5) + API/events/integrations (=D4); D3.5 coding-standard = skill `rules-{kind}`+`ref-{kind}-pattern` (cụ thể sẵn, không cần enrich) |
-| **D7** WAVE-SEQUENCE | `PLAN` (chốt chia-wave của `/domain`) | move → WAVE-SEQUENCE + wave-*.md + MATRIX |
-| DISCOVERED + sync-to-specs | `REVIEW` | replace → approve → `/run-wave` |
-
-**Bỏ có chủ đích (multi-repo plumbing, single-repo không cần):** contract-signing/hash-drift (D4), `_shared/*` placeholder-enrich layer (D3.5), `/sync-to-specs`/SPECS hub, SYSTEM-TOPOLOGY/CONTRACT-MAP tách rời, multi-role Authority sign-off, BLOCKED state. **FEAT KHÔNG sinh ở Discovery** (cả ZIP lẫn harness — DOMAIN sở hữu).
-
-**Flow stage (17 state):** `BOOTSTRAP → DISC_D0 → DISC_D1 → DISC_D2 → DISC_D3 → DOMAIN_AUTHORING → DESIGN ↺ → PLAN → REVIEW → WAVE_OPEN → DEV → REVIEW_DEV → DEV_HANDOFF → TEST_PLAN → TEST_EXECUTE → MANUAL_TEST → DONE`. `DESIGN`/`PLAN` là chốt bên trong `/domain` (tự làm UX nếu có boundary web/mobile). **Back-edge (lùi sửa doc phase-locked):** `/domain` gọi được từ DESIGN/PLAN/REVIEW — tự chạy tiếp từ chốt đang đứng; tiến lại re-gate. `next-wave`: `MANUAL_TEST → DONE → WAVE_OPEN` khi WAVE-SEQUENCE còn wave (**KHÔNG reset** — snapshot `archive/wave-N/` + đánh dấu kết quả theo wave); hết wave → teardown `DONE → BOOTSTRAP` (docs giữ nguyên). **Chia lại sau khi chạy wave:** `/domain` gọi được từ `WAVE_OPEN` (sau snapshot) và `DONE` (hết wave mà còn việc) → đi lại 9 chốt → `/approve-document` → `/run-wave`; wave đã đóng bất biến, phần bù chen vào wave kế (gate `replan_integrity`). Chỗ thiếu cần năng lực/vai (D1), event (D2), boundary (D3) mới → `/discover D1|D2|D3` từ `WAVE_OPEN`/`DONE` trước (quyết định phạm vi, được hỏi user). Quay lại thì dấu ký các lớp sắp sửa bị hạ về DRAFT — phải ký lại thật. Boundary MỚI → `/discover D3`.
-
----
-
-## ROUTING (load on demand)
-
-| Câu hỏi | File / Command |
+## DOC SET (1 lớp `docs/` — chia per-target cho doc code)
+| File | Vai |
 |---|---|
-| "Tôi đang ở stage nào?" | `/status` |
-| "Command nào được phép gọi tiếp?" | `state` output `allowed_commands[]` |
-| "Quy trình state X?" | `harness/PROTOCOL.md` § `<state>` |
-| "Gate của command Y?" | `commands/<Y>.md` frontmatter `gates:` |
-| "Failure mode đã biết?" | `harness/PROTOCOL.md` § FM-* + `grep knowledge-base/` |
-| "Ý tưởng/giả thuyết project (tổng quan)?" | `docs/discovery/hypothesis-log.md` (D0) |
-| "Persona + capability map?" | `docs/discovery/persona-pool.md` + `docs/discovery/capability-map.md` (D1) |
-| "Tình huống X xử ra sao?" (gửi 2 lần · sửa đồng thời · xoá · sai thứ tự · hỏng nửa chừng · bản cũ · rỗng · thu hồi quyền) | `hld-{boundary}.md` **§6.1 Ca biên đã quyết** — bảng TRA, checklist đóng 8 dòng, `n/a` hợp lệ nhưng **ô trống thì không** (gate `edge_cases_decided`). Ca biên HÀNH VI → `FEAT-*` §6.1. Ranh giới liên boundary (KHÔNG được gọi qua đường nào) → `hld` §6.2 |
-| "Ai được / KHÔNG được làm gì?" | `docs/discovery/persona-pool.md` §Ma trận vai × hành động (`có`/`cấm`, không ô trống — gate D1 chặn). Spec phân quyền khi code · nguồn TC âm khi sinh test case · danh sách phép thử của vai `breaker` ở `/dogfood` |
-| "Năng lực nào đã giao, còn bao nhiêu?" | `docs/discovery/capability-map.md` §1 cột `Wave giao` + `Trạng thái` (bảng SỐNG — PLAN điền wave, `/next-wave` cập nhật trạng thái) |
-| "Surface nào đã giao ra ngoài, đổi được không?" | `tracking/BC-LEDGER.md` — §1 sổ hợp đồng (**tích luỹ vĩnh viễn**, không wave nào xoá) · §2 luật additive-first · §3 checklist rà mỗi wave (`/next-wave` re-arm; gate `backward_compat` chặn đóng wave ≥2) |
-| "Đã chất vấn spec chưa?" | `tracking/challenge-log.md` — **hai lượt**, cột `Giai đoạn`: `tài liệu` (≥3 câu, trước `/approve-document`, trả lời CHỈ bằng tài liệu — câu nào phải đoán là **một lỗ tài liệu**) · `code` (≥1 câu, trước dòng code đầu). Gate `challenge_doc` + `challenge_passed`, lọc theo wave |
-| "Chỗ nào tắc cứng, ai đang chờ gì?" | `tracking/blockers.md` (khuôn: `tracking/_templates/TEMPLATE.blockers.md`) — chỗ dừng hợp lệ THỨ BA (khác mơ hồ→`decide.py`, khác ngoài-scope→wave sau). Ghi xong **đi làm việc khác ngay**; cột `Đã thử gì` trống thì chưa phải blocker. Không reset khi mở wave — `/next-wave` đếm và nhắc |
-| "Lớp doc nào đã được KÝ?" | discovery → ký ở chốt D3 của `/discover` · domain → ký trong `/domain` · design → ký ở `/approve-document`. Cả ba đều stamp `status: APPROVED` vào frontmatter; gate `*_stamped` chặn complete chay (state nói đã ký mà file còn `DRAFT`) |
-| "Quyết định tự quyết khi mơ hồ ghi ở đâu?" | `tracking/decisions.md` — agent tự ghi bằng `py scripts/decide.py` khi gặp mơ hồ lúc làm (KHÔNG phải slash command); cột *giả định đang mang* + *đảo ngược được không* |
-| "Event storming domain?" | `docs/discovery/event-storming/ES-{domain}.md` (D2) |
-| "Boundary nào, charter ra sao?" | `docs/discovery/BOUNDARY-MAP.md` + `docs/discovery/boundaries/{b}/CHARTER.md` (D3) |
-| "Epic / Feature / Business-rule (BUSINESS, plain VN — PO/BA ký)?" | `docs/domain/{epics/EP-*,feat/FEAT-*,business-rules/BR-*,journeys,personas}.md` (lớp business, A1) |
-| "Epic / Feature / Business-rule (ENG — dịch từ business, DESIGN/PLAN đọc)?" | `docs/architecture/{epics/EP-*,feat/FEAT-*,business-rules/BR-*}.md` (đầu ra bước dịch của `/domain`) |
-| "Project này làm gì? Stack? Scope?" | `docs/architecture/PROJECT.md` |
-| "Nguyên tắc kiến trúc / invariants bất biến?" | `docs/architecture/ARCHITECTURE-PRINCIPLES.md` |
-| "Severity / test-type / tag taxonomy?" | `docs/architecture/SEVERITY-TEST-TAXONOMY.md` |
-| "Feature X yêu cầu gì?" | `docs/architecture/feat/FEAT-X-*.md` |
-| "Boundary design ra sao?" | `docs/architecture/hld/hld-{boundary}.md` |
-| "API contract boundary?" | `docs/architecture/api/api-{boundary}.md` |
-| "Schema boundary?" | `docs/architecture/data-model/data-model-{boundary}.md` |
-| "Màn nào thuộc boundary nào / mockup ở đâu?" | `docs/architecture/ux/SCREEN-MAP.md` (mục lục màn ↔ boundary ↔ FEAT ↔ mockup) |
-| "UX behavior boundary (states/API/validation)?" | `docs/architecture/ux/ux-{boundary}.md` |
-| "Look màn X?" | `docs/architecture/ux/mockups/{boundary}/{screen}.html` (mở browser) |
-| "Design tokens dùng chung (màu/spacing/typography)?" | `docs/architecture/ux/design-tokens.css` (SoT mọi web boundary, G15) |
-| "Event boundary phát/nhận?" | `docs/architecture/events/{boundary}-events.md` |
-| "Tích hợp service nội bộ / external?" | `docs/architecture/integrations/INTEG-{INT\|EXT}-*.md` |
-| "Wave N kế hoạch?" | `docs/plans/WAVE-SEQUENCE.md` + `docs/plans/wave-{N}.md` |
-| "Boundary ownership / owned_paths / repo_url?" | `harness/SERVICE-BOUNDARY-MATRIX.json` |
-| "Lịch sử quyết định kiến trúc?" | `docs/architecture/adr/ADR-*.md` |
-| "Domain model + business rule per boundary?" | `knowledge-base/{boundary}.knowledge-graph.yaml` |
-| "Test cases wave hiện tại?" | `tracking/wave-{N}/test-case-registry.md` |
-| "Feat nào xong / đang dở (clock-in)?" | `tracking/wave-{N}/feature-state.md` (HARNESS-derive: passing/active/not_started per FEAT; `py scripts/capture_feature_state.py` refresh) |
-| "TC nào đang đỏ?" | `tracking/wave-{N}/test-report.md` + `test-logs/<TC>.log` (nguyên nhân thật). **KHÔNG có sổ bug** — kết quả test chỉ nằm ở report; sửa xong chạy lại chốt test-execute, report tự xanh |
-| "Skills cho `kind` nào?" | `scripts/build_prompt.py` — `PRIMARY_SKILLS_PER_KIND` + `SCAFFOLD_REF_SKILLS_PER_KIND` (kernel đọc, không phải doc) |
-| "Skills cho ``kind`` nào ở đâu?" | ``.claude/skills/<skill-name>/SKILL.md`` (auto-load on-demand bởi Claude Code) |
-| "Cấu hình local dev (docker-compose)?" | `docs/architecture/infra/docker-compose.yml` |
+| `PRD` · `PERSONAS`(+ma trận vai×hành động) · `CAPABILITIES-MAP` · `TECHSTACK` | nền dự án |
+| `feat/FEAT-*` | AC (BDD) + ca biên + field kỹ thuật · `arch/OVERVIEW` + `arch/{target}` (frontmatter `kind/stack/consumes` + data/API/ranh giới) |
+| `DESIGN-SYSTEM` + `ux/` (SCREEN-MAP + mockups) · `ROADMAP` (wave plan + §backlog) | UX · kế hoạch |
+| `DECISIONS` · `BACKWARD-COMPAT` · `PRODUCTION-READY` · `adr/` | quyết định · hợp đồng · prod · ADR |
+| `CONVENTIONS` · `SECURITY` **(framework, cố định)** | quy ước code cross-stack + bảo mật baseline |
+| `knowledge-base/{target}.md` | **KG** — bộ nhớ va vấp, MAIN đọc TRƯỚC khi code target |
 
----
+## ĐỌC GÌ KHI NÀO (chống lost-in-middle — targeted load)
+- **Luôn**: `STATE.md` + `PROTOCOL.md`.
+- **BUILD target X**: CHỈ slice của X — `ROADMAP wave-N` · `feat/FEAT-*` in-scope · `arch/X.md` · `knowledge-base/X.md` · mockup X · `CONVENTIONS`/`SECURITY`. KHÔNG đọc target khác.
+- **Grep khi cần**: `DECISIONS` · `archive/`.
+- **KHÔNG** đọc cả `docs/` rồi mới làm.
 
-## SLASH COMMANDS
+## HOOKS (awareness — chi tiết PROTOCOL §8)
+`guard_ask` (không hỏi sau khoá scope) · `guard_bc` (deploy khi BC §3 xanh) · `guard_ds` (mockup dùng token, không hex thô) · `reanchor` (nhồi lại luật sau compact). `gate.py` chỉ BÁO.
 
-> **7 lệnh.** Xếp theo thứ tự chạy trong một vòng phát triển. Mỗi lệnh **tự suy đang đứng ở đâu** — không mode, không cờ phải nhớ. Gate chi tiết → `harness/PROTOCOL.md`; body lệnh → `.claude/commands/<name>.md`.
-
-| Bước | Lệnh | Tác dụng |
-|---|---|---|
-| **1. Khám phá** | `/discover` | Giả thuyết → persona + **ma trận vai x hành động** → event storming → boundary + `PROJECT.md`. Không arg — tự suy: gate wave đang đứng **xanh thì tiến**, **đỏ thì ở lại** đào đúng chỗ thiếu. Arg `D0..D3` chỉ để ép đào thêm khi gate đã xanh. **Chỗ được hỏi nhiều nhất — không trần số câu.** Hết D3: agent rà chéo cả lớp → **DỪNG, bạn ĐỌC và đánh giá** → bạn duyệt = chữ ký (`status: APPROVED`) → mới sang Domain |
-| **2. Tài liệu** | `/domain` | **Nốt nửa sau, một mạch 9 chốt**: Epic/Feature/BR/Journey (nghiệp vụ, plain VN) → bạn OK = **ký** → dịch sang bản kỹ thuật → ADR/HLD/API/data-model/events/tích hợp → **UX nếu có boundary web/mobile** → chia wave (WAVE-SEQUENCE + MATRIX + KG) → **rà chéo toàn bộ**. Dừng ở REVIEW. Gọi lại = chạy tiếp từ chốt đang đứng. **Gọi sau `/next-wave`** = bổ sung tài liệu + chia lại kế hoạch (bù chen vào wave kế). KHÔNG hỏi lại user — suy từ tài liệu `/discover`; mơ hồ → `decide.py` |
-| **3. Chốt** | `/approve-document` | Bạn **ĐỌC + đánh giá** toàn bộ tài liệu → duyệt = **KHOÁ SCOPE** (ký lớp design/contract). Đây là chỗ kết thúc phần tài liệu; mở cổng wave |
-| **4. Chạy wave** | `/run-wave [<N>]` | **Một mạch 7 chốt**: dựng wave → code từng boundary → review tới sạch → dựng chạy thật → sinh test → chạy test → dogfood. Gate đỏ = **DỪNG đúng chốt đó**. Gọi lại = chạy tiếp từ chốt đang đứng. Còn bug thì tự sửa + re-test |
-| | `/dogfood [<vai>]` | Chạy lại **một** lăng kính (lượt đầu đã nằm trong `/run-wave`) |
-| **5. Khép vòng** | `/next-wave` | Đóng wave + **mở wave kế, KHÔNG reset gì**: snapshot toàn bộ tài liệu → `archive/wave-N/`, đóng gói FEAT/AC đã giao (`DELIVERED.md`), đánh dấu kết quả theo wave nên gate wave mới tự đỏ lại. Hết WAVE-SEQUENCE → teardown |
-| **Mọi lúc** | `/status` | Đang ở đâu · chốt kế là gì · gate còn thiếu gì |
-
-**Không còn là lệnh** — 4 thứ đổi từ cửa-người-gõ thành cơ chế agent tự chạy:
-
-| Cũ | Giờ ở đâu |
+## ROUTING
+| Câu hỏi | Ở đâu |
 |---|---|
-| `/decide` | `py scripts/decide.py`, nhắc trong NON-NEGOTIABLES của mọi prompt spawn. Mơ hồ → chọn phương án **dẫn về một tài liệu cụ thể** → ghi (kèm cột *giả định*) → đi tiếp. Script **từ chối** dòng không dẫn được về artifact nào |
-| `/log-bug` | **bỏ hẳn, không thay bằng gì.** TC đỏ nằm ở `test-report.md`; phát hiện dogfood nằm ở `dogfood-report.md` §2 kèm ô `Xử`. Sổ bug là bản sao thứ ba của cùng một sự thật |
-| `/fix-bugs` | lượt sửa trong `/run-wave`: `build_prompt.py fix --tc TC-NNN` → sửa → chạy lại `test-execute`. Không chốt riêng, không sổ phải đóng bằng tay |
-| `/apply-cr` | thay đổi = wave sau: `/next-wave` rồi `/domain` bổ sung + chia lại |
-| `/design` · `/plan` · `/review-document` | ba chốt bên trong `/domain` (thiết kế · chia wave · rà chéo) |
-
-
-> **Menu `/` hiện cả SKILL, không chỉ lệnh.** `domain-po`, `test-plan`, `dogfood`… là skill
-> của sub-agent — gõ chúng chỉ **nạp checklist** vào phiên, KHÔNG chạy chốt và KHÔNG chuyển
-> state. Nhận ra bằng mô tả: skill mở đầu bằng `Skill của <agent> (chốt X trong /<lệnh>)`.
-> **7 lệnh thật** là bảng ở trên.
-
-Mỗi command tự document trong `.claude/commands/<name>.md` (sync từ `commands/<name>.md` qua `py scripts/sync_commands.py`).
-
----
-
-## RUNTIME GUARANTEES (hooks — chi tiết: `harness/PROTOCOL.md` §Hooks + §Gate evidence)
-
-> Hook đọc từ `gates.py` / `STATE-MACHINE.json` / `policies.py` — **KHÔNG đọc file này**. Bảng dưới chỉ là *awareness* (đủ để biết cái gì sẽ chặn bạn); rule đầy đủ + FM-ID → PROTOCOL.md.
-
-| Hook | Bạn cần biết (chi tiết → PROTOCOL.md) |
-|---|---|
-| `SessionStart` · `UserPromptSubmit` · `Notification` | Inject header `[HARNESS stage=… \| next: …]` mỗi turn |
-| `PreToolUse(Bash)` — gate | Deny `harness <cmd> complete` nếu sai `allowed_commands` hoặc fail gate — §Gate evidence |
-| `PreToolUse(Write\|Edit)` — kernel | **Sub-agent KHÔNG sửa được `scripts/` `harness/` `commands/` `agents/` `.claude/`** — đó là thứ đang chấm nó (gate · chỉ thị · hook · luật). Gate đỏ thì sửa cho đạt, đừng sửa gate. MAIN sửa được (đó là việc phát triển khung). **Vai review (`review-{kind}-agent`, `bug-hunter-agent`) chỉ đọc** — ở DEV/REVIEW_DEV chỉ ghi được `tracking/{wave}/review-findings.md` · `tracking/blockers.md` (+ KG learnings cho review-{kind}); thấy lỗi thì ghi finding, không tự sửa (FM-REVIEW-WRITE) |
-| `PreToolUse(Write\|Edit)` | Block kernel files + 3 proof file (chỉ `capture_infra_proof.py` sinh, FM-PROOF-FORGE) + doc phase-locked ngoài stage sở hữu + `services/**` khi dev-handoff-agent (#12) |
-| `PreToolUse(Task)` | Block spawn command-agent bằng prompt tự viết (E-6: phải dùng `build_prompt.py`); Explore free |
-| `PreToolUse(AskUserQuestion)` | Chặn hỏi user ngoài khâu khám phá. Cho qua ở `BOOTSTRAP`/`DISC_*` (đó LÀ chỗ để hỏi) và ở ba chốt KÝ khi **MAIN** chạy (`DOMAIN_AUTHORING` ký nghiệp vụ · `REVIEW` khoá scope · `MANUAL_TEST` UAT). **Sub-agent thì không, ở bất kỳ đâu ngoài khám phá** — nó phải suy từ tài liệu khám phá, mơ hồ thì `decide.py`, tắc thật thì `blockers.md` |
-| `PreToolUse(Skill\|SlashCommand)` | Chặn CHỈ `SlashCommand` chạy harness cmd ∈ GATE_RULES (MAIN tự nối pipeline); `Skill` tool cho qua (sub-agent load convention); user **gõ tay** không ảnh hưởng |
-| `SubagentStop` | Validate RETURN SCHEMA (7 field: completed/deferred/needs_review/files_changed/build/lint/test) |
-| `Stop` | Build/lint/test **wave-scoped** khi sửa `services/` ở {DEV, REVIEW_DEV, TEST_EXECUTE}; đỏ → block (cache git-hash) |
-| `PreCompact` | Pin STATE (stage+wave+boundary) vào summary |
-
-> Fail-open: hook crash → allow. Mọi gate force-bypass (`force:true,reason`) → audit `tracking/decisions.md`. Config: `.claude/settings.json` · scripts `scripts/hooks/`.
->
-> **Permission là hàng rào NGOÀI, hook là hàng rào TRONG — hai lớp độc lập.** Thứ tự xét `deny → ask → allow`:
-> `deny` chặn thứ hook không nhìn thấy (secret `.env*`/`~/.ssh`/`~/.aws`, `sudo`, `rm -rf /`, force-push) ·
-> `ask` dừng hỏi ở hành động hướng RA NGOÀI hoặc không thu hồi được (`git push`, `gh repo create`/`release`,
-> `npm publish`, `docker compose down --volumes`) · `allow` mở rộng `Bash`/`Edit`/`Write` cho đỡ ma sát.
-> `allow` rộng **KHÔNG** mở khoá được thứ hook chặn — protected file, phase-lock, owned_paths, gate vẫn deny như thường.
-
----
-
-## TIER B / C — load on demand
-
-- **Tier B** (load khi vào stage):
-  - `docs/plans/wave-{N}.md`
-  - `hld/api/data-model/events/ux` của `active_boundary`
-  - `knowledge-base/{boundary}.knowledge-graph.yaml`
-  - `tracking/wave-{N}/*.md`
-- **Tier C** (queried bằng `grep` / Explore subagent):
-  - Toàn bộ `docs/architecture/{adr,feat,integrations,infra}/`
-  - `commands/*.md` body (frontmatter đã inline ở SLASH COMMANDS trên)
-
-> KHÔNG đọc full `docs/architecture/` rồi mới code. Targeted loads only.
-
----
-
-## Change Log
-
-> **Tách ra [`HARNESS-CHANGELOG.md`](HARNESS-CHANGELOG.md)** (append-only, cùng thư mục router) — router này chỉ giữ trạng thái HIỆN TẠI. Thay đổi non-trivial → thêm row ở CUỐI file changelog (mới nhất dưới cùng), KHÔNG ghi vào đây.
+| Đang ở đâu / thiếu gì | `/status` · `STATE.md` |
+| Quy trình / gate / failure mode | `PROTOCOL.md` |
+| FEAT/AC · thiết kế target | `docs/feat/` · `docs/arch/{target}.md` |
+| Ai được / cấm làm gì | `docs/PERSONAS.md §2` |
+| Quy ước code · bảo mật | `docs/CONVENTIONS.md` · `docs/SECURITY.md` |
+| Va vấp / bất biến của target | `knowledge-base/{target}.md` |

@@ -1,0 +1,178 @@
+# PROTOCOL — {{PROJECT_NAME}}
+
+> Định nghĩa CHUẨN của quy trình. [STATE.md](STATE.md) là bản thao tác; lệch nhau thì **PROTOCOL.md thắng**.
+> Router ngắn mỗi phiên: `CLAUDE.md`.
+>
+> **Trạng thái tài liệu: KHUNG (Bước 1/7 — xương sống đã chốt).** Mục đánh `TODO(Bước N)` viết ở bước sau.
+> Bộ khung này là bản refactor tinh gọn, học phương pháp VIPER (1 lớp doc · MAIN tự code · inline prompt
+> · ít script + gate nhìn thấy được), thay cho harness cũ (17 state · ~58 gate · build_prompt · 2 lớp doc).
+
+---
+
+## §0 — Hai đường vào (entry paths)
+
+Nhận diện bằng đúng một dấu hiệu: `docs/INTERVIEW.md` có marker `NGUỒN: INTAKE` (ngoài comment) hay không.
+
+| | **Đường INTERVIEW** | **Đường INTAKE** |
+|---|---|---|
+| Khi nào | Ý tưởng mới, chưa có tài liệu phân tích (greenfield, project nhỏ) | Đã có tài liệu MESH-render/phân tích sẵn ở `intake/` |
+| MAIN làm | **Phỏng vấn Authority** → `docs/INTERVIEW.md` đủ dòng bằng chứng → suy ra PRD/personas/… | **Dịch/render** `intake/*.md` vào doc set + bảng truy vết + marker `NGUỒN: INTAKE` — KHÔNG phỏng vấn lại |
+| Cỡ | nhỏ: 1 app, 3–7 AC, 2–3 persona | không trần: multi-boundary, AC truy về `CAPABILITIES-MAP.md` |
+
+Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/VERIFY như nhau — chỉ khác cách nạp nguyên liệu đầu vào. Đường vào quyết định ràng buộc cỡ, không phải quy trình.
+
+---
+
+## §1 — Năm phase (4 cứng + 1 opt-in)
+
+```
+  ┌──────────┐ khoá  ┌────────┐ chạy  ┌────────┐      ┌──────────┐ xong ┌───────────┐
+  │ DOCUMENT │──────▶│ BUILD  │──────▶│ VERIFY │─────▶│ [SHIP?]  │─────▶│ NEXT-WAVE │
+  │ tài liệu │ scope │MAIN code│ thật  │test+   │      │ opt-in   │ wave │ wave kế   │
+  └──────────┘       └────────┘       │dogfood │      │ theo wave│      └─────┬─────┘
+       ▲                              └────────┘      └──────────┘            │
+       └──────── cần capability/boundary mới → top-up DOCUMENT ◀──────────────┘
+```
+
+| Phase | Làm gì | Ai | Hỏi Authority? | Gate rời phase (chuẩn ở STATE.md §Gate) |
+|---|---|---|---|---|
+| **DOCUMENT** | interview\|intake → PRD·PERSONAS·CAPABILITIES·FEAT·ARCHITECTURE·DESIGN-SYSTEM·ux → chia wave → **khoá scope** | MAIN viết | ✅ CHỖ DUY NHẤT | doc set đủ mục · challenge PASS · ≥2 decisions · scope khoá |
+| **BUILD** | challenge → đọc KG → scaffold → walking skeleton → luồng lõi → **chạy thật (docker up)** | **MAIN tự code** | ❌ tự quyết → DECISIONS.md | skeleton thông · make check xanh · đã commit · health 200 |
+| **VERIFY** | 2 bước: **auto-test** (black-box trên hệ đang chạy) + **dogfood** (6 persona 2 đợt) | MAIN + reviewer/bug-hunter/test-writer + 6 persona | ❌ | make test xanh · dogfood xong · hết finding BLOCKER/MAJOR |
+| **SHIP** | prod-ready → deploy → smoke → rollback thử → dogfood prod | MAIN | ❌ (deploy = ngoại lệ "hỏi thật") | chỉ chạy khi wave khai SHIP; prod sống · rollback thử |
+| **NEXT-WAVE** | go/pivot/kill → snapshot archive → mở wave kế (không reset) | MAIN | (go/pivot/kill) | backlog gộp · snapshot · wave kế mở hoặc teardown |
+
+**Wave**: DOCUMENT chạy 1 lần cho cả dự án (sinh kế hoạch mọi wave). BUILD/VERIFY/SHIP chạy **per wave**.
+Mỗi wave **khai báo phases nó chạy** trong `docs/ROADMAP.md` — wave nội bộ có thể bỏ SHIP; không ép mọi wave đủ phase.
+**AC-cap per wave**: DOCUMENT chia wave giới hạn số AC/boundary mỗi wave (học VIPER: loop nhỏ) để BUILD vừa
+context của MAIN (MAIN-code-hết, không dev-agent). Ngưỡng mềm, gate wave-plan cảnh báo khi vượt. `TODO(Bước 3/4)`
+
+**Loop engineering** (mở wave = RÀ LẠI — học VIPER): kế hoạch mọi wave lập 1 lần ở DOCUMENT (Authority ký 1 lần),
+NHƯNG mở wave nào `/next-wave` phải **rà lại kế hoạch wave đó đối chiếu KẾT QUẢ wave trước + §backlog**, chỉnh nếu
+lệch, rồi stamp `Rà lại wave N: <ngày>`. Gate `wave_reviewed` đòi dòng đó (ngày ≥ lúc mở wave) — thiếu = đang chạy
+mù theo kế hoạch cũ đã lệch. ROADMAP mỗi wave khai thêm: `phụ thuộc wave trước` · `legacy được phép phá`
+(nối BACKWARD-COMPAT/guard_bc) · `điều chỉnh khi mở`. **RÀ LẠI định đoạt RÕ từng backlog/finding treo** (xử/hoãn-lý-do/bỏ-lý-do —
+không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (không sửa sau khi nhìn số). `TODO(Bước 3/4 + /next-wave)`
+
+---
+
+## §2 — Luật nền
+
+1. **Scope khoá sau DOCUMENT.** Phát sinh → `docs/ROADMAP.md §backlog`, không chèn vào wave này.
+2. **Sau khi khoá scope: toàn quyền, không hỏi lại.** Từ BUILD trở đi KHÔNG dùng `AskUserQuestion` (guard_ask).
+3. **Mơ hồ → 1 dòng `docs/DECISIONS.md` (cột giả định + đảo-ngược-được-không) TRƯỚC khi code.**
+4. **Doc là nguồn sự thật.** Code lệch doc (trong AC đã khoá của wave đang mở) → sửa doc **cùng commit**.
+5. **Cỡ sản phẩm theo đường vào** (§0).
+6. **Không secret trong code, không bypass test/lint. Đã code xong → git commit** (không commit = coi như chưa làm).
+7. **Tiếng Việt có dấu** cho văn bản người đọc (giữ tiếng Anh cho identifier/API/schema/tên lệnh/tên file).
+8. **Im lặng với Authority, đối kháng nội bộ.** Challenge trước khi code + dogfood trước khi báo xong.
+9. **Dọn rác tạm.** Artifact tạm (screenshot/trace/log/temp phân tích) dùng xong **dọn ngay** — không commit, không tích tụ, để scratch dir. Build artifact (node_modules/target/dist…) trong `.gitignore`. Docker/seed → teardown ở `/next-wave`.
+
+---
+
+## §3 — Amendment = wave sau (sửa doc sau khi đã chốt)
+
+Chỉ doc của wave **ĐÃ SHIP** mới đóng băng (nằm trong `archive/`). Doc wave **đang mở** vẫn sửa được — nhưng
+chỉ để đúng sự thật *trong scope đã khoá*, KHÔNG thêm scope. Khi đang BUILD/VERIFY mà phát hiện vấn đề:
+
+```
+├─ Code sai so với spec đã chốt              → sửa CODE. Xong. (không đụng doc)
+├─ Spec mơ hồ (không nói rõ ca này)          → DECISIONS.md 1 dòng, tự quyết, đi tiếp. KHÔNG hỏi
+├─ Doc wave HIỆN TẠI lệch thực tế, vẫn trong
+│  AC đã khoá (đổi tên field, thêm chi tiết
+│  kỹ thuật của AC đang làm)                 → sửa DOC cùng commit (doc wave đang mở CHƯA đóng băng)
+├─ THIẾU HẲN luồng / scope MỚI (ngoài AC khoá) → docs/ROADMAP.md §backlog (thiếu gì · đụng FEAT nào ·
+│                                              wave phát hiện) → KHÔNG build → wave sau top-up
+└─ Luồng thiếu CHẶN CỨNG luồng lõi wave này   → STATE.md §Blocker, báo cuối buổi; buộc phải có →
+                                               back-edge DOCUMENT top-up cho wave này (hiếm — DOCUMENT hụt)
+```
+
+Ranh giới 1 câu: **sửa cho doc khớp thực tế trong AC đã khoá = OK tại chỗ; thêm AC/luồng mới = backlog → wave sau.**
+`/next-wave` snapshot doc wave → `archive/wave-N/` → từ đó **bất biến**; đổi = FEAT version mới ở wave tương lai.
+(Giống bộ luật VIPER #1/#4/§1.2 — chỉ đổi "vòng" → "wave".)
+
+---
+
+## §4 — Doc set (1 lớp `docs/`) + KG        `TODO(Bước 3): chi tiết template từng file`
+
+Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KHÔNG còn chuỗi discovery→domain→architecture.
+
+| File | Vai trò |
+|---|---|
+| `docs/PRD.md` | vấn đề · đối tượng · out-of-scope · success metric |
+| `docs/INTERVIEW.md` | bằng chứng phỏng vấn (+ marker `NGUỒN: INTAKE` nếu đường intake) |
+| `docs/PERSONAS.md` | persona + ma trận vai×hành động (nguồn phân quyền + TC âm) |
+| `docs/CAPABILITIES-MAP.md` | capability→outcome→FEAT (truy vết) |
+| `docs/TECHSTACK.md` | stack chốt + biến môi trường |
+| `docs/feat/FEAT-*.md` | AC (BDD, gồm ca biên hành vi + hệ thống) + field kỹ thuật CHUNG file (bỏ translate) |
+| `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md` | **per target**: frontmatter `kind`(backend/web/bff/mobile)·`stack`·`consumes` + data model · luồng · API · §ranh-giới (fold hld/api/data/events/integ). BUILD nạp đúng slice |
+| `docs/CONVENTIONS.md` **(framework)** | quy ước chung + §API error-envelope/header **default** (project chỉnh nếu khác) — KHÔNG author lại |
+| `docs/SECURITY.md` **(framework)** | baseline bảo mật — tick ở PRODUCTION-READY khi SHIP |
+| `docs/DESIGN-SYSTEM.md` + `docs/ux/` | token (khoá trước) + SCREEN-MAP + mockups HTML |
+| `docs/ROADMAP.md` | wave plan (target + phases mỗi wave) + §backlog (amendment) |
+| `docs/DECISIONS.md` | 1 dòng/quyết định (append cả dự án, đánh dấu `(wave N)`) |
+| `docs/BACKWARD-COMPAT.md` · `docs/PRODUCTION-READY.md` | sổ hợp đồng + checklist SHIP |
+| `docs/adr/ADR-*.md` | quyết định kiến trúc (nhẹ) |
+| `knowledge-base/{name}.md` | **KG** (per target): §Invariants · §Gotchas · §Failure-modes · §Key-decisions. KHÔNG phase-lock · sống sót qua mất code · MAIN đọc TRƯỚC khi code target |
+
+> **Tracking wave-scoped** (không phải spec; `/next-wave` gom vào `archive/wave-N/`): `tracking/wave-{N}/test-cases.md`
+> — MỘT bảng = TC · AC · cách chạy · kết quả PASS/FAIL · nguyên nhân (gộp registry + report + bug làm một, chống "3 bản sao").
+>
+> **Quy ước template** (`TEMPLATE.*`, gate bỏ qua): guidance trong `<!-- -->` (gate `read_live` strip → không đếm nhầm) ·
+> placeholder `{{...}}` (gate check "còn `{{` = chưa xong") · tiêu đề `## §` = **mỏ neo cố định** (không đổi tuỳ tiện) ·
+> bảng markdown sạch (ma trận/wave/enforcement — không ô trống ở bảng bắt buộc) · frontmatter máy-đọc (`status·capability·phases·consumes`).
+>
+> **Code** (`services/`, gitignored ở repo khung) chia nhóm theo `kind`: `services/boundaries/` (backend) · `services/web/` ·
+> `services/bff/` · `services/mobile/`. `kind` (khai ở frontmatter `arch/{name}.md`) quyết định: stack skill · nơi scaffold ·
+> cách "chạy thật" (backend/bff `docker up` · web dev server · mobile emulator) · review checklist. Bộ kind = **backend·web·bff·mobile**.
+
+---
+
+## §5 — Command (inline prompt, không build_prompt)   `TODO(Bước 2)`
+## §6 — Gate evidence (gate.py đọc gì mỗi phase)         `TODO(Bước 4)`
+> Danh sách gate cần dựng (thu từ thiết kế command):
+> - **DOCUMENT**: doc set đủ mục · challenge PASS · ≥2 decisions · scope khoá (Authority duyệt)
+> - **BUILD**: `wave_reviewed` (**wave ≥2**: ROADMAP có `Rà lại wave N` ngày ≥ lúc mở; **wave 1 miễn**) · `make check` xanh · **đã commit** · health 200
+> - **VERIFY**: `test-cases.md` mọi AC **PASS** + không **FAIL** · §Findings hết BLOCKER/MAJOR · dogfood xong ·
+>   **(web/mobile) BACKSTOP fidelity**: đòi bằng chứng dogfood `picky` đã screenshot-diff **cấu trúc** vs mockup (không skip — chống E1 "demo đẹp chạy xấu"). `TODO(Bść 6: format bằng chứng khi build dogfood agent)`
+> - **SHIP** (gate đọc ROADMAP `phases` — wave **không khai SHIP** thì **skip** cả nhóm — G3): prod-ready 4 nhóm · BC §3 xanh · rollback thử
+> - **Cross**: contract-test present cho consumer · BACKWARD-COMPAT so `arch §API` (G4) · **phase-lock MIỄN tick tiến-độ ROADMAP lúc BUILD** (E, không phải đổi scope)
+>
+> **Kiến trúc gate.py** (1 file, mirror VIPER): shared readers `read/filled/read_live/count_rows/section/table_cells/challenge_last`
+> + 1 hàm/phase `gate_document/build/verify/ship/next_wave` + `phase_from_state()` đọc `STATE.md`. In ✓/✗ từng mục, exit 1 nếu thiếu — KHÔNG chặn tool.
+## §7 — Agents (MAIN tự code; agent CHỈ để verification + dogfood)
+
+MAIN viết **toàn bộ code sản phẩm**. Agent chỉ để **mắt tươi độc lập** (review) + **dùng thử** (dogfood) — hai việc
+hưởng lợi từ độc lập. Spawn bằng **Task tool** + `subagent_type` + prompt NGẮN tay (KHÔNG `build_prompt`); phương pháp
+nằm ở `.claude/agents/<name>.md`.
+
+**Bộ agent (9):**
+| Agent | Vai | Tools | Ghi được |
+|---|---|---|---|
+| `reviewer` | code AN TOÀN/SẠCH (4 trục: bảo mật · forbidden stack · ranh giới/quy ước · lệch doc) | read-only | — (trả finding) |
+| `bug-hunter` | code ĐÚNG SPEC (AC có impl? ca biên chặn server? phân quyền owner-condition?) | read-only | — (trả finding) |
+| `test-writer` | viết test adversarial | +Write/Edit **chỉ thư mục test** | test/ |
+| `persona-{newbie,edge,picky,rushed,breaker,mobile}` | dogfood 2 đợt (đóng persona thật) | browse/Playwright | — (trả finding) |
+
+**Luật chung mọi agent:** KHÔNG hỏi Authority · KHÔNG sửa product code (trừ test-writer chỉ `test/`) · **TRẢ VỀ finding,
+MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file) · report `[nặng/vừa/nhẹ] + file:dòng + "hỏng thế nào" + đề xuất 1 câu` ·
+**CHỈ nêu hậu quả THẬT** (mất/lộ data · sai kết quả · chặn AC), "trục ổn" thì nói ổn, **đừng bịa finding**.
+
+**Kind-specific:** review agent đọc `stack-<tên>/SKILL.md §review` theo boundary — 2 agent generic, không tách per-kind.
+Mỗi `stack-<tên>` skill = **PORT** rules-<kind> + ref-<kind>-* cũ (idiom code · config · situational kafka/redis/logging/restclient)
++ **§review** = checklist + **bảng Forbidden patterns** (cho reviewer/bug-hunter soi từng dòng). **Giữ nguyên content, chỉ dời nhà** —
+Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) sang đúng stack skill. `TODO(Bước 6)`
+
+**Chất lượng bắt buộc (VERIFY = cổng chất lượng):** mỗi agent phải có **lệnh `grep` cụ thể** + thứ tự soi ưu tiên +
+"**UI disable KHÔNG tính — phải server/DB**". KHÔNG checklist mơ hồ (port độ sâu từ VIPER agents + review-{kind} cũ). `TODO(Bước 6: viết agent thật)`
+## §8 — Hooks (guard_ask / guard_bc / guard_ds + **reanchor**: nhồi lại luật sau compact)  `TODO(Bước 4)`
+> - **guard_ask**: chặn `AskUserQuestion` từ BUILD trở đi. **CHO PHÉP** ở DOCUMENT (kể cả top-up) + **NEXT-WAVE** (go/pivot/kill) — điểm quyết định của Authority (D).
+> - **guard_bc**: chặn deploy khi BACKWARD-COMPAT §3 chưa xanh (wave ≥2). · **guard_ds**: chặn ghi mockup/token lệch design-system.
+> - **guard_archive**: chặn Write/Edit vào `archive/**` (wave đã đóng = hợp đồng bất biến — §3/§5).
+> - **reanchor**: SessionStart(compact) → nhồi lại §2 + STATE.
+> Agent read-only (review/persona `disallowedTools: Write/Edit`) + `test-writer` chỉ `test/` → không cần hook owned_paths/kernel-protect như harness cũ.
+## §9 — Failure modes (FM-*)                             `TODO(Bước 4)`
+## §10 — Quản lý context (van an toàn cho MAIN-code-hết)  `TODO(Bước 3/4/7)`
+> - **reanchor** — hook `SessionStart(compact)`: sau compact, đọc lại PROTOCOL §2 + STATE → inject. BẮT BUỘC.
+> - **compact.py** — report CHỈ-ĐỌC doc phình (DECISIONS/ROADMAP backlog), gấp tay sang `archive/ledger/`, KHÔNG `--go`. Nhẹ hơn VIPER (STATE mình wave-scoped). Chạy ở next-wave.
+> - **AC-cap per wave** — xem §1.

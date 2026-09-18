@@ -1,47 +1,39 @@
-# Generated slash-command copies (source: commands/ + sync_commands.py)
-# Uncomment to always regenerate locally:
-# .cursor/commands/
-# .claude/commands/
-
-# Python
+# --- Build artifacts (dọn — PROTOCOL §2 luật #9; không commit) ---
 __pycache__/
 *.py[cod]
 .venv/
-spawn-prompt.md
-
-# Java
-*.class
 target/
-.gradle/
 build/
-
-# Node / TS
-node_modules/
+.gradle/
 dist/
+out/
 .next/
+node_modules/
+*.class
 
-# IDE / OS
+# --- Secret / env ---
+.env
+.env.*
+!.env.example
+deployment/**/.env
+
+# --- Test / phân tích tạm (screenshot/trace dọn — luật #9) ---
+playwright-report/
+test-results/
+*-trace.zip
+.viper/
+
+# --- IDE / OS ---
 .idea/
 .vscode/settings.json
+.claude/settings.local.json
 .DS_Store
 Thumbs.db
+*.swp
 
-# Harness runtime artifacts
-handoff/.session-*.md
-.claude/settings.local.json
-
-# Polyrepo services scaffolded by /start-dev (live in separate repos)
-services/*
-!services/README.md
-
-# Provider docs folders may contain secrets/credentials
-docs/architecture/integrations/INTEG-EXT-*/sandbox-credentials.md
-docs/architecture/integrations/INTEG-EXT-*/notes-internal.md
-harness/.stop-cache.json
-harness/.turn-advance.flag
-
-# Reference archives (vd {{PROJECT-CODE}}-ADLC.zip — ADLC ZIP gốc để đối chiếu, KHÔNG track)
+# --- Bản tham chiếu (đọc để học, KHÔNG track) ---
 *.zip
-
-# Bản tham chiếu VIPER — đọc để học, KHÔNG thuộc harness
 edu-grounding-viper/
+
+# services/ KHÔNG ignore — MAIN code trực tiếp + commit (fork = monorepo-ish).
+# Build artifact BÊN TRONG services/ vẫn bị bắt bởi pattern global ở trên.
