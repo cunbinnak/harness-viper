@@ -28,10 +28,15 @@ SKIP_DIR = {".git", "node_modules", "target", "build", "dist", ".gradle", "__pyc
 UNFILLED = "_CHƯA ĐIỀN_"
 
 
+SELF = Path(__file__).resolve()
+
+
 def text_files() -> list[Path]:
     out = []
     for p in ROOT.rglob("*"):
         if any(part in SKIP_DIR for part in p.parts):
+            continue
+        if p.resolve() == SELF:   # tool tự chứa {{PROJECT_NAME}}… trong docstring làm ví dụ — không thay, không flag
             continue
         if p.is_file() and (p.suffix in TEXT_EXT or p.name in ("Makefile", ".gitignore")):
             out.append(p)
