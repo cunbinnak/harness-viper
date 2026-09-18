@@ -59,7 +59,7 @@ không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (
 ## §2 — Luật nền
 
 1. **Scope khoá sau DOCUMENT.** Phát sinh → `docs/ROADMAP.md §backlog`, không chèn vào wave này.
-2. **Tương tác Authority CHỈ bằng LỜI, chỉ ở DOCUMENT/NEXT-WAVE.** KHÔNG dùng tool `AskUserQuestion` ở bất kỳ phase nào (guard_ask chặn — option mớm lời). Sau khoá scope: toàn quyền, không hỏi lại (kể cả bằng lời).
+2. **Sau khi khoá scope: toàn quyền, không hỏi lại.** `AskUserQuestion` **chỉ ở DOCUMENT** (trước khoá scope — phỏng vấn/quyết định); BUILD/VERIFY/SHIP/NEXT-WAVE bị `guard_ask` chặn (port VIPER pha V — ô Scope khoá tick = chốt, chặn luôn dù phase còn ghi DOCUMENT). Ngoại lệ ra-ngoài/không-đảo-ngược: hỏi bằng lời.
 3. **Mơ hồ → 1 dòng `docs/DECISIONS.md` (cột giả định + đảo-ngược-được-không) TRƯỚC khi code.**
 4. **Doc là nguồn sự thật.** Code lệch doc (trong AC đã khoá của wave đang mở) → sửa doc **cùng commit**.
 5. **Cỡ sản phẩm theo đường vào** (§0).
@@ -170,7 +170,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 **Chất lượng bắt buộc (VERIFY = cổng chất lượng):** mỗi agent phải có **lệnh `grep` cụ thể** + thứ tự soi ưu tiên +
 "**UI disable KHÔNG tính — phải server/DB**". KHÔNG checklist mơ hồ (port độ sâu từ VIPER agents + review-{kind} cũ).
 ## §8 — Hooks (guard_ask / guard_bc / guard_ds + **reanchor**: nhồi lại luật sau compact)
-> - **guard_ask**: chặn tool `AskUserQuestion` ở **MỌI phase** (VIPER-style — option mớm lời, phỏng vấn mở đào sâu hơn). Hỏi Authority **bằng LỜI**, chỉ ở DOCUMENT (phỏng vấn) + NEXT-WAVE (go/pivot/kill); sau khoá scope tự quyết.
+> - **guard_ask** (port VIPER pha V): `AskUserQuestion` **chỉ dùng được ở DOCUMENT** (phỏng vấn + quyết định, trước khoá scope). Chặn ở BUILD/VERIFY/SHIP/NEXT-WAVE; **ô Scope khoá tick = chặn luôn** dù dòng phase còn ghi DOCUMENT. go/pivot/kill (NEXT-WAVE) hỏi bằng LỜI.
 > - **guard_bc**: chặn deploy khi BACKWARD-COMPAT §3 chưa xanh (wave ≥2). · **guard_ds**: chặn ghi mockup/token lệch design-system.
 > - **guard_archive**: chặn Write/Edit vào `archive/**` (wave đã đóng = hợp đồng bất biến — §3/§5).
 > - **guard_proof**: chặn Write/Edit vào `*proof.json` (bằng chứng runtime CHỈ `capture_proof.py` sinh — agent không giả tick).
@@ -189,7 +189,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 | Test xanh giả (pass nhờ H2/mock, không chạy thật) | `capture_proof.py` MÁY-sinh `proof.json` — gate không tin tick |
 | Chạy mù kế hoạch cũ | `wave_reviewed` + RÀ LẠI (loop engineering) |
 | Agent giả tick proof | `guard_proof` chặn Write/Edit `*proof.json` |
-| Hỏi lại Authority sau khoá scope / dùng tool mớm lời | `guard_ask` (chặn AskUserQuestion mọi phase) |
+| Hỏi lại Authority sau khoá scope | `guard_ask` (chặn AskUserQuestion khi Scope khoá ✓ / ngoài DOCUMENT) |
 | Deploy khi hợp đồng vỡ | `guard_bc` (BACKWARD-COMPAT §3 đỏ, G4) |
 | Ghi đè wave đã đóng | `guard_archive` chặn `archive/**` |
 | Mockup hardcode màu (hex thô) | `guard_ds` (ngoài token :root) |
