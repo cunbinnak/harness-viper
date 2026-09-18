@@ -26,7 +26,7 @@ không phải *đã hỏi đủ N câu hay chưa*.
 | Loại mục | Cách hỏi |
 |---|---|
 | **Khám phá** — pain point, ai chịu, cách làm hiện tại, hệ quả, vì sao bây giờ | **Hội thoại MỞ bằng lời**, đào theo mạch trả lời. **KHÔNG dùng AskUserQuestion** — option có sẵn mớm lời, user bấm cái nghe hợp lý thay vì kể thực tế của họ. Đây là nguồn hời hợt số một |
-| **Quyết định** — chọn giữa các hướng đã đếm được, ưu tiên cược nào trước | `AskUserQuestion` với option cụ thể **kèm đánh đổi** của từng cái |
+| **Quyết định** — chọn giữa các hướng đã đếm được, ưu tiên cược nào trước | **Hỏi bằng lời**: nêu option cụ thể **kèm đánh đổi** từng cái (KHÔNG dùng AskUserQuestion) |
 
 ## Bốn luật đào sâu (mất một luật là mất chiều sâu)
 

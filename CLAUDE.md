@@ -52,7 +52,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE        (SHIP opt-in theo
 - **KHÔNG** đọc cả `docs/` rồi mới làm.
 
 ## HOOKS (awareness — chi tiết PROTOCOL §8)
-`guard_ask` (không hỏi sau khoá scope) · `guard_bc` (deploy khi BC §3 xanh) · `guard_ds` (mockup dùng token, không hex thô) · `reanchor` (nhồi lại luật sau compact). `gate.py` chỉ BÁO.
+`guard_ask` (chặn tool AskUserQuestion mọi phase — hỏi bằng lời, chỉ DOCUMENT/NEXT-WAVE) · `guard_bc` (deploy khi BC §3 xanh) · `guard_ds` (mockup dùng token, không hex thô) · `reanchor` (nhồi lại luật sau compact). `gate.py` chỉ BÁO.
 
 ## ROUTING
 | Câu hỏi | Ở đâu |

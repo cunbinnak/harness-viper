@@ -50,7 +50,7 @@
     ]
   },
   "enableAllProjectMcpServers": true,
-  "$comment_hooks": "Bốn hook, bốn việc (học VIPER — direct, không dispatcher). (1) SessionStart 'compact': reanchor.py nhồi lại PROTOCOL §2 + STATE sau compact. (2) PreToolUse 'AskUserQuestion': guard_ask.py — phase ∉ {DOCUMENT,NEXT-WAVE} thì exit 2. (3) PreToolUse 'Bash': guard_bc.py — 'make deploy' + wave ≥2 + BACKWARD-COMPAT §3 chưa xanh thì exit 2. (4) PreToolUse 'Write|Edit|MultiEdit': guard_ds.py — docs/ux/mockups/** + DESIGN-SYSTEM.md, cấm hex thô ngoài :root. gate.py KHÔNG hook (chỉ báo).",
+  "$comment_hooks": "Bốn hook, bốn việc (học VIPER — direct, không dispatcher). (1) SessionStart 'compact': reanchor.py nhồi lại PROTOCOL §2 + STATE sau compact. (2) PreToolUse 'AskUserQuestion': guard_ask.py — chặn tool AskUserQuestion MỌI phase (exit 2, VIPER-style); hỏi Authority bằng lời chỉ ở DOCUMENT/NEXT-WAVE. (3) PreToolUse 'Bash': guard_bc.py — 'make deploy' + wave ≥2 + BACKWARD-COMPAT §3 chưa xanh thì exit 2. (4) PreToolUse 'Write|Edit|MultiEdit': guard_ds.py — docs/ux/mockups/** + DESIGN-SYSTEM.md, cấm hex thô ngoài :root. gate.py KHÔNG hook (chỉ báo).",
   "hooks": {
     "SessionStart": [
       {

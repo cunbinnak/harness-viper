@@ -17,7 +17,7 @@ Input: `docs/PRD.md` (vision/problem/hypotheses).
 | Loại mục | Cách hỏi |
 |---|---|
 | **Khám phá** — persona là ai, họ làm gì hôm nay, ai được/không được làm gì, vì sao | **Hội thoại MỞ**. KHÔNG dùng AskUserQuestion — option mớm lời |
-| **Quyết định** — gom capability nào vào domain nào, ưu tiên MVP hay Phase 2 | `AskUserQuestion` + đánh đổi cụ thể |
+| **Quyết định** — gom capability nào vào domain nào, ưu tiên MVP hay Phase 2 | **Hỏi bằng lời**: nêu option + đánh đổi cụ thể (KHÔNG dùng AskUserQuestion) |
 
 **Không giới hạn số câu.** Bốn luật đào sâu áp nguyên: hỏi quá khứ cụ thể · mỗi persona phải
 dẫn được về người thật/vai thật · "thường/nhiều" quy ra số · đào theo mạch.
