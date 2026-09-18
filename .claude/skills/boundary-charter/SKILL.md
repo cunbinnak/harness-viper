@@ -17,8 +17,8 @@ Phương pháp **boundary + charter** cho `/document` (Architecture Authority). 
 Input: `docs/PRD.md` (vision/problem) + `docs/CAPABILITIES-MAP.md` + `docs/PERSONAS.md` + section event-storming trong `docs/arch/OVERVIEW.md`.
 
 ## Deliverable
-1. **Boundary map trong `docs/arch/OVERVIEW.md`** — **≥1 row non-placeholder** (backend boundary / web experience): boundary + mission + owned data + wave + status.
-2. **`docs/arch/{boundary}.md`** cho mỗi boundary (frontmatter `kind/stack/consumes`) — **§Mission có content thật**; owned data (từ aggregates event-storming); capabilities exposed/consumed; NON-NEGOTIABLES.
+1. **Boundary map trong `docs/arch/OVERVIEW.md`** — **≥1 row non-placeholder** (backend boundary / web target): target + mission + owned data + wave + status.
+2. **`docs/arch/{name}.md`** cho mỗi target (frontmatter `kind/stack/consumes`) — **§Mission có content thật**; owned data (từ aggregates event-storming); capabilities exposed/consumed; NON-NEGOTIABLES.
 3. **`docs/PRD.md`** — tổng hợp từ vision/problem (đã có) + capability (scope) + event-storming: scope in/out + **NFR có số** + security/compliance + success metrics + glossary.
 
 ## Phương pháp (identify + tổng hợp)

@@ -47,8 +47,8 @@ Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu h�
 4. Lệch tài liệu: code khác `DECISIONS.md`/`arch` đã chốt mà không có dòng quyết định mới
 
 **Cả hai** → `STATE.md §Findings`, format `[nặng/vừa/nhẹ] + file:dòng + "hỏng thế nào" + đề xuất 1 câu`.
-**CHỈ nêu thứ gây hậu quả THẬT** (mất/lộ dữ liệu · sai kết quả · chặn AC) — KHÔNG góp ý đặt tên đẹp/tách file/abstraction/coverage%/perf-chưa-đo; **"trục này ổn" nếu không có gì, đừng bịa finding**. Lệnh `grep` cụ thể nằm trong định nghĩa agent (Bước 6).
-Học được điều mới về boundary → append `knowledge-base/{name}.md`.
+**CHỈ nêu thứ gây hậu quả THẬT** (mất/lộ dữ liệu · sai kết quả · chặn AC) — KHÔNG góp ý đặt tên đẹp/tách file/abstraction/coverage%/perf-chưa-đo; **"trục này ổn" nếu không có gì, đừng bịa finding**. Lệnh `grep` cụ thể nằm trong định nghĩa agent (`.claude/agents/reviewer.md` · `bug-hunter.md`).
+Học được điều mới về target → append `knowledge-base/{name}.md`.
 
 ## Bước 4 — Dogfood (2 đợt — hệ đang chạy)
 6 persona (mỗi vai đóng 1 persona THẬT ở `docs/PERSONAS.md`), **2 đợt tránh đè trạng thái** (server + DB dùng chung):
@@ -56,7 +56,7 @@ Học được điều mới về boundary → append `knowledge-base/{name}.md`
 - **seed lại** `deployment/local/`
 - **Đợt 2 (DB có data)**: `rushed` · `breaker` (chạy đủ **ma trận vai×hành động**) · `mobile`
 
-+ MAIN **tự dùng** đi hết luồng lõi ở localhost (dùng skill `browse`/Playwright). Phát hiện → `STATE.md §Findings` (Nguồn = tên vai).
++ MAIN **tự dùng** đi hết luồng lõi ở localhost (qua Playwright/trình duyệt). Phát hiện → `STATE.md §Findings` (Nguồn = tên vai).
 
 ## Bước 5 — Sửa tới sạch (MAIN)
 - TC **FAIL** hoặc finding **BLOCKER/MAJOR** → **MAIN sửa code** → **re-run** TC + dogfood liên quan → cập nhật

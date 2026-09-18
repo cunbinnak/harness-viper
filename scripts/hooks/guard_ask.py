@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """guard_ask — chặn AskUserQuestion sau khi khoá scope (PROTOCOL §2 luật #2 · §8).
 
-Cho phép hỏi Authority ở: DOCUMENT (author + top-up) · NEXT-WAVE (go/pivot/kill) · BOOTSTRAP.
+Cho phép hỏi Authority ở: DOCUMENT (author + top-up) · NEXT-WAVE (go/pivot/kill).
 Block ở: BUILD / VERIFY / SHIP — mơ hồ thì tự quyết (DECISIONS.md), tắc thì STATE §Blocker.
 Hành động ra-ngoài/không-đảo-ngược vẫn hỏi được bằng LỜI trong chat (không qua tool này) → lớp permission `ask` lo.
 
@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-ALLOW = {"DOCUMENT", "NEXT-WAVE", "BOOTSTRAP"}
+ALLOW = {"DOCUMENT", "NEXT-WAVE"}
 
 try:
     sys.stderr.reconfigure(encoding="utf-8")

@@ -5,7 +5,7 @@ Trống lúc bootstrap. MAIN scaffold vào đây ở `/build` (Bước 3) theo s
 
 | Nhóm | `kind` | Stack skill |
 |---|---|---|
-| `boundaries/{name}/` | backend (API + DB) | `stack-spring-boot` · `stack-go` · `stack-fastapi` |
+| `boundaries/{name}/` | backend (API + DB) | `stack-spring-boot` |
 | `web/{name}/` | web frontend | `stack-nextjs` |
 | `bff/{name}/` | GraphQL gateway | `stack-bff` |
 | `mobile/{name}/` | mobile app | `stack-flutter` |

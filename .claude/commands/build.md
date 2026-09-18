@@ -17,13 +17,13 @@ description: BUILD — MAIN tự code 1 wave: challenge → đọc KG → scaffo
 
 ## Bước 1 — Nạp context (CHỈ slice của wave — targeted, chống lost-in-middle)
 Đọc **đúng phần của wave**, KHÔNG đọc cả `docs/`:
-- `docs/ROADMAP.md` wave-N: **target** (boundary/experience) + **AC in-scope** + phases khai
+- `docs/ROADMAP.md` wave-N: **target** (kind: backend/web/bff/mobile) + **AC in-scope** + phases khai
 - `docs/feat/FEAT-*` của các AC in-scope (AC + ca biên + field kỹ thuật)
 - `docs/arch/{name}.md` của target — **đọc frontmatter lấy `kind`** (backend/web/bff/mobile) + `stack` + data/API/ranh giới (KHÔNG đọc target khác). `kind` quyết định scaffold ở đâu · skeleton kiểu gì · chạy thật ra sao.
 - **`knowledge-base/{name}.md`** nếu có → đọc hết §Invariants/§Gotchas/§Failure-modes/§Key-decisions
 - có UI → `docs/DESIGN-SYSTEM.md` + `docs/ux/mockups/<target>/` các màn in-scope (mockup dựng theo wave — phải có TRƯỚC khi code UI; thiếu → quay `/document` top-up)
 - `docs/TECHSTACK.md` + skill `stack-<tên>`
-- `docs/CONVENTIONS.md` (nhỏ — error envelope · API design · đặt tên; mọi boundary theo) + `docs/SECURITY.md`
+- `docs/CONVENTIONS.md` (nhỏ — error envelope · API design · đặt tên; mọi target theo) + `docs/SECURITY.md`
 - `docs/PERSONAS.md §ma trận vai×hành động` (để code phân quyền)
 
 Đọc thật, không lướt — Bước 2 kiểm.
@@ -53,8 +53,8 @@ Bản mỏng nhất **CHẠY được**, theo `kind`:
 - **mobile**: build + chạy **emulator** → 1 màn render → gọi 1 API
 
 → `git commit`. Chưa thông đường mỏng này thì **KHÔNG** làm gì khác — đừng đắp UI đẹp lên đường chưa thông.
-**Wave nhiều boundary**: skeleton = **1 đường xuyên suốt qua cụm** (1 boundary + 1 experience cho luồng lõi) trước,
-boundary còn lại nối sau — không dựng đầy đủ từng cái một.
+**Wave nhiều target**: skeleton = **1 đường xuyên suốt qua cụm** (1 backend + 1 web/frontend cho luồng lõi) trước,
+target còn lại nối sau — không dựng đầy đủ từng cái một.
 
 ## Bước 5 — Luồng lõi (mỗi AC in-scope)
 `làm → tự bấm thử ở local → tick ROADMAP → commit`. Trong lúc làm:

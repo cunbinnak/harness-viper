@@ -6,14 +6,14 @@ description: >
   Spring Security OAuth2 Resource Server (JWT), database connection pooling (HikariCP),
   Kafka consumer/producer config, Redis cache config, Temporal workflow client config,
   observability config, Gradle setup, Dockerfile (multi-stage), .gitignore.
-  Consult khi scaffold boundary mới hoặc khi cần config pattern cụ thể.
+  Consult khi scaffold target backend mới hoặc khi cần config pattern cụ thể.
 ---
 
 # Reference — Backend Config Patterns
 
-> Situational ref cho stack-spring-boot — load khi boundary cần config pattern cụ thể. Port từ harness cũ, adapt fork viper-adlc.
+> Situational ref cho stack-spring-boot — load khi target backend cần config pattern cụ thể. Port từ harness cũ, adapt fork viper-adlc.
 
-> Config patterns cho backend service. Consult khi scaffold boundary mới hoặc cần config cụ thể (stack-spring-boot §situational trỏ tới).
+> Config patterns cho backend service. Consult khi scaffold target backend mới hoặc cần config cụ thể (stack-spring-boot §situational trỏ tới).
 
 ---
 
@@ -25,14 +25,14 @@ description: >
 # application.yml — base config
 spring:
   application:
-    name: ${SPRING_APPLICATION_NAME:{{service-name}}}
+    name: ${SPRING_APPLICATION_NAME:<name>-service}
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:local}
 
 server:
-  port: ${SERVER_PORT:{{default-port}}}
+  port: ${SERVER_PORT:<port>}
   servlet:
-    context-path: ${CONTEXT_PATH:/{{boundary}}}
+    context-path: ${CONTEXT_PATH:/<name>}
 
 # Profile-specific overrides
 ---
@@ -41,8 +41,8 @@ spring:
     activate:
       on-profile: local
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:{{boundary}}_service}
-    username: ${DB_USER:{{project_code}}}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:<name>_service}
+    username: ${DB_USER:<name>}
     password: ${DB_PASSWORD:dev_password}
 ```
 
@@ -54,8 +54,8 @@ import { z } from 'zod';
 
 const schema = z.object({
   NODE_ENV: z.enum(['local', 'dev', 'staging', 'prod']).default('local'),
-  PORT: z.coerce.number().default({{default-port}}),
-  UPSTREAM_{{SERVICE}}_URL: z.string().url(),
+  PORT: z.coerce.number().default(<port>),
+  UPSTREAM_<SERVICE>_URL: z.string().url(),
   REDIS_URL: z.string().url().default('redis://localhost:6379'),
 });
 
@@ -83,7 +83,7 @@ src/main/resources/
 
 Mỗi profile file override env-specific values: DB URL, secrets ref, log level, feature flags, Kafka bootstrap, cache TTL. KHÔNG để tất cả config trong `application.yml` base rồi chỉ dùng env var — mỗi môi trường phải có file riêng để dễ review và audit.
 
-> **Bắt buộc:** backend boundary phải có **base `application.yml` + ≥1 file `application-<dev|sit|prod>.{yml,properties}`**. Scaffold chỉ base (thiếu profile) là thiếu — bổ sung trước khi qua `/verify`.
+> **Bắt buộc:** target backend phải có **base `application.yml` + ≥1 file `application-<dev|sit|prod>.{yml,properties}`**. Scaffold chỉ base (thiếu profile) là thiếu — bổ sung trước khi qua `/verify`.
 
 Default profile resolution:
 - Local developer: fallback to `local` (base `application.yml` đủ cho local dev)
@@ -95,30 +95,30 @@ Default profile resolution:
 
 ```bash
 # Service identity
-SPRING_APPLICATION_NAME={{boundary}}-service
+SPRING_APPLICATION_NAME=<name>-service
 SPRING_PROFILES_ACTIVE=local
-CONTEXT_PATH=/{{boundary}}          # API gateway route prefix — mỗi boundary có path riêng
+CONTEXT_PATH=/<name>          # API gateway route prefix — mỗi target có path riêng
 
 # Database
 DB_HOST=postgres               # hostname trong compose network
 DB_PORT=5432
-DB_NAME={{project_code}}_{{boundary}}_service
-DB_USER={{project_code}}
-DB_PASSWORD={{secret_ref_or_env_value}}
+DB_NAME=<name>_service
+DB_USER=<name>
+DB_PASSWORD=<secret-ref-or-env>
 
 # Cache (if applicable)
 REDIS_HOST=redis
 REDIS_PORT=6379
-REDIS_PASSWORD={{secret_ref}}
+REDIS_PASSWORD=<secret-ref>
 
 # Message broker (if applicable)
 KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-KAFKA_CONSUMER_GROUP_ID={{boundary}}-service-consumer
+KAFKA_CONSUMER_GROUP_ID=<name>-service-consumer
 
 # OIDC (if applicable)
-OIDC_ISSUER_URI=http://keycloak:8080/realms/{{REALM}}
-OIDC_CLIENT_ID={{boundary}}-service
-OIDC_CLIENT_SECRET={{secret_ref}}
+OIDC_ISSUER_URI=http://keycloak:8080/realms/<realm>
+OIDC_CLIENT_ID=<name>-service
+OIDC_CLIENT_SECRET=<secret-ref>
 ```
 
 ## 4. Secrets Manager Integration
@@ -128,10 +128,10 @@ OIDC_CLIENT_SECRET={{secret_ref}}
 ```yaml
 # Config declares refs, not values
 datasource:
-  password: ${DB_PASSWORD_REF:secret://{{secrets_manager_path}}/db-password}
+  password: ${DB_PASSWORD_REF:secret://<secrets-manager-path>/db-password}
 
 oidc:
-  client-secret: ${OIDC_SECRET_REF:secret://{{secrets_manager_path}}/oidc-client-secret}
+  client-secret: ${OIDC_SECRET_REF:secret://<secrets-manager-path>/oidc-client-secret}
 ```
 
 ### Secrets Manager options
@@ -175,7 +175,7 @@ spring:
           batch_size: 50        # thiếu config này saveAll() vẫn gửi N INSERT riêng lẻ
         order_inserts: true     # group INSERT by entity type để batch hiệu quả
         order_updates: true
-        default_schema: ${DB_SCHEMA:{{boundary}}}
+        default_schema: ${DB_SCHEMA:<name>}
 ```
 
 ### HTTP Client
@@ -202,7 +202,7 @@ spring:
       properties:
         enable.idempotence: true
     consumer:
-      group-id: ${KAFKA_CONSUMER_GROUP_ID:{{boundary}}-consumer}
+      group-id: ${KAFKA_CONSUMER_GROUP_ID:<name>-consumer}
       auto-offset-reset: earliest
       enable-auto-commit: false
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -214,7 +214,7 @@ spring:
 ```bash
 # Env vars
 KAFKA_BOOTSTRAP_SERVERS=kafka:9092
-KAFKA_CONSUMER_GROUP_ID={{boundary}}-consumer
+KAFKA_CONSUMER_GROUP_ID=<name>-consumer
 ```
 
 ## 7. Observability Config
@@ -256,7 +256,7 @@ plugins {
     id 'jacoco'
 }
 
-group = 'com.{{project_code}}'
+group = 'com.<org>'
 sourceCompatibility = '21'
 
 dependencies {
@@ -305,7 +305,7 @@ check.dependsOn jacocoTestCoverageVerification
 
 ## 12. Spring Security — OAuth2 Resource Server
 
-> SecurityConfig đầy đủ (filterChain, JWT converter, TenantContextFilter, HMAC, SpEL sandbox) → load skill `ref-backend-security`
+> SecurityConfig đầy đủ (filterChain, JWT converter, TenantContextFilter, HMAC, SpEL sandbox) → xem `docs/SECURITY.md` + `stack-spring-boot §review` (baseline + forbidden patterns)
 
 Config `application.yml`:
 ```yaml

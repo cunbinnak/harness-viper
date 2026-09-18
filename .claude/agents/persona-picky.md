@@ -39,7 +39,7 @@ Gom `getComputedStyle`: `color`/`background`/`border` mọi phần tử hiển t
 
 ## Báo cáo (final message — MAIN ghi §Findings)
 ```
-Persona <tên> · Experience <tên> · Màn soi <S1,S2…>
+Persona <tên> · Target web <tên> · Màn soi <S1,S2…>
 Cấu trúc:   <x>/<y> màn dùng đúng khối mockup — lệch: <màn · app dùng gì · mockup vẽ gì · [ảnh]>   ← E1
 Token:      <x>/<y> giá trị khớp §2 — lạ: <mã · selector · màn> · gap cụm: <đo được vs mock>
 Tương phản: <x>/<y> cặp đạt — thiếu: <cặp · tỉ số>

@@ -174,7 +174,9 @@ def gate_document(r: Report) -> None:
     r.check(bool(waves) and all(any("BUILD" in c.upper() for c in row) for row in waves),
             "mỗi wave khai phases (≥ BUILD)")
     r.check(challenge_pass("DOCUMENT"), "Challenge DOCUMENT PASS (§Challenge log)")
-    r.check(count_rows("docs/DECISIONS.md", r"^\| DEC-") >= 2, "≥2 dòng DECISIONS")
+    dec_rows = [ln for ln in read_live("docs/DECISIONS.md").splitlines()
+                if ln.strip().startswith("| DEC-") and "{{" not in ln]
+    r.check(len(dec_rows) >= 2, "≥2 dòng DECISIONS (đã điền, không placeholder)")
     r.check(scope_locked(), "Scope khoá (STATE tick)")
 
 
@@ -222,8 +224,9 @@ def gate_ship(r: Report) -> None:
     # bỏ qua mục (sau deploy) khi tính P1
     after_deploy = count_rows("docs/PRODUCTION-READY.md", r"^- \[ \].*\(sau deploy\)")
     r.check(unchecked - after_deploy <= 0, "PRODUCTION-READY 4 nhóm xanh (trừ (sau deploy))")
-    bc3 = count_rows("docs/BACKWARD-COMPAT.md", r"^- \[ \]")
+    bc3 = len(re.findall(r"^- \[ \]", section("docs/BACKWARD-COMPAT.md", "§3"), flags=re.MULTILINE))
     r.check(bc3 == 0, "BACKWARD-COMPAT §3 xanh (guard_bc)")
+    _state_checkboxes(r, "SHIP")   # deploy/smoke/rollback/dogfood-2 tick tay — gate soi như BUILD/VERIFY
 
 
 def gate_next_wave(r: Report) -> None:

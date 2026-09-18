@@ -3,7 +3,7 @@
 > Định nghĩa CHUẨN của quy trình. [STATE.md](STATE.md) là bản thao tác; lệch nhau thì **PROTOCOL.md thắng**.
 > Router ngắn mỗi phiên: `CLAUDE.md`.
 >
-> **Trạng thái tài liệu: KHUNG (Bước 1/7 — xương sống đã chốt).** Mục đánh `TODO(Bước N)` viết ở bước sau.
+> **Trạng thái: HOÀN THIỆN — khung đã dựng, selftest xanh** (7 command · gate.py · 9 agent · hooks · skill library).
 > Bộ khung này là bản refactor tinh gọn, học phương pháp VIPER (1 lớp doc · MAIN tự code · inline prompt
 > · ít script + gate nhìn thấy được), thay cho harness cũ (17 state · ~58 gate · build_prompt · 2 lớp doc).
 
@@ -45,14 +45,14 @@ Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/
 **Wave**: DOCUMENT chạy 1 lần cho cả dự án (sinh kế hoạch mọi wave). BUILD/VERIFY/SHIP chạy **per wave**.
 Mỗi wave **khai báo phases nó chạy** trong `docs/ROADMAP.md` — wave nội bộ có thể bỏ SHIP; không ép mọi wave đủ phase.
 **AC-cap per wave**: DOCUMENT chia wave giới hạn số AC/boundary mỗi wave (học VIPER: loop nhỏ) để BUILD vừa
-context của MAIN (MAIN-code-hết, không dev-agent). Ngưỡng mềm, gate wave-plan cảnh báo khi vượt. `TODO(Bước 3/4)`
+context của MAIN (MAIN-code-hết, không dev-agent). Ngưỡng mềm, gate wave-plan cảnh báo khi vượt.
 
 **Loop engineering** (mở wave = RÀ LẠI — học VIPER): kế hoạch mọi wave lập 1 lần ở DOCUMENT (Authority ký 1 lần),
 NHƯNG mở wave nào `/next-wave` phải **rà lại kế hoạch wave đó đối chiếu KẾT QUẢ wave trước + §backlog**, chỉnh nếu
 lệch, rồi stamp `Rà lại wave N: <ngày>`. Gate `wave_reviewed` đòi dòng đó (ngày ≥ lúc mở wave) — thiếu = đang chạy
 mù theo kế hoạch cũ đã lệch. ROADMAP mỗi wave khai thêm: `phụ thuộc wave trước` · `legacy được phép phá`
 (nối BACKWARD-COMPAT/guard_bc) · `điều chỉnh khi mở`. **RÀ LẠI định đoạt RÕ từng backlog/finding treo** (xử/hoãn-lý-do/bỏ-lý-do —
-không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (không sửa sau khi nhìn số). `TODO(Bước 3/4 + /next-wave)`
+không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (không sửa sau khi nhìn số).
 
 ---
 
@@ -93,7 +93,7 @@ Ranh giới 1 câu: **sửa cho doc khớp thực tế trong AC đã khoá = OK 
 
 ---
 
-## §4 — Doc set (1 lớp `docs/`) + KG        `TODO(Bước 3): chi tiết template từng file`
+## §4 — Doc set (1 lớp `docs/`) + KG
 
 Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KHÔNG còn chuỗi discovery→domain→architecture.
 
@@ -128,13 +128,17 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 
 ---
 
-## §5 — Command (inline prompt, không build_prompt)   `TODO(Bước 2)`
-## §6 — Gate evidence (gate.py đọc gì mỗi phase)         `TODO(Bước 4)`
+## §5 — Command (inline prompt, không build_prompt)
+> 7 lệnh, prompt viết THẲNG trong `.claude/commands/<tên>.md` (không sinh động qua `build_prompt`). Spine:
+> DOCUMENT → BUILD → VERIFY → [SHIP] → NEXT-WAVE (+ `/status`, `/dogfood` mọi lúc). Việc ĐẦU của mỗi lệnh = set
+> `Phase hiện tại` ở STATE (gate/guard đọc dòng này). Chi tiết từng bước = chính file command; bảng tóm ở `CLAUDE.md`.
+
+## §6 — Gate evidence (gate.py đọc gì mỗi phase)
 > Danh sách gate cần dựng (thu từ thiết kế command):
 > - **DOCUMENT**: doc set đủ mục · challenge PASS · ≥2 decisions · scope khoá (Authority duyệt)
 > - **BUILD**: `wave_reviewed` (**wave ≥2**: ROADMAP có `Rà lại wave N` ngày ≥ lúc mở; **wave 1 miễn**) · **`make check` + health 2xx qua `proof.json`** (`capture_proof.py` MÁY-sinh — gate KHÔNG tin tick tay, chống "test xanh nhờ H2"/"dev-done ≠ runnable") · **đã commit**
 > - **VERIFY**: `test-cases.md` mọi AC **PASS** + không **FAIL** · §Findings hết BLOCKER/MAJOR · dogfood xong ·
->   **(web/mobile) BACKSTOP fidelity**: đòi bằng chứng dogfood `picky` đã screenshot-diff **cấu trúc** vs mockup (không skip — chống E1 "demo đẹp chạy xấu"). `TODO(Bść 6: format bằng chứng khi build dogfood agent)`
+>   **(web/mobile) BACKSTOP fidelity**: đòi bằng chứng dogfood `picky` đã screenshot-diff **cấu trúc** vs mockup (không skip — chống E1 "demo đẹp chạy xấu"). Format bằng chứng: `persona-picky` §E1 (BACKSTOP screenshot-diff cấu trúc component).
 > - **SHIP** (gate đọc ROADMAP `phases` — wave **không khai SHIP** thì **skip** cả nhóm — G3): prod-ready 4 nhóm · BC §3 xanh · rollback thử
 > - **Cross**: contract-test present cho consumer · BACKWARD-COMPAT so `arch §API` (G4) · **phase-lock MIỄN tick tiến-độ ROADMAP lúc BUILD** (E, không phải đổi scope)
 >
@@ -158,22 +162,39 @@ nằm ở `.claude/agents/<name>.md`.
 MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file) · report `[nặng/vừa/nhẹ] + file:dòng + "hỏng thế nào" + đề xuất 1 câu` ·
 **CHỈ nêu hậu quả THẬT** (mất/lộ data · sai kết quả · chặn AC), "trục ổn" thì nói ổn, **đừng bịa finding**.
 
-**Kind-specific:** review agent đọc `stack-<tên>/SKILL.md §review` theo boundary — 2 agent generic, không tách per-kind.
+**Kind-specific:** review agent đọc `stack-<tên>/SKILL.md §review` theo kind — 2 agent generic, không tách per-kind.
 Mỗi `stack-<tên>` skill = **PORT** rules-<kind> + ref-<kind>-* cũ (idiom code · config · situational kafka/redis/logging/restclient)
 + **§review** = checklist + **bảng Forbidden patterns** (cho reviewer/bug-hunter soi từng dòng). **Giữ nguyên content, chỉ dời nhà** —
-Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) sang đúng stack skill. `TODO(Bước 6)`
+Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) sang đúng stack skill.
 
 **Chất lượng bắt buộc (VERIFY = cổng chất lượng):** mỗi agent phải có **lệnh `grep` cụ thể** + thứ tự soi ưu tiên +
-"**UI disable KHÔNG tính — phải server/DB**". KHÔNG checklist mơ hồ (port độ sâu từ VIPER agents + review-{kind} cũ). `TODO(Bước 6: viết agent thật)`
-## §8 — Hooks (guard_ask / guard_bc / guard_ds + **reanchor**: nhồi lại luật sau compact)  `TODO(Bước 4)`
+"**UI disable KHÔNG tính — phải server/DB**". KHÔNG checklist mơ hồ (port độ sâu từ VIPER agents + review-{kind} cũ).
+## §8 — Hooks (guard_ask / guard_bc / guard_ds + **reanchor**: nhồi lại luật sau compact)
 > - **guard_ask**: chặn `AskUserQuestion` từ BUILD trở đi. **CHO PHÉP** ở DOCUMENT (kể cả top-up) + **NEXT-WAVE** (go/pivot/kill) — điểm quyết định của Authority (D).
 > - **guard_bc**: chặn deploy khi BACKWARD-COMPAT §3 chưa xanh (wave ≥2). · **guard_ds**: chặn ghi mockup/token lệch design-system.
 > - **guard_archive**: chặn Write/Edit vào `archive/**` (wave đã đóng = hợp đồng bất biến — §3/§5).
 > - **guard_proof**: chặn Write/Edit vào `*proof.json` (bằng chứng runtime CHỈ `capture_proof.py` sinh — agent không giả tick).
 > - **reanchor**: SessionStart(compact) → nhồi lại §2 + STATE.
 > Agent read-only (review/persona `disallowedTools: Write/Edit`) + `test-writer` chỉ `test/` → không cần hook owned_paths/kernel-protect như harness cũ.
-## §9 — Failure modes (FM-*)                             `TODO(Bước 4)`
-## §10 — Quản lý context (van an toàn cho MAIN-code-hết)  `TODO(Bước 3/4/7)`
+## §9 — Failure modes (đã có cơ chế chặn)
+> Kiểu hỏng gặp thật (retro harness cũ + VIPER) và chốt chặn tương ứng — mã trong ngoặc = ref rải rác trong doc.
+
+| Triệu chứng | Chặn bởi |
+|---|---|
+| Backlog trôi (phát sinh không ai định đoạt) | `/next-wave` dispose cột `Xử` + `gate_next_wave` (D1) |
+| 2 agent đè file findings → mất | agent chỉ TRẢ finding, MAIN ghi `§Findings` (B1) |
+| KG bay hơi (va gotcha lúc code, không ghi) | `/build` Bước 5 append `knowledge-base/{name}.md` (B3) |
+| Kẹt DRAFT (top-up doc mà không re-lock) | `/next-wave` 4.4 Authority duyệt lại = re-lock (F1) |
+| Demo đẹp chạy xấu (UI khớp ảnh, cấu trúc sai) | `persona-picky` BACKSTOP screenshot-diff (E1) |
+| Test xanh giả (pass nhờ H2/mock, không chạy thật) | `capture_proof.py` MÁY-sinh `proof.json` — gate không tin tick |
+| Chạy mù kế hoạch cũ | `wave_reviewed` + RÀ LẠI (loop engineering) |
+| Agent giả tick proof | `guard_proof` chặn Write/Edit `*proof.json` |
+| Hỏi lại Authority sau khoá scope | `guard_ask` (BUILD+ chặn) |
+| Deploy khi hợp đồng vỡ | `guard_bc` (BACKWARD-COMPAT §3 đỏ, G4) |
+| Ghi đè wave đã đóng | `guard_archive` chặn `archive/**` |
+| Mockup hardcode màu (hex thô) | `guard_ds` (ngoài token :root) |
+
+## §10 — Quản lý context (van an toàn cho MAIN-code-hết)
 > - **reanchor** — hook `SessionStart(compact)`: sau compact, đọc lại PROTOCOL §2 + STATE → inject. BẮT BUỘC.
 > - **compact.py** — report CHỈ-ĐỌC doc phình (DECISIONS/ROADMAP backlog), gấp tay sang `archive/ledger/`, KHÔNG `--go`. Nhẹ hơn VIPER (STATE mình wave-scoped). Chạy ở next-wave.
 > - **AC-cap per wave** — xem §1.
