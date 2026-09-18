@@ -1,0 +1,113 @@
+---
+name: infra-local-dev
+description: Setup + verify infra local cho test handoff — docker-compose service per boundary + DB/redis/kafka, network internal, healthcheck, chạy migrations, verify. dev-handoff.
+---
+
+# Infra Local Dev Skill
+
+> Load ở /build (Bước 3) khi dựng deployment/local docker-compose per boundary.
+**Mục tiêu:** khi DONE, `/verify` chạy được local — app target + DB/Redis/Kafka **healthy**, schema **migrated**.
+Input: `deployment/docker-compose.yml` (skeleton từ DOCUMENT) + targets trong wave (ROADMAP) + `docs/arch/{name}.md` (data model → migrations).
+
+## Output: `deployment/docker-compose.yml` (1 vị trí chuẩn)
+Yêu cầu:
+1. **Service per target** — 1 app container cho mỗi target trong **wave hiện tại** (build từ `services/{web|boundaries}/{name}/`), + infra (DB/cache/broker) chúng dùng. KHÔNG thêm target ngoài wave, không service thừa.
+2. **Network internal + cross-target** — container gọi nhau qua **service name**: app → `postgres:5432`/`redis:6379`/`kafka:9092`; **app→app cross-target** → `http://{callee-service}:{port}` (KHÔNG `localhost`). Nếu wave có target gọi nhau (theo `depends_on` ROADMAP / `INTEG-INT-*`) → app caller `depends_on` app callee `{condition: service_healthy}`. Tất cả service cùng **1 network** (default compose network) để resolve tên.
+3. **Healthcheck** mỗi service (interval/retries); app `depends_on` infra với `condition: service_healthy`.
+4. Volume cho DB persist; dev creds **inline** (dev-only, không phải secret — không cần .env riêng).
+
+```yaml
+services:
+  # --- app service per boundary trong wave (build từ code boundary) ---
+  order-management:                      # = {name}
+    build: ../services/boundaries/order-management   # target có Dockerfile (ref-backend-config)
+    ports: ["8080:8080"]
+    environment:                          # host = service name (network internal)
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/app_dev
+      REDIS_URL: redis://redis:6379
+      KAFKA_SERVER_HOST: kafka:9092
+    depends_on:
+      postgres: { condition: service_healthy }
+    healthcheck: { test: ["CMD","curl","-f","http://localhost:8080/health/ready"], interval: 10s, retries: 12 }
+  # --- infra (chỉ cái boundary trong wave dùng) ---
+  postgres:
+    image: postgres:16-alpine
+    environment: { POSTGRES_DB: app_dev, POSTGRES_USER: postgres, POSTGRES_PASSWORD: postgres }
+    ports: ["5432:5432"]
+    volumes: ["pg_data:/var/lib/postgresql/data"]
+    healthcheck: { test: ["CMD-SHELL","pg_isready -U postgres"], interval: 5s, retries: 10 }
+  redis:                                  # bỏ nếu không dùng
+    image: redis:7-alpine
+    ports: ["6379:6379"]
+    healthcheck: { test: ["CMD","redis-cli","ping"], interval: 5s, retries: 10 }
+  zookeeper:                              # chỉ khi dùng Kafka
+    image: confluentinc/cp-zookeeper:7.6.0
+    environment: { ZOOKEEPER_CLIENT_PORT: 2181 }
+  kafka:                                  # bỏ nếu không dùng
+    image: confluentinc/cp-kafka:7.6.0
+    ports: ["9092:9092"]
+    depends_on: [zookeeper]
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck: { test: ["CMD","kafka-broker-api-versions","--bootstrap-server","localhost:9092"], interval: 10s, retries: 15 }
+volumes: { pg_data: {} }
+```
+
+## Reuse-first — kiểm tra ĐÃ CÓ GÌ trước khi dựng/tải (KHÔNG cài/pull/build thừa)
+> Nguyên tắc: env dev tồn tại lâu, nhiều thứ đã sẵn từ lần handoff/wave trước. Dựng lại từ đầu = tải lại rác + chậm. **Quét trước, chỉ bù cái THIẾU.**
+```bash
+docker compose ps                                   # service nào đang UP rồi (re-run handoff → có thể đã healthy)
+docker images --format '{{.Repository}}:{{.Tag}}'   # image nền (postgres/redis/kafka) đã pull chưa
+docker volume ls                                    # volume DB đã tồn tại (giữ data) — KHÔNG tạo trùng
+```
+- **Image nền đã có local** → Docker tự dùng cache; **KHÔNG** `docker pull`/`--pull` ép tải lại. Chỉ kéo image THIẾU (compose tự kéo khi up).
+- **Service đã UP+healthy và code boundary KHÔNG đổi** → KHÔNG rebuild/restart thừa. `docker compose up -d --build` dùng layer-cache: chỉ rebuild app boundary có source đổi; infra đang chạy giữ nguyên.
+- **KHÔNG** `docker compose down --volumes` / `docker system prune` / xoá image để "cho sạch" — chỉ teardown ở `/next-wave`. Reset chỉ khi thật sự hỏng (nêu lý do).
+- **Volume/network đã tồn tại → tái dùng**, không nhân bản; không tạo container tên khác cho cùng vai trò.
+
+## Verify (BẮT BUỘC chạy lệnh + đọc output, không chỉ viết file)
+```bash
+docker info >/dev/null 2>&1 || { echo "Docker daemon chưa chạy — bật Docker Desktop"; exit 1; }
+# đã quét reuse-first ở trên → up (compose chỉ kéo image thiếu + rebuild service code đổi, giữ cái đang chạy)
+cd deployment && docker compose up -d --build
+# đợi tới khi tất cả healthy (max ~60s)
+for i in $(seq 1 12); do
+  H=$(docker compose ps --format json 2>/dev/null | grep -c '"Health":"healthy"' || echo 0)
+  T=$(docker compose ps -q | wc -l); echo "[$i] healthy $H/$T"; [ "$H" = "$T" ] && break; sleep 5
+done
+docker compose ps
+docker compose exec postgres pg_isready -U postgres   # "accepting connections"
+docker compose exec redis redis-cli ping              # "PONG" (nếu có)
+curl -f http://localhost:8080/health/ready            # app boundary ready
+# Cross-target connectivity (kết nối liên service): mỗi cặp caller→callee (theo INTEG-INT-* / depends_on ROADMAP)
+#   caller container gọi được callee qua service name (KHÔNG localhost):
+docker compose exec {caller} curl -f http://{callee}:{port}/health/ready   # phải 200
+# (event) nếu cross-boundary qua Kafka → topic tồn tại:
+docker compose exec kafka kafka-topics --bootstrap-server localhost:9092 --list
+```
+Service fail → `docker compose logs <svc> --tail=50` → diagnose → sửa compose → `docker compose down && up -d --build` → lặp. KHÔNG qua bước migration khi còn service fail.
+
+## Migrations (sau khi infra healthy)
+Chạy migration của mỗi backend target từ `services/boundaries/{name}/`, theo stack:
+```bash
+# Java/Flyway (Gradle default; hoặc Flyway tự chạy lúc app boot qua spring-boot-flyway)
+./gradlew flywayMigrate -Pflyway.url="jdbc:postgresql://localhost:5432/app_dev" -Pflyway.user=postgres -Pflyway.password=postgres
+#   (Maven: mvn -q flyway:migrate -Dflyway.url=... — chỉ khi ADR chọn Maven)
+# Liquibase / Prisma (npx prisma migrate deploy) / Alembic (alembic upgrade head) / raw: psql ... -f schema.sql
+```
+Verify schema thật:
+```bash
+psql "postgresql://postgres:postgres@localhost:5432/app_dev" -c "\dt" \
+  -c "SELECT count(*) FROM information_schema.tables WHERE table_schema='public';"
+```
+`count = 0` → migration chưa chạy, debug ngay.
+
+## Done (MAIN chạy lệnh verify + đọc output thật, không chỉ viết file)
+- `docker-compose.yml` valid, **mọi service (app boundary + infra) healthy**; migrations applied (schema có tables).
+- **Kết nối liên service (cross-target connectivity)**: mỗi dependency `INTEG-INT-*` / `depends_on` ROADMAP đã verify caller gọi được callee qua service name (HTTP 200 / topic tồn tại) — không chỉ healthy riêng lẻ.
+- Test agent chạy được: `docker compose exec {service} <test-cmd>` / `curl localhost:{port}/health`.
+
+> Production deploy (Dockerfile/Helm/CI-CD) KHÔNG thuộc skill này — state machine hiện kết thúc ở DONE (UAT), chưa có stage deploy.

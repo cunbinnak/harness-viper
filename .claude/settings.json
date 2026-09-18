@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_comment": "Fork VIPER-style (feat/viper-adlc). 4 hook / 4 việc, KHÔNG dispatcher. gate.py chỉ BÁO (commands gọi), không phải hook. Windows dùng 'python'; Mac/Linux đổi 'python3' (bootstrap.py patch).",
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Edit",
+      "Write",
+      "Bash",
+      "mcp__browser",
+      "WebFetch(domain:localhost)",
+      "WebFetch(domain:127.0.0.1)"
+    ],
+    "ask": [
+      "Bash(make deploy:*)",
+      "Bash(git push:*)",
+      "Bash(gh repo create:*)",
+      "Bash(gh release:*)",
+      "Bash(gh pr create:*)",
+      "Bash(npm publish:*)",
+      "Bash(vercel:*)",
+      "Bash(railway:*)",
+      "Bash(fly:*)",
+      "Bash(flyctl:*)",
+      "Bash(render:*)",
+      "Bash(docker compose down --volumes:*)",
+      "Bash(docker compose down -v:*)",
+      "Bash(docker volume rm:*)"
+    ],
+    "deny": [
+      "Read(.env)",
+      "Read(.env.local)",
+      "Read(.env.*.local)",
+      "Read(.env.production)",
+      "Read(.env.staging)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Bash(sudo:*)",
+      "Bash(rm -rf /:*)",
+      "Bash(rm -rf ~:*)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(git reset --hard origin:*)",
+      "Read(**/node_modules/**)",
+      "Read(**/target/**)",
+      "Read(**/dist/**)",
+      "Read(**/.gradle/**)",
+      "Read(**/.next/**)",
+      "Read(**/__pycache__/**)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "$comment_hooks": "Bốn hook, bốn việc (học VIPER — direct, không dispatcher). (1) SessionStart 'compact': reanchor.py nhồi lại PROTOCOL §2 + STATE sau compact. (2) PreToolUse 'AskUserQuestion': guard_ask.py — phase ∉ {DOCUMENT,NEXT-WAVE} thì exit 2. (3) PreToolUse 'Bash': guard_bc.py — 'make deploy' + wave ≥2 + BACKWARD-COMPAT §3 chưa xanh thì exit 2. (4) PreToolUse 'Write|Edit|MultiEdit': guard_ds.py — docs/ux/mockups/** + DESIGN-SYSTEM.md, cấm hex thô ngoài :root. gate.py KHÔNG hook (chỉ báo).",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/reanchor.py"] }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_ask.py"] }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_bc.py"] }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_ds.py"] },
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_archive.py"] },
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_proof.py"] }
+        ]
+      }
+    ]
+  }
+}
