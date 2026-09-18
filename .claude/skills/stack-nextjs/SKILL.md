@@ -54,4 +54,4 @@ test    : npm run test
 | Đăng xuất không xoá cache server-state | Người sau thấy dữ liệu người trước | `queryClient.clear()` khi logout |
 
 ## §done
-typecheck/build/lint/test pass, coverage ≥60%, a11y clean; đủ loading/empty/error/success; không `console.log`/`any`; API type khớp contract; không business logic quan trọng ở FE; file chỉ trong owned_paths.
+typecheck/build/lint/test pass, coverage ≥60%, a11y clean; đủ loading/empty/error/success; không `console.log`/`any`; API type khớp contract; không business logic quan trọng ở FE; file chỉ trong `services/web/{name}/`.

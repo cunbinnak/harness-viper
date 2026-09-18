@@ -76,8 +76,10 @@ def main() -> int:
     hava = {p.stem for p in (ROOT / ".claude/agents").glob("*.md")}
     check(agents <= hava, f"9 agent đủ ({len(agents & hava)}/9)")
 
-    check((ROOT / ".claude/skills/stack-spring-boot/SKILL.md").exists()
-          and (ROOT / ".claude/skills/stack-nextjs/SKILL.md").exists(), "2 stack skill đủ")
+    stacks = {"stack-spring-boot", "stack-nextjs", "stack-bff", "stack-flutter"}
+    have_sk = {p.name for p in (ROOT / ".claude/skills").glob("*") if p.is_dir()}
+    check(stacks <= have_sk, f"4 stack skill đủ ({len(stacks & have_sk)}/4)")
+    check(len(have_sk) >= 20, f"skill library ({len(have_sk)} skill — ref/review/method chắt lọc)")
 
     # 5. file khung
     for f in ("CLAUDE.md", "PROTOCOL.md", "STATE.md", "Makefile", ".gitignore"):

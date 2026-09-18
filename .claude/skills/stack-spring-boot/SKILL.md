@@ -65,4 +65,4 @@ migrate : ./gradlew flywayMigrate          # hoặc chạy lúc bootRun
 | H2 trong test | Che lỗi dialect/JSONB/`TIMESTAMPTZ` tới lúc chạy thật | Testcontainers Postgres |
 
 ## §done
-Build/lint/test pass, coverage ≥80%, không H2; file chỉ trong owned_paths; KG cập nhật.
+Build/lint/test pass, coverage ≥80%, không H2; file chỉ trong `services/boundaries/{name}/`; KG cập nhật.
