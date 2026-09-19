@@ -88,6 +88,12 @@ def main() -> int:
     for f in ("CLAUDE.md", "PROTOCOL.md", "STATE.md", "Makefile", ".gitignore"):
         check((ROOT / f).exists(), f"{f} tồn tại")
 
+    # 6. templates gom 1 folder (docs/ + knowledge-base/ chỉ file thật)
+    tpls = list((ROOT / "templates").glob("TEMPLATE.*.md"))
+    check(len(tpls) >= 16, f"templates/ đủ ({len(tpls)} template) + README")
+    stray = list((ROOT / "docs").rglob("TEMPLATE.*")) + list((ROOT / "knowledge-base").glob("TEMPLATE.*"))
+    check(not stray, f"docs/ + knowledge-base/ không còn TEMPLATE lạc ({len(stray)} sót)")
+
     print(f"\n{'PASS — smoke sạch' if ok else 'FAIL — có mục gãy'}")
     return 0 if ok else 1
 
