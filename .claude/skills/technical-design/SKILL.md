@@ -14,7 +14,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) +
 > Đây là **DESIGN docs**, không scaffold code. Scaffold code (`services/{name}/`) xảy ra ở `/build`, KHÔNG ở đây.
 
 ## Deliverable
-1. **ADR** `docs/adr/ADR-NNN-*.md` — theo chủ đề (tech-stack, backend-architecture [Layered/Hexagonal], auth, **api-error-convention [envelope + generic codes chung]**, **ui-kit [có FE target → chốt component library trưởng thành; React → Ant Design 5, mockup mô phỏng visual language của nó, dev dùng thật, token map qua theme]**, event/messaging…). Theo `docs/TEMPLATE.decisions.md`/ADR: context · decision · **Alternatives considered ≥2 (lý do reject)** · consequences.
+1. **ADR** `docs/adr/ADR-NNN-*.md` — theo chủ đề (tech-stack, backend-architecture [Layered/Hexagonal], auth, **api-error-convention [envelope + generic codes chung]**, **ui-kit [có FE target → chốt component library trưởng thành; React → Ant Design 5, mockup mô phỏng visual language của nó, dev dùng thật, token map qua theme]**, event/messaging…). Theo `templates/TEMPLATE.decisions.md`/ADR: context · decision · **Alternatives considered ≥2 (lý do reject)** · consequences.
 2. **Boundary decomposition** — chốt các **target**: mỗi target + **kind** (`backend`/`bff`/`web`/`mobile`) + **stack** (set tại đây, vd Java 21 + Spring Boot 3.4). Ghi nhận **tech situational per-target** (phát/nhận event, dùng cache/lock, external đặc thù) — input cho bước chia wave gắn `ref_skills`.
 3. **`docs/arch/OVERVIEW.md`** — bức tranh tổng: danh sách target + kind/stack + quan hệ (ai gọi ai, depends_on), luồng E2E chính, cross-cutting chung.
 4. **Per target** — `docs/arch/{name}.md` (frontmatter `kind`/`stack`/`consumes`), gộp mọi mặt của target đó vào MỘT file:

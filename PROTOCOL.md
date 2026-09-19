@@ -44,7 +44,7 @@ Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/
 
 **Wave**: DOCUMENT chạy 1 lần cho cả dự án (sinh kế hoạch mọi wave). BUILD/VERIFY/SHIP chạy **per wave**.
 Mỗi wave **khai báo phases nó chạy** trong `docs/ROADMAP.md` — wave nội bộ có thể bỏ SHIP; không ép mọi wave đủ phase.
-**AC-cap per wave**: DOCUMENT chia wave giới hạn số AC/boundary mỗi wave (học VIPER: loop nhỏ) để BUILD vừa
+**FEAT-cap per wave**: DOCUMENT chia wave giới hạn **~3-4 FEAT/wave** (`feat_cap_per_wave`; học VIPER: loop nhỏ) để BUILD vừa
 context của MAIN (MAIN-code-hết, không dev-agent). Ngưỡng mềm, gate wave-plan cảnh báo khi vượt.
 
 **Loop engineering** (mở wave = RÀ LẠI — học VIPER): kế hoạch mọi wave lập 1 lần ở DOCUMENT (Authority ký 1 lần),
@@ -118,7 +118,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 > **Tracking wave-scoped** (không phải spec; `/next-wave` gom vào `archive/wave-N/`): `tracking/wave-{N}/test-cases.md`
 > — MỘT bảng = TC · AC · cách chạy · kết quả PASS/FAIL · nguyên nhân (gộp registry + report + bug làm một, chống "3 bản sao").
 >
-> **Quy ước template** (`TEMPLATE.*`, gate bỏ qua): guidance trong `<!-- -->` (gate `read_live` strip → không đếm nhầm) ·
+> **Quy ước template** (gom ở **`templates/`** — xem `templates/README.md`; gate KHÔNG quét folder này): guidance trong `<!-- -->` (gate `read_live` strip → không đếm nhầm) ·
 > placeholder `{{...}}` (gate check "còn `{{` = chưa xong") · tiêu đề `## §` = **mỏ neo cố định** (không đổi tuỳ tiện) ·
 > bảng markdown sạch (ma trận/wave/enforcement — không ô trống ở bảng bắt buộc) · frontmatter máy-đọc (`status·capability·phases·consumes`).
 >
@@ -197,4 +197,4 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 ## §10 — Quản lý context (van an toàn cho MAIN-code-hết)
 > - **reanchor** — hook `SessionStart(compact)`: sau compact, đọc lại PROTOCOL §2 + STATE → inject. BẮT BUỘC.
 > - **compact.py** — report CHỈ-ĐỌC doc phình (DECISIONS/ROADMAP backlog), gấp tay sang `archive/ledger/`, KHÔNG `--go`. Nhẹ hơn VIPER (STATE mình wave-scoped). Chạy ở next-wave.
-> - **AC-cap per wave** — xem §1.
+> - **FEAT-cap per wave** — xem §1.

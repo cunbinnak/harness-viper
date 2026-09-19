@@ -8,6 +8,7 @@ Chạy được **mọi lúc**. KHÔNG đổi phase, không tiêu gate.
 ## Đọc
 1. `STATE.md` — dòng `Phase hiện tại` · `Wave` · `Phases wave này` + gate checklist đang mở (mục nào chưa tick).
 2. `python scripts/gate.py` — chấm gate phase hiện tại (thiếu bằng chứng gì).
+3. `docs/ROADMAP.md §1` — **đếm số dòng wave** = tổng N (để báo `wave M/N`); wave nào `Trạng thái` = đã đóng/đang mở.
 
 ## Đọc thêm khi cần trả lời *"còn thiếu gì để đi tiếp"*
 | Câu hỏi | Ở đâu |
@@ -20,7 +21,7 @@ Chạy được **mọi lúc**. KHÔNG đổi phase, không tiêu gate.
 
 ## Báo cáo (3 dòng, KHÔNG đổ nguyên JSON)
 ```
-Đang ở : <phase> · wave <N> · <target/kind>
+Đang ở : <phase> · wave <M>/<N tổng> · <target/kind>
 Chốt kế: <lệnh cụ thể + arg>
 Thiếu  : <gate đỏ / thiếu gì — hoặc "không thiếu, chạy được ngay">
 ```

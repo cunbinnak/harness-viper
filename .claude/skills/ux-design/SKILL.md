@@ -89,7 +89,7 @@ Ghi vào `docs/DESIGN-SYSTEM.md §4` (dev implement + reviewer/verify đối chi
 
 Đảo thứ tự là mất tác dụng — token rút ra từ mockup đã vẽ chỉ là bản mô tả những màu đã lỡ chọn, không phải quyết định. Và phản hồi "chữ nhỏ quá" lẽ ra sửa MỘT token rồi lan ra mọi màn, nay thành đi sửa tay từng file.
 
-`docs/DESIGN-SYSTEM.md` (chép từ `TEMPLATE.design-system.md`) khai phần **máy không suy được từ token (§2)**:
+`docs/DESIGN-SYSTEM.md` (chép từ `templates/TEMPLATE.design-system.md`) khai phần **máy không suy được từ token (§2)**:
 
 | § | Khai gì | Ai dùng về sau |
 |---|---|---|

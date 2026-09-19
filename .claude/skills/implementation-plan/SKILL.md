@@ -18,7 +18,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) +
 - **Sinh FULL PLAN toàn dự án** ngay từ đầu: mọi wave khai trong `docs/ROADMAP.md §1`.
 
 ## Deliverable
-1. **`docs/ROADMAP.md §1`** — roadmap toàn dự án: chia **toàn bộ** target/FEAT thành **nhiều wave** theo phụ thuộc. Mỗi wave khai:
+1. **`docs/ROADMAP.md §1`** (copy từ `templates/TEMPLATE.roadmap.md` — frontmatter `feat_cap_per_wave` sẵn; **số wave = số dòng §1**) — roadmap toàn dự án: chia **toàn bộ** target/FEAT thành **nhiều wave** theo phụ thuộc. Mỗi wave khai:
    - `goal` + `targets[]` (name từ `docs/arch/`) + `features[]` (FEAT-id) + `phases` (thứ tự dev trong wave: foundation trước) + **`dependencies` (cần gì từ wave trước)** + `legacy` (surface đã giao ở wave trước mà wave này build tiếp — additive) + `exit_criteria`.
    - Wave nào **opt-in SHIP** → khai `ship: true` (mặc định không ship).
    - `features_by_wave`: nếu 1 target sống qua ≥2 wave, tách rõ FEAT nào thuộc wave nào (tránh FEAT wave sau lọt vào scope wave hiện tại).
@@ -31,9 +31,9 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) +
 3. **Topological → wave** (sprint):
    - **Wave 1 = foundation mỏng** (auth/shared + 1–2 capability core) đủ chạy **E2E sớm** (login + 1 luồng nghiệp vụ chính).
    - **Wave kế** = target/FEAT phụ thuộc wave trước, nhóm theo lát giá trị ship được cùng nhau; ghi rõ `dependencies` từ wave trước.
-   - **Kích thước wave: đếm tổng AC của mọi FEAT trong wave — chia nhỏ để dễ triển khai.** Ngưỡng `ac_cap_per_wave` khai ở frontmatter `ROADMAP.md` (không khai → mặc định **6**). Project vừa để 6; project lớn vài trăm AC để 10-15 — mỗi wave là một vòng đầy đủ build → review → dựng Docker → test → dogfood 6 vai × 2 đợt, ngưỡng quá nhỏ ở project lớn đẻ hàng chục wave nuốt hết thời gian thật.
+   - **Kích thước wave: ~3-4 FEAT/wave** (`feat_cap_per_wave`, frontmatter `ROADMAP.md`, không khai → mặc định **4**; đối chiếu ≈15-20 AC — **1 FEAT quá to (nhiều AC) thì tách nhỏ**). Mỗi wave là một vòng đầy đủ build → review → dựng Docker → test → dogfood 6 vai × 2 đợt: ngưỡng quá nhỏ đẻ hàng chục wave nuốt hết thời gian, quá lớn thì vỡ context 1 phiên BUILD của MAIN.
      - **Ngưỡng là KHUYẾN KHÍCH, luồng mới là luật.** Tách ra mà **đứt luồng** (nửa luồng ở wave này, nửa kia wave sau, không demo được luồng nào trọn) → **giữ tròn luồng**, vượt ngưỡng cũng được — ghi `rationale` (≥20 ký tự) nói luồng nào sẽ đứt nếu tách.
-     - "Nhét cho gọn số wave" KHÔNG phải lý do. Ít AC quá (1-2) không cần tách.
+     - "Nhét cho gọn số wave" KHÔNG phải lý do. Ít quá (1 FEAT lẻ) không cần tách.
    - Lặp tới khi **mọi** target/FEAT đã vào 1 wave.
 4. **Viết ROADMAP §1** đủ mọi wave (goal/targets/features/phases/dependencies/legacy/exit_criteria).
 5. **KG skeleton** per target.
@@ -66,7 +66,7 @@ wave 4: D, E         wave 4: C, D        ← C bị đẩy xuống
 - [ ] Chia **≥ 2 wave** khi có phụ thuộc; thứ tự topological (không phụ thuộc ngược/vòng).
 - [ ] Mỗi wave có goal + targets + features + phases + **dependencies từ wave trước** + exit_criteria.
 - [ ] Wave 1 mỏng, chạy được **E2E** (foundation + 1 lát core).
-- [ ] Mỗi wave trong ngưỡng `ac_cap_per_wave` (tổng AC mọi FEAT). Vượt vì tách sẽ đứt luồng → điền `rationale`.
+- [ ] Mỗi wave trong ngưỡng `feat_cap_per_wave` (~3-4 FEAT). Vượt vì tách sẽ đứt luồng → điền `rationale`.
 - [ ] Chia lại sau khi đóng wave (có `archive/wave-*`): wave đã đóng không đổi · phần bù ở wave kế (hoặc `placement_rationale`) · không FEAT nào rơi mất.
 - [ ] **Deferred-scope tường minh**: AC/feature chủ động hoãn (auth/idempotency/event ở wave CRUD…) ghi vào wave §Deferred (token `FEAT-NNN[:AC-M]`/`BR-NNN`) — SoT để test skip.
 - [ ] KG skeleton mọi target (`knowledge-base/{name}.md`, metadata; section va-vấp rỗng).

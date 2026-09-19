@@ -10,6 +10,10 @@ description: DOCUMENT — interview|intake → doc set (PRD/PERSONAS/FEAT/ARCHIT
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: DOCUMENT` (nếu đang ở phase khác = back-edge top-up).
 `gate.py` + `guard_ask` đọc dòng này — không sửa thì máy tưởng còn phase cũ.
 
+> **Lấy template**: mọi doc dựng từ mẫu ở **`templates/`** (bảng template ↔ path đích: `templates/README.md`).
+> Mỗi Bước dưới: copy template tương ứng → path đích → **xoá comment `<!-- -->` guidance** → điền hết `{{...}}`.
+> `docs/` + `knowledge-base/` chỉ chứa file THẬT (gate không quét `templates/`).
+
 ## Bước 0 — Nhận diện đường vào
 - `intake/` có tài liệu đã điền thật (không phải template `_*.md` trơ)? → **ĐƯỜNG INTAKE**: ghi marker
   `NGUỒN: INTAKE` (ngoài comment) vào `docs/INTERVIEW.md`.
@@ -60,7 +64,7 @@ Token là thứ **DUY NHẤT chép nguyên** sang code ở BUILD.
 
 ## Bước 9 — Chia wave (`docs/ROADMAP.md`)
 Bảng wave: mỗi wave khai **target** (kind: backend/web/bff/mobile) + **phases chạy** (`BUILD,VERIFY[,SHIP]`) + **AC in-scope**.
-**AC-cap**: mỗi wave đủ nhỏ để **một phiên BUILD của MAIN làm nổi** — **~3–4 FEAT hoặc ~15 AC / wave** (MAIN-code-hết, không dev-agent; vượt → tách wave, tránh vỡ context / lost-in-middle). Điền cột
+**FEAT-cap** = `feat_cap_per_wave` (frontmatter `docs/ROADMAP.md`, **mặc định ~3-4 FEAT/wave ≈ 15-20 AC**) — ngưỡng để **một phiên BUILD của MAIN làm nổi** (MAIN-code-hết, không dev-agent). KHUYẾN KHÍCH, **tròn luồng thắng con số**: tách mà đứt luồng → giữ tròn + ghi `rationale`; 1 FEAT quá to (nhiều AC) → tách nhỏ. **SỐ WAVE = số dòng §1** (phái sinh từ scope ÷ cap + phụ thuộc — không đặt tay). Chi tiết chia: skill `implementation-plan`. Điền cột
 `Wave giao` ở CAPABILITIES-MAP. Để trống `§backlog` (amendment tương lai đổ vào đây).
 
 ## Bước 10 — Challenge DOCUMENT (luật #8 — tới khi hiểu ĐÚNG Ý AUTHOR)
@@ -74,7 +78,7 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 2. ≥2 dòng `docs/DECISIONS.md`.
 3. **Trình Authority đọc** toàn bộ doc set → OK = duyệt.
 4. Tick hết gate DOCUMENT + `Scope khoá` trong `STATE.md`. **Từ đây không hỏi Authority nữa.**
-5. Báo: tài liệu xong, chạy `/build <wave-1>` để vào wave đầu.
+5. Báo: tài liệu xong — **đã chia thành N wave** (đọc `docs/ROADMAP.md §1`, liệt kê `w1: <target/FEAT> · w2: … · wN: …`), chạy `/build 1` để vào wave đầu.
 
 ## Ranh giới
 - **Không viết code** ở phase này. Không dựng `services/`.

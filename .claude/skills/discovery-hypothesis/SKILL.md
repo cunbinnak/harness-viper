@@ -58,7 +58,7 @@ Ngờ scope quá lớn → **nói thẳng ngay tại đây**, đề xuất cắt
 
 ## Ghi sổ NGAY trong lúc hỏi
 
-Điền `docs/PRD.md` (§Vision / §Problem) dần theo `docs/TEMPLATE.prd.md`. Không đợi hỏi xong hết mới viết:
+Điền `docs/PRD.md` (§Vision / §Problem) dần theo `templates/TEMPLATE.prd.md`. Không đợi hỏi xong hết mới viết:
 viết muộn là viết theo trí nhớ đã bị làm mượt.
 
 ## Playback trước khi chốt
