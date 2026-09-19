@@ -58,6 +58,15 @@ def main() -> int:
     check(run("scripts/hooks/guard_proof.py", [],
               '{"tool_input":{"file_path":"tracking/wave-1/proof.json","content":"x"}}') == 2,
           "guard_proof sửa proof.json → deny (exit 2)")
+    check(run("scripts/hooks/guard_makefile.py", [],
+              '{"tool_input":{"file_path":"Makefile","content":"x"}}') == 2,
+          "guard_makefile ROOT Makefile → deny (exit 2)")
+    check(run("scripts/hooks/guard_makefile.py", [],
+              '{"tool_input":{"file_path":"services/boundaries/order/Makefile","content":"x"}}') == 0,
+          "guard_makefile per-target Makefile → allow")
+    check(run("scripts/hooks/guard_doc.py", [],
+              '{"tool_input":{"file_path":"docs/DECISIONS.md","content":"x"}}') == 0,
+          "guard_doc DECISIONS (sổ sống) → allow")
     check(run("scripts/hooks/reanchor.py", [], "") == 0, "reanchor → exit 0")
 
     # 3. settings.json hợp lệ

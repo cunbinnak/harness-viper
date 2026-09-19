@@ -50,7 +50,7 @@
     ]
   },
   "enableAllProjectMcpServers": true,
-  "$comment_hooks": "Bốn hook, bốn việc (học VIPER — direct, không dispatcher). (1) SessionStart 'compact': reanchor.py nhồi lại PROTOCOL §2 + STATE sau compact. (2) PreToolUse 'AskUserQuestion': guard_ask.py — AskUserQuestion chỉ ở DOCUMENT (port VIPER pha V); Scope khoá ✓ hoặc phase≠DOCUMENT → exit 2. (3) PreToolUse 'Bash': guard_bc.py — 'make deploy' + wave ≥2 + BACKWARD-COMPAT §3 chưa xanh thì exit 2. (4) PreToolUse 'Write|Edit|MultiEdit': guard_ds.py — docs/ux/mockups/** + DESIGN-SYSTEM.md, cấm hex thô ngoài :root. gate.py KHÔNG hook (chỉ báo).",
+  "$comment_hooks": "Bốn hook, bốn việc (học VIPER — direct, không dispatcher). (1) SessionStart 'compact': reanchor.py nhồi lại PROTOCOL §2 + STATE sau compact. (2) PreToolUse 'AskUserQuestion': guard_ask.py — AskUserQuestion chỉ ở DOCUMENT (port VIPER pha V); Scope khoá ✓ hoặc phase≠DOCUMENT → exit 2. (3) PreToolUse 'Bash': guard_bc.py — 'make deploy' + wave ≥2 + BACKWARD-COMPAT §3 chưa xanh thì exit 2. (4) PreToolUse 'Write|Edit|MultiEdit' (5 guard): guard_ds (mockup/DESIGN-SYSTEM cấm hex thô ngoài :root) · guard_archive (cấm sửa archive/**) · guard_proof (cấm sửa *proof.json) · guard_makefile (cấm sửa ROOT Makefile — điền per-target) · guard_doc (cấm sửa doc SPEC đã khoá ngoài phase DOCUMENT — dồn ROADMAP §backlog). gate.py KHÔNG hook (chỉ báo).",
   "hooks": {
     "SessionStart": [
       {
@@ -78,7 +78,9 @@
         "hooks": [
           { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_ds.py"] },
           { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_archive.py"] },
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_proof.py"] }
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_proof.py"] },
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_makefile.py"] },
+          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_doc.py"] }
         ]
       }
     ]

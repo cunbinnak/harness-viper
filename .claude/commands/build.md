@@ -62,7 +62,7 @@ target còn lại nối sau — không dựng đầy đủ từng cái một.
 - **Phân quyền**: mỗi ô `cấm` trong ma trận vai phải bị chặn ở **server**, không tự quyết lại
 - **Ranh giới module** theo `arch/{name}.md` — logic sai tầng là lỗi, không phải phong cách
 - **Ca biên** (trong AC): xử **ngay khi làm phần liên quan**, đừng để cuối
-- **Doc wave đang mở lệch thực tế** (trong AC đã khoá — vd đổi tên field, thêm chi tiết kỹ thuật) → **sửa doc CÙNG commit** (luật #4, doc = nguồn sự thật). Thêm AC/luồng MỚI thì không → `ROADMAP §backlog`.
+- **Doc spec lệch thực tế** (vd đổi tên field) → **KHÔNG sửa doc đã khoá** (guard_doc chặn — doc đóng băng lúc BUILD); ghi `ROADMAP §backlog`, wave sau `/document` top-up đồng bộ. Mơ hồ trong AC → `DECISIONS.md` 1 dòng (sổ sống). Thêm AC/luồng MỚI cũng → `ROADMAP §backlog`.
 - Mơ hồ → `DECISIONS.md` 1 dòng · ngoài AC → `ROADMAP §backlog` · commit nhỏ, message tiếng Việt
 - **Gặp gotcha / vá bug lúc code** (env nông · config · quirk contract · schema drift...) → **append NGAY** `knowledge-base/{name}.md` §Gotchas/§Failure-modes. Đây là **nguồn KG nhiều nhất** (lúc code mới va) — không ghi = mất, wave/rebuild sau lặp lại (retro B3).
 

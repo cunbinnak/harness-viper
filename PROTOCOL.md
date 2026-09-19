@@ -61,7 +61,7 @@ không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (
 1. **Scope khoá sau DOCUMENT.** Phát sinh → `docs/ROADMAP.md §backlog`, không chèn vào wave này.
 2. **Sau khi khoá scope: toàn quyền, không hỏi lại.** `AskUserQuestion` **chỉ ở DOCUMENT** (trước khoá scope — phỏng vấn/quyết định); BUILD/VERIFY/SHIP/NEXT-WAVE bị `guard_ask` chặn (port VIPER pha V — ô Scope khoá tick = chốt, chặn luôn dù phase còn ghi DOCUMENT). Ngoại lệ ra-ngoài/không-đảo-ngược: hỏi bằng lời.
 3. **Mơ hồ → 1 dòng `docs/DECISIONS.md` (cột giả định + đảo-ngược-được-không) TRƯỚC khi code.**
-4. **Doc là nguồn sự thật.** Code lệch doc (trong AC đã khoá của wave đang mở) → sửa doc **cùng commit**.
+4. **Doc là nguồn sự thật — ĐÓNG BĂNG sau khoá scope.** Code lệch doc (trong AC đã khoá) → **KHÔNG sửa doc spec lúc BUILD** (guard_doc chặn); ghi `ROADMAP §backlog` → wave sau `/document` top-up đồng bộ. Mơ hồ → `DECISIONS.md` (sổ sống, được ghi). Giữ hợp đồng ổn định để review/dogfood đánh, tránh "vừa code vừa vặn doc".
 5. **Cỡ sản phẩm theo đường vào** (§0).
 6. **Không secret trong code, không bypass test/lint. Đã code xong → git commit** (không commit = coi như chưa làm).
 7. **Tiếng Việt có dấu** cho văn bản người đọc (giữ tiếng Anh cho identifier/API/schema/tên lệnh/tên file).
@@ -174,6 +174,8 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 > - **guard_bc**: chặn deploy khi BACKWARD-COMPAT §3 chưa xanh (wave ≥2). · **guard_ds**: chặn ghi mockup/token lệch design-system.
 > - **guard_archive**: chặn Write/Edit vào `archive/**` (wave đã đóng = hợp đồng bất biến — §3/§5).
 > - **guard_proof**: chặn Write/Edit vào `*proof.json` (bằng chứng runtime CHỈ `capture_proof.py` sinh — agent không giả tick).
+> - **guard_makefile**: chặn Write/Edit vào **ROOT `Makefile`** (hợp đồng 6 lệnh, bất biến) — MAIN điền THÂN ở per-target `services/<nhóm>/<tên>/Makefile`, không sửa root lúc BUILD.
+> - **guard_doc**: chặn Write/Edit vào **doc SPEC** (`docs/**` trừ DECISIONS/ROADMAP/BACKWARD-COMPAT/PRODUCTION-READY) khi phase ≠ DOCUMENT — doc đóng băng sau khoá scope, lệch/thiếu dồn `ROADMAP §backlog` → wave sau top-up. Sổ sống + DOCUMENT/top-up vẫn sửa được.
 > - **reanchor**: SessionStart(compact) → nhồi lại §2 + STATE.
 > Agent read-only (review/persona `disallowedTools: Write/Edit`) + `test-writer` chỉ `test/` → không cần hook owned_paths/kernel-protect như harness cũ.
 ## §9 — Failure modes (đã có cơ chế chặn)
