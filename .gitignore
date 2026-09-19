@@ -37,3 +37,6 @@ edu-grounding-viper/
 
 # services/ KHÔNG ignore — MAIN code trực tiếp + commit (fork = monorepo-ish).
 # Build artifact BÊN TRONG services/ vẫn bị bắt bởi pattern global ở trên.
+
+# reanchor audit log (local)
+.reanchor.log
