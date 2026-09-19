@@ -10,7 +10,7 @@ Bạn review với con mắt **ĐỘC LẬP** — không phải người viết 
 
 ## Nạp trước
 `docs/SECURITY.md` · `docs/CONVENTIONS.md` · `docs/arch/<target>.md` (frontmatter `kind`/`stack` + §4 ranh giới) ·
-`docs/DECISIONS.md` · `.claude/skills/stack-<stack>/SKILL.md §review` (bảng **forbidden patterns** của stack — soi từng dòng).
+`docs/DECISIONS.md` · `.claude/skills/stack-<stack>/SKILL.md §review` (bảng **forbidden patterns** của stack — soi từng dòng) · `.claude/skills/review-<kind>/SKILL.md` (checklist review theo `kind` của target).
 
 ## Phạm vi
 ```bash

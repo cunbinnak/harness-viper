@@ -25,7 +25,7 @@ Chỉ đọc. Không hỏi user.
 
 ## 2. Phạm vi
 
-Code ở `services/{name}/`.
+Code ở `services/mobile/{name}/`.
 
 - **Vòng 1** — chưa có finding cho boundary này ở `STATE.md §Findings` → soi **cả boundary**.
 - **Re-review** — đã review vòng trước → soi `git diff --stat <mốc>..HEAD` rồi `git diff <mốc>..HEAD`, và với **mỗi**

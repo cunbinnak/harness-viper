@@ -130,7 +130,7 @@ EXPOSE 80
 
 ## Forbidden config patterns
 
-- Token / API key trong source code — luôn qua `VITE_*` env vars
+- Secret / API key / token trong `VITE_*`/`NEXT_PUBLIC_*` (hay source code) — các biến này nằm NGUYÊN trong bundle client, ai cũng đọc được. Chỉ base URL + flag công khai được để trong env công khai; secret giữ ở server/BFF
 - Build dev với secret production — separate `.env.production`
 - Disable ESLint cho cả file (`/* eslint-disable */`) — fix root cause
 - Console.log trong production build — strip qua Vite/Webpack config

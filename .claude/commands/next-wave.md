@@ -20,7 +20,7 @@ Copy vào `archive/wave-N/` — **chép hết, không chọn lọc** ("chép doc
 - **Shipped surface** (test-cases PASS + `arch §API`) = hợp đồng wave sau phải giữ → wave sau **chỉ THÊM** (additive), ghi vào `docs/BACKWARD-COMPAT.md §1` (sổ tích luỹ, **không wave nào xoá**).
 
 ## Bước 3 — Dọn rác (luật #9)
-- **Còn wave** → `docker compose stop` (**giữ image + volume** để wave sau khởi động nhanh, chỉ boundary mới/đổi build lại).
+- **Còn wave** → `docker compose stop` (**giữ image + volume** để wave sau khởi động nhanh, chỉ target mới/đổi build lại).
 - **Hết wave** → `docker compose down --volumes`.
 - Dọn build artifact tạm + screenshot/trace Playwright còn sót.
 

@@ -13,7 +13,7 @@ Bước viết FEAT của `/document` — vai **Product Owner**. Chia sản ph�
 ## Output
 | Đối tượng | Output |
 |---|---|
-| Feature (chủ đạo) | `docs/feat/FEAT-<PREFIX>-NNN.md` — AC BDD + ca biên + §field kỹ thuật (consume contract, ranh giới) |
+| Feature (chủ đạo) | `docs/feat/FEAT-<slug>.md` — AC BDD + ca biên + §field kỹ thuật (consume contract, ranh giới) |
 | Epic (gom nhóm) | `docs/feat/FEAT-*.md` frontmatter `epic` / §Epic gom feature theo capability |
 | Journey (hành trình) | ghi trong FEAT §Journey hoặc `docs/ux/` (SCREEN-MAP) nếu là hành trình UI |
 
@@ -41,7 +41,7 @@ Neo về nền dự án: `docs/PRD.md`, `docs/PERSONAS.md`, `docs/CAPABILITIES-M
 Thứ tự khi bí: **(1)** tìm trong `PRD`/`PERSONAS`/`CAPABILITIES-MAP`/`INTERVIEW`/`intake` · **(2)** vẫn mơ hồ → ghi 1 dòng `docs/DECISIONS.md` (what/why dẫn về artifact/mục/assume/reversible) rồi đi tiếp · **(3)** tắc cứng thật → `STATE.md §Blocker`, chuyển việc khác, báo gộp cuối lượt · ngoài scope → `docs/ROADMAP.md §backlog`.
 
 ## Quy tắc
-- ID `FEAT-<PREFIX>-NNN`. Cross-ref bằng ID canonical đầy đủ (không rút gọn).
+- ID `FEAT-<slug>`. Cross-ref bằng ID canonical đầy đủ (không rút gọn).
 - Field kỹ thuật viết chung file FEAT (fork 1 lớp — KHÔNG có `docs/domain/`, KHÔNG có bước translate).
 - Sửa FEAT đã chốt (đã khoá scope) = **wave sau**: `ROADMAP §backlog` → `/next-wave` → `/document` top-up.
 

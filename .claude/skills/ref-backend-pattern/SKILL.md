@@ -276,7 +276,7 @@ class ArchitectureTest {
   // controller KHÔNG gọi repository trực tiếp (§7)
   @ArchTest static final ArchRule ctrl_no_repo = noClasses().that().resideInAPackage("..controller..")
       .should().dependOnClassesThat().resideInAPackage("..repository..");
-  // @Entity ở entities/ + tên *Entity (rules-backend)
+  // @Entity ở entities/ + tên *Entity
   @ArchTest static final ArchRule entity_pkg = classes().that().areAnnotatedWith(jakarta.persistence.Entity.class)
       .should().resideInAPackage("..entities..").andShould().haveSimpleNameEndingWith("Entity");
   // không cycle giữa slice
