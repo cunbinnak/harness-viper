@@ -15,13 +15,13 @@ Input: `docs/{PRD.md, feat/FEAT-*.md}` (BR nằm trong FEAT §field hoặc `docs
 ## Cái cần đảm bảo (chất lượng AC/BR — FEAT do DOMAIN author)
 1. **AC testable** — Given/When/Then (Cho/Khi/Thì) hoặc condition đo được; mỗi user story ≥ 1 AC; cover cả non-happy-path.
 2. **Business rules `BR-*`** — phát biểu rõ + nguồn (policy/regulation/stakeholder) + ≥2 ví dụ; `related_features` ≥1.
-3. **Scope rõ** — §Ngoài phạm vi đủ để QC biết KHÔNG test gì; bounded context rõ (boundary thật chốt ở DESIGN/PLAN).
+3. **Scope rõ** — §Ngoài phạm vi đủ để QC biết KHÔNG test gì; bounded context rõ (boundary thật chốt ở bước boundary-charter/technical-design trong DOCUMENT).
 
 > `domain-po`/`domain-ba` (trong `/document`) sở hữu FEAT/BR; skill này là LENS kiểm chất lượng (review) + phân tích thay đổi — KHÔNG tự author FEAT.
 
 ## Phương pháp phân tích (để ra AC/BR/boundaries chất lượng)
 1. **Research** — chỉ khi domain phức tạp/chưa rõ và có WebSearch/WebFetch: business process pattern của industry, edge case/failure đã documented, compliance/regulatory. KHÔNG bịa nguồn.
-2. **Actor & bounded context** — liệt kê tác nhân (role/system/external) → suy ra bounded context (gợi ý boundary; DESIGN chốt).
+2. **Actor & bounded context** — liệt kê tác nhân (role/system/external) → suy ra bounded context (gợi ý boundary; chốt ở bước boundary-charter/technical-design trong DOCUMENT).
 3. **Process flow (Mermaid)** — As-Is (nếu có hệ thống cũ) + To-Be (theo PRD). Happy path + nhánh ngoại lệ → giúp tìm AC + edge case.
    ```mermaid
    flowchart TD

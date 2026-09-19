@@ -1,5 +1,5 @@
 ---
-description: BUILD — MAIN tự code 1 wave: challenge → đọc KG → scaffold → walking skeleton → luồng lõi → chạy thật
+description: BUILD — MAIN tự code 1 wave: đọc KG/context → challenge → scaffold → walking skeleton → luồng lõi → chạy thật
 ---
 # /build [<wave>] — Phase BUILD
 

@@ -11,10 +11,8 @@ Input: `PRD.md` (persona, platform, design system / ADR ui-kit) + `feat/FEAT-*.m
 
 ## Deliverable
 **Đơn vị thiết kế = MÀN (screen)** — boundary chỉ là nơi màn thuộc về. Sản phẩm gồm:
-- **`docs/ux/SCREEN-MAP.md`** — MỤC LỤC MÀN, sinh TRƯỚC khi vẽ: bảng `| screen | route | target | feat | mockup | note |` — mỗi màn 1 row, gắn rõ màn ↔ web target ↔ FEAT:AC ↔ đường dẫn mockup. **Luật gán màn → target** (quan trọng khi NHIỀU web target): (1) FEAT frontmatter `target_hint`; (2) không có hint → journey + persona của FEAT so với persona pool của target (`PERSONAS.md` + `CAPABILITIES-MAP.md`); (3) vẫn mơ hồ → **hỏi user**, KHÔNG đoán. Mỗi FEAT `has_ui_touchpoint=true` phải có ≥1 màn; màn dùng chung nhiều FEAT (list/detail) = 1 row ghi nhiều FEAT.
-- **`docs/ux/SCREEN-MAP.md`** cũng ghi BEHAVIOR (không template — viết thẳng theo outline này, ngắn gọn bảng/bullet) cho mỗi màn:
-  `## 1 Tổng quan` (persona/platform/BE phục vụ) · `## 2 User flows` (mỗi FEAT Must ≥1) · `## 3 Screens` (mỗi screen: link mockup + bảng Screen states + API calls khớp `docs/arch/{name}.md §3 API` + validation FE map `error.code`→field) · `## 4 Permission UI` (ẩn/hiện theo role) · `## 5 Global patterns` (toast/routing-guard/loading-empty quy ước chung) · `## 6 A11y` (WCAG 2.1 AA checklist) · `## 7 Edge cases + handoff notes` · `## 8 Open questions`.
-  **KHÔNG chép giá trị token vào .md** — `docs/DESIGN-SYSTEM.md §2` là SoT duy nhất về màu/spacing/chữ (chép = drift).
+- **`docs/ux/SCREEN-MAP.md`** — MỤC LỤC MÀN, sinh TRƯỚC khi vẽ: **1 bảng đơn** `| Màn | Route | Target (web/mobile) | FEAT | Mockup | Ghi chú |` — mỗi màn 1 row, gắn rõ màn ↔ route ↔ web target ↔ FEAT:AC ↔ đường dẫn mockup, cột **Ghi chú** ghi behavior ngắn (empty→CTA, list realtime, validation…). **Luật gán màn → target** (quan trọng khi NHIỀU web target): (1) FEAT frontmatter `target_hint`; (2) không có hint → journey + persona của FEAT so với persona pool của target (`PERSONAS.md` + `CAPABILITIES-MAP.md`); (3) vẫn mơ hồ → **hỏi user**, KHÔNG đoán. Mỗi FEAT `has_ui_touchpoint=true` phải có ≥1 màn; màn dùng chung nhiều FEAT (list/detail) = 1 row ghi nhiều FEAT.
+- BEHAVIOR chi tiết per màn (API calls khớp `docs/arch/{name}.md §3 API` + validation FE map `error.code`→field + permission UI + a11y) — state chính render TRONG mockup, chi tiết còn lại ghi gọn ở cột **Ghi chú** hoặc dev-handoff notes cuối file. **KHÔNG chép giá trị token vào .md** — `docs/DESIGN-SYSTEM.md §2` là SoT duy nhất về màu/spacing/chữ (chép = drift).
 - **`docs/ux/mockups/{name}/{screen}.html`** — LOOK **per MÀN**: **THIẾT KẾ THẲNG giao diện hoàn chỉnh bằng HTML** (không có template — bạn là designer, tự dựng app shell + screen đẹp theo §Visual polish, như trang web thật). Khi thiết kế 1 màn, đọc ĐÚNG tài liệu của màn đó: FEAT (AC) trong row SCREEN-MAP + `docs/arch/{name}.md §3 API` mà flow màn gọi — không đọc cả đống target khác. Luật: HTML TĨNH mở `file://` xem được (không JS/build/CDN) · style CHỈ `var(--...)` từ token ở `docs/DESIGN-SYSTEM.md §2` (thiếu token → thêm vào SoT, không bịa tại chỗ) · nội dung thật không lorem · state phụ (loading/empty/error) = section trong cùng file · responsive media query · đủ `:hover`/`:focus-visible`. **Mọi row mockup phải TỒN TẠI + dùng token; web target không có màn nào = chặn** (guard_ds). User duyệt "đẹp/xấu" TRÊN MOCKUP trước khi build; dev FE (stack-nextjs) bám mockup; reviewer đối chiếu.
 
 ## Design system trước khi vẽ
@@ -22,10 +20,10 @@ Input: `PRD.md` (persona, platform, design system / ADR ui-kit) + `feat/FEAT-*.m
 - Chưa có → **đề xuất chốt 1 component library trưởng thành** (React → mặc định **Ant Design 5**; hoặc MUI/Chakra theo ý user) — báo user chốt để `/document` ghi **ADR ui-kit** (`docs/adr/`). KHÔNG tự chế design system từ số 0. Library đã chốt = visual language chuẩn cho CẢ mockup lẫn app.
 - **Mockup mô phỏng đúng visual language của library đã chốt** (mockup là HTML tĩnh nên không nhúng antd thật — nhưng radius/màu/spacing/kiểu component phải nhìn NHƯ antd; dev sau đó dùng antd thật, token map qua `ConfigProvider`/theme → mockup và app hội tụ).
 - KHÔNG hardcode color/spacing/typography → **reference design tokens** (token ở `docs/DESIGN-SYSTEM.md §2`, chỉnh theo palette của library đã chốt).
-- **Shared design tokens:** `docs/DESIGN-SYSTEM.md §2` là SoT token dùng chung MỌI web target (`--color-*`/`--font-*`/`--space-*`/`--radius-*` + dark/hc theme). SCREEN-MAP §4 tham chiếu token NÀY (không bịa palette per-target). Web FE consume qua `var(--...)`; mobile map `ThemeData`/`ColorScheme`. Hook `guard_ds` ép plain-CSS phải dùng `var(--...)`.
+- **Shared design tokens:** `docs/DESIGN-SYSTEM.md §2` là SoT token dùng chung MỌI web target (`--color-*`/`--font-*`/`--space-*`/`--radius-*` + dark/hc theme). Mockup tham chiếu token NÀY (không bịa palette per-target). Web FE consume qua `var(--...)`; mobile map `ThemeData`/`ColorScheme`. Hook `guard_ds` ép plain-CSS phải dùng `var(--...)`.
 
 ## Chuẩn chuyên nghiệp + ANTI-PATTERNS (bắt buộc — mockup xấu = fail review)
-**BƯỚC 0 bắt buộc: MỞ `docs/ux/mockups/EXAMPLE.reference.html` trong browser** — thư viện ARCHETYPE màn dùng cho MỌI đề bài (1 Dashboard · 2 Bảng danh sách · 3 Form · 4 Trang chi tiết · 5 Timeline/lịch tài nguyên · 6 Feedback states). Mỗi màn sắp vẽ: xác định thuộc archetype nào (hoặc ghép archetype nào) → đối chiếu section đó về bố cục/mật độ/màu/states — đó là mức chất lượng TỐI THIỂU. KHÔNG copy nội dung — chỉ neo phong cách. Vẽ xong tự so: thua bài mẫu = làm lại trước khi trình user.
+**BƯỚC 0 — neo phong cách qua ARCHETYPE màn** (áp cho MỌI đề bài): 1 Dashboard · 2 Bảng danh sách · 3 Form · 4 Trang chi tiết · 5 Timeline/lịch tài nguyên · 6 Feedback states. Mỗi màn sắp vẽ: xác định thuộc archetype nào (hoặc ghép archetype nào) → đối chiếu về bố cục/mật độ/màu/states — đó là mức chất lượng TỐI THIỂU. **Research tham chiếu là OPTIONAL** (không có file mẫu bắt buộc mở): khi cần neo cụ thể hơn, tìm 2-3 sản phẩm tham chiếu THẬT qua WebSearch/trình duyệt (xem §Phương pháp bước 1) và ghi vào `docs/DESIGN-SYSTEM.md §1`. KHÔNG copy nội dung — chỉ neo phong cách. Vẽ xong tự so với archetype: thua chuẩn = làm lại trước khi trình user.
 
 **LUẬT MÀU — neutral-first (lỗi hay phạm nhất):**
 - NỀN luôn trung tính (`--color-surface`/`--color-surface-alt`). **CẤM sơn màu semantic (xanh lá/đỏ/vàng) lên mảng lớn** — màu chỉ để NHẤN (block/badge/button/status), chiếm ~10% màn hình.
@@ -42,7 +40,7 @@ Benchmark: mockup phải trông như **sản phẩm SaaS thương mại** (chu�
 - **Responsive bắt buộc kiểm**: thu browser <768px phải ra layout mobile tử tế (card/stack), không phải bảng tràn ngang.
 
 ## Visual polish (spec CỤ THỂ để dev implement được "đẹp" — không chung chung)
-Ghi vào `docs/DESIGN-SYSTEM.md §4` (dev implement + reviewer/verify đối chiếu được):
+Ghi vào `docs/DESIGN-SYSTEM.md §3` (kho component — dev implement + reviewer/verify đối chiếu được):
 - **App shell**: layout khung chuẩn (header + nav + content + footer) dùng chung mọi screen — screen chỉ đổi content, KHÔNG mỗi trang một khung.
 - **Spacing rhythm**: MỌI padding/margin/gap từ `--space-*` (scale 4/8px) — cấm số lẻ tùy tiện; mật độ nhất quán (form row gap, card padding, section gap ghi rõ token nào).
 - **Type scale**: heading/body/label dùng `--font-size-*` + `--font-weight-*`; mỗi screen có hierarchy rõ (1 h1, section h2, không nhảy cấp).
@@ -63,7 +61,7 @@ Ghi vào `docs/DESIGN-SYSTEM.md §4` (dev implement + reviewer/verify đối chi
    - Đọc đúng tài liệu của màn: FEAT:AC trong row + `docs/arch/{name}.md §3 API` mà flow gọi + journey liên quan.
    - **Mockup HTML** (`docs/ux/mockups/{name}/{screen}.html`): THIẾT KẾ giao diện hoàn chỉnh — app shell + nội dung screen thật, compose từ token ở `docs/DESIGN-SYSTEM.md §2`. Mockup là SoT về look — làm "đẹp" ở ĐÂY theo §Visual polish, không tả suông, không skeleton chờ điền.
    - **Component states đầy đủ**: default / hover / disabled / loading / error / empty — state chính render trong mockup, bảng behavior ở ux-*.md.
-   - **Bản kê trong mockup (BẮT BUỘC)**: `data-screen="<mã cột screen của SCREEN-MAP>"` trên khung gốc · `data-ds="<mã #, vd C3>"` trên MỖI khối, chỉ lấy từ `docs/DESIGN-SYSTEM.md §4` · `data-state="empty|loading|error"` trên section trạng thái phụ. Vẽ xong màn thì cập nhật cột "Dùng ở màn" của §4 cho khớp — đối chiếu hai chiều. Đây là thứ biến mockup từ ảnh để nhìn thành bản code FE lắp theo được.
+   - **Bản kê trong mockup (BẮT BUỘC)**: `data-screen="<mã cột Màn của SCREEN-MAP>"` trên khung gốc · `data-ds="<mã #, vd C3>"` trên MỖI khối, chỉ lấy từ `docs/DESIGN-SYSTEM.md §3` · `data-state="empty|loading|error"` trên section trạng thái phụ. Vẽ xong màn thì cập nhật cột "Dùng ở màn" của §3 cho khớp — đối chiếu hai chiều. Đây là thứ biến mockup từ ảnh để nhìn thành bản code FE lắp theo được.
    - **API calls**: trigger → endpoint → method → loading state, khớp `docs/arch/{name}.md §3 API`.
    - **Validation FE-side**: field · required · rule · error message.
    - Mobile layout riêng nếu khác desktop đáng kể.
@@ -76,11 +74,11 @@ Ghi vào `docs/DESIGN-SYSTEM.md §4` (dev implement + reviewer/verify đối chi
 - [ ] **SCREEN-MAP đủ**: mọi FEAT `has_ui_touchpoint` có ≥1 màn; mọi màn gán đúng target (mơ hồ đã hỏi user); mọi web target có ≥1 màn.
 - [ ] Mọi FEAT Must có user flow.
 - [ ] Mọi màn trong SCREEN-MAP có **mockup HTML tồn tại** mở browser xem được (responsive trong cùng file; đủ section state phụ).
-- [ ] Mọi mockup có **bản kê**: `data-screen` khớp SCREEN-MAP · mọi khối có `data-ds` thuộc §4 · cột "Dùng ở màn" của §4 khớp hai chiều với mockup · đủ `data-state` theo cột **Khuôn §5** của component trên màn.
+- [ ] Mọi mockup có **bản kê**: `data-screen` khớp SCREEN-MAP · mọi khối có `data-ds` thuộc §3 · cột "Dùng ở màn" của §3 khớp hai chiều với mockup · đủ `data-state` theo **§4 (ba khuôn rỗng/lỗi/tải)** của component trên màn.
 - [ ] Mockup CHỈ dùng `var(--...)` — không hardcode hex/px (hook `guard_ds` check reference token).
 - [ ] Mọi component có đủ states (default/hover/disabled/loading/error/empty).
 - [ ] API call mỗi screen khớp `docs/arch/{name}.md §3 API` (op name, method, loading state).
-- [ ] Design tokens referenced — KHÔNG hardcode màu/spacing/typography; `docs/DESIGN-SYSTEM.md §2` tồn tại + §4 trỏ tới nó.
+- [ ] Design tokens referenced — KHÔNG hardcode màu/spacing/typography; `docs/DESIGN-SYSTEM.md §2` tồn tại + §3 (kho component) trỏ tới nó.
 - [ ] Permission-based UI documented (ẩn/hiện theo quyền).
 - [ ] A11y WCAG 2.1 AA checklist pass.
 - [ ] Handoff notes có edge case dev dễ sót.
@@ -94,15 +92,15 @@ Ghi vào `docs/DESIGN-SYSTEM.md §4` (dev implement + reviewer/verify đối chi
 | § | Khai gì | Ai dùng về sau |
 |---|---|---|
 | §1 | **Ba tính từ + neo tham chiếu THẬT** — ưu tiên user chỉ ra ("nhìn như app X"); KHÔNG có thì agent tự tìm (bước Research) và ghi tên + URL + đặc điểm vay mượn, không để trống | chỗ đối chiếu khi cãi nhau đẹp/xấu — không có neo thì tranh luận không có đáy |
-| §3 | **Cặp tương phản** (hex chữ / hex nền / loại) | gate **tự tính tỉ số WCAG**, không tin lời khai |
-| §4 | **Kho component ĐÓNG** — mỗi khối: dùng ở màn nào + **trạng thái bắt buộc** | vai `picky` ở `/verify` đi kiểm đúng cột này trên app đã render |
-| §5 | **Ba khuôn** rỗng / lỗi / đang tải | năm màn không được đẻ ra năm kiểu báo lỗi |
+| §2 | Token + **cặp tương phản** (hex chữ / hex nền — WCAG AA) | gate **tự tính tỉ số WCAG**, không tin lời khai |
+| §3 | **Kho component ĐÓNG** — mỗi khối: dùng ở màn nào + **trạng thái bắt buộc** | vai `picky` ở `/verify` đi kiểm đúng cột này trên app đã render |
+| §4 | **Ba khuôn** rỗng / lỗi / đang tải | năm màn không được đẻ ra năm kiểu báo lỗi |
 
-**§4 là mục dễ bỏ nhất và đắt nhất khi bỏ.** Thiếu trạng thái "đang gửi (khoá lại)" chính là cái bấm-hai-lần mà vai `rushed` sẽ tìm thấy — và lúc đó đã code xong. Component không dùng ở màn nào → **xoá dòng**, đừng giữ cho đủ bộ.
+**§3 là mục dễ bỏ nhất và đắt nhất khi bỏ.** Thiếu trạng thái "đang gửi (khoá lại)" chính là cái bấm-hai-lần mà vai `rushed` sẽ tìm thấy — và lúc đó đã code xong. Component không dùng ở màn nào → **xoá dòng**, đừng giữ cho đủ bộ.
 
-Mockup chỉ được **lắp từ kho §4** và dùng `var(--…)` từ token §2. Cần khối mới → thêm dòng ở §4 trước, không vẽ khối lạ tại chỗ. Thiếu token → thêm vào `docs/DESIGN-SYSTEM.md §2`, không gõ thẳng hex.
+Mockup chỉ được **lắp từ kho §3** và dùng `var(--…)` từ token §2. Cần khối mới → thêm dòng ở §3 trước, không vẽ khối lạ tại chỗ. Thiếu token → thêm vào `docs/DESIGN-SYSTEM.md §2`, không gõ thẳng hex.
 
-Bốn mục §1/§3/§4/§5 phải đầy đủ trước khi khoá scope @ `/document`.
+Bốn mục §1/§2/§3/§4 phải đầy đủ trước khi khoá scope @ `/document`.
 
 ## Chốt mockup — KHÔNG dừng ở đây
 

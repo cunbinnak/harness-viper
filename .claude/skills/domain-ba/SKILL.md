@@ -34,7 +34,7 @@ Bước phân tích nghiệp vụ của `/document` — vai **Business Analyst**
 `/document` đã phỏng vấn Authority hoặc có `intake/`. Thứ tự khi bí: **(1)** tìm trong `PRD`/`PERSONAS`/`CAPABILITIES-MAP`/`INTERVIEW`/`intake` · **(2)** mơ hồ → 1 dòng `docs/DECISIONS.md` (what/why dẫn về artifact/assume/reversible) · **(3)** tắc cứng → `STATE.md §Blocker` · ngoài scope → `docs/ROADMAP.md §backlog`.
 
 ## Quy tắc
-- ID `BR-<PREFIX>-NNN` (nếu tách rule) / persona đặt trong `PERSONAS.md`. Cross-ref bằng ID canonical đầy đủ.
+- ID `BR-<slug>` (nếu tách rule) / persona đặt trong `PERSONAS.md`. Cross-ref bằng ID canonical đầy đủ.
 - Enforce viết chung file với contract (fork 1 lớp — KHÔNG `docs/domain/`, KHÔNG bước translate/TODO-engineer).
 - Sửa doc đã chốt = **wave sau** (`ROADMAP §backlog` → `/next-wave` → `/document` top-up).
 

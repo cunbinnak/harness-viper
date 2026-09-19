@@ -23,7 +23,7 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker / dev server / emulat
 5. **Đợt 2 (DB CÓ DỮ LIỆU)** — spawn 3 vai 1 lượt: `rushed` · `breaker` (chạy đủ ma trận) · `mobile`.
 6. Gộp phát hiện → soi **dấu hiệu dogfood giả** → vai nào dính thì chạy lại vai đó.
 7. Agent **TRẢ VỀ** phát hiện → **MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file).
-8. Còn finding `sửa ngay` → `/verify` fix-loop. Sạch → SHIP / `/next-wave`.
+8. Còn finding `sửa ngay` → `/verify` fix-loop. Sạch → quay `/verify` Bước cuối (gate VERIFY xanh) rồi mới `/ship`|`/next-wave`.
 
 ## Vì sao 2 đợt (KHÔNG phải dàn tải)
 Các vai dùng chung **1 hệ + 1 DB**: `breaker` đổ dữ liệu bậy, `rushed` tạo bản ghi trùng NGAY giữa lúc `newbie` nhìn màn →

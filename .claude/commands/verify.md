@@ -33,6 +33,7 @@ Chạy từng TC qua giao diện THẬT (API `curl`/REST · UI Playwright · per
 
 ## Bước 3 — Code review (2 vai mắt-tươi, checklist đúng `kind` — KHÔNG sửa)
 Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu hỏi KHÁC nhau:
+> **Cả 2 agent nạp thêm skill `review-<kind>`** (review-backend/web/bff/mobile — checklist review theo `kind` của target đang review) BÊN CẠNH `stack-<x> §review`.
 
 **`bug-hunter` — code có LÀM ĐÚNG như DOC không?** (đối chiếu spec, soi theo thứ tự)
 1. Mỗi AC in-scope → tìm code hiện thực: **có tồn tại? đúng mô tả? hay chỉ nửa vời?**
@@ -42,7 +43,7 @@ Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu h�
 
 **`reviewer` — code có AN TOÀN / SẠCH không?** (chất lượng, 4 trục)
 1. Bảo mật theo `docs/SECURITY.md`: secret · validate ở **server** · SQL nối chuỗi · lộ nguyên entity / lỗi nội bộ ra response
-2. **Forbidden patterns** của `stack-<tên>` skill §7 (lỗi stack này hay dính)
+2. **Forbidden patterns** của `stack-<tên>` skill §review (lỗi stack này hay dính)
 3. Ranh giới + quy ước: logic sai tầng (`arch §ranh-giới`) · lệch `CONVENTIONS.md` · đặt tên lệch thuật ngữ PRD
 4. Lệch tài liệu: code khác `DECISIONS.md`/`arch` đã chốt mà không có dòng quyết định mới
 

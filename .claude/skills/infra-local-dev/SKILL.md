@@ -7,9 +7,9 @@ description: Setup + verify infra local cho test handoff — docker-compose serv
 
 > Load ở /build (Bước 3) khi dựng deployment/local docker-compose per boundary.
 **Mục tiêu:** khi DONE, `/verify` chạy được local — app target + DB/Redis/Kafka **healthy**, schema **migrated**.
-Input: `deployment/docker-compose.yml` (skeleton từ DOCUMENT) + targets trong wave (ROADMAP) + `docs/arch/{name}.md` (data model → migrations).
+Input: `deployment/local/docker-compose.yml` (skeleton từ DOCUMENT) + targets trong wave (ROADMAP) + `docs/arch/{name}.md` (data model → migrations).
 
-## Output: `deployment/docker-compose.yml` (1 vị trí chuẩn)
+## Output: `deployment/local/docker-compose.yml` (1 vị trí chuẩn)
 Yêu cầu:
 1. **Service per target** — 1 app container cho mỗi target trong **wave hiện tại** (build từ `services/{web|boundaries}/{name}/`), + infra (DB/cache/broker) chúng dùng. KHÔNG thêm target ngoài wave, không service thừa.
 2. **Network internal + cross-target** — container gọi nhau qua **service name**: app → `postgres:5432`/`redis:6379`/`kafka:9092`; **app→app cross-target** → `http://{callee-service}:{port}` (KHÔNG `localhost`). Nếu wave có target gọi nhau (theo `depends_on` ROADMAP / `INTEG-INT-*`) → app caller `depends_on` app callee `{condition: service_healthy}`. Tất cả service cùng **1 network** (default compose network) để resolve tên.
@@ -20,7 +20,7 @@ Yêu cầu:
 services:
   # --- app service per boundary trong wave (build từ code boundary) ---
   order-management:                      # = {name}
-    build: ../services/boundaries/order-management   # target có Dockerfile (ref-backend-config)
+    build: ../../services/boundaries/order-management   # target có Dockerfile (ref-backend-config)
     ports: ["8080:8080"]
     environment:                          # host = service name (network internal)
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/app_dev
@@ -72,7 +72,7 @@ docker volume ls                                    # volume DB đã tồn tại
 ```bash
 docker info >/dev/null 2>&1 || { echo "Docker daemon chưa chạy — bật Docker Desktop"; exit 1; }
 # đã quét reuse-first ở trên → up (compose chỉ kéo image thiếu + rebuild service code đổi, giữ cái đang chạy)
-cd deployment && docker compose up -d --build
+cd deployment/local && docker compose up -d --build
 # đợi tới khi tất cả healthy (max ~60s)
 for i in $(seq 1 12); do
   H=$(docker compose ps --format json 2>/dev/null | grep -c '"Health":"healthy"' || echo 0)

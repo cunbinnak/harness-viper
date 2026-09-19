@@ -2,7 +2,7 @@
 name: ref-backend-config
 description: >
   Reference patterns cho backend service configuration và scaffold — application.yml (Spring Boot 3.4),
-  profiles (local/dev/staging/prod), env var binding, secrets management (Azure Key Vault),
+  profiles (local/dev/sit/prod), env var binding, secrets management (Azure Key Vault),
   Spring Security OAuth2 Resource Server (JWT), database connection pooling (HikariCP),
   Kafka consumer/producer config, Redis cache config, Temporal workflow client config,
   observability config, Gradle setup, Dockerfile (multi-stage), .gitignore.
@@ -53,7 +53,7 @@ spring:
 import { z } from 'zod';
 
 const schema = z.object({
-  NODE_ENV: z.enum(['local', 'dev', 'staging', 'prod']).default('local'),
+  NODE_ENV: z.enum(['local', 'dev', 'sit', 'prod']).default('local'),
   PORT: z.coerce.number().default(<port>),
   UPSTREAM_<SERVICE>_URL: z.string().url(),
   REDIS_URL: z.string().url().default('redis://localhost:6379'),

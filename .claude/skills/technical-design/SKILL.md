@@ -24,7 +24,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) +
    - **§Events** (nếu phát/nhận) — event (topic, payload schema, consumers, idempotency key).
    - **§Ranh giới liên target** — được gọi qua đường nào, **KHÔNG được** làm gì, vì sao (quyết định riêng của hệ này — không khai thì lúc code đi đường tiện nhất).
 5. **Integrations** — cross-target (sync HTTP / async event) + external, ghi trong `docs/arch/OVERVIEW.md §Integrations` hoặc `docs/arch/{name}.md §consumes` — **≥ 1**.
-6. **`deployment/docker-compose.yml`** skeleton local dev (service + DB/cache/broker cho target trong scope).
+6. **`deployment/local/docker-compose.yml`** skeleton local dev (service + DB/cache/broker cho target trong scope).
 
 > UX/UI cho FE target (kind web/mobile): **bước riêng của `/document`** (skill `ux-design`) chạy sau khi §API sẵn — sinh `docs/ux/` + mockups + `docs/DESIGN-SYSTEM.md`. Architect chỉ đảm bảo FE target có §HLD + BE contract đủ cho UX consume.
 
@@ -67,7 +67,7 @@ Mỗi concern ghi rõ ở ADR / §HLD / §API (không để hở):
 - [ ] `consumes` frontmatter + §Ranh giới khớp topology (ai gọi ai) — đối chiếu được với `docs/arch/OVERVIEW.md` và ROADMAP depends_on.
 - [ ] ≥ 1 integration thật (cross-target / external).
 - [ ] Enterprise concerns đều addressed: auth · observability · resilience · caching · rate limit · idempotency · health check.
-- [ ] `deployment/docker-compose.yml` skeleton có service cho target trong scope.
+- [ ] `deployment/local/docker-compose.yml` skeleton có service cho target trong scope.
 - [ ] (Nếu research) ≥ 1 nguồn thật, ghi link.
 
 ## Done

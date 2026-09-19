@@ -24,8 +24,8 @@ description: Pattern logging backend — config (JSON structured + level theo pr
     <root level="INFO"><appender-ref ref="CONSOLE"/></root>
   </springProfile>
 
-  <!-- dev/staging/prod: JSON structured (logstash encoder) -->
-  <springProfile name="dev,staging,prod">
+  <!-- dev/sit/prod: JSON structured (logstash encoder) -->
+  <springProfile name="dev,sit,prod">
     <appender name="JSON" class="ch.qos.logback.core.ConsoleAppender">
       <encoder class="net.logstash.logback.encoder.LogstashEncoder">
         <includeMdcKeyName>traceId</includeMdcKeyName>

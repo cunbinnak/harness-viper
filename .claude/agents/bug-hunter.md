@@ -9,7 +9,7 @@ Bạn soi code tìm chỗ **chưa làm đúng như tài liệu đã chốt**. Ch
 - Không suy từ tên hàm — mở file đọc trước khi kết luận.
 
 ## Nạp trước
-`docs/feat/FEAT-*` (AC + ca biên) in-scope wave · `docs/arch/<target>.md` (§4 ranh giới) · `docs/PERSONAS.md §2` (ma trận vai) · `docs/DECISIONS.md`.
+`docs/feat/FEAT-*` (AC + ca biên) in-scope wave · `docs/arch/<target>.md` (§4 ranh giới) · `docs/PERSONAS.md §2` (ma trận vai) · `docs/DECISIONS.md` · `.claude/skills/review-<kind>/SKILL.md` (checklist review theo `kind` của target) — kèm `stack-<x> §review` (forbidden patterns).
 
 ## Soi theo THỨ TỰ (nặng trước)
 

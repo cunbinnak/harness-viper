@@ -11,6 +11,9 @@
 | `--color-primary` | {{#…}} | {{nút chính}} |
 | `--space-md` | {{16px}} | {{khoảng cách khối}} |
 
+<!-- cặp tương phản: khai hex chữ + hex nền để gate tự tính tỉ số WCAG AA (không tin lời khai). -->
+- **cặp tương phản** (hex chữ / hex nền — WCAG AA): {{`#111827` trên `#ffffff` · body ≥ 4.5:1 · text lớn ≥ 3:1}}
+
 <!-- §3: component — mỗi cái đủ trạng thái bắt buộc + có màn dùng. -->
 ## §3 Component
 | Component | Trạng thái bắt buộc | Dùng ở màn |

@@ -58,7 +58,7 @@ Ngờ scope quá lớn → **nói thẳng ngay tại đây**, đề xuất cắt
 
 ## Ghi sổ NGAY trong lúc hỏi
 
-Điền `docs/PRD.md` (§Vision / §Problem) dần theo `templates/TEMPLATE.prd.md`. Không đợi hỏi xong hết mới viết:
+Điền `docs/PRD.md` (**§1 Vấn đề** + **§2 Giả thuyết + rủi ro**) dần theo `templates/TEMPLATE.prd.md`. Không đợi hỏi xong hết mới viết:
 viết muộn là viết theo trí nhớ đã bị làm mượt.
 
 ## Playback trước khi chốt
@@ -74,11 +74,10 @@ Chỗ user không trả lời được, hoặc chưa quyết: (1) tìm trong tà
 
 ## Deliverable (ghi vào `docs/PRD.md`)
 
-1. **§Vision narrative** — 1-2 đoạn: vấn đề gì, cho ai, vì sao bây giờ.
-2. **§Problem statement** — mỗi pain point + status quo + cost of inaction + **dòng `Bằng chứng:` không rỗng**.
-3. **§Hypotheses** — ≥3 row: statement falsifiable + outcome đo được + test method + **cột Bằng chứng** + status TESTABLE.
-4. **§Anti-hypotheses** — ≥2 item.
-5. **§Lỗ hổng & cách xử** — ≥1 dòng, mỗi lỗ có cách xử + vết (trỏ `docs/DECISIONS.md`).
+1. **PRD §1 Vấn đề (pain)** — ai đau + đau gì (status quo) + hệ quả (cost of inaction) + **dòng `Bằng chứng:` không rỗng**. Vision narrative (vấn đề gì, cho ai, vì sao bây giờ) mở đầu §1.
+2. **PRD §2 Giả thuyết + rủi ro** — ≥3 giả thuyết falsifiable (statement + outcome đo được + test method + **cột Bằng chứng** + status TESTABLE) + ≥2 phản-giả-thuyết + rủi ro chính.
+3. **Nguồn** — ghi vào **PRD §6 Glossary + Nguồn** (tài liệu tham chiếu: intake / phỏng vấn).
+4. **Lỗ hổng & cách xử** — ≥1 dòng, mỗi lỗ có cách xử + vết (trỏ `docs/DECISIONS.md`).
 
 ## Dấu hiệu hời hợt — dính ≥2 thì quay lại hỏi tiếp
 
@@ -92,10 +91,10 @@ Chỗ user không trả lời được, hoặc chưa quyết: (1) tìm trong tà
 
 ## Quy tắc
 
-- KHÔNG bịa số liệu/nguồn. Số nào là giả định thì ghi rõ ở §Hypotheses để verify sau.
+- KHÔNG bịa số liệu/nguồn. Số nào là giả định thì ghi rõ ở PRD §2 Giả thuyết + rủi ro để verify sau.
 - KHÔNG viết hypothesis không test được.
 - Idempotent: re-run thì update file, không tạo file mới / blind-append.
 - KHÔNG icon/emoji trong tài liệu.
 
 ## Done
-- `docs/PRD.md` (§Vision/§Problem/§Hypotheses) đầy đủ + đã playback + user confirm → tiếp phương pháp capability-mapping.
+- `docs/PRD.md` (§1 Vấn đề + §2 Giả thuyết + rủi ro) đầy đủ + đã playback + user confirm → tiếp phương pháp capability-mapping.
