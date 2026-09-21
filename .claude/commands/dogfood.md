@@ -18,7 +18,7 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker / dev server / emulat
 ## Workflow
 1. Lấy URL/endpoint thật của hệ đang chạy — **không đoán**.
 2. Đọc `docs/PERSONAS.md` (persona · ma trận quyền · gán vai↔persona) + luồng lõi/AC của wave + mockup đã chốt.
-3. **MAIN TỰ DÙNG TRƯỚC — bắt buộc, TRƯỚC khi spawn vai nào.** Đích thân mở trình duyệt (Playwright), đóng **persona chính**, vào **từ trang đầu** (không nhảy URL trong), đi hết luồng lõi đầu→cuối: kiểm **từng AC** làm được THẬT không · đối chiếu từng màn với **mockup đã chốt** (lệch = phát hiện, không phải thẩm mỹ) · soi token/trạng thái (nút gửi có khoá, lỗi đúng khuôn). Ghi mọi thứ vướng kể cả nhỏ. → *"Eat your own shit" gốc ở đây: MAIN nếm TRƯỚC, rồi mới giao 6 lăng kính.*
+3. **MAIN TỰ DÙNG TRƯỚC — bắt buộc, TRƯỚC khi spawn vai nào.** Đích thân mở trình duyệt *(skill `browse` — cách gọi tool `browser_*` + công thức + chứng minh đã dùng thật)*, đóng **persona chính**, vào **từ trang đầu** (không nhảy URL trong), đi hết luồng lõi đầu→cuối: kiểm **từng AC** làm được THẬT không · đối chiếu từng màn với **mockup đã chốt** (lệch = phát hiện, không phải thẩm mỹ) · soi token/trạng thái (nút gửi có khoá, lỗi đúng khuôn). Ghi mọi thứ vướng kể cả nhỏ. → *"Eat your own shit" gốc ở đây: MAIN nếm TRƯỚC, rồi mới giao 6 lăng kính.*
 4. **Đợt 1 (DB SẠCH)** — spawn 3 vai 1 lượt: `edge` (rỗng/lỗi) · `newbie` · `picky`.
 5. Đợi **đủ 3 vai** trả kết quả → **seed lại** `deployment/local/`.
 6. **Đợt 2 (DB CÓ DỮ LIỆU)** — spawn 3 vai 1 lượt: `rushed` · `breaker` (chạy đủ ma trận) · `mobile`.

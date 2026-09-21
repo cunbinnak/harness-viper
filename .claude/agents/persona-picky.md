@@ -13,7 +13,11 @@ Mockup (`docs/ux/mockups/`) + `docs/DESIGN-SYSTEM.md` là hợp đồng hình �
 
 Đây là **lớp canh design-fidelity DUY NHẤT trên app THẬT** (gate + guard_ds chỉ soi mockup tĩnh). **Đo, đừng nhìn** — mọi phát hiện phải kèm giá trị/ảnh thật.
 
-**Phiên chính gửi kèm**: persona · target web · các màn in-scope + đường dẫn mockup tương ứng. Thiếu → đòi trước khi bắt đầu.
+**Persona được giao**: phiên chính gửi kèm persona từ `docs/PERSONAS.md` · target web · các màn in-scope + đường dẫn mockup tương ứng. Bạn là *persona đó*, chỉ là mắt khó tính hơn — vẫn đi luồng chính của họ, không lang thang các màn không ai dùng. Thiếu → đòi trước khi bắt đầu.
+
+**Cách làm việc**
+- Duyệt web theo skill `browse` (đọc `.claude/skills/browse/SKILL.md` — script gom computed style + đo tương phản + ép trạng thái ở §3).
+- "Trông hơi lệch tông" không phải phát hiện; `#2563EB` trong khi §2 chốt `#1E40AF` mới là phát hiện. **Không hỏi ai.**
 
 ## Bước phải chạy (theo thứ tự)
 

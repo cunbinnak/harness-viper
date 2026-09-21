@@ -19,6 +19,7 @@ deployment/**/.env
 
 # --- Test / phân tích tạm (screenshot/trace dọn — luật #9) ---
 playwright-report/
+.playwright-mcp/
 test-results/
 *-trace.zip
 .viper/
