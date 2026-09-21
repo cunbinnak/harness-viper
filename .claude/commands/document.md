@@ -22,7 +22,8 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 
 ## Bước 1 — Nạp nguyên liệu (rẽ nhánh theo đường vào)
 - **INTERVIEW**: phỏng vấn Authority — hỏi tới khi đủ dựng PRD/persona/capability (không trần số câu; đây là
-  chỗ được hỏi). Kết tinh vào `docs/INTERVIEW.md`, mỗi mục có dòng `Bằng chứng:`.
+  chỗ được hỏi). Kết tinh vào `docs/INTERVIEW.md` **theo đợt**: DOCUMENT đầu ghi khối `### Wave 1`; top-up sau
+  `/next-wave` **thêm khối `### Wave N`** (không sửa khối cũ), mỗi mục có dòng `Bằng chứng:` + gắn FEAT nó phục vụ.
   > **Cách hỏi** (DOCUMENT = chỗ DUY NHẤT `AskUserQuestion` được phép — guard_ask cho qua):
   > · **Khám phá** (pain/persona/ca biên/rỗng-lỗi) → **hội thoại MỞ bằng lời**, KHÔNG dùng `AskUserQuestion` (option mớm lời → Authority bấm cái nghe hợp lý thay vì kể thật).
   > · **Quyết định** (stack/auth/thu tiền/deploy) → `AskUserQuestion` với **option cụ thể + đánh đổi** ("Clerk 20' có phí vs Auth.js 1-2h free").
