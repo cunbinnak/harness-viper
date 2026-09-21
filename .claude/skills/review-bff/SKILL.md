@@ -135,7 +135,7 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
 3. **Mở file ra đọc** — `file:dòng` phải là dòng đã đọc thật; không suy từ tên hàm.
 4. **Không chắc → `QUESTION`**, cột `suggested fix` ghi **cách kiểm chứng**.
 
-Không góp ý: đặt tên cho đẹp · tách file cho gọn · trừu tượng hoá "để sau dễ mở rộng" · tối ưu khi chưa có số đo.
+Góp ý **bảo trì/nhất quán được** (trục B) — khi nêu **chi phí cụ thể** hoặc **trích chuẩn** (cấu trúc chuẩn · `CONVENTIONS` · Glossary). **Vẫn cấm khẩu vị thuần**: thích tên khác không lý do · trừu tượng "để sau dễ mở rộng" · tối ưu chưa đo · coverage%. Style tùy-ca → **mặc định tha**, chỉ nêu khi che mất ý.
 
 ## 7. Kết luận
 

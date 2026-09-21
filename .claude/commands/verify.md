@@ -1,5 +1,5 @@
 ---
-description: VERIFY — auto-test (black-box) + code review + dogfood 6 persona → MAIN sửa finding tới sạch
+description: VERIFY — code review + auto-test (black-box) + dogfood 6 persona → MAIN sửa finding tới sạch
 ---
 # /verify [<wave>] — Phase VERIFY
 
@@ -12,9 +12,29 @@ description: VERIFY — auto-test (black-box) + code review + dogfood 6 persona 
 - `docs/ROADMAP.md` wave-N (AC in-scope) + `docs/feat/FEAT-*` (AC + ca biên) + `docs/CONVENTIONS.md §API` + `arch/{name}.md` (**`kind`** + §API)
 - Hệ chạy thật (từ BUILD), theo `kind`: backend/bff → `docker ps` + health 200 · web → dev server chạy · mobile → emulator. Chưa chạy → đưa lên trước.
 
-## Bước 2 — Thiết kế + chạy test case (black-box)
+## Bước 2 — Code review (2 vai mắt-tươi, checklist đúng `kind` — KHÔNG sửa)
+Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu hỏi KHÁC nhau:
+> **Cả 2 agent nạp thêm skill `review-<kind>`** (review-backend/web/bff/mobile — checklist review theo `kind` của target đang review) BÊN CẠNH `stack-<x> §review`.
 
-### 2a — THIẾT KẾ (dẫn xuất từ AC — ưu-tiên-trước-phủ-sau)
+**`reviewer` — code có AN TOÀN chạy + BẢO TRÌ được không?** (senior/team-lead, **2 trục** — chi tiết `.claude/agents/reviewer.md`)
+- **Trục A · An toàn/đúng** (hỏng = hại NGAY → BLOCKER/MAJOR): bảo mật (secret · validate **server** · SQL nối chuỗi · lộ entity/lỗi nội bộ) · phân quyền dữ liệu (id kèm owner/tenant) · **forbidden patterns** stack · toàn vẹn transaction · lệch `DECISIONS`/`arch` đã chốt.
+- **Trục B · Bảo trì/nhất quán** (vẫn chạy nhưng đắt MAI SAU → MAJOR/MINOR, **không chặn**): cấu trúc khớp **kiến trúc đã chốt** (`arch §4` — Layered/DDD, không trộn) · convert DTO map tay nhiều → MapStruct · logic đúng tầng · naming khớp Glossary · **chất lượng test**. Chỉ báo khi nêu **chi phí bảo trì cụ thể**; style tùy-ca (`var`…) **mặc định tha**.
+
+**`bug-hunter` — code có LÀM ĐÚNG như DOC không?** (đối chiếu spec, soi theo thứ tự)
+1. Mỗi AC in-scope → tìm code hiện thực: **có tồn tại? đúng mô tả? hay chỉ nửa vời?**
+2. Mỗi ca biên trong AC → tìm chỗ code chặn. **Chặn ở UI (disable nút) KHÔNG TÍNH — phải ràng buộc DB hoặc kiểm ở server.**
+3. Phân quyền: **mọi truy vấn lấy bản ghi theo id có kèm điều kiện chủ sở hữu không?** (lỗ hay gặp + nặng nhất)
+4. Việc dở (TODO/FIXME) chặn AC · lỗi bị nuốt (`catch{}` rỗng) · secret hardcode
+
+**Cả hai** → `STATE.md §Findings`, format `[nặng/vừa/nhẹ] (+trục A|B nếu reviewer) + file:dòng + "hỏng/tốn thế nào" + đề xuất 1 câu`.
+- **Trục A · bug-hunter**: chỉ nêu **hậu quả THẬT** (mất/lộ dữ liệu · sai kết quả · chặn AC).
+- **Trục B**: nêu **chi phí bảo trì CỤ THỂ** — **vẫn cấm** khẩu vị thuần (tên đẹp không lý do · abstraction "để sau" · perf chưa đo · coverage%) + style tùy-ca **tha**.
+- **"Trục nào ổn → nói ổn, đừng bịa finding."** Lệnh `grep` cụ thể ở `.claude/agents/reviewer.md` · `bug-hunter.md`.
+Học được điều mới về target → append `knowledge-base/{name}.md`.
+
+## Bước 3 — Thiết kế + chạy test case (black-box)
+
+### 3a — THIẾT KẾ (dẫn xuất từ AC — ưu-tiên-trước-phủ-sau)
 Điền `tracking/wave-N/test-cases.md` (`TC | AC | mô tả | cách chạy | kết quả | nguyên nhân`), kết quả = "chưa chạy".
 Thứ tự **ưu tiên** (VIPER "ít test đúng chỗ" — hết giờ vẫn có cái giá trị nhất):
 1. **Smoke luồng lõi** — 1 TC đi hết luồng chính đầu→cuối (giá trị hơn 50 TC vụn)
@@ -26,30 +46,10 @@ Thứ tự **ưu tiên** (VIPER "ít test đúng chỗ" — hết giờ vẫn c�
 
 Tên TC nói **hỏng gì khi đỏ** ("2 order cùng bàn", không "test order 2").
 
-### 2b — CHẠY (black-box, hệ đang chạy)
+### 3b — CHẠY (black-box, hệ đang chạy)
 Chạy từng TC qua giao diện THẬT (API `curl`/REST · UI Playwright · perf k6) → điền `kết quả` PASS/FAIL + nguyên nhân **tại dòng**.
 `make test` xanh (unit/integration trong source, MAIN đã viết ở BUILD). **KHÔNG sửa source để test xanh** (→ Bước 5).
 *(tuỳ)* spawn `test-writer` viết thêm test adversarial cho AC dễ vỡ (nó sửa được **thư mục test**, KHÔNG sửa product code).
-
-## Bước 3 — Code review (2 vai mắt-tươi, checklist đúng `kind` — KHÔNG sửa)
-Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu hỏi KHÁC nhau:
-> **Cả 2 agent nạp thêm skill `review-<kind>`** (review-backend/web/bff/mobile — checklist review theo `kind` của target đang review) BÊN CẠNH `stack-<x> §review`.
-
-**`bug-hunter` — code có LÀM ĐÚNG như DOC không?** (đối chiếu spec, soi theo thứ tự)
-1. Mỗi AC in-scope → tìm code hiện thực: **có tồn tại? đúng mô tả? hay chỉ nửa vời?**
-2. Mỗi ca biên trong AC → tìm chỗ code chặn. **Chặn ở UI (disable nút) KHÔNG TÍNH — phải ràng buộc DB hoặc kiểm ở server.**
-3. Phân quyền: **mọi truy vấn lấy bản ghi theo id có kèm điều kiện chủ sở hữu không?** (lỗ hay gặp + nặng nhất)
-4. Việc dở (TODO/FIXME) chặn AC · lỗi bị nuốt (`catch{}` rỗng) · secret hardcode
-
-**`reviewer` — code có AN TOÀN / SẠCH không?** (chất lượng, 4 trục)
-1. Bảo mật theo `docs/SECURITY.md`: secret · validate ở **server** · SQL nối chuỗi · lộ nguyên entity / lỗi nội bộ ra response
-2. **Forbidden patterns** của `stack-<tên>` skill §review (lỗi stack này hay dính)
-3. Ranh giới + quy ước: logic sai tầng (`arch §ranh-giới`) · lệch `CONVENTIONS.md` · đặt tên lệch thuật ngữ PRD
-4. Lệch tài liệu: code khác `DECISIONS.md`/`arch` đã chốt mà không có dòng quyết định mới
-
-**Cả hai** → `STATE.md §Findings`, format `[nặng/vừa/nhẹ] + file:dòng + "hỏng thế nào" + đề xuất 1 câu`.
-**CHỈ nêu thứ gây hậu quả THẬT** (mất/lộ dữ liệu · sai kết quả · chặn AC) — KHÔNG góp ý đặt tên đẹp/tách file/abstraction/coverage%/perf-chưa-đo; **"trục này ổn" nếu không có gì, đừng bịa finding**. Lệnh `grep` cụ thể nằm trong định nghĩa agent (`.claude/agents/reviewer.md` · `bug-hunter.md`).
-Học được điều mới về target → append `knowledge-base/{name}.md`.
 
 ## Bước 4 — Dogfood (2 đợt — hệ đang chạy)
 6 persona (mỗi vai đóng 1 persona THẬT ở `docs/PERSONAS.md`), **2 đợt tránh đè trạng thái** (server + DB dùng chung):

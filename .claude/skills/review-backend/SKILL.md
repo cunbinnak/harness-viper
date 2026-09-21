@@ -143,7 +143,7 @@ ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ n�
 | `stack-spring-boot §review` §Coding checklist — đi từng dòng: interface/impl, inject interface · `@RequiredArgsConstructor` + `private final` · MapStruct · `Instant` đúng tầng · id/tenant boxed · Specification thay JPQL `(:x IS NULL OR …)`, không `nativeQuery` vô cớ · error code từ enum · `@ConfigurationProperties` · không FQCN/wildcard import · theo convention sẵn có, không tự thêm pattern | `grep -rn -e "@Autowired" -e "LoggerFactory.getLogger" -e "ServiceImpl " J` | MAJOR · FQCN = MINOR |
 | Logging (`ref-backend-logging`): `@Slf4j`, JSON structured, MDC traceId/tenantId, mask PII, level đúng, log lỗi đủ ngữ cảnh, async/job có correlation | `grep -rn "MDC" J` | MAJOR |
 | Config (`ref-backend-config`): `application.yml` + `application-{dev,sit,prod}.yml`; Dockerfile multi-stage `bootJar` | `ls src/main/resources/application*.yml Dockerfile` | MAJOR |
-| Dễ bảo trì: method gọn, không lồng sâu, không nhân đôi logic nghiệp vụ, không dependency vô cớ | Chỉ ghi khi nói được hậu quả thật | MINOR |
+| Dễ bảo trì: method gọn, không lồng sâu, không nhân đôi logic nghiệp vụ, không dependency vô cớ | Ghi khi nêu được **chi phí bảo trì cụ thể** (người mới vấp thế nào) | MINOR |
 
 ### Trục 6 — Test
 
@@ -183,14 +183,15 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
 
 ## 6. Bốn luật cho mọi finding
 
-1. **Hậu quả thật** — chuyện gì xảy ra với người dùng thật: mất dữ liệu · lộ dữ liệu · sai kết quả · AC
-   không chạy · wave trước gãy. Viết không nổi câu này thì không phải finding.
+1. **Hậu quả thật (trục A) HOẶC chi phí bảo trì cụ thể (trục B)** — trục A: mất/lộ dữ liệu · sai kết quả · AC
+   không chạy · wave trước gãy. Trục B: người mới đọc/sửa vấp thế nào (vd "20 field map tay, thêm field dễ sót").
+   Viết không nổi **một trong hai** thì không phải finding.
 2. **Trục sạch thì nói sạch** — ghi thẳng "trục N sạch" trong phần trả về; đừng bịa nhận xét cho có.
 3. **Mở file ra đọc** — `file:dòng` phải là dòng đã đọc thật; không suy từ tên hàm.
 4. **Không chắc → `QUESTION`**, cột `suggested fix` ghi **cách kiểm chứng** (vd "gọi API bằng token A với
    id bản ghi của B, xem có trả 200 không").
 
-Không góp ý: đặt tên cho đẹp · tách file cho gọn · trừu tượng hoá "để sau dễ mở rộng" · tối ưu khi chưa có số đo.
+Góp ý **bảo trì/nhất quán được** (trục B) — khi nêu **chi phí cụ thể** hoặc **trích chuẩn** (cây thư mục · `CONVENTIONS` · Glossary). **Vẫn cấm khẩu vị thuần**: thích tên khác không lý do · trừu tượng "để sau dễ mở rộng" · tối ưu chưa đo · coverage%. Style tùy-ca (`var` khi kiểu hiển nhiên · map 2–3 field tay) → **mặc định tha**, chỉ nêu khi che mất ý.
 
 ## 7. Kết luận
 

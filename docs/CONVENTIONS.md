@@ -43,11 +43,11 @@
 - Test theo **HÀNH VI** (không theo hiện thực). Bug fix → **regression test**. Coverage ngưỡng theo kind (BE ~80% · web ~60%) — chi tiết ở stack skill.
 
 ## §9 Backend (mọi stack backend — Java/Go/Python…)
-> Nguyên tắc backend-universal (không phụ thuộc ngôn ngữ). Idiom cụ thể (Lombok/JPA/@Transactional…) ở `stack-<tên>`.
-- **Truy vấn dữ liệu người dùng kèm điều kiện chủ sở hữu/tenant** — không `findById` trần (chi tiết `SECURITY.md §3`).
-- **Migration additive**: KHÔNG sửa migration đã apply; cột `NOT NULL` mới đi 2 bước (nullable → backfill → enforce). Add **index** cho field hay join/filter/sort.
-- **Không N+1 / query không giới hạn**: không gọi repository trong vòng lặp; list API phải **paginate**.
-- **Không gọi external chậm TRONG DB transaction** (cạn connection pool). Publish event **SAU commit** (after-commit / outbox), không trước.
-- **Phân loại hardcoded value**: kỹ thuật ổn định → constant · theo môi trường → config/env · secret → vault/env · trạng thái nghiệp vụ → enum · message user → i18n. **KHÔNG hardcode secret** kể cả trong test.
-- **Idempotency**: consumer / webhook / callback / job dedup theo id (xem §5).
-- **Không phơi entity** ra API (request/response = DTO); không tin id/role/tenant từ client (lấy từ auth context).
+> Nguyên tắc backend-universal (không phụ thuộc ngôn ngữ). **Chi tiết + lệnh soi ở `review-backend` Trục 4**; idiom stack ở `stack-<tên>`.
+- **Truy vấn dữ liệu người dùng kèm chủ sở hữu/tenant** — không `findById` trần (`SECURITY.md §3`).
+- **Migration additive** — không sửa migration đã apply; `NOT NULL` mới rollout an toàn; index cho field join/filter/sort.
+- **Không N+1 / query không giới hạn** — list API phải **paginate**.
+- **Không external chậm trong DB transaction**; publish event **SAU commit** (outbox), không trước.
+- **Phân loại hardcoded value**: constant · config/env · secret store · enum · i18n. **KHÔNG hardcode secret** kể cả trong test.
+- **Idempotency**: consumer / webhook / job dedup theo id (§5).
+- **Không phơi entity** ra API (DTO ở biên); không tin id/role/tenant từ client.
