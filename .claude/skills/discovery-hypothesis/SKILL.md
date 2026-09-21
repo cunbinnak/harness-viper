@@ -60,7 +60,7 @@ chọn góc đang mờ mà xoáy; mỗi probe đào ra chi tiết → về đún
 Term kỹ thuật bắt buộc phải dùng thì giảng giải theo hướng nghiệp vụ TRƯỚC khi hỏi — không hiểu câu
 hỏi thì câu trả lời vô giá trị, và họ sẽ trả lời đại cho xong.
 
-## Checklist đóng — đi tới khi đủ cả 6 mục
+## Checklist đóng — đi tới khi đủ cả 7 mục
 
 | # | Phải làm rõ | Đủ khi |
 |---|---|---|
@@ -70,6 +70,7 @@ hỏi thì câu trả lời vô giá trị, và họ sẽ trả lời đại cho
 | 4 | Vì sao bây giờ | Bối cảnh/áp lực khiến việc này thành cấp thiết lúc này |
 | 5 | Cược đo được (success metric) | **MỘT con số + ngưỡng go/pivot/kill** ghi TRƯỚC khi nhìn số liệu. Giả thuyết phụ nếu nảy ra → ghi PRD §2 để verify sau, KHÔNG ép đủ ≥3/≥2. Out-of-scope tường minh → PRD §4 (chặn scope-creep) |
 | 6 | Hướng tương lai (nguyên liệu Phase 2/N) | **MAIN tự suy** từ nghiệp vụ + research (đích 1-2 năm · nhóm user/nguồn thu kế tiếp · 2-3 việc "sau này chắc chắn cần") → **đề xuất, rồi hỏi Authority xác nhận** ở playback/challenge — KHÔNG bắt Authority tự kể. Kết quả nuôi cột MVP/Phase 2/N của CAPABILITIES-MAP (Bước 4) |
+| 7 | Dữ liệu mẫu (→ PRD §7) | Ưu tiên **dữ liệu THẬT Authority đang có** (ảnh sổ · file Excel · tin nhắn). KHÔNG có (dự án mới toanh) → **MAIN research domain + TỰ CHUẨN BỊ** bộ mẫu realistic (đúng thuật ngữ/giá trị thật ngoài đời — như QA chuẩn bị test-data), playback Authority gật. Ghi rõ nguồn (thật \| chuẩn bị). Bộ này nuôi 4 chỗ: mockup · seed `deployment/local/` · dogfood · test-cases |
 
 Ngờ scope quá lớn → **nói thẳng ngay tại đây**, đề xuất cắt cái gì. Đây là lúc cắt rẻ nhất.
 

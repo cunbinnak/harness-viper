@@ -7,7 +7,9 @@ description: UX/UI cho web target (bước 8 mockup của /document) — user fl
 
 > Load ở /document (Bước 8 mockup) + persona-picky đối chiếu. Phương pháp: mockup HTML tĩnh · neutral-first · anti-pattern "demo đẹp chạy xấu" (vá E1).
 Chạy SAU khi DOCUMENT đã chốt target + `docs/arch/{name}.md §3 API` (UX consume contract, không bịa endpoint).
-Input: `PRD.md` (persona, platform, design system / ADR ui-kit) + `feat/FEAT-*.md` (user story + AC) + `PERSONAS.md` + `docs/arch/{name}.md §3 API` (contract target phục vụ).
+Input: `PRD.md` (persona, platform, design system / ADR ui-kit + **§6 Glossary + §7 Dữ liệu mẫu**) + `feat/FEAT-*.md` (user story + AC) + `PERSONAS.md` + `docs/arch/{name}.md §3 API` (contract target phục vụ).
+
+> **BÁM NGHIỆP VỤ — nội dung mockup phải có NGUỒN**: chữ/số trên màn lấy từ **PRD §7 Dữ liệu mẫu** (giá trị thật ngoài đời) + thuật ngữ đúng **PRD §6 Glossary** + ca thật trong INTERVIEW. **CẤM bịa placeholder generic** ("Nguyễn Văn A", "Sản phẩm 1", "Lorem") — mockup generic là mockup Authority không soi nổi nghiệp vụ, duyệt cũng vô nghĩa. Thiếu dữ liệu mẫu cho màn đang vẽ → bổ sung PRD §7 trước (research domain, không bịa tại chỗ).
 
 ## Deliverable
 **Đơn vị thiết kế = MÀN (screen)** — boundary chỉ là nơi màn thuộc về. Sản phẩm gồm:

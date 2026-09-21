@@ -46,3 +46,15 @@
 
 **Nguồn:**
 - {{vd: intake/brief.md · phỏng vấn Authority 2026-… · tài liệu X}}
+
+<!-- §7: bộ dữ liệu mẫu — MỘT nguồn nuôi 4 chỗ: mockup (Bước 8) · seed deployment/local/ · dogfood · test-cases.
+     Ưu tiên dữ liệu THẬT Authority đang có; không có → MAIN research domain + tự chuẩn bị bộ realistic
+     (đúng thuật ngữ + giá trị thật ngoài đời — như QA chuẩn bị test-data), Authority gật ở playback.
+     Vài bản ghi per entity chính là đủ — đủ dựng mockup không bịa + seed chạy dogfood. -->
+## §7 Dữ liệu mẫu
+Nguồn: {{thật (ảnh sổ/Excel/tin nhắn) | MAIN chuẩn bị từ research — Authority đã gật}}
+
+| Entity | Bản ghi mẫu (giá trị THẬT ngoài đời, không "Nguyễn Văn A") |
+|---|---|
+| {{Món}} | {{Phở bò tái 45.000đ · Cơm tấm sườn 40.000đ · Trà đá 5.000đ}} |
+| {{Bàn}} | {{B1-B12 (trệt) · L1-L6 (lầu, ghép được)}} |
