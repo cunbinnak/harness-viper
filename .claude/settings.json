@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "_comment": "Fork VIPER-style (feat/viper-adlc). 4 hook / 4 việc, KHÔNG dispatcher. gate.py chỉ BÁO (commands gọi), không phải hook. Windows dùng 'python'; Mac/Linux đổi 'python3' (bootstrap.py patch).",
+  "_comment": "Fork VIPER-style (feat/viper-adlc). 4 hook / 4 việc, KHÔNG dispatcher. gate.py chỉ BÁO (commands gọi), không phải hook. Interpreter: 'py -3' (Python Launcher — python.org luôn cài vào PATH kể cả không tick 'Add to PATH', -3 lấy Python 3 từ registry nên KHÔNG dính stub WindowsApps/shebang python3). Clone trên Mac/Linux (không có 'py'): đổi 8 hook về command 'python3', bỏ arg '-3'.",
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [
@@ -56,7 +56,7 @@
       {
         "matcher": "compact",
         "hooks": [
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/reanchor.py"] }
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/reanchor.py"] }
         ]
       }
     ],
@@ -64,23 +64,23 @@
       {
         "matcher": "AskUserQuestion",
         "hooks": [
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_ask.py"] }
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_ask.py"] }
         ]
       },
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_bc.py"] }
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_bc.py"] }
         ]
       },
       {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_ds.py"] },
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_archive.py"] },
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_proof.py"] },
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_makefile.py"] },
-          { "type": "command", "command": "python", "args": ["${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_doc.py"] }
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_ds.py"] },
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_archive.py"] },
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_proof.py"] },
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_makefile.py"] },
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_doc.py"] }
         ]
       }
     ]
