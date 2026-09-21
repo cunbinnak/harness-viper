@@ -13,7 +13,7 @@ description: Pattern gọi downstream HTTP cho backend — @HttpExchange interfa
 ## 1. Nguyên tắc
 - Mỗi downstream = **1 `@HttpExchange` interface** + 1 RestClient proxy (base-url/timeout từ config).
 - Inject **interface** vào service — KHÔNG inject `RestClient`/factory trực tiếp.
-- KHÔNG `new RestTemplate()` thủ công; KHÔNG `WebClient` trừ khi HLD chỉ định reactive.
+- KHÔNG `new RestTemplate()` thủ công; KHÔNG `WebClient` trừ khi ADR chỉ định reactive.
 
 ## 2. Config per-client (`@ConfigurationProperties` — không hardcode)
 ```java
@@ -146,7 +146,7 @@ public class ClientHeaderInterceptor implements ClientHttpRequestInterceptor {
 
 ## Forbidden
 - `new RestTemplate()` / inject `RestTemplate`/`RestClient` thủ công trong business method.
-- `WebClient` trừ khi HLD chỉ định reactive.
+- `WebClient` trừ khi ADR chỉ định reactive.
 - Hardcode base-url / timeout / pool / credential — phải qua `@ConfigurationProperties`.
 - Return `null` khi lỗi — map về typed exception.
 - Nuốt lỗi downstream (catch không log/rethrow).

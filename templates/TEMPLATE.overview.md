@@ -1,9 +1,11 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/arch/OVERVIEW.md. Sơ đồ TỔNG; chi tiết per-target ở arch/<name>.md. -->
 # ARCHITECTURE OVERVIEW — {{PROJECT_NAME}}
 
-<!-- §1: bản đồ target — mỗi target + kind + ai gọi ai (dependency). -->
+<!-- §1: bản đồ target — boundary-charter điền (mỗi target = 1 boundary, owned data không overlap). -->
 ## §1 Boundary map
-{{sơ đồ / danh sách target + kind + phụ thuộc}}
+| Target | kind | Mission (1 câu) | Owned data | Gọi ai (depends_on) |
+|---|---|---|---|---|
+| {{order-service}} | {{backend}} | {{nhận + quản lý vòng đời đơn}} | {{Order, OrderItem}} | {{menu-service}} |
 
 <!-- §2: tích hợp cross-boundary — cặp gọi nhau qua đâu, contract nào. -->
 ## §2 Tích hợp cross-boundary

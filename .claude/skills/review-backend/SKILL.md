@@ -15,7 +15,7 @@ Chỉ đọc. Không hỏi user.
 | Đọc | Để soi |
 |---|---|
 | `docs/feat/FEAT-*.md` boundary đảm nhận | trục 1 |
-| `docs/arch/{name}.md` §4 kiến trúc · §6.1 ca biên | trục 1, 5 |
+| `docs/arch/{name}.md` §4 kiến trúc · §6 ca biên | trục 1, 5 |
 | `docs/arch/{name}.md §3 API` · data model · events · integrations trong `docs/arch/{name}.md` | trục 4 |
 | `docs/PERSONAS.md §2` (ma trận vai × hành động) | trục 2 |
 | skill `stack-spring-boot §review` (forbidden patterns Java/Spring) | trục 3, 5 |
@@ -51,7 +51,7 @@ Build/test đỏ → BLOCKER `type=test`, dẫn tên test + dòng lỗi. Coverag
 | Mọi BR enforce ở service/domain, chạy **trước** khi ghi | `grep -rn "BR-" J` → mở chỗ check | BLOCKER |
 | Ca xấu: không tồn tại · inactive · status đã final · request lặp · không sở hữu · tenant khác | Mở từng method service có ghi dữ liệu | MAJOR |
 | Chuyển trạng thái hợp lệ; default đúng; không side effect ngoài ý | `grep -rn "setStatus(" J` → trước đó có kiểm trạng thái nguồn không | MAJOR |
-| Ca biên `arch/{name}.md §6.1` (gửi hai lần · sửa đồng thời · xoá · sai thứ tự · hỏng nửa chừng · bản cũ · rỗng · thu hồi quyền) | Mỗi dòng không `n/a` → ràng buộc DB (`grep -rniE "unique" src/main/resources/db`), `@Version`, hoặc check ở service. Không tìm thấy = chưa xử | BLOCKER |
+| Ca biên `arch/{name}.md §6` (gửi hai lần · sửa đồng thời · xoá · sai thứ tự · hỏng nửa chừng · bản cũ · rỗng · thu hồi quyền) | Mỗi dòng không `n/a` → ràng buộc DB (`grep -rniE "unique" src/main/resources/db`), `@Version`, hoặc check ở service. Không tìm thấy = chưa xử | BLOCKER |
 
 ### Trục 2 — Bảo mật (6 nhóm)
 
@@ -75,7 +75,7 @@ Build/test đỏ → BLOCKER `type=test`, dẫn tên test + dòng lỗi. Coverag
 | | Actuator/endpoint nhạy cảm không public | `grep -rn -A3 "exposure" src/main/resources` → `include: "*"` không auth = finding | MAJOR |
 | | Rate limit: đăng nhập · đăng ký · quên mật khẩu · gửi OTP/email/SMS | `grep -rni -e login -e signin -e register -e signup -e otp -e forgot --include=*Controller.java src/main` → có rate limiter (theo ADR)? ADR không nói → QUESTION kèm cách kiểm | MAJOR |
 | Dữ liệu | Response không thừa field nhạy cảm (hash, cờ nội bộ, dữ liệu người khác) | Mở từng `*Response` so với `arch/{name}.md §3 API` | MAJOR |
-| | Chỉ thu dữ liệu AC cần; PII mã hoá at-rest khi HLD yêu cầu; chỉ qua TLS | Cột trong migration so với AC — cột cá nhân không AC nào dùng = finding | MINOR · thiếu mã hoá khi yêu cầu = MAJOR |
+| | Chỉ thu dữ liệu AC cần; PII mã hoá at-rest khi arch/PRD NFR yêu cầu; chỉ qua TLS | Cột trong migration so với AC — cột cá nhân không AC nào dùng = finding | MINOR · thiếu mã hoá khi yêu cầu = MAJOR |
 | Phụ thuộc | Không lib có CVE nghiêm trọng; không thêm lib vì một hàm | Có plugin thì `./gradlew dependencyCheckAnalyze`; không có → đọc dependency mới trong `git diff <mốc>..HEAD -- build.gradle*` | MAJOR |
 
 ```bash
@@ -133,8 +133,8 @@ ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ n�
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
-| `ArchitectureTest.java` tồn tại, rule khớp layout HLD §4 | `find src/test -name ArchitectureTest.java` → đọc rule | thiếu/rỗng = BLOCKER |
-| Cấu trúc khớp HLD §4 + cây `ref-backend-pattern`: Layered HOẶC Hexagonal, không trộn, không package tự đặt | `find src/main/java -type d` so với cây trong skill | BLOCKER |
+| `ArchitectureTest.java` tồn tại, rule khớp layout arch §4 | `find src/test -name ArchitectureTest.java` → đọc rule | thiếu/rỗng = BLOCKER |
+| Cấu trúc khớp arch §4 + cây `ref-backend-pattern`: Layered HOẶC Hexagonal, không trộn, không package tự đặt | `find src/main/java -type d` so với cây trong skill | BLOCKER |
 | Class đúng package; `@Entity` ở `entities/` (Hexagonal: `adapter/out/persistence/entities/`), tên `{Resource}Entity` | `grep -rl "@Entity" J` | MAJOR |
 | Không package rỗng, không scaffold mẫu | `find src/main -type d -empty` · `find src -name "Example*" -o -name "Demo*" -o -name "Sample*" -o -name "HelloController*"` | thừa = MAJOR · mẫu lẫn code thật = BLOCKER |
 | Đúng tầng: controller map + validate + gọi service interface · nghiệp vụ + transaction ở service · query ở repository · convert ở mapper · không nghiệp vụ trong controller/repository/mapper/config/migration | Đọc controller + mapper | MAJOR |
@@ -149,7 +149,7 @@ ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ n�
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
-| Ca đủ: success · validation fail · not found · permission denied · tenant khác · chuyển trạng thái sai · trùng/idempotency · external fail · publish event · rollback · biên | Đối chiếu `src/test` với AC + `arch/{name}.md §6.1` | MAJOR |
+| Ca đủ: success · validation fail · not found · permission denied · tenant khác · chuyển trạng thái sai · trùng/idempotency · external fail · publish event · rollback · biên | Đối chiếu `src/test` với AC + `arch/{name}.md §6` | MAJOR |
 | Unit: given-when-then, tên `should_x_when_y`, assert hành vi + error code (không assert chi tiết cài đặt), mock đúng ranh giới (không mock class đang test), deterministic (Clock/seed), branch coverage có nghĩa | Đọc 2–3 test đại diện | MAJOR |
 | Integration trên Testcontainers Postgres (không H2); contract API status + envelope; tenant isolation | `grep -rl -e PostgreSQLContainer -e "@Testcontainers" src/test` | MAJOR |
 | **Schema drift**: ≥ 1 test boot Spring context + chạy migration + `ddl-auto: validate` | `grep -rn "ddl-auto" src/test/resources src/main/resources` + test `@SpringBootTest` dùng container | BLOCKER |
@@ -172,7 +172,7 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
 [severity] file:dòng — [nguồn] hỏng thế nào → đề xuất
 ```
 
-- `[nguồn]`: `[FEAT-X AC-2]` · `[BR-...]` · `[Bảo mật: <nhóm>]` · `[stack-spring-boot Forbidden: <cột Cấm>]` · `[arch/{name}.md §6.1 <ca>]` · `[DECISIONS <ngày>]`.
+- `[nguồn]`: `[FEAT-X AC-2]` · `[BR-...]` · `[Bảo mật: <nhóm>]` · `[stack-spring-boot Forbidden: <cột Cấm>]` · `[arch/{name}.md §6 <ca>]` · `[DECISIONS <ngày>]`.
 - **BLOCKER (nặng)** — sai nghiệp vụ · lủng bảo mật/tenant · hỏng dữ liệu/transaction · phá hợp đồng không có yêu
   cầu · thiếu idempotency ở luồng tiền · secret · sửa migration đã chạy · query không giới hạn.
   **MAJOR (vừa)** — nên sửa trước bàn giao. **MINOR/NIT (nhẹ)** — không chặn. **QUESTION** — chưa chắc.

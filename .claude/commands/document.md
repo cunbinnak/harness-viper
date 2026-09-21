@@ -21,8 +21,8 @@ description: DOCUMENT — interview|intake → doc set (PRD/PERSONAS/FEAT/ARCHIT
 Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 
 ## Bước 1 — Nạp nguyên liệu (rẽ nhánh theo đường vào)
-- **INTERVIEW**: phỏng vấn Authority — hỏi tới khi đủ dựng PRD/persona/capability (không trần số câu; đây là
-  chỗ được hỏi). Kết tinh vào `docs/INTERVIEW.md` **theo đợt**: DOCUMENT đầu ghi khối `### Wave 1`; top-up sau
+- **INTERVIEW**: phỏng vấn Authority *(skill `discovery-hypothesis` — 4 luật đào sâu + probe nghiệp vụ hóc búa +
+  cược đo được)* — hỏi tới khi đủ dựng PRD/persona/capability (không trần số câu; đây là chỗ được hỏi). Kết tinh vào `docs/INTERVIEW.md` **theo đợt**: DOCUMENT đầu ghi khối `### Wave 1`; top-up sau
   `/next-wave` **thêm khối `### Wave N`** (không sửa khối cũ), mỗi mục có dòng `Bằng chứng:` + gắn FEAT nó phục vụ.
   > **Cách hỏi** (DOCUMENT = chỗ DUY NHẤT `AskUserQuestion` được phép — guard_ask cho qua):
   > · **Khám phá** (pain/persona/ca biên/rỗng-lỗi) → **hội thoại MỞ bằng lời**, KHÔNG dùng `AskUserQuestion` (option mớm lời → Authority bấm cái nghe hợp lý thay vì kể thật).
@@ -33,17 +33,19 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 ## Bước 2 — PRD (`docs/PRD.md`)
 Vấn đề (pain) + đối tượng cụ thể + **out-of-scope tường minh** + ≥1 success metric **có số**.
 
-## Bước 3 — PERSONAS (`docs/PERSONAS.md`)
+## Bước 3 — PERSONAS (`docs/PERSONAS.md`)  *(skill `domain-ba`)*
 Persona + năng lực được cấp + **ma trận vai × hành động** — mỗi ô `có`/`cấm`, **KHÔNG ô trống**
 (đây là spec phân quyền khi code + nguồn TC âm khi test + danh sách phép thử của vai `breaker` ở dogfood).
 
-## Bước 4 — CAPABILITIES-MAP (`docs/CAPABILITIES-MAP.md`)
+## Bước 4 — CAPABILITIES-MAP (`docs/CAPABILITIES-MAP.md`)  *(skill `capability-mapping`)*
 `capability → outcome → FEAT`. **Mọi FEAT truy về ≥1 capability**; capability TRƯỚC feature. Cột `Wave giao` để trống (điền ở Bước 9).
 
-## Bước 5 — FEAT (`docs/feat/FEAT-*.md`)
+## Bước 5 — FEAT (`docs/feat/FEAT-*.md`)  *(skill `domain-po` · viết xong rà bằng lens `business-analysis`)*
 Mỗi capability → ≥1 FEAT. Mỗi FEAT: **AC dạng BDD** (Given/When/Then) **gồm ca biên** (rỗng/đầy/lỗi/quyền) + **field kỹ thuật** (`enforcement` rule · `consumes_contracts` = target nào cấp API/event). Mỗi FEAT truy về ≥1 capability + ≥1 persona.
 
-## Bước 6 — Architecture (`docs/arch/`)  *(skill `technical-design`)*
+## Bước 6 — Architecture (`docs/arch/`)  *(3 skill THEO THỨ TỰ: `event-storming` → `boundary-charter` → `technical-design`)*
+- Thứ tự + phân đất: `event-storming` ghi **OVERVIEW §4** (events/aggregates/hot-spots per domain) → `boundary-charter` đọc §4, ghi **OVERVIEW §1** (bản đồ target) + **khởi tạo** `arch/{name}.md` §Mission (target = boundary, cùng tên file) → `technical-design` điền **chi tiết** `arch/{name}.md`.
+- **Rời bước 6 CHỈ KHI trace 5 chiều PASS** (`technical-design §Trọn vẹn`): AC↔API 2 chiều · endpoint đủ ruột · consumes↔provider khớp · luồng E2E không đứt — **tự rà, KHÔNG để Authority phát hiện lỗ hộ**.
 - `docs/arch/OVERVIEW.md`: topology — có target nào, ai gọi ai, ranh giới hệ.
 - `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ nằm ở đây; FEAT chỉ khai `consumes_contracts`.
 
@@ -56,7 +58,7 @@ nếu project khác default → sửa thẳng file + ghi `DECISIONS.md`.
 - Contract **CỤ THỂ** từng target (endpoints) → `arch/<name>.md §3 API`; FE khai `consumes_contracts` trong FEAT;
   đồng bộ bằng **contract-test** (VERIFY) + **BACKWARD-COMPAT** (SHIP). (Skill `stack-*` lo idiom CODE.)
 
-## Bước 8 — Design system + UX  *(nếu có UI; backend-only → ghi marker `KHÔNG CÓ UI`, bỏ qua bước này)*
+## Bước 8 — Design system + UX  *(skill `ux-design` · nếu có UI; backend-only → ghi marker `KHÔNG CÓ UI`, bỏ qua bước này)*
 Thứ tự bắt buộc: `docs/DESIGN-SYSTEM.md` (token — **khoá TRƯỚC**, cả dự án) → `docs/ux/SCREEN-MAP.md` (mục lục
 **mọi màn** ↔ target ↔ FEAT ↔ wave, cả dự án) → `docs/ux/mockups/<target>/*.html` **chỉ dựng màn in-scope
 wave đang mở** (ở DOCUMENT = wave 1; màn wave sau để trống, `/document` top-up khi `/next-wave` mở wave đó —
@@ -68,7 +70,7 @@ Bảng wave: mỗi wave khai **target** (kind: backend/web/bff/mobile) + **phase
 **FEAT-cap** = `feat_cap_per_wave` (frontmatter `docs/ROADMAP.md`, **mặc định ~3-4 FEAT/wave ≈ 15-20 AC**) — ngưỡng để **một phiên BUILD của MAIN làm nổi** (MAIN-code-hết, không dev-agent). KHUYẾN KHÍCH, **tròn luồng thắng con số**: tách mà đứt luồng → giữ tròn + ghi `rationale`; 1 FEAT quá to (nhiều AC) → tách nhỏ. **SỐ WAVE = số dòng §1** (phái sinh từ scope ÷ cap + phụ thuộc — không đặt tay). Chi tiết chia: skill `implementation-plan`. Điền cột
 `Wave giao` ở CAPABILITIES-MAP. Để trống `§backlog` (amendment tương lai đổ vào đây).
 
-## Bước 10 — Challenge DOCUMENT (luật #8 — tới khi hiểu ĐÚNG Ý AUTHOR)
+## Bước 10 — Challenge DOCUMENT (luật #8 — tới khi hiểu ĐÚNG Ý AUTHOR)  *(rà chéo bằng lens `business-analysis`)*
 Tự ra **≥3 câu hỏi khó nhất**, trả lời **CHỈ bằng tài liệu vừa viết**. Câu nào phải đoán = **một lỗ tài liệu** →
 vá (INTERVIEW: **hỏi Authority thêm** · INTAKE: dịch lại + vá lỗ). **Lặp tới khi tài liệu trả lời được HẾT và
 phản ánh ĐÚNG ý Author** (không còn chỗ đoán, không còn lệch ý) — **không giới hạn số vòng**. **PASS** mới đi tiếp.

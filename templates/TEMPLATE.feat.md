@@ -1,8 +1,7 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/feat/FEAT-<slug>.md. Điền hết {{...}}; gate check "còn {{ = chưa xong". -->
 ---
 name: FEAT-{{slug}}
-epic: EPIC-{{slug}}
-capability: CAP-{{id}}            # truy về docs/CAPABILITIES-MAP.md — MỌI FEAT phải có
+capability: CAP-{{id}}            # truy về docs/CAPABILITIES-MAP.md — MỌI FEAT phải có (gom nhóm theo capability, KHÔNG có Epic)
 version: 1                       # bump khi sửa qua /document top-up ở wave sau
 status: DRAFT                    # DRAFT → APPROVED (Authority ký ở /document bước cuối)
 has_ui: true                     # true → cần mockup docs/ux/ · false → backend-only
@@ -26,11 +25,12 @@ consumes_contracts: []           # consumer (FE/bff): [order-service.api, ...] �
 - **Then** {{kết quả đo được}}
 - *Ca biên*: {{gửi 2 lần → lần 2 không tạo bản ghi trùng · rỗng → hiện trạng thái rỗng}}
 
-<!-- §3: enforcement_location = chặn/kiểm Ở ĐÂU. Phải server/DB, UI disable KHÔNG tính. 1 dòng/AC hoặc /rule. -->
+<!-- §3: enforcement_location = chặn/kiểm Ở ĐÂU. Phải server/DB, UI disable KHÔNG tính. 1 dòng/AC hoặc /rule.
+     Business-rule gắn 1-2 feature (domain-ba viết) ghi ở ĐÂY (dòng `BR-<slug>` + enforcement); rule nền/cross-cutting → docs/adr/. -->
 ## §3 Field kỹ thuật
 | AC / rule | enforcement_location | Ghi chú |
 |---|---|---|
 | AC-1 | {{server: `OrderService.create` · DB: `unique(order, table_id) where active`}} | |
 
 ## §References
-- Capability: `CAP-{{id}}` · Epic: `EPIC-{{slug}}` · Journey: {{JOURNEY-… nếu có}}
+- Capability: `CAP-{{id}}` · BR liên quan: {{BR-… / ADR-… nếu có}} · Màn UI: {{SCREEN-MAP mục … nếu has_ui}}

@@ -1,32 +1,31 @@
 ---
 name: boundary-charter
-description: Phương pháp boundary + charter cho /document — identify boundary từ event-storming → boundary map + charter per boundary (vào docs/arch/OVERVIEW.md + docs/arch/{name}.md), RỒI tổng hợp PRD (scope/NFR/security/metrics). KHÔNG sinh FEAT (domain-po/ba sở hữu).
+description: Phương pháp boundary + charter cho /document Bước 6 — identify boundary từ event-storming (OVERVIEW §4) → boundary map (OVERVIEW §1) + KHỞI TẠO charter docs/arch/{name}.md §Mission; technical-design điền chi tiết sau. Target = boundary (cùng tên file). KHÔNG sinh FEAT/BR, KHÔNG đụng PRD.
 ---
 
-> Phương pháp cho /document (fork gộp discovery vào DOCUMENT). Không phải stage riêng.
+> Phương pháp cho /document Bước 6 (fork gộp discovery vào DOCUMENT). Không phải stage riêng.
+> **Thứ tự trong Bước 6**: `event-storming` (OVERVIEW §4) → **`boundary-charter` (bước này)** → `technical-design` (chi tiết per-target).
 
 # Boundary Charter Skill
 
 ## Khi load
-Phương pháp **boundary + charter** cho `/document` (Architecture Authority). Vai trò kép:
-1. **Identify boundary** từ aggregates/domains ở event-storming → boundary map (`docs/arch/OVERVIEW.md`) + charter per boundary (`docs/arch/{name}.md`).
-2. **Tổng hợp PRD** (`docs/PRD.md`) — §4 Out-of-scope + §3 NFR (số) + security + §5 metric + §6 glossary.
+Phương pháp **boundary + charter** cho `/document` Bước 6. Một việc duy nhất:
+**Identify boundary** từ aggregates/domains ở event-storming → boundary map (`docs/arch/OVERVIEW.md §1`) + **KHỞI TẠO** charter per boundary (`docs/arch/{name}.md §0 Mission`; `technical-design` điền chi tiết §1-§6 sau).
 
-> **KHÔNG sinh FEAT/Epic/BR ở đây**: phương pháp `domain-po`/`domain-ba` (cùng trong `/document`) sở hữu product — viết Epic/Feature/Journey (BDD AC) thẳng vào `docs/feat/` + Business-rule/Persona. Bước này chỉ boundary map + charter + tổng hợp PRD.
+> **Target = boundary** trong khung này: backend boundary nằm `services/boundaries/{name}` ↔ cùng tên file `docs/arch/{name}.md`. KHÔNG có file boundary riêng.
+> **KHÔNG sinh FEAT/BR** (`domain-po`/`domain-ba` sở hữu — đã viết ở Bước 3/5). **KHÔNG đụng PRD** (viết trọn ở Bước 2); nếu lúc chia boundary **lộ thêm** NFR/out-of-scope → bổ sung `docs/PRD.md §3/§4` (vẫn trong DOCUMENT, chưa khoá scope — hợp lệ) + 1 dòng `DECISIONS.md`.
 
-Input: `docs/PRD.md` (vision/problem) + `docs/CAPABILITIES-MAP.md` + `docs/PERSONAS.md` + section event-storming trong `docs/arch/OVERVIEW.md`.
+Input: `docs/PRD.md` + `docs/CAPABILITIES-MAP.md` + `docs/PERSONAS.md` + `docs/feat/FEAT-*` (đã viết ở Bước 5) + event-storming ở `docs/arch/OVERVIEW.md §4`.
 
 ## Deliverable
-1. **Boundary map trong `docs/arch/OVERVIEW.md`** — **≥1 row non-placeholder** (backend boundary / web target): target + mission + owned data + wave + status.
-2. **`docs/arch/{name}.md`** cho mỗi target (frontmatter `kind/stack/consumes`) — **§Mission có content thật**; owned data (từ aggregates event-storming); capabilities exposed/consumed; NON-NEGOTIABLES.
-3. **`docs/PRD.md`** — tổng hợp từ vấn đề/giả thuyết (§1/§2 đã có) + capability + event-storming: scope-out → **§4 Out-of-scope** · **§3 NFR (có số)** + security/compliance · success metric → **§5** · glossary → **§6 Glossary + Nguồn**.
+1. **Boundary map trong `docs/arch/OVERVIEW.md §1`** — **≥1 row non-placeholder** (backend boundary / web target): target + mission + owned data + wave + status.
+2. **KHỞI TẠO `docs/arch/{name}.md`** cho mỗi target (frontmatter `kind/stack/consumes` — theo `templates/TEMPLATE.arch.md`) — **§0 Mission có content thật**: mission 1 câu + owned data (từ aggregates event-storming) + capabilities exposed/consumed + NON-NEGOTIABLES. *(Chi tiết §1-§6: `technical-design` điền tiếp — không giẫm.)*
 
-## Phương pháp (identify + tổng hợp)
+## Phương pháp
 1. **Boundary identification**: group aggregates (`docs/arch/OVERVIEW.md §4` Event Storming) chia sẻ data/lifecycle → 1 boundary. Mỗi boundary owns data duy nhất (no overlap — verify qua boundary map).
 2. **Mission**: 1 câu "what & why" từ capability-map.
 3. **Owned data / capabilities**: từ aggregates event-storming + capability-map.
-4. **NON-NEGOTIABLES**: hỏi Architecture Authority (AskUserQuestion).
-5. **Tổng hợp PRD**: gộp §1 Vấn đề + §2 Giả thuyết (đã có) + capability + event-storming → điền **§3 NFR (số)** + **§4 Out-of-scope** + **§5 Success metric** + **§6 Glossary + Nguồn** trong `docs/PRD.md`. KHÔNG bịa số NFR — hỏi user nếu chưa rõ.
+4. **NON-NEGOTIABLES**: hỏi Architecture Authority (AskUserQuestion — đang ở DOCUMENT, được hỏi).
 
 ## Quy tắc
 - KHÔNG invent capability/boundary ngoài những gì đã khám phá — refer back các bước trước (khai thác ý tưởng / capability / event-storming).
@@ -35,23 +34,20 @@ Input: `docs/PRD.md` (vision/problem) + `docs/CAPABILITIES-MAP.md` + `docs/PERSO
 - Idempotent re-run.
 
 ## Sau boundary-charter
-Sau bước này, `/document` tiếp sang author product: `domain-po`/`domain-ba` viết Epic/Feature/Journey + Business-rule/Persona vào `docs/feat/` (suy từ tài liệu khám phá, mơ hồ → `docs/DECISIONS.md`), rồi chia wave (`docs/ROADMAP.md`) → **khoá scope** (1 lần cho dự án) → `/build 1`.
+`/document` Bước 6 tiếp sang `technical-design`: điền chi tiết `docs/arch/{name}.md` (§1 data · §2 luồng · §3 API · §4 kiến trúc/ranh giới · §5 events · §6 ca biên) per target → Bước 7 TECHSTACK → … → Bước 10 challenge → khoá scope.
 
 ## Quality checklist
-- [ ] Boundary map ≥1 row non-placeholder.
+- [ ] Boundary map ≥1 row non-placeholder (OVERVIEW §1).
 - [ ] Mỗi boundary có `docs/arch/{name}.md` §Mission thật + owned data không overlap.
-- [ ] `docs/PRD.md` có §4 Out-of-scope + §3 NFR số + security/compliance + §5 metric + §6 glossary.
-- [ ] KHÔNG sinh FEAT/Epic/BR (để domain-po/ba).
+- [ ] KHÔNG sinh FEAT/BR (domain-po/ba sở hữu) · KHÔNG viết lại PRD (chỉ bổ sung §3/§4 nếu lộ thêm, kèm DECISIONS).
 
-## Chốt — user ĐỌC và ĐÁNH GIÁ rồi mới ký
+## Rà chéo trước khi rời bước
 
-Đây là artifact khép lại phần khám phá, nên nó gánh thêm lượt **rà chéo toàn lớp** mà từng bước riêng lẻ không thấy: vision ↔ capability ↔ persona ↔ ma trận quyền ↔ event-storming ↔ boundary ↔ PRD. Lệch chỗ nào sửa trước, đừng đẩy sang cho user phát hiện hộ.
+Đây là chỗ khép lại phần chia hệ, nên gánh lượt **rà chéo toàn lớp** mà từng bước riêng lẻ không thấy: vision ↔ capability ↔ persona ↔ ma trận quyền ↔ event-storming ↔ boundary. Lệch chỗ nào sửa trước, đừng đẩy sang cho Authority phát hiện hộ.
 
-Rồi **DỪNG LẠI**: trình danh sách file kèm *mỗi file nên soi gì*, nói rõ chỗ đã tự quyết (trỏ `docs/DECISIONS.md`) và chỗ mình không chắc nhất. **KHÔNG tự ký, KHÔNG chạy tiếp.**
+Chỗ đã tự quyết → trỏ `docs/DECISIONS.md`; chỗ không chắc nhất → nêu rõ khi trình Authority ở **Bước cuối `/document`** (Authority đọc toàn bộ doc set rồi mới ký khoá scope — không ký lẻ ở đây).
 
-User góp ý → sửa → rà lại → trình lại. User **duyệt** → khoá scope (trong `/document`) → complete.
-
-Vì sao rà kỹ ở đây: FEAT + design + wave đều xây trên phần khám phá này. Tìm ra lỗ ở vision/boundary lúc đã dựng tầng trên nghĩa là tháo ngược nhiều tầng.
+Vì sao rà kỹ ở đây: design + wave đều xây trên phần chia hệ này. Tìm ra lỗ ở boundary lúc đã dựng tầng trên nghĩa là tháo ngược nhiều tầng.
 
 ## Done
-- Boundary map + charter + `docs/PRD.md` đầy đủ; user confirm → tiếp author product (domain-po/ba) trong `/document`.
+- Boundary map (OVERVIEW §1) + charter khởi tạo (`arch/{name}.md` §Mission/owned-data) đầy đủ, không overlap → tiếp `technical-design` trong Bước 6.

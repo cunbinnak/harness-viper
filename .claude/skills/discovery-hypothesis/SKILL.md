@@ -1,6 +1,6 @@
 ---
 name: discovery-hypothesis
-description: Phương pháp khai thác ý tưởng cho /document — KHAI THÁC SÂU ý tưởng project thành vision + problem có bằng chứng + ≥3 hypothesis testable + ≥2 anti-hypothesis + lỗ hổng. Bức tranh tổng quan TRƯỚC khi map capability/event-storming/boundary.
+description: Phương pháp phỏng vấn khai thác cho /document Bước 1 (đường interview) — đào SÂU pain có bằng chứng (probe nghiệp vụ hóc búa) + 1 cược đo được (success metric + go/pivot/kill) + lỗ hổng. Bức tranh tổng quan TRƯỚC khi map capability/event-storming/boundary.
 ---
 
 > Phương pháp cho /document (fork gộp discovery vào DOCUMENT). Không phải stage riêng.
@@ -14,6 +14,9 @@ Input: mô tả project user truyền (`$ARGUMENTS`) hoặc tài liệu trong `i
 
 > **Đây là một trong những chỗ được hỏi nhiều nhất.** Mọi thứ không đào ra ở đây sẽ phải trả bằng
 > một lần ngắt giữa lúc code, hoặc tệ hơn — bằng một quyết định agent tự đoán. Hỏi cho đủ và cho SÂU.
+
+## Research TRƯỚC khi phỏng vấn — chống hallucination
+Domain/module mới chưa biết đi thế nào → **research là bước đầu, đừng bịa**: pattern ngành + thuật ngữ + cách sản phẩm cùng loại giải (WebSearch nếu có). Vì sao bắt buộc: hiểu biết domain của model không research = trí nhớ mù → **bịa có cấu trúc (hallucination)**. Mọi kiến thức domain phải có **NGUỒN**: research (ghi link) / Authority trả lời / intake — không từ "cảm giác". Research xong hỏi mới trúng (probe hóc búa cần hiểu ngành để xoáy).
 
 ## Ngân sách là THỜI GIAN, không phải số câu
 
@@ -39,6 +42,20 @@ không phải *đã hỏi đủ N câu hay chưa*.
 4. **Đào theo mạch, đừng nhảy mục.** Sau mỗi câu trả lời tự hỏi: *"đã đủ để người khác quyết mà không
    phải quay lại hỏi chưa?"* — chưa thì hỏi tiếp cùng chủ đề.
 
+## Probe đào sâu nghiệp vụ — dùng khi câu trả lời còn ở bề mặt
+
+Bốn luật trên là CÁCH đào; đây là GÓC đào — bộ câu hỏi hóc búa của BA lão luyện. Không hỏi máy móc cả bộ —
+chọn góc đang mờ mà xoáy; mỗi probe đào ra chi tiết → về đúng dòng `Bằng chứng:` của mục liên quan, KHÔNG mở mục mới:
+
+- **Chỗ tiền/dữ liệu rơi**: "Trong cách làm hiện tại, chỗ nào tiền hoặc số liệu dễ sai/thất thoát nhất?"
+- **Ai chịu + phát hiện muộn**: "Khi chỗ đó sai, ai gánh? Biết sau bao lâu — ngay, cuối ca, hay cuối tháng mới lòi?"
+- **Root cause (5-whys)**: hỏi "vì sao" liên tiếp tới gốc, đừng dừng ở triệu chứng ("đơn nhầm" → vì sao? → "chép tay" → vì sao chép tay? → …).
+- **Ngoại lệ xử tay**: "Trường hợp nào quy trình chuẩn không lo được, phải xử tay/linh động?" — ngoại lệ là nơi phần mềm hay bỏ sót nhất.
+- **Scale-break**: "Lượng đơn/khách/giao dịch tăng gấp 10 thì chỗ nào vỡ trước?"
+- **Xung đột vai**: "Vai [A] và [B] có chỗ nào mâu thuẫn lợi ích? (nhanh vs kiểm soát · doanh số vs rủi ro)"
+- **Compliance/ràng buộc**: "Có quy định pháp lý / hợp đồng / SLA nào bắt buộc phải theo không?"
+- **JTBD**: "Không có sản phẩm này thì họ đang 'thuê' cái gì để làm việc đó?" — lộ đối thủ thật + tiêu chí thắng.
+
 **Ngôn ngữ**: user là người hiểu nghiệp vụ, không nhất thiết là kỹ sư. Hỏi bằng ngôn ngữ nghiệp vụ.
 Term kỹ thuật bắt buộc phải dùng thì giảng giải theo hướng nghiệp vụ TRƯỚC khi hỏi — không hiểu câu
 hỏi thì câu trả lời vô giá trị, và họ sẽ trả lời đại cho xong.
@@ -51,8 +68,8 @@ hỏi thì câu trả lời vô giá trị, và họ sẽ trả lời đại cho
 | 2 | Cách làm hiện tại (status quo) | Mô tả được họ đang xoay xở bằng gì — file/sổ/nhóm chat/phần mềm cũ |
 | 3 | Cost of inaction | Không làm thì mất gì, và cái mất đó tăng theo quy mô ra sao |
 | 4 | Vì sao bây giờ | Bối cảnh/áp lực khiến việc này thành cấp thiết lúc này |
-| 5 | Cược gì (≥3 hypothesis) | Mỗi cược falsifiable + tín hiệu đo được + cách kiểm + **bằng chứng vì sao tin** |
-| 6 | KHÔNG cược gì (≥2 anti-hypothesis) | Nêu tường minh cái ngoài scope, để chặn scope-creep về sau |
+| 5 | Cược đo được (success metric) | **MỘT con số + ngưỡng go/pivot/kill** ghi TRƯỚC khi nhìn số liệu. Giả thuyết phụ nếu nảy ra → ghi PRD §2 để verify sau, KHÔNG ép đủ ≥3/≥2. Out-of-scope tường minh → PRD §4 (chặn scope-creep) |
+| 6 | Hướng tương lai (nguyên liệu Phase 2/N) | **MAIN tự suy** từ nghiệp vụ + research (đích 1-2 năm · nhóm user/nguồn thu kế tiếp · 2-3 việc "sau này chắc chắn cần") → **đề xuất, rồi hỏi Authority xác nhận** ở playback/challenge — KHÔNG bắt Authority tự kể. Kết quả nuôi cột MVP/Phase 2/N của CAPABILITIES-MAP (Bước 4) |
 
 Ngờ scope quá lớn → **nói thẳng ngay tại đây**, đề xuất cắt cái gì. Đây là lúc cắt rẻ nhất.
 
@@ -75,7 +92,7 @@ Chỗ user không trả lời được, hoặc chưa quyết: (1) tìm trong tà
 ## Deliverable (ghi vào `docs/PRD.md`)
 
 1. **PRD §1 Vấn đề (pain)** — ai đau + đau gì (status quo) + hệ quả (cost of inaction) + **dòng `Bằng chứng:` không rỗng**. Vision narrative (vấn đề gì, cho ai, vì sao bây giờ) mở đầu §1.
-2. **PRD §2 Giả thuyết + rủi ro** — ≥3 giả thuyết falsifiable (statement + outcome đo được + test method + **cột Bằng chứng** + status TESTABLE) + ≥2 phản-giả-thuyết + rủi ro chính.
+2. **PRD §2 Giả thuyết + rủi ro** — **1 giả thuyết chính = success metric** (con số + ngưỡng go/pivot/kill, ghi TRƯỚC khi nhìn số) + rủi ro chính. Giả thuyết phụ (nếu có) thêm dòng cùng bảng — tùy chọn, KHÔNG ép số lượng.
 3. **Nguồn** — ghi vào **PRD §6 Glossary + Nguồn** (tài liệu tham chiếu: intake / phỏng vấn).
 4. **Lỗ hổng & cách xử** — ≥1 dòng, mỗi lỗ có cách xử + vết (trỏ `docs/DECISIONS.md`).
 
@@ -97,4 +114,4 @@ Chỗ user không trả lời được, hoặc chưa quyết: (1) tìm trong tà
 - KHÔNG icon/emoji trong tài liệu.
 
 ## Done
-- `docs/PRD.md` (§1 Vấn đề + §2 Giả thuyết + rủi ro) đầy đủ + đã playback + user confirm → tiếp phương pháp capability-mapping.
+- `docs/PRD.md` (§1 Vấn đề + §2 Giả thuyết + rủi ro) đầy đủ + đã playback + user confirm → tiếp Bước 2 (PRD trọn §1-6) → Bước 3 `domain-ba` (persona + ma trận) → Bước 4 `capability-mapping`.

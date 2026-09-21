@@ -8,7 +8,7 @@ description: Lens phân tích AC/BR cho /document — kiểm AC testable + BR lo
 # Business Analysis Skill
 
 ## Khi load
-- **`/document`**: soi product (FEAT/AC + BR) + design xem AC có testable, BR có logical, scope có rõ — trả issues cho user feed feedback.
+- **`/document` Bước 5** (ngay sau viết FEAT — rà AC testable/BR logical trước khi sang arch) + **Bước 10** (challenge — rà chéo toàn lớp doc). LENS review, KHÔNG author.
 
 Input: `docs/{PRD.md, feat/FEAT-*.md}` (BR nằm trong FEAT §field hoặc `docs/adr/`).
 
@@ -20,7 +20,7 @@ Input: `docs/{PRD.md, feat/FEAT-*.md}` (BR nằm trong FEAT §field hoặc `docs
 > `domain-po`/`domain-ba` (trong `/document`) sở hữu FEAT/BR; skill này là LENS kiểm chất lượng (review) + phân tích thay đổi — KHÔNG tự author FEAT.
 
 ## Phương pháp phân tích (để ra AC/BR/boundaries chất lượng)
-1. **Research** — chỉ khi domain phức tạp/chưa rõ và có WebSearch/WebFetch: business process pattern của industry, edge case/failure đã documented, compliance/regulatory. KHÔNG bịa nguồn.
+1. **Research — MẶC ĐỊNH LÀM TRƯỚC** (module/domain mới chưa biết đi thế nào → research là bước đầu, đừng bịa): business process pattern của industry, cách sản phẩm cùng ngành giải, edge case/failure đã documented, compliance/regulatory. Domain quá quen mới được bỏ qua (ghi 1 dòng lý do). KHÔNG bịa nguồn.
 2. **Actor & bounded context** — liệt kê tác nhân (role/system/external) → suy ra bounded context (gợi ý boundary; chốt ở bước boundary-charter/technical-design trong DOCUMENT).
 3. **Process flow (Mermaid)** — As-Is (nếu có hệ thống cũ) + To-Be (theo PRD). Happy path + nhánh ngoại lệ → giúp tìm AC + edge case.
    ```mermaid

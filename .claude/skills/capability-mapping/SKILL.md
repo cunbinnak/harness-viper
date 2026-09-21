@@ -70,4 +70,4 @@ không lặp lại ở đây; chỉ chỉ ra capability nào chưa dẫn đượ
 - [ ] Anti-capability listed.
 
 ## Done
-- `docs/CAPABILITIES-MAP.md` §1 + §2 đầy đủ; đã playback; user confirm → tiếp phương pháp event-storming.
+- `docs/CAPABILITIES-MAP.md` §1 + §2 đầy đủ; đã playback; user confirm → tiếp Bước 5 `domain-po` (viết FEAT từ capability §1); §2 Candidate domains để dành cho `event-storming` ở Bước 6.
