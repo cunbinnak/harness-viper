@@ -1,5 +1,6 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/INTERVIEW.md.
-     Đường INTERVIEW: điền §1, xoá §2.  ·  Đường INTAKE: xoá §1, GIỮ §2 (dòng `NGUỒN: INTAKE` ngoài comment — gate is_intake đọc). -->
+     Đường INTERVIEW: điền §1, xoá §2.  ·  Đường INTAKE: xoá §1, GIỮ §2 (dòng `NGUỒN: INTAKE` ngoài comment —
+     marker cho MAIN/top-up vòng sau nhận diện đường vào; máy đọc đường vào ở STATE.md dòng `Đường vào`). -->
 # INTERVIEW — {{PROJECT_NAME}}
 
 ## §1 Bằng chứng phỏng vấn  *(đường INTERVIEW)*
