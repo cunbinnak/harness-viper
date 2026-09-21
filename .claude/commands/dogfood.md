@@ -17,13 +17,14 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker / dev server / emulat
 
 ## Workflow
 1. Lấy URL/endpoint thật của hệ đang chạy — **không đoán**.
-2. Đọc `docs/PERSONAS.md`: persona · ma trận quyền · gán vai↔persona.
-3. **Đợt 1 (DB SẠCH)** — spawn 3 vai 1 lượt: `edge` (rỗng/lỗi) · `newbie` · `picky`.
-4. Đợi **đủ 3 vai** trả kết quả → **seed lại** `deployment/local/`.
-5. **Đợt 2 (DB CÓ DỮ LIỆU)** — spawn 3 vai 1 lượt: `rushed` · `breaker` (chạy đủ ma trận) · `mobile`.
-6. Gộp phát hiện → soi **dấu hiệu dogfood giả** → vai nào dính thì chạy lại vai đó.
-7. Agent **TRẢ VỀ** phát hiện → **MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file).
-8. Còn finding `sửa ngay` → `/verify` fix-loop. Sạch → quay `/verify` Bước cuối (gate VERIFY xanh) rồi mới `/ship`|`/next-wave`.
+2. Đọc `docs/PERSONAS.md` (persona · ma trận quyền · gán vai↔persona) + luồng lõi/AC của wave + mockup đã chốt.
+3. **MAIN TỰ DÙNG TRƯỚC — bắt buộc, TRƯỚC khi spawn vai nào.** Đích thân mở trình duyệt (Playwright), đóng **persona chính**, vào **từ trang đầu** (không nhảy URL trong), đi hết luồng lõi đầu→cuối: kiểm **từng AC** làm được THẬT không · đối chiếu từng màn với **mockup đã chốt** (lệch = phát hiện, không phải thẩm mỹ) · soi token/trạng thái (nút gửi có khoá, lỗi đúng khuôn). Ghi mọi thứ vướng kể cả nhỏ. → *"Eat your own shit" gốc ở đây: MAIN nếm TRƯỚC, rồi mới giao 6 lăng kính.*
+4. **Đợt 1 (DB SẠCH)** — spawn 3 vai 1 lượt: `edge` (rỗng/lỗi) · `newbie` · `picky`.
+5. Đợi **đủ 3 vai** trả kết quả → **seed lại** `deployment/local/`.
+6. **Đợt 2 (DB CÓ DỮ LIỆU)** — spawn 3 vai 1 lượt: `rushed` · `breaker` (chạy đủ ma trận) · `mobile`.
+7. Gộp phát hiện (**MAIN Bước 3 + 6 vai**) → soi **dấu hiệu dogfood giả** → vai nào dính thì chạy lại vai đó.
+8. Agent **TRẢ VỀ** phát hiện → **MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file).
+9. Báo Authority theo **mẫu tổng kết** (dưới). Còn finding `sửa ngay` → `/verify` fix-loop. Sạch → quay `/verify` Bước cuối (gate VERIFY xanh) rồi mới `/ship`|`/next-wave`.
 
 ## Vì sao 2 đợt (KHÔNG phải dàn tải)
 Các vai dùng chung **1 hệ + 1 DB**: `breaker` đổ dữ liệu bậy, `rushed` tạo bản ghi trùng NGAY giữa lúc `newbie` nhìn màn →
@@ -48,6 +49,19 @@ Tôi thấy     : <thứ hiện ra / mã lỗi / response thật>
 Tôi mong đợi : <thứ lẽ ra phải xảy ra + dẫn về AC/FEAT/ô ma trận>
 ```
 Thiếu vế đầu = suy từ code chứ chưa chạy. Vế cuối không dẫn được về tài liệu = ý kiến cá nhân, không phải finding.
+
+## Mẫu báo cáo tổng kết (cuối dogfood → Authority)
+```
+Đã dùng thử ở <local|prod>, MAIN đóng <persona chính> + 6 vai × 2 đợt
+
+Luồng lõi:     đi hết được / gãy ở bước <n>
+AC:            <x>/<y> làm được thật
+Phân quyền:    <x>/<y> ô ✗ ma trận đã thử, chặn đúng hết / thủng ở <đâu>
+Mockup:        khớp bản đã chốt / lệch ở <màn> (n/a nếu KHÔNG CÓ UI)
+Design system: <x> màu lạ · <y>/<z> cặp tương phản đạt · <a>/<b> component đủ trạng thái
+Ghi §Findings: <n> (BLOCKER <> · MAJOR <> · MINOR <>)
+Đẩy backlog:   <danh sách>
+```
 
 ## Forbidden
 - **KHÔNG tự fix** — trả finding, MAIN điều phối lượt sửa (nhân quả rõ ràng).

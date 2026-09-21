@@ -1,5 +1,5 @@
 ---
-description: VERIFY — code review + auto-test (black-box) + dogfood 6 persona → MAIN sửa finding tới sạch
+description: VERIFY — code review (2 vai) + test-writer thiết kế/chạy black-box test-case + dogfood 6 persona → MAIN sửa finding tới sạch
 ---
 # /verify [<wave>] — Phase VERIFY
 
@@ -32,11 +32,14 @@ Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu h�
 - **"Trục nào ổn → nói ổn, đừng bịa finding."** Lệnh `grep` cụ thể ở `.claude/agents/reviewer.md` · `bug-hunter.md`.
 Học được điều mới về target → append `knowledge-base/{name}.md`.
 
-## Bước 3 — Thiết kế + chạy test case (black-box)
+## Bước 3 — Thiết kế + chạy test case (black-box) — **`test-writer` chủ trì**
+> Spawn `test-writer` (sub-agent **độc lập MAIN**): **thiết kế `tracking/wave-N/test-cases.md` + CHẠY** trên hệ thật → PASS/FAIL.
+> **MAIN KHÔNG tự ra đề** (người code không tự-chấm-bài-mình) — MAIN chỉ SỬA ở Bước 5. TC sâu (contract/perf/security/e2e) → nạp `specialist-testing`.
 
-### 3a — THIẾT KẾ (dẫn xuất từ AC — ưu-tiên-trước-phủ-sau)
-Điền `tracking/wave-N/test-cases.md` (`TC | AC | mô tả | cách chạy | kết quả | nguyên nhân`), kết quả = "chưa chạy".
-Thứ tự **ưu tiên** (VIPER "ít test đúng chỗ" — hết giờ vẫn có cái giá trị nhất):
+### 3a — THIẾT KẾ (test-writer, dẫn xuất từ AC — ưu-tiên-trước-phủ-sau)
+Điền `tracking/wave-N/test-cases.md` (`TC | loại | AC | mô tả | cách chạy | kết quả | nguyên nhân`), kết quả = "chưa chạy".
+Cột **`loại`**: `functional` / `contract` / `performance` / `security` / `e2e`… (taxonomy + rigor per loại: `specialist-testing`).
+Thứ tự **ưu tiên** (test luồng lõi + tiền/dữ liệu trước — thứ vỡ thì đau nhất):
 1. **Smoke luồng lõi** — 1 TC đi hết luồng chính đầu→cuối (giá trị hơn 50 TC vụn)
 2. **Tiền / dữ liệu** — tính tiền · trừ kho · huỷ/hoàn · xoá · cập nhật đồng thời
 3. **Ca biên** trong AC — đặc biệt **gửi 2 lần** (lần 2 KHÔNG tạo bản ghi trùng)
@@ -46,18 +49,19 @@ Thứ tự **ưu tiên** (VIPER "ít test đúng chỗ" — hết giờ vẫn c�
 
 Tên TC nói **hỏng gì khi đỏ** ("2 order cùng bàn", không "test order 2").
 
-### 3b — CHẠY (black-box, hệ đang chạy)
-Chạy từng TC qua giao diện THẬT (API `curl`/REST · UI Playwright · perf k6) → điền `kết quả` PASS/FAIL + nguyên nhân **tại dòng**.
-`make test` xanh (unit/integration trong source, MAIN đã viết ở BUILD). **KHÔNG sửa source để test xanh** (→ Bước 5).
-*(tuỳ)* spawn `test-writer` viết thêm test adversarial cho AC dễ vỡ (nó sửa được **thư mục test**, KHÔNG sửa product code).
+### 3b — CHẠY (test-writer, black-box, hệ đang chạy)
+`test-writer` chạy từng TC qua giao diện THẬT (API `curl`/REST · UI Playwright · perf k6) → điền `kết quả` PASS/FAIL + nguyên nhân **tại dòng**.
+**FAIL = bug TÌM ĐƯỢC (finding hợp lệ), KHÔNG phải test dở** → báo cho MAIN sửa ở Bước 5; `test-writer` **KHÔNG sửa product code** (thấy code sai thì báo).
+`make test` xanh (unit/integration MAIN đã viết ở BUILD). **KHÔNG sửa source để test xanh** (→ Bước 5).
 
-## Bước 4 — Dogfood (2 đợt — hệ đang chạy)
-6 persona (mỗi vai đóng 1 persona THẬT ở `docs/PERSONAS.md`), **2 đợt tránh đè trạng thái** (server + DB dùng chung):
+## Bước 4 — Dogfood (chi tiết `/dogfood`)
+**TRƯỚC HẾT — MAIN tự dùng** (bắt buộc, trước khi spawn vai nào): đích thân mở trình duyệt, đóng **persona chính**, vào từ trang đầu, đi hết luồng lõi đầu→cuối — kiểm từng AC làm được THẬT + đối chiếu mockup đã chốt (lệch = phát hiện). *"Eat your own shit": MAIN nếm trước.*
+Rồi mới **6 persona**, **2 đợt tránh đè trạng thái** (server + DB dùng chung):
 - **Đợt 1 (DB sạch)**: `edge` (rỗng/lỗi) · `newbie` · `picky` (đo giao diện thật vs mockup + token)
 - **seed lại** `deployment/local/`
 - **Đợt 2 (DB có data)**: `rushed` · `breaker` (chạy đủ **ma trận vai×hành động**) · `mobile`
 
-+ MAIN **tự dùng** đi hết luồng lõi ở localhost (qua Playwright/trình duyệt). Phát hiện → `STATE.md §Findings` (Nguồn = tên vai).
+Phát hiện (MAIN + 6 vai) → `STATE.md §Findings` (Nguồn = tên vai) → báo Authority theo **mẫu tổng kết** (`/dogfood`).
 
 ## Bước 5 — Sửa tới sạch (MAIN)
 - TC **FAIL** hoặc finding **BLOCKER/MAJOR** → **MAIN sửa code** → **re-run** TC + dogfood liên quan → cập nhật

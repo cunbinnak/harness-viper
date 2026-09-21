@@ -66,7 +66,8 @@ target còn lại nối sau — không dựng đầy đủ từng cái một.
 - Mơ hồ → `DECISIONS.md` 1 dòng · ngoài AC → `ROADMAP §backlog` · commit nhỏ, message tiếng Việt
 - **Gặp gotcha / vá bug lúc code** (env nông · config · quirk contract · schema drift...) → **append NGAY** `knowledge-base/{name}.md` §Gotchas/§Failure-modes. Đây là **nguồn KG nhiều nhất** (lúc code mới va) — không ghi = mất, wave/rebuild sau lặp lại (retro B3).
 
-**KHÔNG** làm ở phase này: tối ưu hiệu năng · UI đẹp quá mức đủ dùng · viết test formal (để VERIFY) · tính năng "tiện tay".
+**Viết unit/integration test CÙNG LÚC code** (chạy `make test` — lưới an toàn của MAIN; code smell/checkstyle sạch).
+**KHÔNG** làm ở phase này: tối ưu hiệu năng · UI đẹp quá mức đủ dùng · **black-box test-case + dogfood (để VERIFY — `test-writer` chủ trì)** · tính năng "tiện tay".
 
 ## Bước 6 — Chạy thật (theo `kind` — VERIFY sẽ đánh trên đây)
 - **backend / bff**: `docker compose -f deployment/local/docker-compose.yml up -d --build` → health 200
@@ -82,5 +83,5 @@ target còn lại nối sau — không dựng đầy đủ từng cái một.
 ## Ranh giới
 - Không sửa AC (`docs/feat/**`) cho dễ làm — không làm được → `STATE.md §Blocker`, báo cuối buổi
 - Không đổi stack (đổi sau khoá scope = phá luật; cần thì ghi đánh đổi rõ ở `DECISIONS.md`)
-- Không viết test formal / không tối ưu sớm (để VERIFY)
+- Viết unit/integration (lưới an toàn MAIN) — nhưng **black-box test-case + dogfood để VERIFY** (`test-writer`); không tối ưu sớm
 - **Không spawn dev-agent** — MAIN tự code; agent chỉ xuất hiện ở `/verify`

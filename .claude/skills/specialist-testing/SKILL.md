@@ -5,14 +5,14 @@ description: Test chuyên sâu — contract (consumer-driven/Pact + backward-com
 
 # Specialist Testing Skill
 
-> Load ở /verify khi test vượt CRUD cơ bản (contract/Pact · k6 perf · OWASP · chaos · migration).
+> Load bởi `test-writer` ở /verify khi test vượt CRUD cơ bản (contract/Pact · k6 perf · OWASP · chaos · migration).
 
 ## Hoạt động
-Bổ sung TC chuyên sâu = **thêm row** vào `docs/feat/FEAT-*.md` test-cases (cùng cột template), mỗi TC trace ≥1 `FEAT-N:AC-M` (+ `BR-N` nếu enforce rule). **Dedupe trước**: các wave tích luỹ TC — check trùng (cùng feature + group) → reuse thay vì tạo mới.
+Bổ sung TC chuyên sâu = **thêm row** vào `tracking/wave-N/test-cases.md` (điền cột **`loại`** = test_type), mỗi TC trace ≥1 `FEAT-N:AC-M` trong cột `AC` (+ `BR-N` nếu enforce rule, ghi ở `mô tả`). **Dedupe trước**: các wave tích luỹ TC — check trùng (cùng feature + `loại`) → reuse thay vì tạo mới.
 
-> `group` (test_type) enum + khi-nào-dùng + scope: SSOT ở `docs/CONVENTIONS.md`. Skill này KHÔNG định nghĩa enum đối nghịch — chỉ chi tiết rigor PER LOẠI.
+> `loại` (test_type) enum + khi-nào-dùng: **SSOT là skill này** (bảng dưới) — điền vào cột `loại` của `test-cases.md`. Skill chi tiết **rigor PER LOẠI**.
 
-## test_type taxonomy — khi nào dùng + scope (ref SSOT CONVENTIONS)
+## test_type taxonomy — khi nào dùng + scope (SSOT của cột `loại`)
 | group | Khi nào (wave strategy) | Scope | Nguồn input single-repo |
 |---|---|---|---|
 | `functional` | mọi wave (1 AC/1 luồng) | hẹp: 1 feature | `feat/FEAT-*.md` AC |
@@ -46,4 +46,4 @@ Bổ sung TC chuyên sâu = **thêm row** vào `docs/feat/FEAT-*.md` test-cases 
 - **architecture-drift** (tuỳ chọn — KHÔNG có trong khung, tự cài khi cần): đo coupling/cohesion + drift khỏi `arch/{name}.md` bằng **số** (metric). Mặc định `reviewer`/`bug-hunter` soi "logic sai tầng / ranh giới module" **định tính** là đủ. Project multi-boundary phức tạp cần đo bằng số → tự thêm skill wrap tool ngoài, vd [arcade-agent](https://github.com/lemduc/arcade-agent) (đa ngôn ngữ, MCP + CI drift-check). Cân dep nặng (tree-sitter) vs lợi ích trước khi thêm.
 
 ## Done
-- TC chuyên sâu vào `feat/FEAT-*.md`, có AC trace + priority + tags đúng (`docs/CONVENTIONS.md`). Contract/perf/security/resilience/migration chỉ thêm khi contract phức tạp / NFR yêu cầu / có đổi schema. Dedupe-check trước khi tạo (reuse > create).
+- TC chuyên sâu vào `tracking/wave-N/test-cases.md` (cột `loại` + trace AC ở cột `AC`). Contract/perf/security/resilience/migration chỉ thêm khi contract phức tạp / NFR yêu cầu / có đổi schema. Dedupe-check trước khi tạo (reuse > create).

@@ -38,7 +38,7 @@ Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/
 |---|---|---|---|---|
 | **DOCUMENT** | interview\|intake → PRD·PERSONAS·CAPABILITIES·FEAT·ARCHITECTURE·DESIGN-SYSTEM·ux → chia wave → **khoá scope** | MAIN viết | ✅ CHỖ DUY NHẤT | doc set đủ mục · challenge PASS · ≥2 decisions · scope khoá |
 | **BUILD** | challenge → đọc KG → scaffold → walking skeleton → luồng lõi → **chạy thật (docker up)** | **MAIN tự code** | ❌ tự quyết → DECISIONS.md | skeleton thông · make check xanh · đã commit · health 200 |
-| **VERIFY** | 2 bước: **auto-test** (black-box trên hệ đang chạy) + **dogfood** (6 persona 2 đợt) | MAIN + reviewer/bug-hunter/test-writer + 6 persona | ❌ | make test xanh · dogfood xong · hết finding BLOCKER/MAJOR |
+| **VERIFY** | 3 bước: **code review** (2 vai) + **`test-writer` thiết kế/chạy black-box test-case** + **dogfood** (6 persona 2 đợt) | MAIN + reviewer/bug-hunter/test-writer + 6 persona | ❌ | make test xanh · test-cases PASS · dogfood xong · hết finding BLOCKER/MAJOR |
 | **SHIP** | prod-ready → deploy → smoke → rollback thử → dogfood prod | MAIN | ❌ (deploy = ngoại lệ "hỏi thật") | chỉ chạy khi wave khai SHIP; prod sống · rollback thử |
 | **NEXT-WAVE** | go/pivot/kill → snapshot archive → mở wave kế (không reset) | MAIN | (go/pivot/kill) | backlog gộp · snapshot · wave kế mở hoặc teardown |
 
@@ -116,7 +116,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 | `knowledge-base/{name}.md` | **KG** (per target): §Invariants · §Gotchas · §Failure-modes · §Key-decisions. KHÔNG phase-lock · sống sót qua mất code · MAIN đọc TRƯỚC khi code target |
 
 > **Tracking wave-scoped** (không phải spec; `/next-wave` gom vào `archive/wave-N/`): `tracking/wave-{N}/test-cases.md`
-> — MỘT bảng = TC · AC · cách chạy · kết quả PASS/FAIL · nguyên nhân (gộp registry + report + bug làm một, chống "3 bản sao").
+> — MỘT bảng = TC · **loại** · AC · cách chạy · kết quả PASS/FAIL · nguyên nhân — **`test-writer` thiết kế + chạy** (gộp registry + report + bug làm một, chống "3 bản sao").
 >
 > **Quy ước template** (gom ở **`templates/`** — xem `templates/README.md`; gate KHÔNG quét folder này): guidance trong `<!-- -->` (gate `read_live` strip → không đếm nhầm) ·
 > placeholder `{{...}}` (gate check "còn `{{` = chưa xong") · tiêu đề `## §` = **mỏ neo cố định** (không đổi tuỳ tiện) ·
@@ -153,14 +153,14 @@ nằm ở `.claude/agents/<name>.md`.
 **Bộ agent (9):**
 | Agent | Vai | Tools | Ghi được |
 |---|---|---|---|
-| `reviewer` | code AN TOÀN/SẠCH (4 trục: bảo mật · forbidden stack · ranh giới/quy ước · lệch doc) | read-only | — (trả finding) |
+| `reviewer` | code AN TOÀN + BẢO TRÌ (trục A an toàn: bảo mật/dữ liệu/forbidden · trục B bảo trì: structure/pattern/convention/naming) | read-only | — (trả finding) |
 | `bug-hunter` | code ĐÚNG SPEC (AC có impl? ca biên chặn server? phân quyền owner-condition?) | read-only | — (trả finding) |
-| `test-writer` | viết test adversarial | +Write/Edit **chỉ thư mục test** | test/ |
+| `test-writer` | QA độc lập: thiết kế + chạy black-box `test-cases.md` (từ AC) + test adversarial | +Write/Edit **test/ + tracking/wave-N/test-cases.md** | test/ · test-cases.md |
 | `persona-{newbie,edge,picky,rushed,breaker,mobile}` | dogfood 2 đợt (đóng persona thật) | browse/Playwright | — (trả finding) |
 
 **Luật chung mọi agent:** KHÔNG hỏi Authority · KHÔNG sửa product code (trừ test-writer chỉ `test/`) · **TRẢ VỀ finding,
 MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file) · report `[nặng/vừa/nhẹ] + file:dòng + "hỏng thế nào" + đề xuất 1 câu` ·
-**CHỈ nêu hậu quả THẬT** (mất/lộ data · sai kết quả · chặn AC), "trục ổn" thì nói ổn, **đừng bịa finding**.
+nêu **hậu quả THẬT** (trục A: mất/lộ data · sai kết quả · chặn AC) **HOẶC chi phí bảo trì cụ thể** (trục B), "trục ổn" thì nói ổn, **đừng bịa finding**.
 
 **Kind-specific:** review agent đọc `stack-<tên>/SKILL.md §review` theo kind — 2 agent generic, không tách per-kind.
 Mỗi `stack-<tên>` skill = **PORT** rules-<kind> + ref-<kind>-* cũ (idiom code · config · situational kafka/redis/logging/restclient)

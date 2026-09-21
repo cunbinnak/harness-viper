@@ -202,8 +202,8 @@ def gate_build(r: Report) -> None:
 def gate_verify(r: Report) -> None:
     wave = state_wave()
     tc = f"tracking/wave-{wave}/test-cases.md"
-    rows = table_rows(read(tc))   # test-cases.md = 1 bảng: TC | AC | mô tả | cách chạy | kết quả | nguyên nhân
-    results = [row[4].upper() for row in rows if len(row) >= 5]
+    rows = table_rows(read(tc))   # test-cases.md = 1 bảng: TC | loại | AC | mô tả | cách chạy | kết quả | nguyên nhân
+    results = [row[5].upper() for row in rows if len(row) >= 6]
     has_fail = any("FAIL" in x for x in results)
     has_pass = any("PASS" in x for x in results)
     r.check(exists(tc) and has_pass and not has_fail, f"{tc}: có TC PASS, không TC FAIL")

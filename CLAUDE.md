@@ -15,7 +15,7 @@
 > Vi phạm → hook chặn (`guard_ask`/`guard_bc`/`guard_ds`). `gate.py` chỉ BÁO thiếu gì (không chặn). Chi tiết PROTOCOL §6/§8.
 
 ## MAIN TỰ CODE
-MAIN viết **toàn bộ code sản phẩm**. Agent CHỈ để **verification** (`reviewer`/`bug-hunter`/`test-writer` — chỉ trả finding, MAIN ghi §Findings) + **dogfood** (6 persona). **Không dev-agent, không build_prompt** — spawn bằng Task tool + prompt ngắn tay.
+MAIN viết **toàn bộ code sản phẩm + unit/integration test** (ở BUILD). Agent CHỈ để **verification**: `reviewer`/`bug-hunter` trả finding · `test-writer` (QA độc lập) thiết kế+chạy black-box `test-cases.md` + viết test — **KHÔNG đụng product code** · **dogfood** (6 persona). MAIN ghi §Findings + sửa. **Không dev-agent, không build_prompt** — spawn bằng Task tool + prompt ngắn tay.
 
 ## HAI ĐƯỜNG VÀO
 - **interview** — ý tưởng mới → `/document` phỏng vấn Authority.
@@ -29,7 +29,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE        (SHIP opt-in theo
 |---|---|
 | `/document` | interview\|intake → PRD/PERSONAS/CAPABILITIES/FEAT/arch/UX → chia wave → **khoá scope** (1 lần cho dự án) |
 | `/build [<wave>]` | **MAIN code** 1 wave: đọc KG/context → challenge → scaffold → walking skeleton → luồng lõi → chạy thật |
-| `/verify` | auto-test (`test-cases.md`) + review 2 vai + **dogfood 6 persona** → MAIN sửa tới sạch |
+| `/verify` | review 2 vai + **`test-writer` thiết kế/chạy `test-cases.md`** + **dogfood 6 persona** → MAIN sửa tới sạch |
 | `/ship` | *(chỉ khi wave khai SHIP)* prod-ready → deploy → smoke → thử rollback |
 | `/next-wave` | đóng wave (snapshot, **KHÔNG reset**) → **RÀ LẠI** + mở wave kế (loop engineering) |
 | `/status` | *(mọi lúc)* đang ở đâu · gate thiếu gì · chốt kế |
