@@ -172,6 +172,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 ## §8 — Hooks (guard_ask / guard_bc / guard_ds + **reanchor**: nhồi lại luật sau compact)
 > - **guard_ask** (port VIPER pha V): `AskUserQuestion` **chỉ dùng được ở DOCUMENT** (phỏng vấn + quyết định, trước khoá scope). Chặn ở BUILD/VERIFY/SHIP/NEXT-WAVE; **ô Scope khoá tick = chặn luôn** dù dòng phase còn ghi DOCUMENT. go/pivot/kill (NEXT-WAVE) hỏi bằng LỜI.
 > - **guard_bc**: chặn deploy khi BACKWARD-COMPAT §3 chưa xanh (wave ≥2). · **guard_ds**: chặn ghi mockup/token lệch design-system.
+> - **guard_shell**: chặn ghi mockup có **app shell lệch `_shell.html` canonical** (nav items/thứ tự/nhóm/logo/user-menu/icon) — so khối `<!-- SHELL:START/END -->`, chuẩn hoá `aria-current`. Chặn chắc ở Write; Edit chạm khối = báo mềm. Chống shell trôi mỗi màn một kiểu.
 > - **guard_archive**: chặn Write/Edit vào `archive/**` (wave đã đóng = hợp đồng bất biến — §3/§5).
 > - **guard_proof**: chặn Write/Edit vào `*proof.json` (bằng chứng runtime CHỈ `capture_proof.py` sinh — agent không giả tick).
 > - **guard_makefile**: chặn Write/Edit vào **ROOT `Makefile`** (hợp đồng 6 lệnh, bất biến) — MAIN điền THÂN ở per-target `services/<nhóm>/<tên>/Makefile`, không sửa root lúc BUILD.
@@ -188,6 +189,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 | KG bay hơi (va gotcha lúc code, không ghi) | `/build` Bước 5 append `knowledge-base/{name}.md` (B3) |
 | Kẹt DRAFT (top-up doc mà không re-lock) | `/next-wave` 4.4 Authority duyệt lại = re-lock (F1) |
 | Demo đẹp chạy xấu (UI khớp ảnh, cấu trúc sai) | `persona-picky` BACKSTOP screenshot-diff (E1) |
+| App shell trôi (mỗi mockup một kiểu sidebar/nav/icon) | `guard_shell` (so khối SHELL vs `_shell.html`) + ux-design §Nhất quán cross-màn |
 | Test xanh giả (pass nhờ H2/mock, không chạy thật) | `capture_proof.py` MÁY-sinh `proof.json` — gate không tin tick |
 | Chạy mù kế hoạch cũ | `wave_reviewed` + RÀ LẠI (loop engineering) |
 | Agent giả tick proof | `guard_proof` chặn Write/Edit `*proof.json` |

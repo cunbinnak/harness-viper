@@ -86,15 +86,16 @@ Ghi vào `docs/DESIGN-SYSTEM.md §3` (kho component — dev implement + reviewer
 Mỗi mockup vẽ ĐỘC LẬP (đọc đúng tài liệu màn đó) → **app shell dễ trôi**: màn này có nhóm "QUẢN LÝ" màn kia không · mục đầu "Dashboard" vs "Tổng quan" · user-menu góc dưới sidebar vs góc trên · logo trơn vs có subtitle · thứ tự/số mục nav lệch. Người dùng thật thấy NGAY — cùng một app mà mỗi trang một khung = mockup chưa đạt.
 
 **Chặn tại nguồn — shell là CANONICAL, không tái phát minh per màn:**
-- Định nghĩa app shell **MỘT LẦN**: 1 file `docs/ux/mockups/{name}/_shell.html` (full sidebar + header + breadcrumb + user-menu) — **danh sách mục nav + thứ tự + nhóm heading + vị trí logo/user cố định TẠI ĐÂY**. Đây là nguồn sự thật của shell target đó.
-- Mỗi màn **copy shell nguyên văn**, CHỈ đổi: (1) `aria-current="page"` + class active của mục nav đang đứng · (2) breadcrumb · (3) vùng content. **KHÔNG** thêm/bớt/đổi thứ tự mục nav · **KHÔNG** dời chỗ user-menu/logo per màn.
-- HTML tĩnh không `include` được → copy tay; bù lại bằng bước rà dưới.
+- Định nghĩa app shell **MỘT LẦN**: 1 file `docs/ux/mockups/{name}/_shell.html` (sidebar: logo + **nav items + ICON mỗi mục** + user-menu · top-bar chrome) — **danh sách mục nav + thứ tự + nhóm heading + icon từng mục + vị trí logo/user cố định TẠI ĐÂY**. Đây là nguồn sự thật của shell target đó.
+- Bọc phần **BẤT BIẾN** của shell trong marker `<!-- SHELL:START -->` … `<!-- SHELL:END -->` (ở cả `_shell.html` lẫn mọi màn) — `guard_shell` so đúng khối này. **Breadcrumb + vùng content per màn nằm NGOÀI khối** (chúng được phép khác nhau).
+- Mỗi màn **copy khối SHELL NGUYÊN VĂN** từ `_shell.html`, CHỈ đổi **1 chỗ trong khối**: đánh `aria-current="page"` lên mục nav đang đứng (style active qua CSS `[aria-current="page"]`, **KHÔNG** đổi class per màn). **KHÔNG** thêm/bớt/đổi thứ tự mục nav · **KHÔNG** đổi icon · **KHÔNG** dời chỗ user-menu/logo.
+- HTML tĩnh không `include` được → copy tay; drift bị **`guard_shell` chặn ở Write** (so khối SHELL vs `_shell.html`, chuẩn hoá `aria-current`) + bước rà dưới cho `Edit`/toàn cảnh.
 
 **Bước rà nhất quán (BẮT BUỘC — SAU khi vẽ hết màn của wave, TRƯỚC khi trình chốt):**
-Mở tất cả mockup của target cạnh nhau, đối chiếu vùng shell — mọi màn phải KHỚP `_shell.html`:
-- [ ] Danh sách mục nav + **thứ tự** + **nhóm heading** giống hệt mọi màn
+Mở tất cả mockup của target cạnh nhau, đối chiếu vùng shell — mọi màn phải KHỚP `_shell.html` (`guard_shell` đã chặn ở Write, đây là lượt rà toàn cảnh + bắt drift do `Edit`):
+- [ ] Danh sách mục nav + **thứ tự** + **nhóm heading** + **ICON mỗi mục** giống hệt mọi màn
 - [ ] Logo (+ subtitle) + **vị trí user-menu** giống hệt mọi màn
-- [ ] Cùng cấu trúc header/breadcrumb + cùng token (guard_ds đã lo màu)
+- [ ] Cùng cấu trúc header + cùng token (guard_ds lo màu). Breadcrumb/content được phép khác (ngoài khối SHELL)
 Lệch → **sửa màn lệch cho khớp canonical** (KHÔNG sửa canonical theo 1 màn lẻ, trừ khi chính canonical sai). Ghi phát hiện + cách xử vào `SCREEN-MAP.md §Chốt`.
 
 ## Quality checklist
