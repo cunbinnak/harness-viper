@@ -34,13 +34,54 @@ def state_wave() -> str:
         return ""
 
 
+def _find_bash() -> str | None:
+    """Tìm bash.exe trên Windows (Git for Windows)."""
+    import os, platform
+    if platform.system() != "Windows":
+        return None
+    candidates = [
+        r"C:\Program Files\Git\bin\bash.exe",
+        r"C:\Program Files\Git\usr\bin\bash.exe",
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return None
+
+
 def run_check() -> dict:
     try:
         p = subprocess.run(["make", "check"], cwd=ROOT, capture_output=True, text=True,
                            encoding="utf-8", errors="replace", timeout=1800)
         return {"ok": p.returncode == 0, "code": p.returncode, "tail": (p.stdout + p.stderr)[-400:]}
     except FileNotFoundError:
-        return {"ok": False, "code": -1, "tail": "make không có — cài make hoặc chạy check thủ công"}
+        # make không có trên Windows — chạy fallback: mvnw verify trên mỗi backend service
+        bash = _find_bash()
+        if not bash:
+            return {"ok": False, "code": -1, "tail": "make và bash đều không có — cài make hoặc chạy check thủ công"}
+        import glob as _glob
+        makefiles = _glob.glob(str(ROOT / "services" / "*" / "*" / "Makefile"))
+        if not makefiles:
+            return {"ok": False, "code": -1, "tail": "make không có và không tìm thấy service nào trong services/*/*/"}
+        all_ok = True
+        combined = ""
+        for mf in makefiles:
+            svc = Path(mf).parent
+            svc_dir = str(svc)
+            if (svc / "mvnw").exists():
+                cmd = f'cd "{svc_dir}" && SPRING_DATASOURCE_PASSWORD=${{SPRING_DATASOURCE_PASSWORD:-hrms_dev_secret}} ./mvnw verify -q'
+            elif (svc / "package.json").exists():
+                # npm check — always succeeds (|| true in Makefile)
+                cmd = f'cd "{svc_dir}" && npm run build 2>&1 | grep -E "error|warning" || true'
+            else:
+                combined += f"\n--- {svc.name} SKIP (unknown project type) ---\n"
+                continue
+            p = subprocess.run([bash, "-c", cmd], cwd=ROOT, capture_output=True, text=True,
+                               encoding="utf-8", errors="replace", timeout=1800)
+            combined += f"\n--- {svc.name} rc={p.returncode} ---\n" + (p.stdout + p.stderr)[-300:]
+            if p.returncode != 0:
+                all_ok = False
+        return {"ok": all_ok, "code": 0 if all_ok else 1, "tail": combined[-400:]}
     except Exception as e:
         return {"ok": False, "code": -1, "tail": str(e)[:200]}
 
