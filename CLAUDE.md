@@ -52,7 +52,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE        (SHIP opt-in theo
 - **KHÔNG** đọc cả `docs/` rồi mới làm.
 
 ## HOOKS (awareness — chi tiết PROTOCOL §8)
-`guard_ask` (AskUserQuestion chỉ ở DOCUMENT; Scope khoá ✓ / ngoài DOCUMENT → chặn) · `guard_bc` (deploy khi BC §3 xanh) · `guard_ds` (mockup dùng token, không hex thô) · `guard_shell` (mockup có app shell khớp `_shell.html` canonical — nav/logo/user-menu/icon) · `guard_archive` (cấm sửa `archive/**`) · `guard_proof` (cấm sửa `*proof.json`) · `guard_makefile` (cấm sửa ROOT Makefile — điền per-target) · `guard_doc` (doc SPEC đóng băng ngoài DOCUMENT → sửa = wave sau) · `trace_docsync` (sửa spec doc ở DOCUMENT → nhắc CASCADE propagate + re-trace 5 chiều/UI↔AC; trigger, không tự kiểm) · `reanchor` (nhồi lại luật sau compact). `gate.py` chỉ BÁO.
+`guard_ask` (AskUserQuestion chỉ ở DOCUMENT; Scope khoá đã tick / ngoài DOCUMENT → chặn) · `guard_bc` (deploy khi BC §3 xanh) · `guard_ds` (mockup dùng token, không hex thô) · `guard_shell` (mockup có app shell khớp `_shell.html` canonical — nav/logo/user-menu/icon) · `guard_archive` (cấm sửa `archive/**`) · `guard_proof` (cấm sửa `*proof.json`) · `guard_makefile` (cấm sửa ROOT Makefile — điền per-target) · `guard_doc` (doc SPEC đóng băng ngoài DOCUMENT → sửa = wave sau) · `trace_docsync` (sửa spec doc ở DOCUMENT → nhắc CASCADE propagate + re-trace 5 chiều/UI↔AC; trigger, không tự kiểm) · `reanchor` (nhồi lại luật sau compact). `gate.py` chỉ BÁO.
 
 ## ROUTING
 | Câu hỏi | Ở đâu |

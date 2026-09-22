@@ -27,19 +27,19 @@ Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/
 
 ```
   ┌──────────┐ khoá  ┌────────┐ chạy  ┌────────┐      ┌──────────┐ xong ┌───────────┐
-  │ DOCUMENT │──────▶│ BUILD  │──────▶│ VERIFY │─────▶│ [SHIP?]  │─────▶│ NEXT-WAVE │
+  │ DOCUMENT │──────>│ BUILD  │──────>│ VERIFY │─────>│ [SHIP?]  │─────>│ NEXT-WAVE │
   │ tài liệu │ scope │MAIN code│ thật  │test+   │      │ opt-in   │ wave │ wave kế   │
   └──────────┘       └────────┘       │dogfood │      │ theo wave│      └─────┬─────┘
-       ▲                              └────────┘      └──────────┘            │
-       └──────── cần capability/boundary mới → top-up DOCUMENT ◀──────────────┘
+       ^                              └────────┘      └──────────┘            │
+       └──────── cần capability/boundary mới → top-up DOCUMENT <──────────────┘
 ```
 
 | Phase | Làm gì | Ai | Hỏi Authority? | Gate rời phase (chuẩn ở STATE.md §Gate) |
 |---|---|---|---|---|
-| **DOCUMENT** | interview\|intake → PRD·PERSONAS·CAPABILITIES·FEAT·ARCHITECTURE·DESIGN-SYSTEM·ux → chia wave → **khoá scope** | MAIN viết | ✅ CHỖ DUY NHẤT | doc set đủ mục · challenge PASS · ≥2 decisions · scope khoá |
-| **BUILD** | challenge → đọc KG → scaffold → walking skeleton → luồng lõi → **chạy thật (docker up)** | **MAIN tự code** | ❌ tự quyết → DECISIONS.md | skeleton thông · make check xanh · đã commit · health 200 |
-| **VERIFY** | 3 bước: **code review** (2 vai) + **`test-writer` thiết kế/chạy black-box test-case** + **dogfood** (6 persona 2 đợt) | MAIN + reviewer/bug-hunter/test-writer + 6 persona | ❌ | make test xanh · test-cases PASS · dogfood xong · hết finding BLOCKER/MAJOR |
-| **SHIP** | prod-ready → deploy → smoke → rollback thử → dogfood prod | MAIN | ❌ (deploy = ngoại lệ "hỏi thật") | chỉ chạy khi wave khai SHIP; prod sống · rollback thử |
+| **DOCUMENT** | interview\|intake → PRD·PERSONAS·CAPABILITIES·FEAT·ARCHITECTURE·DESIGN-SYSTEM·ux → chia wave → **khoá scope** | MAIN viết | CÓ — chỗ duy nhất | doc set đủ mục · challenge PASS · ≥2 decisions · scope khoá |
+| **BUILD** | challenge → đọc KG → scaffold → walking skeleton → luồng lõi → **chạy thật (docker up)** | **MAIN tự code** | KHÔNG — tự quyết → DECISIONS.md | skeleton thông · make check xanh · đã commit · health 200 |
+| **VERIFY** | 3 bước: **code review** (2 vai) + **`test-writer` thiết kế/chạy black-box test-case** + **dogfood** (6 persona 2 đợt) | MAIN + reviewer/bug-hunter/test-writer + 6 persona | KHÔNG | make test xanh · test-cases PASS · dogfood xong · hết finding BLOCKER/MAJOR |
+| **SHIP** | prod-ready → deploy → smoke → rollback thử → dogfood prod | MAIN | KHÔNG (deploy = ngoại lệ "hỏi thật") | chỉ chạy khi wave khai SHIP; prod sống · rollback thử |
 | **NEXT-WAVE** | go/pivot/kill → snapshot archive → mở wave kế (không reset) | MAIN | (go/pivot/kill) | backlog gộp · snapshot · wave kế mở hoặc teardown |
 
 **Wave**: DOCUMENT chạy 1 lần cho cả dự án (sinh kế hoạch mọi wave). BUILD/VERIFY/SHIP chạy **per wave**.
@@ -143,7 +143,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 > - **Cross**: contract-test present cho consumer · BACKWARD-COMPAT so `arch §API` (G4) · **phase-lock MIỄN tick tiến-độ ROADMAP lúc BUILD** (E, không phải đổi scope)
 >
 > **Kiến trúc gate.py** (1 file, mirror VIPER): shared readers `read/filled/read_live/count_rows/section/table_cells/challenge_last`
-> + 1 hàm/phase `gate_document/build/verify/ship/next_wave` + `phase_from_state()` đọc `STATE.md`. In ✓/✗ từng mục, exit 1 nếu thiếu — KHÔNG chặn tool.
+> + 1 hàm/phase `gate_document/build/verify/ship/next_wave` + `phase_from_state()` đọc `STATE.md`. In đạt/thiếu từng mục, exit 1 nếu thiếu — KHÔNG chặn tool.
 ## §7 — Agents (MAIN tự code; agent CHỈ để verification + dogfood)
 
 MAIN viết **toàn bộ code sản phẩm**. Agent chỉ để **góc nhìn độc lập** (*fresh eyes* — review) + **dùng thử** (dogfood) — hai việc
@@ -195,7 +195,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 | Test xanh giả (pass nhờ H2/mock, không chạy thật) | `capture_proof.py` MÁY-sinh `proof.json` — gate không tin tick |
 | Chạy mù kế hoạch cũ | `wave_reviewed` + RÀ LẠI (loop engineering) |
 | Agent giả tick proof | `guard_proof` chặn Write/Edit `*proof.json` |
-| Hỏi lại Authority sau khoá scope | `guard_ask` (chặn AskUserQuestion khi Scope khoá ✓ / ngoài DOCUMENT) |
+| Hỏi lại Authority sau khoá scope | `guard_ask` (chặn AskUserQuestion khi Scope khoá đã tick / ngoài DOCUMENT) |
 | Deploy khi hợp đồng vỡ | `guard_bc` (BACKWARD-COMPAT §3 đỏ, G4) |
 | Ghi đè wave đã đóng | `guard_archive` chặn `archive/**` |
 | Mockup hardcode màu (hex thô) | `guard_ds` (ngoài token :root) |
