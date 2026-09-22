@@ -41,7 +41,7 @@ Học được điều mới về target → append `knowledge-base/{name}.md`.
 Cột **`loại`**: `functional` / `contract` / `performance` / `security` / `e2e`… (taxonomy + rigor per loại: `specialist-testing`).
 Thứ tự **ưu tiên** (test luồng lõi + tiền/dữ liệu trước — thứ vỡ thì đau nhất):
 1. **Smoke luồng lõi** — 1 TC đi hết luồng chính đầu→cuối (giá trị hơn 50 TC vụn)
-2. **Tiền / dữ liệu** — tính tiền · trừ kho · huỷ/hoàn · xoá · cập nhật đồng thời
+2. **Tiền / dữ liệu** — tính tiền · trừ kho · huỷ/hoàn · xoá · cập nhật đồng thời (**cần data tiền đề** như kỳ lương trước → **DỰNG nó rồi test**, đừng bỏ; cách dựng: `specialist-testing §Dựng tiền đề`)
 3. **Ca biên** trong AC — đặc biệt **gửi 2 lần** (lần 2 KHÔNG tạo bản ghi trùng)
 4. **Phân quyền** — B không chạm dữ liệu A. **Chặn ở UI KHÔNG TÍNH → phải server/DB** (mỗi ô `cấm` ma trận vai = 1 TC âm)
 5. **Validate đầu vào** — rỗng · quá dài · sai kiểu · số âm

@@ -35,6 +35,7 @@ getter/setter · hàm tiện ích không logic · mock nặng tới mức chỉ 
 ## Nguyên tắc
 - Tên test/TC nói **HỎNG GÌ khi nó đỏ** (`không cho đặt 2 lịch trùng khung giờ`, không `test booking 2`).
 - Test **độc lập**, dữ liệu tự tạo, **KHÔNG phập phù** (lúc xanh lúc đỏ → cả bộ mất giá trị).
+- **Thiếu data tiền đề ≠ không test được.** TC cần trạng thái trước (lương tháng trước để test bù lương · đơn đã thanh toán để test hoàn · kho đã trừ để test bán tiếp) → **tự DỰNG tiền đề rồi mới act** — seed qua API thật / insert DB / fixture (cách dựng: `specialist-testing §Dựng tiền đề`). Mọi TC là **Arrange→Act→Assert**; bước **Arrange là việc CỦA BẠN**, không phải cái cớ để bỏ. **CẤM** ghi "không test được, dựa unit test" khi chỉ đơn giản là thiếu data — đó là né việc. Chỉ ghi không-test-được khi tiền đề **bất khả nội bộ** (cần bên thứ 3 thật trigger, không có sandbox) → nêu rõ lý do + cách phủ thay (contract-test/manual).
 - **Dedupe**: wave sau tích luỹ TC — check trùng (cùng feature + loại) → reuse thay vì tạo mới (`specialist-testing`).
 
 ## Chốt + TRẢ VỀ (final message)

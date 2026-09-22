@@ -22,6 +22,26 @@ Bổ sung TC chuyên sâu = **thêm row** vào `tracking/wave-N/test-cases.md` (
 | `security` | mọi wave chạm auth/payment/PII | negative testing là chính | `docs/SECURITY.md` + `adr/` security + FEAT phân quyền |
 | `accessibility` | CHỈ full-stack FE (WCAG 2.1 AA) | FE-only, ref WCAG criterion ID | `docs/ux/` + FEAT |
 
+## Dựng tiền đề (Arrange) — seed / fixture / mock / sandbox
+> Mọi TC = **Arrange→Act→Assert**. "Thiếu data để test" **KHÔNG phải lý do bỏ TC** — dựng tiền đề là bước Arrange, **việc của test-writer**. Ghi "không test được, dựa unit test" khi chỉ thiếu data = **né việc** (anti-pattern thật đã gặp: TC bù lương tháng này cần bảng lương tháng trước → phải seed tháng trước rồi chạy bù, không phải bỏ).
+
+| Tiền đề cần | Cách dựng (ưu tiên trên xuống) |
+|---|---|
+| **Data lịch sử** (lương/đơn/giao dịch kỳ trước) | Chạy **luồng tạo thật qua API** cho kỳ trước → đúng invariant. Không có API tạo → insert DB / seed migration với data **hợp lệ nghiệp vụ** |
+| **Trạng thái nhiều bước** (đơn đã duyệt+thanh toán+giao) | fixture/factory builder dựng sẵn, hoặc chuỗi API act tuần tự |
+| **Thời gian** (hết hạn · cron · chốt kỳ lương · TTL) | clock injection / override env giờ hệ thống / set field ngày trực tiếp — KHÔNG `sleep` chờ thật |
+| **External API** có phí / rate-limit / đối tác | stub tại **seam HTTP client** (WireMock/MSW), trả response mẫu theo `arch §API` |
+| **Payment gateway** (MoMo/VNPay) | **sandbox + credential test** — test THẬT vs sandbox, KHÔNG mock (mock che mất lỗi ký/callback) |
+| **Email / SMS / push** | fake sink (MailHog/Mailpit) hoặc provider sandbox → assert đã gửi + nội dung |
+| **Webhook / callback từ ngoài** (IPN, event đối tác) | tự `POST` **payload giả đúng schema** (`arch §Events`) vào endpoint nhận — mô phỏng bên ngoài gọi |
+| **Event Kafka** (nhận từ target khác) | EmbeddedKafka / produce event giả đúng schema vào topic |
+
+**Luật mock:**
+- Mock tại **ranh giới ngoài cùng** (HTTP/SMTP/gateway/broker client) — **KHÔNG** mock service/repo **nội bộ** (mock nội bộ = test cái mock, che bug tích hợp thật).
+- Fake data phải **hợp lệ nghiệp vụ** — đi qua **cùng validation/invariant** như data thật (seed thẳng DB thì tự đảm bảo ràng buộc). Fake bậy (bỏ qua rule) → **test đậu giả**, tệ hơn không test.
+- Mock/stub xong **assert được tương tác** (đã gọi đúng endpoint/payload gì) — không chỉ "không nổ".
+- Dọn seed/fixture cuối phase (luật #9) — không để rác data giữa các TC (gây phập phù).
+
 ## Rigor per loại
 - **contract**: verify API/event contract khớp `docs/arch/{name}.md §3 API` / events.
   - Consumer-driven (Pact hoặc tương đương): consumer định nghĩa expectation → provider verification chạy ở CI provider.
