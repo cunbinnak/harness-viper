@@ -20,6 +20,7 @@ description: BUILD — MAIN tự code 1 wave: đọc KG/context → challenge �
 - `docs/ROADMAP.md` wave-N: **target** (kind: backend/web/bff/mobile) + **AC in-scope** + phases khai
 - `docs/feat/FEAT-*` của các AC in-scope (AC + ca biên + field kỹ thuật)
 - `docs/arch/{name}.md` của target — **đọc frontmatter lấy `kind`** (backend/web/bff/mobile) + `stack` + data/API/ranh giới (KHÔNG đọc target khác). `kind` quyết định scaffold ở đâu · skeleton kiểu gì · chạy thật ra sao.
+- **`docs/adr/*` liên quan target** — quyết định kiến trúc đã chốt (ui-kit nào · Layered vs Hexagonal · auth · caching...). Scaffold Bước 3 **phải theo ADR** — ADR thắng default của skill.
 - **`knowledge-base/{name}.md`** nếu có → đọc hết §Invariants/§Gotchas/§Failure-modes/§Key-decisions
 - có UI → `docs/DESIGN-SYSTEM.md` + `docs/ux/mockups/<target>/` các màn in-scope (mockup dựng theo wave — phải có TRƯỚC khi code UI; thiếu → quay `/document` top-up)
 - `docs/TECHSTACK.md` + skill `stack-<tên>`
@@ -38,8 +39,16 @@ trả lời lại. **KHÔNG được code** khi chưa PASS. **PASS** → ghi `ST
 > 1 câu/mảng việc lớn ở mức BUILD (confirm hiểu trước khi code). Việc soi lỗ tài liệu **3–5 câu** đã làm ở DOCUMENT.
 
 ## Bước 3 — Scaffold
-Theo `stack-<tên>/SKILL.md` — **TÔN TRỌNG đúng pattern/convention của skill** (cấu trúc thư mục · layer · error
-shape · forbidden patterns), KHÔNG tự chế cấu trúc riêng. Tuân thêm `docs/CONVENTIONS.md` (đặt tên · error envelope · API).
+**Bốn nguồn ràng buộc — theo ĐÚNG, KHÔNG tự chế / KHÔNG lệch** (đây là chỗ hay đi lệch nhất):
+1. **`docs/TECHSTACK.md`** — stack + **VERSION đã chốt**: dùng ĐÚNG framework/lib/version đó. **KHÔNG** tự nâng/hạ version · **KHÔNG** thêm dependency ngoài danh sách · **KHÔNG** đổi build tool. Cần lib mới thật sự bất khả thiếu → `DECISIONS.md` 1 dòng lý do trước, rồi mới thêm.
+2. **`docs/adr/*`** — mọi quyết định kiến trúc đã chốt (ui-kit · Layered vs Hexagonal · auth · caching...). **ADR THẮNG default của skill**: skill mặc định Layered mà ADR khai Hexagonal → theo ADR.
+3. **Skill pattern (gọi TÊN cụ thể, không mơ hồ "skill"):**
+   · **`stack-<tên>`** (`stack-spring-boot`/`stack-nextjs`/`stack-flutter`/`stack-bff`) — idiom CODE + `§review`
+   · **`ref-<kind>-pattern`** — CẤU TRÚC: `ref-backend-pattern` (Layered mặc định · JPA `@Entity` ở package `entities/` tên `{Resource}Entity` · layer trách nhiệm · interface/impl · response & error shape · forbidden patterns) · `ref-frontend-pattern` (layout thư mục + tổ chức component)
+   · **`ref-backend-{config,kafka,redis,logging,restclient}`** — nạp khi target dùng đúng mảnh đó
+   → TÔN TRỌNG cấu trúc thư mục · layer · error shape · forbidden patterns của chúng. **KHÔNG tự chế cấu trúc riêng.**
+4. **`docs/CONVENTIONS.md`** (đặt tên · error envelope · API design — mọi target theo) + **`docs/SECURITY.md`** (baseline).
+
 Scaffold vào **đúng nhóm theo `kind`** bằng **CLI chính chủ** (không chép boilerplate):
 · `backend` → `services/boundaries/{name}/` · `web` → `services/web/{name}/` · `bff` → `services/bff/{name}/` · `mobile` → `services/mobile/{name}/`
 **Có KG** → áp lại NGAY §Invariants + §Gotchas (chống lặp bug cũ: env tường minh, JWT local, soft-delete...).
@@ -53,8 +62,9 @@ Bản mỏng nhất **CHẠY được**, theo `kind`:
 - **mobile**: build + chạy **emulator** → 1 màn render → gọi 1 API
 
 → `git commit`. Chưa thông đường mỏng này thì **KHÔNG** làm gì khác — đừng đắp UI đẹp lên đường chưa thông.
-**Wave nhiều target**: skeleton = **1 đường xuyên suốt qua cụm** (1 backend + 1 web/frontend cho luồng lõi) trước,
-target còn lại nối sau — không dựng đầy đủ từng cái một.
+**Wave nhiều target — THỨ TỰ theo chiều phụ thuộc, KHÔNG song song:** **provider TRƯỚC, consumer SAU.**
+Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được** (health 200 + gọi được) TRƯỚC → rồi web/bff/mobile mới build **gọi API thật đó** (FE consume `consumes_contracts`). Skeleton = **1 đường xuyên suốt qua cụm ĐÚNG chiều phụ thuộc** (backend luồng lõi → frontend luồng lõi), nhánh còn lại nối sau.
+**CẤM code BE và FE "song song mỗi cái một nửa"** · **CẤM mock API để FE chạy trước** khi backend chưa có endpoint thật — FE dựng trên contract chưa chạy = đường CHƯA THÔNG, đắp thịt lên đó là retro. Provider chưa thông thì consumer chưa được bắt đầu.
 
 ## Bước 5 — Luồng lõi (mỗi AC in-scope)
 `làm → tự bấm thử ở local → tick ROADMAP → commit`. Trong lúc làm:
@@ -82,6 +92,7 @@ target còn lại nối sau — không dựng đầy đủ từng cái một.
 
 ## Ranh giới
 - Không sửa AC (`docs/feat/**`) cho dễ làm — không làm được → `STATE.md §Blocker`, báo cuối buổi
-- Không đổi stack (đổi sau khoá scope = phá luật; cần thì ghi đánh đổi rõ ở `DECISIONS.md`)
+- **Không đổi stack / version / bỏ ADR** (đã chốt ở DOCUMENT = phá luật): dùng đúng `TECHSTACK.md` version + `docs/adr/*` + skill `stack-<tên>`/`ref-<kind>-pattern`. Bất khả thi → ghi đánh đổi rõ `DECISIONS.md`, KHÔNG tự lệch.
+- **Nhiều target: KHÔNG code BE+FE song song** (Bước 4) — provider (API thật, health 200) trước, consumer sau. FE bám contract đã chạy, KHÔNG mock để chạy trước.
 - Viết unit/integration (lưới an toàn MAIN) — nhưng **black-box test-case + dogfood để VERIFY** (`test-writer`); không tối ưu sớm
 - **Không spawn dev-agent** — MAIN tự code; agent chỉ xuất hiện ở `/verify`
