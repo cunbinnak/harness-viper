@@ -146,7 +146,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 > + 1 hàm/phase `gate_document/build/verify/ship/next_wave` + `phase_from_state()` đọc `STATE.md`. In ✓/✗ từng mục, exit 1 nếu thiếu — KHÔNG chặn tool.
 ## §7 — Agents (MAIN tự code; agent CHỈ để verification + dogfood)
 
-MAIN viết **toàn bộ code sản phẩm**. Agent chỉ để **mắt tươi độc lập** (review) + **dùng thử** (dogfood) — hai việc
+MAIN viết **toàn bộ code sản phẩm**. Agent chỉ để **góc nhìn độc lập** (*fresh eyes* — review) + **dùng thử** (dogfood) — hai việc
 hưởng lợi từ độc lập. Spawn bằng **Task tool** + `subagent_type` + prompt NGẮN tay (KHÔNG `build_prompt`); phương pháp
 nằm ở `.claude/agents/<name>.md`.
 

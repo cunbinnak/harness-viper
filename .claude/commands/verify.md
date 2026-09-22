@@ -7,7 +7,7 @@ description: VERIFY — code review (2 vai) + test-writer thiết kế/chạy bl
 > **Kỷ luật spawn** (mọi Bước dưới): spawn bằng **Task tool + prompt ngắn TAY viết** (KHÔNG `build_prompt`, KHÔNG generator). Ranh giới cấm là **PRODUCT code — chỉ MAIN viết/sửa** (không phải "cấm viết mọi thứ"). Phân vai ghi/đọc:
 > · `reviewer` · `bug-hunter` · `persona-*` → **READ-ONLY** — chỉ đọc, trả finding, không viết gì (đã chặn `Write`/`Edit` bằng frontmatter).
 > · `test-writer` → **QA độc lập, CÓ viết**: thiết kế `tracking/wave-N/test-cases.md` + viết test code trong `test/` (đó là việc của nó) — CHỈ **không đụng product code**.
-> Mọi agent thấy product code sai → **TRẢ finding**, MAIN sửa (mắt tươi độc lập — MAIN không tự-chấm-bài-mình).
+> Mọi agent thấy product code sai → **TRẢ finding**, MAIN sửa (**góc nhìn độc lập** — *fresh eyes*: người kiểm không phải người viết, nên MAIN không tự-chấm-bài-mình).
 > Không hỏi Authority (mơ hồ → `DECISIONS.md` · ngoài scope → `ROADMAP §backlog` · chặn cứng → `STATE §Blocker`).
 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: VERIFY`.
@@ -16,7 +16,7 @@ description: VERIFY — code review (2 vai) + test-writer thiết kế/chạy bl
 - `docs/ROADMAP.md` wave-N (AC in-scope) + `docs/feat/FEAT-*` (AC + ca biên) + `docs/CONVENTIONS.md §API` + `arch/{name}.md` (**`kind`** + §API)
 - Hệ chạy thật (từ BUILD), theo `kind`: backend/bff → `docker ps` + health 200 · web → dev server chạy · mobile → emulator. Chưa chạy → đưa lên trước.
 
-## Bước 2 — Code review (2 vai mắt-tươi, checklist đúng `kind` — KHÔNG sửa)
+## Bước 2 — Code review (2 vai góc-nhìn-độc-lập, checklist đúng `kind` — KHÔNG sửa)
 Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu hỏi KHÁC nhau:
 > **Cả 2 agent nạp thêm skill `review-<kind>`** (review-backend/web/bff/mobile — checklist review theo `kind` của target đang review) BÊN CẠNH `stack-<x> §review`.
 
@@ -81,6 +81,6 @@ Phát hiện (MAIN + 6 vai) → `STATE.md §Findings` (Nguồn = tên vai) → b
 
 ## Ranh giới
 - **KHÔNG build/sửa source để test qua** — test black-box đo hành vi thật; lỗi thì sửa ở Bước 5 rồi re-test.
-- Agent (review/persona) **chỉ trả finding** — chỉ MAIN sửa (giữ "mắt tươi" độc lập).
+- Agent (review/persona) **chỉ trả finding** — chỉ MAIN sửa (giữ **góc nhìn độc lập** — *fresh eyes*).
 - Không thả 6 persona cùng lúc (đè trạng thái nhau + trạng thái rỗng chết khi có bản ghi đầu tiên).
 - **Dọn rác**: screenshot/trace/video Playwright chụp để phân tích → **xoá sau khi xong**, KHÔNG commit, để scratch dir (không tích tụ). Seed test-data → cleanup cuối phase. test-logs/k6 output → archive theo wave hoặc xoá.
