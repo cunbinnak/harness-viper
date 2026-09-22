@@ -34,6 +34,8 @@ grep -rnE 'catch\s*\{\s*\}|except[^:]*:\s*pass' services/<target>
 ```
 Cái nào chặn AC → finding. Cái nào nợ tương lai → ghi chú riêng.
 
+> **Hành vi hỏng/thiếu mà KHÔNG map AC nào** = dấu hiệu **lỗ spec** (Author miss), không phải bug thường → tag **`nghi thiếu AC`** trong finding (ghi FEAT liên đới). MAIN route thành **AC mới** (top-up), không chỉ fix code lặng lẽ (verify.md Bước 5).
+
 ## TRẢ VỀ (final message — MAIN ghi `STATE §Findings`)
 ```
 Đã nạp: <liệt kê file/skill thực đọc — vd FEAT-leave · arch/hrms-api · review-backend · stack-spring-boot §review>

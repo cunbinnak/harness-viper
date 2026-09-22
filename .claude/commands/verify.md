@@ -68,6 +68,9 @@ Rồi mới **6 persona**, **2 đợt tránh đè trạng thái** (server + DB d
 Phát hiện (MAIN + 6 vai) → `STATE.md §Findings` (Nguồn = tên vai) → báo Authority theo **mẫu tổng kết** (`/dogfood`).
 
 ## Bước 5 — Sửa tới sạch (MAIN)
+> **PHÂN LOẠI finding trước khi xử — bug ≠ thiếu-AC:**
+> - **Bug** (AC/spec ĐÃ có mà code sai) → **MAIN sửa code**, không đụng doc.
+> - **Thiếu-AC** (dogfood/bug-hunter chạm case **không AC nào phủ**, mà đáng ra phải có) → KHÔNG chỉ vá code lặng lẽ: **tag `nghi thiếu AC`** vào `§Findings` + đẩy `ROADMAP §backlog` (ghi FEAT liên đới) → `/next-wave` cân nhắc `/document` top-up **thành AC mới** (spec giàu dần — loop engineering). Vá code tạm cho qua VERIFY thì vẫn phải để lại vết backlog, đừng để case chìm.
 - TC **FAIL** hoặc finding **BLOCKER/MAJOR** → **MAIN sửa code** → **re-run** TC + dogfood liên quan → cập nhật
   `test-cases.md` thành PASS, đánh dấu finding đã xử.
 - **Không hội tụ** — finding mới cứ nảy sau **~3 vòng** sửa→re-test → DỪNG, ghi `STATE.md §Blocker`, báo cuối buổi (đừng sửa vô hạn — max-turns safety, học từ loop-engineering).
