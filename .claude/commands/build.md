@@ -6,7 +6,7 @@ description: BUILD — MAIN tự code 1 wave: đọc KG/context → challenge �
 > Sau khoá scope: **TOÀN QUYỀN, KHÔNG hỏi Authority.** Mơ hồ → tự quyết theo doc → 1 dòng `docs/DECISIONS.md` → đi tiếp.
 > Ngoài scope → `docs/ROADMAP.md §backlog`, không hỏi. Chặn cứng → `STATE.md §Blocker`, báo gộp cuối buổi.
 > Ngoại lệ DUY NHẤT được hỏi: hành động **không đảo ngược / hướng ra ngoài** (xoá data prod, tiêu tiền, đăng ký dịch vụ).
-> **MAIN tự code — KHÔNG spawn dev-agent** (review + dogfood để dành `/verify`).
+> **MAIN tự viết 100% product code + unit/integration test. Ở BUILD KHÔNG spawn agent NÀO** — không chỉ "dev-agent": cấm mọi Task subagent để code/scaffold/viết test/"phụ một tay", dù đặt tên gì. MAIN gõ từng dòng. Agent (review/test-writer/persona) **chỉ xuất hiện ở `/verify`**, và chỉ verification — không đụng product code.
 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: BUILD` + `Wave: <N>` (arg `<wave>`, hoặc dòng `Wave` sẵn có).
 `guard_ask` + `gate.py` đọc dòng này — không sửa thì máy tưởng còn phase cũ, luật "không hỏi" mất hiệu lực.
@@ -95,4 +95,4 @@ Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được
 - **Không đổi stack / version / bỏ ADR** (đã chốt ở DOCUMENT = phá luật): dùng đúng `TECHSTACK.md` version + `docs/adr/*` + skill `stack-<tên>`/`ref-<kind>-pattern`. Bất khả thi → ghi đánh đổi rõ `DECISIONS.md`, KHÔNG tự lệch.
 - **Nhiều target: KHÔNG code BE+FE song song** (Bước 4) — provider (API thật, health 200) trước, consumer sau. FE bám contract đã chạy, KHÔNG mock để chạy trước.
 - Viết unit/integration (lưới an toàn MAIN) — nhưng **black-box test-case + dogfood để VERIFY** (`test-writer`); không tối ưu sớm
-- **Không spawn dev-agent** — MAIN tự code; agent chỉ xuất hiện ở `/verify`
+- **Không spawn agent NÀO ở BUILD để code/scaffold/viết test** (dev-agent hay bất kỳ tên nào) — MAIN tự viết hết; agent chỉ ở `/verify` và chỉ verification. Spawn bằng **Task tool + prompt ngắn tay**, **KHÔNG `build_prompt`**.

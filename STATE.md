@@ -48,6 +48,7 @@ URL production  : —
 - [ ] Đã set `Phase hiện tại: BUILD` (việc ĐẦU TIÊN khi vào phase)
 - [ ] Đọc `knowledge-base/{name}.md` nếu có → áp lại §Invariants/§Gotchas (chống lặp bug cũ)
 - [ ] Challenge **PASS** (trước dòng code đầu) — §Challenge log
+- [ ] **Scaffold đúng ràng buộc**: `docs/TECHSTACK.md` version + `docs/adr/*` + skill `stack-<tên>`/`ref-<kind>-pattern` — cấu trúc/layer/error-shape khớp · KHÔNG tự chế cấu trúc · KHÔNG lệch version / thêm dep ngoài danh sách
 - [ ] `make dev` · `make check` · `make migrate` có thân
 - [ ] Walking skeleton: app+db lên · health 200 · 1 thao tác ghi→đọc DB được (dù xấu)
 - [ ] Luồng lõi end-to-end bấm được ở local (theo AC in-scope wave)
