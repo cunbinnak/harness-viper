@@ -28,8 +28,18 @@ Neo về nền dự án: `docs/PRD.md`, `docs/PERSONAS.md`, `docs/CAPABILITIES-M
 
 ## Cách viết AC BDD tốt (giá trị — giữ nguyên)
 - **Cho/Khi/Thì (Given/When/Then)** — mỗi AC 1 hành vi kiểm được, có kết quả quan sát được (không "hệ thống hoạt động đúng").
-- Phủ **4 loại tối thiểu**: happy path · validation (input sai) · error/failure · a11y (bàn phím/screen-reader/tương phản khi là UI).
-- Ca biên: gửi hai lần · sửa đồng thời · rỗng · quyền thu hồi giữa chừng — nếu FEAT chạm trạng thái thì AC/ca biên phải nói tới, đừng để hở cho lúc code đoán.
+- Phủ **4 loại nền tối thiểu**: happy path · validation (input sai) · error/failure · a11y (bàn phím/screen-reader/tương phản khi là UI).
+- **TAXONOMY CA BIÊN — quét MỖI FEAT qua TỪNG trục.** Trục nào FEAT chạm → **phải có AC**; không chạm → ghi `n/a`, **KHÔNG bỏ trắng** (bỏ trắng = điểm mù Author lọt thẳng tới code — đây là chỗ Author hay miss nhất):
+  - **rỗng/đầy/biên**: 0 bản ghi · đúng 1 · rất nhiều (phân trang) · min/max/tràn độ dài
+  - **lỗi/timeout**: input sai · downstream chết/chậm · validate fail → hiện thông báo gì
+  - **quyền/tenant**: vai bị `cấm` (ma trận) · chạm dữ liệu tenant khác · thu hồi quyền giữa chừng
+  - **đồng thời**: gửi 2 lần · 2 người sửa 1 bản ghi · race tạo trùng
+  - **thời gian/kỳ**: hết hạn giữa chừng · ranh giới kỳ (cuối tháng/năm/ca) · timezone · job chạy nền
+  - **tiền/số**: làm tròn · số âm · đơn vị · cộng dồn lệch
+  - **idempotency**: retry · webhook/callback lặp · job chạy 2 lần
+  - **partial-failure**: ghi DB xong nhưng event/cache/email fail → bù/hoàn thế nào
+  - **thứ tự**: sự kiện tới lệch thứ tự · phụ thuộc bước trước chưa xong
+  > Danh sách này còn là **danh sách săn** cho `pre-mortem` audit (cuối DOCUMENT). FEAT chạm trạng thái mà AC không nói tới trục nào = để hở cho lúc code đoán.
 - Field kỹ thuật ĐI CÙNG AC trong cùng file (fork 1 lớp): AC business + `consumes_contracts`/ranh giới ngồi chung — không tách business rồi dịch.
 
 ## Không hỏi user (fork rule)
@@ -42,4 +52,4 @@ Thứ tự khi bí: **(1)** tìm trong `PRD`/`PERSONAS`/`CAPABILITIES-MAP`/`INTE
 - Sửa FEAT đã chốt (đã khoá scope) = **wave sau**: `ROADMAP §backlog` → `/next-wave` → `/document` top-up.
 
 ## Done
-- FEAT đúng cấu trúc + ≥4 AC BDD (happy/validation/error/a11y) + §3 field kỹ thuật + mọi chỗ tự quyết có dòng `DECISIONS.md` → rà bằng lens `business-analysis` (AC testable? BR logical? scope rõ?) → tiếp Bước 6 (`event-storming` → `boundary-charter` → `technical-design`).
+- FEAT đúng cấu trúc + ≥4 AC BDD (happy/validation/error/a11y) + **taxonomy ca biên quét đủ trục (mỗi trục có AC hoặc `n/a`, không bỏ trắng)** + §3 field kỹ thuật + mọi chỗ tự quyết có dòng `DECISIONS.md` → rà bằng lens `business-analysis` (AC testable? BR logical? scope rõ?) → tiếp Bước 6 (`event-storming` → `boundary-charter` → `technical-design`).
