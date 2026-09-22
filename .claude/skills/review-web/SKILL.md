@@ -117,10 +117,13 @@ grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effe
 
 ### Trục 6 — a11y, cấu trúc, test
 
+> **BƯỚC 6.0 — SOI HÌNH DẠNG CÂY TRƯỚC (đọc nội dung code KHÔNG thay được).**
+> (1) pattern FE chốt ở `arch §4`/ADR + `ref-frontend-pattern` là gì? · (2) `find src -maxdepth 2 -type d` dump cây THẬT · (3) **phân loại**: ra `pages/components/hooks/api/stores/router` (hoặc feature-based đã chốt) hay **phẳng/tự chế** (mọi thứ 1 folder · tên tự đặt)? · (4) cây THẬT phải khớp pattern đã chốt — lệch = **BLOCKER**. Chưa làm 6.0 mà kết luận "cấu trúc ổn" = chưa soi cấu trúc.
+
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | a11y: contrast · label · role · focus order; semantic HTML; icon button có `aria-label`; modal focus trap + Escape; màu không là tín hiệu duy nhất | axe (mục 3) · `grep -rn "<div[^>]*onClick" src` | critical = BLOCKER · khác = MAJOR |
-| Cấu trúc khớp `ref-frontend-pattern` (`pages` · `components` · `hooks` · `api` · `stores` · `router`) | `find src -maxdepth 1 -type d` | lệch = BLOCKER |
+| **(6.0)** Cây THẬT khớp pattern đã chốt (`ref-frontend-pattern`: `pages`·`components`·`hooks`·`api`·`stores`·`router`, hoặc feature-based) — không phẳng/tự chế | `find src -maxdepth 2 -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch = BLOCKER |
 | Không file/folder thừa: component/hook mồ côi, scaffold mẫu, import chết | `npx knip` nếu có; không có → grep tên export không ai import | MAJOR |
 | Route/storage key/query key/role/status là constant; format ngày/tiền dùng helper chung; text qua i18n nếu project có | `grep -rnE "navigate\(['\"]/" src` | MINOR |
 | Test: hành vi người dùng (query theo role/label/text, không className/testId); mock ở network (MSW/MockedProvider); mỗi màn chính có success · loading · error · submit lỗi · permission; không snapshot lớn; sửa bug có regression test | `grep -rn -e getByTestId -e toMatchSnapshot src` | MAJOR |
@@ -131,6 +134,7 @@ grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effe
 |---|---|---|
 | Code làm khác một dòng `docs/DECISIONS.md` mà không có dòng mới đè lên | Mỗi dòng liên quan boundary → tìm chỗ code | MAJOR |
 | Ui-kit / state lib / cách lưu token khác ADR | `package.json` so với ADR | MAJOR |
+| Framework/version khác `TECHSTACK.md` khai (vd khai React 19 → code `19.x`; đúng Next/Vite đã chốt) | `package.json` vs `docs/TECHSTACK.md §1` | MAJOR |
 | Wave ≥ 2: route/URL đã giao vẫn mở được (deep link cũ), không đổi nghĩa màn | Router so với `archive/wave-*/` | BLOCKER |
 | Thuật ngữ trên UI lệch FEAT/Glossary | Đọc label | MINOR |
 

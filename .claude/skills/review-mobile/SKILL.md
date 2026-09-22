@@ -97,10 +97,13 @@ grep -rniE "price|total|discount|eligib" lib           # nghiệp vụ trong app
 
 ### Trục 5 — UI, cấu trúc, test
 
+> **BƯỚC 5.0 — SOI HÌNH DẠNG CÂY TRƯỚC (đọc nội dung code KHÔNG thay được).**
+> (1) cấu trúc chốt ở `arch §4`/ADR: feature-first (`features/`·`shared/`·`core/`) hay layer/theo design? · (2) `find lib -type d` dump cây THẬT · (3) **phân loại** hình dạng · (4) khớp cấu trúc đã chốt — lệch = **MAJOR** (phẳng/tự chế, mọi `.dart` 1 folder = BLOCKER).
+
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | Mỗi action có loading · error · success; bám `ux-{name}.md` + design system đã chốt (Material 3) | Đọc màn | MAJOR |
-| Naming `snake_case.dart` / `PascalCase` class; folder feature-first (`features/` · `shared/` · `core/`) hoặc theo design | `find lib -type d` | MINOR · lệch cấu trúc đã chốt = MAJOR |
+| **(5.0)** Cây THẬT khớp cấu trúc đã chốt (feature-first `features/`·`shared/`·`core/` hoặc theo design) — không phẳng/tự chế; naming `snake_case.dart`/`PascalCase` | `find lib -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch cấu trúc = MAJOR |
 | Widget test cho màn/action chính; test không phụ thuộc mạng thật | `ls test` · đọc test đại diện | MAJOR |
 
 ### Trục 6 — Lệch thứ đã chốt
@@ -109,6 +112,7 @@ grep -rniE "price|total|discount|eligib" lib           # nghiệp vụ trong app
 |---|---|---|
 | Code làm khác một dòng `docs/DECISIONS.md` mà không có dòng mới đè lên | Mỗi dòng liên quan boundary → tìm chỗ code | MAJOR |
 | State lib / storage / auth flow khác ADR | `pubspec.yaml` so với ADR | MAJOR |
+| Flutter/Dart SDK version khác `TECHSTACK.md` khai | `pubspec.yaml` (`environment.sdk`/`flutter`) · `.fvmrc` vs `docs/TECHSTACK.md §1` | MAJOR |
 | Wave ≥ 2: deep link/màn đã giao vẫn mở được; bản app cũ ngoài kia vẫn gọi được API | Router so với `archive/wave-*/` | BLOCKER |
 | Thuật ngữ trên UI lệch FEAT/Glossary | Đọc label | MINOR |
 

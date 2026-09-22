@@ -99,10 +99,13 @@ grep -rniE "price|total|discount|eligib" src/resolvers                      # ng
 
 ### Trục 5 — Test và cấu trúc
 
+> **BƯỚC 5.0 — SOI HÌNH DẠNG CÂY TRƯỚC (đọc nội dung code KHÔNG thay được).**
+> (1) cách tổ chức chốt ở `arch §4`/ADR (resolver/loader/schema theo module/domain)? · (2) `find src -type d` dump cây THẬT · (3) **phân loại** hình dạng · (4) khớp cấu trúc đã chốt — lệch/phẳng/tự chế = **MAJOR**.
+
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | Unit resolver + mapper; integration mock backend; test chứng minh DataLoader batch | `find src -name "*.spec.ts"` · đọc test loader | MAJOR |
-| Naming: `{type}.resolver.ts` · `{entity}.loader.ts` · `{domain}.graphql` · `*.spec.ts` | `find src -name "*.ts"` | MINOR |
+| **(5.0)** Cây THẬT khớp cách tổ chức đã chốt (module/domain: resolver·loader·schema) — không phẳng/tự chế; naming `{type}.resolver.ts`·`{entity}.loader.ts`·`{domain}.graphql`·`*.spec.ts` | `find src -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch = MAJOR |
 | KG của boundary có operations + loaders + cache key strategy | `knowledge-base/{name}.md` | MINOR |
 
 ### Trục 6 — Lệch thứ đã chốt
@@ -111,6 +114,7 @@ grep -rniE "price|total|discount|eligib" src/resolvers                      # ng
 |---|---|---|
 | Code làm khác một dòng `docs/DECISIONS.md` mà không có dòng mới đè lên | Mỗi dòng liên quan boundary → tìm chỗ code | MAJOR |
 | Thư viện/cách dựng schema khác ADR (code-first vs SDL, server lib) | `package.json` so với ADR | MAJOR |
+| Framework/version (Node · Apollo/server lib) khác `TECHSTACK.md` khai | `package.json` (+ `.nvmrc`) vs `docs/TECHSTACK.md §1` | MAJOR |
 | Tên type/field lệch thuật ngữ FEAT/Glossary | Đọc SDL | MINOR |
 
 ## 5. Report finding
