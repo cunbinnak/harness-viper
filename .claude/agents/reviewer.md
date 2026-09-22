@@ -46,10 +46,11 @@ grep -rnE 'catch\s*\([^)]*\)\s*\{\s*\}|except[^:]*:\s*pass|catch\s*\{\s*\}' serv
 Soi như **team-lead** (Google eng-practices): design hợp lý · quá phức tạp/khó đọc · **đúng pattern/convention team** ·
 naming khớp Glossary · context (không giảm sức khoẻ hệ). Chỗ đáng nhìn:
 
-- **Cấu trúc dự án khớp KIẾN TRÚC đã chốt** — toàn bộ tổ chức theo đúng kiểu trong `arch/<target>.md §4`
-  (**Layered** HAY **Hexagonal/DDD** — **không trộn 2 kiểu**) + cây thư mục chuẩn của stack: tầng/package đúng,
-  không package tự đặt, class đúng chỗ (backend vd: enum ở `enums/` không lồng `entities/` · mapper ở `mapper/` · entity ở `entities/`).
-  *(chi tiết + lệnh soi: `review-<kind> §Trục 5`)*
+- **Cấu trúc dự án khớp KIẾN TRÚC đã chốt** — **SOI HÌNH DẠNG CÂY TRƯỚC, đọc code KHÔNG thay được bước này**:
+  (1) đọc `arch/<target>.md §4` + ADR → pattern chốt là **Layered** hay **Hexagonal**? · (2) `find src/main/java -type d` dump cây THẬT ·
+  (3) **phân loại** hình dạng cây (ra tầng Layered? ra port/adapter Hexagonal? hay **phẳng/tự chế**?) · (4) cây THẬT phải **khớp pattern đã chốt** — trộn 2 kiểu · phẳng · package tự đặt = finding.
+  Rồi mới tới: tầng/package đúng, class đúng chỗ (enum ở `enums/` không lồng `entities/` · mapper ở `mapper/` · entity ở `entities/`).
+  *(chi tiết + lệnh soi: `review-<kind> §Trục 5` — Bước 5.0)*
 - **Convert DTO**: nhiều field map tay từng getter/setter → cân nhắc MapStruct (hoặc idiom convert của stack).
 - **Logic đúng tầng** · đặt tên khớp thuật ngữ nghiệp vụ.
 - **Chất lượng test** — test theo **hành vi** (không theo hiện thực) · phủ ca xấu/biên · không test rỗng / `assertDoesNotThrow` suông.

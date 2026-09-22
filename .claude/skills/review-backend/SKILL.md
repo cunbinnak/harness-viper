@@ -131,10 +131,19 @@ grep -rni -e h2database -e "jdbc:h2" build.gradle* src               # H2
 
 ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ nó không bắt được.
 
+> **BƯỚC 5.0 — SOI HÌNH DẠNG CÂY, LÀM TRƯỚC khi đọc code (đọc nội dung code KHÔNG thay được bước này).**
+> Đọc file trong package chỉ cho biết code viết gì, KHÔNG cho biết cấu trúc **tổ chức đúng pattern** hay không — phải lùi lại nhìn cây:
+> 1. **Pattern đã chốt là gì?** Đọc `docs/arch/{name}.md §4` + `docs/adr/*` → **Layered** hay **Hexagonal**?
+> 2. **Dump cây THẬT:** `find src/main/java -type d` (hoặc `tree src/main/java`).
+> 3. **Phân loại hình dạng cây:** nó ra **Layered** (`controller/ · service/ + impl/ · repository/ · entities/ · dto/ · mapper/`) · **Hexagonal** (`domain/ · application/ · adapter/in · adapter/out/...`) · hay **phẳng/tự chế** (mọi class 1 package · tên package tự đặt · không thấy tầng)?
+> 4. **Cây THẬT phải KHỚP pattern ĐÃ CHỐT.** Chốt Layered mà cây không ra tầng · trộn 2 kiểu · phẳng · package tự đặt = **BLOCKER**. Hình dạng chuẩn từng pattern: `ref-backend-pattern §2/§3`.
+>
+> Chưa làm 5.0 mà đã kết luận "cấu trúc ổn" = review CHƯA soi cấu trúc, chỉ mới đọc code.
+
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | `ArchitectureTest.java` tồn tại, rule khớp layout arch §4 | `find src/test -name ArchitectureTest.java` → đọc rule | thiếu/rỗng = BLOCKER |
-| Cấu trúc khớp arch §4 + cây `ref-backend-pattern`: Layered HOẶC Hexagonal, không trộn, không package tự đặt | `find src/main/java -type d` so với cây trong skill | BLOCKER |
+| **(5.0)** Cây THẬT khớp pattern đã chốt (Layered/Hexagonal, không trộn, không phẳng, không package tự đặt) | `find src/main/java -type d` → **phân loại hình dạng** vs `arch §4`/ADR + `ref-backend-pattern §2/§3` | BLOCKER |
 | Class đúng package; `@Entity` ở `entities/` (Hexagonal: `adapter/out/persistence/entities/`), tên `{Resource}Entity` | `grep -rl "@Entity" J` | MAJOR |
 | Không package rỗng, không scaffold mẫu | `find src/main -type d -empty` · `find src -name "Example*" -o -name "Demo*" -o -name "Sample*" -o -name "HelloController*"` | thừa = MAJOR · mẫu lẫn code thật = BLOCKER |
 | Đúng tầng: controller map + validate + gọi service interface · nghiệp vụ + transaction ở service · query ở repository · convert ở mapper · không nghiệp vụ trong controller/repository/mapper/config/migration | Đọc controller + mapper | MAJOR |
