@@ -1,6 +1,6 @@
 ---
 name: stack-spring-boot
-description: Stack backend Java 21 + Spring Boot 3.4 — scaffold · convention · make · config · §review (forbidden patterns cho reviewer/bug-hunter). Load khi target kind=backend stack=spring-boot.
+description: Stack backend Java 21 + Spring Boot 4.x — scaffold · convention · make · config · §review (forbidden patterns cho reviewer/bug-hunter). Load khi target kind=backend stack=spring-boot. Version thật do docs/TECHSTACK.md + ADR chốt; 3.x đã EOL 6/2026 (chỉ dùng khi bảo trì codebase cũ).
 ---
 
 # stack-spring-boot

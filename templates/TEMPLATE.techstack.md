@@ -4,7 +4,7 @@
 ## §1 Stack per target
 | Target (kind) | Stack | Skill |
 |---|---|---|
-| {{order-service (backend)}} | {{Java 21 + Spring Boot 3.4}} | `stack-spring-boot` |
+| {{order-service (backend)}} | {{Java 21 + Spring Boot 4.1}} | `stack-spring-boot` |
 | {{customer-web (web)}} | {{React 19 + Vite}} | `stack-nextjs` |
 
 ## §2 Hạ tầng

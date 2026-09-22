@@ -1,7 +1,7 @@
 ---
 name: ref-backend-config
 description: >
-  Reference patterns cho backend service configuration và scaffold — application.yml (Spring Boot 3.4),
+  Reference patterns cho backend service configuration và scaffold — application.yml (Spring Boot 4.x),
   profiles (local/dev/sit/prod), env var binding, secrets management (Azure Key Vault),
   Spring Security OAuth2 Resource Server (JWT), database connection pooling (HikariCP),
   Kafka consumer/producer config, Redis cache config, Temporal workflow client config,
@@ -15,11 +15,13 @@ description: >
 
 > Config patterns cho backend service. Consult khi scaffold target backend mới hoặc cần config cụ thể (stack-spring-boot §situational trỏ tới).
 
+> **Version = `docs/TECHSTACK.md` + ADR CHỐT (nguồn sự thật); skill này chỉ THAM CHIẾU.** Mẫu dưới cho **Spring Boot 4.1** (bản đang được hỗ trợ, 9/2026). Dòng **3.x đã EOL 30/6/2026** (bản OSS cuối 3.5.16) — chỉ dùng khi bảo trì codebase cũ, KHÔNG chọn cho dự án mới. Nâng 3.x→4.x là **major, KHÔNG phải đổi số**: Jackson 2→3 (đổi groupId/annotation), `@MockBean`/`@SpyBean`→`@MockitoBean`/`@MockitoSpyBean`, vài property đổi tên → chạy `spring-boot-properties-migrator` dò, gỡ Undertow/JUnit4. Java baseline vẫn **21**.
+
 ---
 
 ## 1. Config File Structure
 
-### Spring Boot 3.4 (e.g. Spring Boot)
+### Spring Boot 4.1 (e.g. Spring Boot)
 
 ```yaml
 # application.yml — base config
@@ -250,8 +252,8 @@ logging:
 ```groovy
 // build.gradle — Groovy DSL (KHÔNG build.gradle.kts)
 plugins {
-    id 'org.springframework.boot' version '3.4.0'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version '4.1.1'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
     id 'jacoco'
 }
@@ -265,7 +267,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'  // OpenAPI — BẮT BUỘC: /v3/api-docs cho phép /verify so endpoint runtime vs docs/arch/{name}.md §3 API; KHÔNG disable ở profile local/dev
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'  // springdoc 3.x cho Spring Boot 4.x (Boot 3.x dùng 2.6.x). OpenAPI — BẮT BUỘC: /v3/api-docs cho phép /verify so endpoint runtime vs docs/arch/{name}.md §3 API; KHÔNG disable ở profile local/dev
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.flywaydb:flyway-core'
@@ -386,3 +388,4 @@ logs/
 |---|---|
 | 2026-05-02 | Initial backend-config reference skill |
 | 2026-05-07 | Add §11 Gradle, §12 Spring Security OAuth2, §13 Dockerfile, §14 .gitignore |
+| 2026-09-22 | Bump Boot 3.4→4.1 (plugin 4.1.1 · dep-mgmt 1.1.7 · springdoc 3.0.1); reframe version = TECHSTACK/ADR SoT; ghi chú 3.x EOL + delta migration (Jackson 3 · @MockitoBean · properties-migrator) |
