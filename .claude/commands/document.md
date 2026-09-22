@@ -55,6 +55,7 @@ Mỗi capability → ≥1 FEAT. Mỗi FEAT: **AC dạng BDD** (Given/When/Then) 
 
 ## Bước 7 — TECHSTACK (`docs/TECHSTACK.md`)
 Chốt stack (khớp skill `stack-<tên>`) + **1 dòng lý do** ở `docs/DECISIONS.md`. INTAKE: giữ đúng lựa chọn của intake.
+> **Quét FEAT xem feature nào NGẦM đòi tech/infra chưa chốt** (Author hay tả tính năng mà quên "chạy bằng gì"): **upload**→lưu trữ (S3/blob/disk) · **thông báo**→email/SMS/push provider · **tìm kiếm nâng cao**→search engine? · **xuất file**→PDF/Excel + sync/async · **thanh toán**→cổng · **lịch/định kỳ**→job runner · **realtime**→WS/SSE. Mỗi cái chạm → chốt trong TECHSTACK/`adr/`. (Sót thì `pre-mortem` bắt ở pre-lock audit, nhưng chốt sớm ở đây đỡ hơn.)
 
 ## Bước 7b — Quy ước chung  *(đã có sẵn — framework default, KHÔNG author lại)*
 `docs/CONVENTIONS.md` + `docs/SECURITY.md` là **doc framework cố định**. Chỉ **rà + chỉnh §API error-envelope/header/versioning**
@@ -80,10 +81,17 @@ vá (INTERVIEW: **hỏi Authority thêm** · INTAKE: dịch lại + vá lỗ) �
 phản ánh ĐÚNG ý Author** (không còn chỗ đoán, không còn lệch ý) — **không giới hạn số vòng**. **PASS** mới đi tiếp.
 Ghi mỗi vòng vào `STATE.md §Challenge log`.
 
-**Consistency-audit (bắt buộc, sau khi hết vòng vá — TRƯỚC khoá scope):** đọc TRỌN doc set, chạy trace toàn cục — báo mọi **tham chiếu treo**:
+**PRE-LOCK AUDIT (bắt buộc, sau khi hết vòng vá — TRƯỚC khoá scope) — 2 phần:**
+
+**(1) Khớp nhau — consistency** (đọc TRỌN doc set, báo mọi **tham chiếu treo**):
 - **AC↔API 2 chiều** · **data model nuôi đủ field mọi AC cần** · **consumes↔provider khớp** · **luồng E2E không đứt** (`technical-design §Trọn vẹn`).
 - **UI↔AC 2 chiều**: mỗi phần tử tương tác trong mockup (search/filter/sort/nút/phân trang) có 1 AC · mỗi AC có UI có phần tử mockup. Phần tử mockup **không AC = quyết NGAY** (thêm AC vì UI đã/ sẽ duyệt · hoặc bỏ khỏi mockup) — **KHÔNG silent-defer wave sau**.
-> Đây là việc **NGỮ NGHĨA** — làm bằng đọc/đối chiếu (lý tưởng spawn 1 sub-agent audit độc lập đọc cả đồ thị), **KHÔNG** phải hook. Hook `trace_docsync` chỉ TRIGGER nhắc; audit này mới KIỂM. Còn treo = **chưa được khoá scope**.
+
+**(2) Không thiếu — completeness** (con mắt ĐỘC LẬP, bù điểm mù Author + MAIN-tự-vấn):
+- **Spawn `pre-mortem`** (sub-agent độc lập MAIN) → quét mỗi FEAT/luồng qua **taxonomy ca biên** (`domain-po`) + 3 câu xuyên-luồng → trả **nghi vấn case Author MISS**.
+- MAIN nhận nghi vấn → mỗi cái **quyết**: thêm AC (CASCADE) · hỏi Authority (còn DOCUMENT nên được hỏi) · ghi giả định `DECISIONS.md`. **KHÔNG bỏ lửng.**
+
+> Cả 2 phần là việc **NGỮ NGHĨA** — làm bằng đọc/đối chiếu + agent độc lập, **KHÔNG** phải hook. Hook `trace_docsync` chỉ TRIGGER nhắc; audit này mới KIỂM. Còn tham chiếu treo HOẶC nghi vấn pre-mortem chưa xử = **chưa được khoá scope**.
 
 ## Bước cuối — Chốt + khoá scope
 1. `python scripts/gate.py` (phase DOCUMENT) phải **xanh**.

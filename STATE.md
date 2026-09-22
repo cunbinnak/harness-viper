@@ -41,7 +41,7 @@ URL production  : —
       chốt · backend-only → marker `KHÔNG CÓ UI`
 - [ ] `docs/ROADMAP.md`: chia wave; mỗi wave khai **target** + **phases chạy** (BUILD,VERIFY[,SHIP])
 - [ ] Challenge DOCUMENT **PASS** (≥3 câu khó, trả lời CHỈ bằng tài liệu) — §Challenge log
-- [ ] **consistency-audit PASS** — trace 5 chiều (AC↔API · data model nuôi đủ field · consumes↔provider · luồng E2E) + UI↔AC 2 chiều; không tham chiếu treo (mọi amendment đã CASCADE, không point-edit)
+- [ ] **PRE-LOCK AUDIT PASS** (2 phần) — (1) **khớp**: trace 5 chiều (AC↔API · data model nuôi đủ field · consumes↔provider · luồng E2E) + UI↔AC 2 chiều, không tham chiếu treo (amendment đã CASCADE) · (2) **không thiếu**: `pre-mortem` quét taxonomy ca biên, mọi nghi vấn đã xử (thêm AC / hỏi / DECISIONS)
 - [ ] ≥2 dòng `docs/DECISIONS.md`
 - [ ] **Scope khoá** — từ đây không hỏi Authority nữa (trừ ngoại lệ "hỏi thật", xem PROTOCOL §3)
 
