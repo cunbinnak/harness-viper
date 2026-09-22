@@ -177,6 +177,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 > - **guard_proof**: chặn Write/Edit vào `*proof.json` (bằng chứng runtime CHỈ `capture_proof.py` sinh — agent không giả tick).
 > - **guard_makefile**: chặn Write/Edit vào **ROOT `Makefile`** (hợp đồng 6 lệnh, bất biến) — MAIN điền THÂN ở per-target `services/<nhóm>/<tên>/Makefile`, không sửa root lúc BUILD.
 > - **guard_doc**: chặn Write/Edit vào **doc SPEC** (`docs/**` trừ DECISIONS/ROADMAP/BACKWARD-COMPAT/PRODUCTION-READY) khi phase ≠ DOCUMENT — doc đóng băng sau khoá scope, lệch/thiếu dồn `ROADMAP §backlog` → wave sau top-up. Sổ sống + DOCUMENT/top-up vẫn sửa được.
+> - **trace_docsync** (PostToolUse Edit|MultiEdit): sửa spec doc (`docs/feat|arch|ux/**` · PRD/PERSONAS/CAPABILITIES/DESIGN-SYSTEM) ở pha **DOCUMENT** (scope chưa khoá) → **nhắc CASCADE** (propagate FEAT↔arch data model↔§3 API↔mockup) + **re-run trace 5 chiều + UI↔AC**. Là **TRIGGER nhắc**, KHÔNG tự kiểm (việc ngữ nghĩa của LLM/consistency-audit). exit 2 đưa nhắc lại model, không undo.
 > - **reanchor**: SessionStart(compact) → nhồi lại §2 + STATE.
 > Agent read-only (review/persona `disallowedTools: Write/Edit`) + `test-writer` chỉ `test/` → không cần hook owned_paths/kernel-protect như harness cũ.
 ## §9 — Failure modes (đã có cơ chế chặn)
@@ -190,6 +191,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 | Kẹt DRAFT (top-up doc mà không re-lock) | `/next-wave` 4.4 Authority duyệt lại = re-lock (F1) |
 | Demo đẹp chạy xấu (UI khớp ảnh, cấu trúc sai) | `persona-picky` BACKSTOP screenshot-diff (E1) |
 | App shell trôi (mỗi mockup một kiểu sidebar/nav/icon) | `guard_shell` (so khối SHELL vs `_shell.html`) + ux-design §Nhất quán cross-màn |
+| Point-edit lệch doc (sửa FEAT quên arch/API/mockup) | `trace_docsync` nhắc CASCADE + consistency-audit (trace 5 chiều + UI↔AC) trước khoá scope |
 | Test xanh giả (pass nhờ H2/mock, không chạy thật) | `capture_proof.py` MÁY-sinh `proof.json` — gate không tin tick |
 | Chạy mù kế hoạch cũ | `wave_reviewed` + RÀ LẠI (loop engineering) |
 | Agent giả tick proof | `guard_proof` chặn Write/Edit `*proof.json` |

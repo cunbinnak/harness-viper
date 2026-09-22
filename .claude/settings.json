@@ -50,7 +50,7 @@
     ]
   },
   "enableAllProjectMcpServers": true,
-  "$comment_hooks": "Bốn hook, bốn việc (học VIPER — direct, không dispatcher). (1) SessionStart 'compact': reanchor.py nhồi lại PROTOCOL §2 + STATE sau compact. (2) PreToolUse 'AskUserQuestion': guard_ask.py — AskUserQuestion chỉ ở DOCUMENT (port VIPER pha V); Scope khoá ✓ hoặc phase≠DOCUMENT → exit 2. (3) PreToolUse 'Bash': guard_bc.py — 'make deploy' + wave ≥2 + BACKWARD-COMPAT §3 chưa xanh thì exit 2. (4) PreToolUse 'Write|Edit|MultiEdit' (6 guard): guard_ds (mockup/DESIGN-SYSTEM cấm hex thô ngoài :root) · guard_archive (cấm sửa archive/**) · guard_proof (cấm sửa *proof.json) · guard_makefile (cấm sửa ROOT Makefile — điền per-target) · guard_doc (cấm sửa doc SPEC đã khoá ngoài phase DOCUMENT — dồn ROADMAP §backlog) · guard_shell (mockup có app shell lệch _shell.html canonical — nav/logo/user-menu/icon; chặn ở Write, báo mềm ở Edit). gate.py KHÔNG hook (chỉ báo).",
+  "$comment_hooks": "Bốn hook, bốn việc (học VIPER — direct, không dispatcher). (1) SessionStart 'compact': reanchor.py nhồi lại PROTOCOL §2 + STATE sau compact. (2) PreToolUse 'AskUserQuestion': guard_ask.py — AskUserQuestion chỉ ở DOCUMENT (port VIPER pha V); Scope khoá ✓ hoặc phase≠DOCUMENT → exit 2. (3) PreToolUse 'Bash': guard_bc.py — 'make deploy' + wave ≥2 + BACKWARD-COMPAT §3 chưa xanh thì exit 2. (4) PreToolUse 'Write|Edit|MultiEdit' (6 guard): guard_ds (mockup/DESIGN-SYSTEM cấm hex thô ngoài :root) · guard_archive (cấm sửa archive/**) · guard_proof (cấm sửa *proof.json) · guard_makefile (cấm sửa ROOT Makefile — điền per-target) · guard_doc (cấm sửa doc SPEC đã khoá ngoài phase DOCUMENT — dồn ROADMAP §backlog) · guard_shell (mockup có app shell lệch _shell.html canonical — nav/logo/user-menu/icon; chặn ở Write, báo mềm ở Edit). (5) PostToolUse 'Edit|MultiEdit': trace_docsync — sửa spec doc (feat/arch/ux/PRD/PERSONAS/CAPABILITIES/DESIGN-SYSTEM) ở pha DOCUMENT (scope chưa khoá) → nhắc CASCADE propagate + re-run trace 5 chiều + UI↔AC (chống point-edit lệch doc); exit 2 đưa nhắc lại model, KHÔNG undo. gate.py KHÔNG hook (chỉ báo).",
   "hooks": {
     "SessionStart": [
       {
@@ -82,6 +82,14 @@
           { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_makefile.py"] },
           { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_doc.py"] },
           { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_shell.py"] }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/trace_docsync.py"] }
         ]
       }
     ]

@@ -14,6 +14,11 @@ description: DOCUMENT — interview|intake → doc set (PRD/PERSONAS/FEAT/ARCHIT
 > Mỗi Bước dưới: copy template tương ứng → path đích → **xoá comment `<!-- -->` guidance** → điền hết `{{...}}`.
 > `docs/` + `knowledge-base/` chỉ chứa file THẬT (gate không quét `templates/`).
 
+> **SỬA/BỔ SUNG doc = CASCADE qua đồ thị phụ thuộc, KHÔNG point-edit.** Khi Authority đọc lại phát hiện thiếu (vd "quản lý thêm thông tin X") → **không chỉ sửa doc được nhắc tên**, phải lần hết doc liên đới:
+> - Thêm **field/thông tin** → `feat/FEAT-*` (AC + field kỹ thuật) · `arch/{name}.md` (**data model** + **§3 API** request/response) · `ux/mockup` (ô nhập/hiển thị) (+ `CAPABILITIES-MAP` nếu năng lực mới).
+> - Thêm **luồng/AC** → FEAT · `arch` (API + events + luồng) · `ux` (màn) (+ `ROADMAP` nếu đổi scope).
+> Sau MỖI amendment: **re-run trace 5 chiều** (`technical-design §Trọn vẹn`) + chiều **UI↔AC**. Còn tham chiếu treo (field/AC/màn không có doc liên đới nuôi) = **chưa xong**. Authority chỉ nói cái họ THẤY thiếu — **agent tự truy các doc liên đới**, không để họ dò lỗ hộ. *(Hook `trace_docsync` nhắc mỗi lần Edit spec doc ở DOCUMENT.)*
+
 ## Bước 0 — Nhận diện đường vào
 - `intake/` có tài liệu đã điền thật (không phải template `_*.md` trơ)? → **ĐƯỜNG INTAKE**: ghi marker
   `NGUỒN: INTAKE` (ngoài comment) vào `docs/INTERVIEW.md`.
@@ -71,12 +76,18 @@ Bảng wave: mỗi wave khai **target** (kind: backend/web/bff/mobile) + **phase
 
 ## Bước 10 — Challenge DOCUMENT (luật #8 — tới khi hiểu ĐÚNG Ý AUTHOR)  → **Nạp `Skill("business-analysis")` để rà chéo**
 Tự ra **≥3 câu hỏi khó nhất**, trả lời **CHỈ bằng tài liệu vừa viết**. Câu nào phải đoán = **một lỗ tài liệu** →
-vá (INTERVIEW: **hỏi Authority thêm** · INTAKE: dịch lại + vá lỗ). **Lặp tới khi tài liệu trả lời được HẾT và
+vá (INTERVIEW: **hỏi Authority thêm** · INTAKE: dịch lại + vá lỗ) — vá theo **luật CASCADE** (đầu file): mỗi vá lan hết doc liên đới, không point-edit. **Lặp tới khi tài liệu trả lời được HẾT và
 phản ánh ĐÚNG ý Author** (không còn chỗ đoán, không còn lệch ý) — **không giới hạn số vòng**. **PASS** mới đi tiếp.
 Ghi mỗi vòng vào `STATE.md §Challenge log`.
 
+**Consistency-audit (bắt buộc, sau khi hết vòng vá — TRƯỚC khoá scope):** đọc TRỌN doc set, chạy trace toàn cục — báo mọi **tham chiếu treo**:
+- **AC↔API 2 chiều** · **data model nuôi đủ field mọi AC cần** · **consumes↔provider khớp** · **luồng E2E không đứt** (`technical-design §Trọn vẹn`).
+- **UI↔AC 2 chiều**: mỗi phần tử tương tác trong mockup (search/filter/sort/nút/phân trang) có 1 AC · mỗi AC có UI có phần tử mockup. Phần tử mockup **không AC = quyết NGAY** (thêm AC vì UI đã/ sẽ duyệt · hoặc bỏ khỏi mockup) — **KHÔNG silent-defer wave sau**.
+> Đây là việc **NGỮ NGHĨA** — làm bằng đọc/đối chiếu (lý tưởng spawn 1 sub-agent audit độc lập đọc cả đồ thị), **KHÔNG** phải hook. Hook `trace_docsync` chỉ TRIGGER nhắc; audit này mới KIỂM. Còn treo = **chưa được khoá scope**.
+
 ## Bước cuối — Chốt + khoá scope
 1. `python scripts/gate.py` (phase DOCUMENT) phải **xanh**.
+1b. **Consistency-audit PASS** (Bước 10): trace 5 chiều + UI↔AC sạch, không tham chiếu treo. Tick gate `consistency-audit`.
 2. ≥2 dòng `docs/DECISIONS.md`.
 3. **Trình Authority đọc** toàn bộ doc set → OK = duyệt.
 4. Tick hết gate DOCUMENT + `Scope khoá` trong `STATE.md`. **Từ đây không hỏi Authority nữa.**
