@@ -4,7 +4,10 @@ description: VERIFY — code review (2 vai) + test-writer thiết kế/chạy bl
 # /verify [<wave>] — Phase VERIFY
 
 > Kiểm trên hệ **ĐANG CHẠY** (BUILD đã đưa hệ chạy thật theo `kind`). Agent (review + persona) **CHỈ trả finding — MAIN sửa**.
-> **Kỷ luật spawn** (mọi Bước dưới): spawn bằng **Task tool + prompt ngắn TAY viết** (KHÔNG `build_prompt`, KHÔNG generator). Mỗi agent **verification thuần — KHÔNG viết/sửa product code** (`reviewer`/`bug-hunter`/`persona-*` read-only; `test-writer` chỉ `test/`). Thấy code sai → **TRẢ finding**, MAIN sửa. Đây là "mắt tươi độc lập" — MAIN không tự-chấm-bài-mình.
+> **Kỷ luật spawn** (mọi Bước dưới): spawn bằng **Task tool + prompt ngắn TAY viết** (KHÔNG `build_prompt`, KHÔNG generator). Ranh giới cấm là **PRODUCT code — chỉ MAIN viết/sửa** (không phải "cấm viết mọi thứ"). Phân vai ghi/đọc:
+> · `reviewer` · `bug-hunter` · `persona-*` → **READ-ONLY** — chỉ đọc, trả finding, không viết gì (đã chặn `Write`/`Edit` bằng frontmatter).
+> · `test-writer` → **QA độc lập, CÓ viết**: thiết kế `tracking/wave-N/test-cases.md` + viết test code trong `test/` (đó là việc của nó) — CHỈ **không đụng product code**.
+> Mọi agent thấy product code sai → **TRẢ finding**, MAIN sửa (mắt tươi độc lập — MAIN không tự-chấm-bài-mình).
 > Không hỏi Authority (mơ hồ → `DECISIONS.md` · ngoài scope → `ROADMAP §backlog` · chặn cứng → `STATE §Blocker`).
 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: VERIFY`.
