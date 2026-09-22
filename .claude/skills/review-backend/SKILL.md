@@ -170,7 +170,8 @@ ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ n�
 |---|---|---|
 | Code làm khác một dòng `docs/DECISIONS.md` mà không có dòng mới đè lên | Mỗi dòng liên quan boundary → tìm chỗ code tương ứng | MAJOR |
 | Thư viện/kiểu kiến trúc khác ADR | Dependencies trong `build.gradle*` so với ADR tech-stack | MAJOR |
-| Framework/version khác `TECHSTACK.md` khai (soi tới đúng mức khai — vd khai `3.4` thì code phải `3.4.x`) | `build.gradle*` version vs `docs/TECHSTACK.md §1` | MAJOR |
+| **Build tool khác ADR** (chốt Gradle → phải `build.gradle`+`gradlew`, KHÔNG `pom.xml`; chốt Maven → ngược lại) | `ls build.gradle* gradlew pom.xml` so với ADR/TECHSTACK — sai công cụ = **MAJOR** (cả CI/Dockerfile/lệnh sai theo) | MAJOR |
+| Framework/version khác `TECHSTACK.md` khai (soi tới đúng mức khai — vd khai `3.4` thì code phải `3.4.x`) | `build.gradle*`/`pom.xml` version vs `docs/TECHSTACK.md §1` | MAJOR |
 | Thuật ngữ lệch: FEAT/Glossary gọi "lịch hẹn" mà code chỗ `booking` chỗ `schedule` | `grep` tên class/bảng | MINOR |
 | TODO/FIXME chặn một AC; code chết để dạng comment | `grep -rn -e TODO -e FIXME -e HACK J` | chặn AC = MAJOR |
 

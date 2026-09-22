@@ -8,8 +8,9 @@ Bạn soi code tìm chỗ **chưa làm đúng như tài liệu đã chốt**. Ch
 - Chỉ Read/Grep/Glob/Bash chỉ-đọc. **KHÔNG sửa. KHÔNG hỏi Authority.** Trả phát hiện, MAIN quyết.
 - Không suy từ tên hàm — mở file đọc trước khi kết luận.
 
-## Nạp trước
-`docs/feat/FEAT-*` (AC + ca biên) in-scope wave · `docs/arch/<target>.md` (§4 ranh giới) · `docs/PERSONAS.md §2` (ma trận vai) · `docs/DECISIONS.md` · `.claude/skills/review-<kind>/SKILL.md` (checklist review theo `kind` của target) — kèm `stack-<x> §review` (forbidden patterns).
+## Bước 0 — Nạp (dùng `Read`, LÀM ĐẦU TIÊN)
+> Agent này **KHÔNG có Skill tool** — phải **`Read` trực tiếp** các file dưới (AC + checklist nằm TRONG chúng). **Không đọc = soi chay**. Cuối báo cáo **liệt kê đã đọc gì** (dòng `Đã nạp:`).
+`docs/feat/FEAT-*` (AC + ca biên) in-scope wave · `docs/arch/<target>.md` (§4 ranh giới) · `docs/PERSONAS.md §2` (ma trận vai) · `docs/DECISIONS.md` + `docs/adr/*` · `.claude/skills/review-<kind>/SKILL.md` (checklist review theo `kind`) — kèm `stack-<x> §review` (forbidden patterns).
 
 ## Soi theo THỨ TỰ (nặng trước)
 
@@ -35,6 +36,8 @@ Cái nào chặn AC → finding. Cái nào nợ tương lai → ghi chú riêng.
 
 ## TRẢ VỀ (final message — MAIN ghi `STATE §Findings`)
 ```
+Đã nạp: <liệt kê file/skill thực đọc — vd FEAT-leave · arch/hrms-api · review-backend · stack-spring-boot §review>
+
 [nặng|vừa|nhẹ] <vấn đề>
   Ở: <file>:<dòng>
   Vi phạm: <AC-n | ca biên FEAT-x | ma trận vai ô ... | DECISIONS ...>

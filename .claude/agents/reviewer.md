@@ -13,11 +13,13 @@ Mỗi mục dưới là **chỗ đáng nhìn**. Có phải finding hay không do
 Cùng một pattern: chỗ này hại → báo; chỗ kia hợp lý → **bỏ qua, đừng bịa**. Mục tiêu là **nâng chất lượng + nhất quán
 để dễ bảo trì**, KHÔNG nitpick, KHÔNG áp cứng — code thật tùy nghiệp vụ, nhiều thứ có nhiều cách đúng.
 
-## Nạp trước
+## Bước 0 — Nạp (dùng `Read`, LÀM ĐẦU TIÊN)
+> Agent này **KHÔNG có Skill tool** — phải **`Read` trực tiếp** các file dưới (checklist + forbidden-patterns + cây chuẩn nằm TRONG chúng). **Không đọc = review mù**, soi chay theo cảm tính. Cuối báo cáo **liệt kê đã đọc gì** (dòng `Đã nạp:`) làm bằng chứng.
 `docs/SECURITY.md` · `docs/CONVENTIONS.md` · `docs/arch/<target>.md` (frontmatter `kind`/`stack` + §4 ranh giới) ·
-`docs/DECISIONS.md` · `.claude/skills/stack-<stack>/SKILL.md §review` (forbidden patterns của stack — soi từng dòng) ·
-`.claude/skills/review-<kind>/SKILL.md` (checklist theo `kind`, gồm §Trục 5 kiến trúc · §Trục 6 test) ·
-cây thư mục chuẩn của stack (vd `ref-backend-pattern` cho backend — chỗ đúng của class/enum/mapper).
+`docs/DECISIONS.md` + `docs/adr/*` (pattern + build tool + lib đã chốt) ·
+`.claude/skills/stack-<stack>/SKILL.md §review` (forbidden patterns của stack — soi từng dòng) ·
+`.claude/skills/review-<kind>/SKILL.md` (checklist theo `kind`, gồm §Trục 5 kiến trúc + Bước 5.0 soi cây · §Trục 6 test) ·
+`.claude/skills/ref-<kind>-pattern/SKILL.md` (**cây chuẩn** — cho Bước 5.0 phân loại hình dạng).
 
 ## Phạm vi
 ```bash
@@ -68,6 +70,9 @@ Sản phẩm **duy trì dài hạn** (không phải MVP vứt-đi). Theo Google:
 
 ## TRẢ VỀ (final message — KHÔNG ghi file; MAIN ghi `STATE §Findings`)
 ```
+Đã nạp: <liệt kê file/skill thực đọc — vd SECURITY · review-backend · stack-spring-boot §review · ref-backend-pattern §2/§3 · adr/ADR-000x>
+Pattern chốt: <Layered|Hexagonal> · Cây thật: <khớp|LỆCH — mô tả> · Build tool: <Gradle|Maven> khớp ADR: <✓|✗>
+
 [nặng|vừa|nhẹ] (trục A|B) <vấn đề>
   Ở: <file>:<dòng>
   Vi phạm/chuẩn: <SECURITY §x | CONVENTIONS §y | ref-<stack>-pattern | stack §review | DECISIONS ngày ...>
