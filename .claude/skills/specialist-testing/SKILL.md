@@ -1,6 +1,6 @@
 ---
 name: specialist-testing
-description: Test chuyên sâu — contract (consumer-driven/Pact + backward-compat), regression, isolation, perf (k6 smoke/load/stress/soak), security (OWASP), resilience/chaos, migration. Bổ sung vào registry khi vượt CRUD cơ bản.
+description: Chuẩn QA senior cho test-writer — dựng tiền đề/test-data (Arrange qua seed/fixture/mock/sandbox, không bỏ TC vì "thiếu data") + taxonomy loại test + rigor chuyên sâu: contract (consumer-driven/Pact + backward-compat), regression, isolation, perf (k6 smoke/load/stress/soak), security (OWASP), resilience/chaos, migration. Load khi thiết kế test vượt CRUD cơ bản hoặc TC cần trạng thái tiền đề.
 ---
 
 # Specialist Testing Skill
