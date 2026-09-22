@@ -21,7 +21,7 @@ Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu h�
 > **Cả 2 agent nạp thêm skill `review-<kind>`** (review-backend/web/bff/mobile — checklist review theo `kind` của target đang review) BÊN CẠNH `stack-<x> §review`.
 
 **`reviewer` — code có AN TOÀN chạy + BẢO TRÌ được không?** (senior/team-lead, **2 trục** — chi tiết `.claude/agents/reviewer.md`)
-- **Trục A · An toàn/đúng** (hỏng = hại NGAY → BLOCKER/MAJOR): bảo mật (secret · validate **server** · SQL nối chuỗi · lộ entity/lỗi nội bộ) · phân quyền dữ liệu (id kèm owner/tenant) · **forbidden patterns** stack · toàn vẹn transaction · lệch `DECISIONS`/`arch` đã chốt.
+- **Trục A · An toàn/đúng** (hỏng = hại NGAY → BLOCKER/MAJOR): bảo mật (secret · validate **server** · SQL nối chuỗi · lộ entity/lỗi nội bộ) · phân quyền dữ liệu (id kèm owner/tenant) · **forbidden patterns** stack · toàn vẹn transaction · lệch `DECISIONS`/`arch`/`TECHSTACK` đã chốt (stack/version khớp mức TECHSTACK khai).
 - **Trục B · Bảo trì/nhất quán** (vẫn chạy nhưng đắt MAI SAU → MAJOR/MINOR, **không chặn**): cấu trúc khớp **kiến trúc đã chốt** (`arch §4` — Layered/DDD, không trộn) · convert DTO map tay nhiều → MapStruct · logic đúng tầng · naming khớp Glossary · **chất lượng test**. Chỉ báo khi nêu **chi phí bảo trì cụ thể**; style tùy-ca (`var`…) **mặc định tha**.
 
 **`bug-hunter` — code có LÀM ĐÚNG như DOC không?** (đối chiếu spec, soi theo thứ tự)

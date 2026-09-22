@@ -40,7 +40,7 @@ grep -rnE 'catch\s*\([^)]*\)\s*\{\s*\}|except[^:]*:\s*pass|catch\s*\{\s*\}' serv
 2. **Phân quyền dữ liệu**: truy vấn theo id **kèm điều kiện chủ sở hữu/tenant** (lỗ hay gặp + nặng nhất).
 3. **Forbidden patterns** stack (`stack-<x> §review`) — chỉ báo dòng **gây hại thật**.
 4. **Toàn vẹn dữ liệu/transaction**: ghi nhiều bảng atomic · publish event sau commit · lỗi bị nuốt (`catch{}` rỗng).
-5. **Lệch tài liệu đã chốt** (`DECISIONS`/`arch`) mà không có dòng quyết định mới.
+5. **Lệch tài liệu đã chốt** (`DECISIONS`/`arch`/`TECHSTACK` — stack/version khớp mức TECHSTACK khai) mà không có dòng quyết định mới.
 
 ### Trục B — BẢO TRÌ / NHẤT QUÁN  → vẫn chạy nhưng đắt **MAI SAU** (người mới đọc không ra · nợ kỹ thuật) → **MAJOR/MINOR, không chặn**
 Soi như **team-lead** (Google eng-practices): design hợp lý · quá phức tạp/khó đọc · **đúng pattern/convention team** ·
