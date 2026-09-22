@@ -52,7 +52,7 @@ Benchmark: mockup phải trông như **sản phẩm SaaS thương mại** (chu�
 
 ## Visual polish (spec CỤ THỂ để dev implement được "đẹp" — không chung chung)
 Ghi vào `docs/DESIGN-SYSTEM.md §3` (kho component — dev implement + reviewer/verify đối chiếu được):
-- **App shell**: layout khung chuẩn (header + nav + content + footer) dùng chung mọi screen — screen chỉ đổi content, KHÔNG mỗi trang một khung.
+- **App shell**: layout khung chuẩn (header + nav + content + footer) dùng chung mọi screen — screen chỉ đổi content, KHÔNG mỗi trang một khung. **Shell là CANONICAL** (xem §Nhất quán cross-màn) — nav items/thứ tự/nhóm · logo · vị trí user-menu định NGHĨA MỘT LẦN, mọi màn copy nguyên văn.
 - **Spacing rhythm**: MỌI padding/margin/gap từ `--space-*` (scale 4/8px) — cấm số lẻ tùy tiện; mật độ nhất quán (form row gap, card padding, section gap ghi rõ token nào).
 - **Type scale**: heading/body/label dùng `--font-size-*` + `--font-weight-*`; mỗi screen có hierarchy rõ (1 h1, section h2, không nhảy cấp).
 - **Component primitives**: Button (primary/secondary/danger + hover/focus/disabled), Input (+error state), Card, Table, Badge, Modal, Toast — định nghĩa 1 lần (style từ token), mọi screen compose lại; KHÔNG style ad-hoc per-page.
@@ -80,11 +80,28 @@ Ghi vào `docs/DESIGN-SYSTEM.md §3` (kho component — dev implement + reviewer
 5. **Responsive**: breakpoint desktop / tablet / mobile + hành vi (sidebar collapse, table → card…).
 6. **Accessibility (WCAG 2.1 AA)**: label/`aria-label`, focus visible, contrast ≥ 4.5:1, keyboard nav (Tab/Enter/Esc), `role`/`aria-live` cho modal/toast, error gắn input qua `aria-describedby`.
 7. **Dev handoff notes**: animation/transition, edge case (empty / long text / overflow), breakpoint, a11y.
+8. **Rà nhất quán cross-màn** (sau khi vẽ HẾT màn của wave): đối chiếu app shell mọi mockup vs `_shell.html` — nav/logo/user-menu khớp hết chưa (xem §Nhất quán cross-màn). Lệch → sửa khớp canonical trước khi trình chốt.
+
+## Nhất quán cross-màn — app shell dùng chung (vá lỗi shell trôi mỗi màn một kiểu)
+Mỗi mockup vẽ ĐỘC LẬP (đọc đúng tài liệu màn đó) → **app shell dễ trôi**: màn này có nhóm "QUẢN LÝ" màn kia không · mục đầu "Dashboard" vs "Tổng quan" · user-menu góc dưới sidebar vs góc trên · logo trơn vs có subtitle · thứ tự/số mục nav lệch. Người dùng thật thấy NGAY — cùng một app mà mỗi trang một khung = mockup chưa đạt.
+
+**Chặn tại nguồn — shell là CANONICAL, không tái phát minh per màn:**
+- Định nghĩa app shell **MỘT LẦN**: 1 file `docs/ux/mockups/{name}/_shell.html` (full sidebar + header + breadcrumb + user-menu) — **danh sách mục nav + thứ tự + nhóm heading + vị trí logo/user cố định TẠI ĐÂY**. Đây là nguồn sự thật của shell target đó.
+- Mỗi màn **copy shell nguyên văn**, CHỈ đổi: (1) `aria-current="page"` + class active của mục nav đang đứng · (2) breadcrumb · (3) vùng content. **KHÔNG** thêm/bớt/đổi thứ tự mục nav · **KHÔNG** dời chỗ user-menu/logo per màn.
+- HTML tĩnh không `include` được → copy tay; bù lại bằng bước rà dưới.
+
+**Bước rà nhất quán (BẮT BUỘC — SAU khi vẽ hết màn của wave, TRƯỚC khi trình chốt):**
+Mở tất cả mockup của target cạnh nhau, đối chiếu vùng shell — mọi màn phải KHỚP `_shell.html`:
+- [ ] Danh sách mục nav + **thứ tự** + **nhóm heading** giống hệt mọi màn
+- [ ] Logo (+ subtitle) + **vị trí user-menu** giống hệt mọi màn
+- [ ] Cùng cấu trúc header/breadcrumb + cùng token (guard_ds đã lo màu)
+Lệch → **sửa màn lệch cho khớp canonical** (KHÔNG sửa canonical theo 1 màn lẻ, trừ khi chính canonical sai). Ghi phát hiện + cách xử vào `SCREEN-MAP.md §Chốt`.
 
 ## Quality checklist
 - [ ] **SCREEN-MAP đủ**: mọi FEAT `has_ui_touchpoint` có ≥1 màn; mọi màn gán đúng target (mơ hồ đã hỏi user); mọi web target có ≥1 màn.
 - [ ] Mọi FEAT Must có user flow.
 - [ ] Mọi màn trong SCREEN-MAP có **mockup HTML tồn tại** mở browser xem được (responsive trong cùng file; đủ section state phụ).
+- [ ] **Shell nhất quán cross-màn** (§Nhất quán cross-màn): mọi mockup của target dùng CÙNG app shell — nav items/thứ tự/nhóm · logo · vị trí user-menu giống hệt, chỉ khác active-state + content. Đã rà cạnh nhau, lệch đã sửa khớp `_shell.html`.
 - [ ] Mọi mockup có **bản kê**: `data-screen` khớp SCREEN-MAP · mọi khối có `data-ds` thuộc §3 · cột "Dùng ở màn" của §3 khớp hai chiều với mockup · đủ `data-state` theo **§4 (ba khuôn rỗng/lỗi/tải)** của component trên màn.
 - [ ] Mockup CHỈ dùng `var(--...)` — không hardcode hex/px (hook `guard_ds` check reference token).
 - [ ] Mọi component có đủ states (default/hover/disabled/loading/error/empty).

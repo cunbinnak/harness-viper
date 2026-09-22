@@ -61,7 +61,7 @@ nếu project khác default → sửa thẳng file + ghi `DECISIONS.md`.
 Thứ tự bắt buộc: `docs/DESIGN-SYSTEM.md` (token — **khoá TRƯỚC**, cả dự án) → `docs/ux/SCREEN-MAP.md` (mục lục
 **mọi màn** ↔ target ↔ FEAT ↔ wave, cả dự án) → `docs/ux/mockups/<target>/*.html` **chỉ dựng màn in-scope
 wave đang mở** (ở DOCUMENT = wave 1; màn wave sau để trống, `/document` top-up khi `/next-wave` mở wave đó —
-vẽ tới đâu duyệt tới đó, không phí công mockup wave xa dễ đổi) → **Authority chốt mockup của wave đó**.
+vẽ tới đâu duyệt tới đó, không phí công mockup wave xa dễ đổi) → **rà nhất quán cross-màn** (app shell — sidebar/nav/logo/user-menu — phải giống hệt mọi mockup; lệch = sửa khớp `_shell.html` canonical, xem `ux-design §Nhất quán cross-màn`) → **Authority chốt mockup của wave đó**.
 Token là thứ **DUY NHẤT chép nguyên** sang code ở BUILD.
 
 ## Bước 9 — Chia wave (`docs/ROADMAP.md`)
