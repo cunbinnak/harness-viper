@@ -14,7 +14,7 @@ description: VERIFY — code review (2 vai) + test-writer thiết kế/chạy bl
 
 ## Bước 1 — Nạp + xác nhận hệ đang chạy
 - `docs/ROADMAP.md` wave-N (AC in-scope) + `docs/feat/FEAT-*` (AC + ca biên) + `docs/CONVENTIONS.md §API` + `arch/{name}.md` (**`kind`** + §API)
-- Hệ chạy thật (từ BUILD), theo `kind`: backend/bff → `docker ps` + health 200 · web → dev server chạy · mobile → emulator. Chưa chạy → đưa lên trước.
+- Hệ chạy thật (từ BUILD), theo `kind`: backend/bff/web → `docker ps` + health 200 (web = nginx container) · mobile → emulator. Chưa chạy → đưa lên trước.
 
 ## Bước 2 — Code review (2 vai góc-nhìn-độc-lập, checklist đúng `kind` — KHÔNG sửa)
 Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu hỏi KHÁC nhau:

@@ -70,6 +70,22 @@ def table_rows(block: str) -> list[str]:
 
 # --------------------------------------------------------- hook: nhồi lại ----
 
+def targets_owed(wave: str, target_cell: str) -> list[str]:
+    """Target container hoá (backend/bff/web) khai ở ROADMAP nhưng CHƯA healthy trong proof.json."""
+    healthy = set()
+    p = ROOT / "tracking" / f"wave-{wave}" / "proof.json"
+    try:
+        proof = json.loads(p.read_text(encoding="utf-8"))
+        healthy = {t.get("target") for t in proof.get("targets", []) if t.get("healthy")}
+    except (OSError, ValueError):
+        pass
+    owed = []
+    for name, kind in re.findall(r"([\w.\-]+)\s*\(\s*(\w+)\s*\)", target_cell):
+        if kind.lower() in ("backend", "bff", "web") and name not in healthy:
+            owed.append(f"{name} ({kind})")
+    return owed
+
+
 def laws() -> str:
     body = section(read("PROTOCOL.md"), "## §2 — Luật nền", stop="\n---")
     return body or "_Không đọc được `PROTOCOL.md §2` — mở file đọc luật nền trước khi làm tiếp._"
@@ -94,6 +110,11 @@ def live_state() -> str:
             cells = [c.strip() for c in r.strip("|").split("|")]
             if cells and cells[0] == w:
                 out.append(f"**Wave {w} đang bám (ROADMAP §1):** {r.strip()}")
+                if phase() == "BUILD" and len(cells) > 1:
+                    owed = targets_owed(w, cells[1])   # cột Target = col 1 (sau Wave)
+                    if owed:
+                        out.append("**Target CÒN NỢ (chưa có proof chạy thật) — BUILD chưa xong, "
+                                   "làm nốt rồi mới /verify:** " + ", ".join(owed))
                 break
     return "\n\n".join(out)
 

@@ -124,7 +124,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 >
 > **Code** (`services/`, gitignored ở repo khung) chia nhóm theo `kind`: `services/boundaries/` (backend) · `services/web/` ·
 > `services/bff/` · `services/mobile/`. `kind` (khai ở frontmatter `arch/{name}.md`) quyết định: stack skill · nơi scaffold ·
-> cách "chạy thật" (backend/bff `docker up` · web dev server · mobile emulator) · review checklist. Bộ kind = **backend·web·bff·mobile**.
+> cách "chạy thật" (backend/bff/web `docker up` — web = nginx container · mobile emulator) · review checklist. Bộ kind = **backend·web·bff·mobile**.
 
 ---
 
@@ -136,7 +136,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 ## §6 — Gate evidence (gate.py đọc gì mỗi phase)
 > Danh sách gate cần dựng (thu từ thiết kế command):
 > - **DOCUMENT**: doc set đủ mục · challenge PASS · ≥2 decisions · scope khoá (Authority duyệt)
-> - **BUILD**: `wave_reviewed` (**wave ≥2**: ROADMAP có `Rà lại wave N` ngày ≥ lúc mở; **wave 1 miễn**) · **`make check` + health 2xx qua `proof.json`** (`capture_proof.py` MÁY-sinh — gate KHÔNG tin tick tay, chống "test xanh nhờ H2"/"dev-done ≠ runnable") · **đã commit**
+> - **BUILD**: `wave_reviewed` (**wave ≥2**: ROADMAP có `Rà lại wave N` ngày ≥ lúc mở; **wave 1 miễn**) · **`make check` qua `proof.json`** (`capture_proof.py` MÁY-sinh — gate KHÔNG tin tick tay, chống "test xanh nhờ H2"/"dev-done ≠ runnable") · **target phủ đủ wave**: mỗi target ROADMAP §1 cột Target khai (kind container hoá: backend/bff/web) có entry `healthy` trong `proof.json` (capture_proof đọc `docker compose ps` per-target) — **thiếu/không-healthy target nào = đỏ** (chống "khai 2 làm 1, nhảy VERIFY"); mobile tick tay (emulator) · **đã commit**
 > - **VERIFY**: `test-cases.md` mọi AC **PASS** + không **FAIL** · §Findings hết BLOCKER/MAJOR · dogfood xong ·
 >   **(web/mobile) BACKSTOP fidelity**: đòi bằng chứng dogfood `picky` đã screenshot-diff **cấu trúc** vs mockup (không skip — chống E1 "demo đẹp chạy xấu"). Format bằng chứng: `persona-picky` §E1 (BACKSTOP screenshot-diff cấu trúc component).
 > - **SHIP** (gate đọc ROADMAP `phases` — wave **không khai SHIP** thì **skip** cả nhóm — G3): prod-ready 4 nhóm · BC §3 xanh · rollback thử

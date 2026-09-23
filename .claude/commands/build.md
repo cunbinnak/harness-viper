@@ -19,7 +19,7 @@ description: BUILD — MAIN tự code 1 wave: đọc KG/context → challenge �
 Đọc **đúng phần của wave**, KHÔNG đọc cả `docs/`:
 - `docs/ROADMAP.md` wave-N: **target** (kind: backend/web/bff/mobile) + **AC in-scope** + phases khai
 - `docs/feat/FEAT-*` của các AC in-scope (AC + ca biên + field kỹ thuật)
-- `docs/arch/{name}.md` của target — **đọc frontmatter lấy `kind`** (backend/web/bff/mobile) + `stack` + data/API/ranh giới (KHÔNG đọc target khác). `kind` quyết định scaffold ở đâu · skeleton kiểu gì · chạy thật ra sao.
+- `docs/arch/{name}.md` của **mỗi target wave khai** — **đọc frontmatter lấy `kind`** (backend/web/bff/mobile) + `stack` + data/API/ranh giới (KHÔNG đọc target **ngoài wave**). `kind` quyết định scaffold ở đâu · skeleton kiểu gì · chạy thật ra sao. **Wave nhiều target → phủ HẾT, đọc/làm TỪNG target một** theo chiều phụ thuộc (Bước 4), không chỉ 1 cái.
 - **`docs/adr/*` liên quan target** — quyết định kiến trúc đã chốt (ui-kit nào · Layered vs Hexagonal · auth · caching...). Scaffold Bước 3 **phải theo ADR** — ADR thắng default của skill.
 - **`knowledge-base/{name}.md`** nếu có → đọc hết §Invariants/§Gotchas/§Failure-modes/§Key-decisions
 - có UI → `docs/DESIGN-SYSTEM.md` + `docs/ux/mockups/<target>/` các màn in-scope (mockup dựng theo wave — phải có TRƯỚC khi code UI; thiếu → quay `/document` top-up)
@@ -38,6 +38,8 @@ Trả lời thẳng, tự chấm PASS/FAIL trung thực. **FAIL** (đoán / phá
 trả lời lại. **KHÔNG được code** khi chưa PASS. **PASS** → ghi `STATE.md §Challenge log` → đi tiếp.
 > 1 câu/mảng việc lớn ở mức BUILD (confirm hiểu trước khi code). Việc soi lỗ tài liệu **3–5 câu** đã làm ở DOCUMENT.
 
+> **Wave nhiều target — Bước 3-6 là VÒNG LẶP theo target, KHÔNG phải 1 lượt:** lặp scaffold→skeleton→luồng lõi→chạy thật cho **MỖI target ROADMAP §1 cột Target khai**, theo thứ tự **provider→consumer** (Bước 4). BUILD **chưa xong** khi còn 1 target chưa chạy thật — làm BE xong nhảy VERIFY để quên FE là lỗi gate (đối chiếu ROADMAP↔proof). Nhớ đủ target: reanchor nhồi lại "Target còn nợ" sau mỗi compact.
+
 ## Bước 3 — Scaffold
 **Bốn nguồn ràng buộc — theo ĐÚNG, KHÔNG tự chế / KHÔNG lệch** (đây là chỗ hay đi lệch nhất):
 1. **`docs/TECHSTACK.md`** — stack + **VERSION đã chốt**: dùng ĐÚNG framework/lib/version đó. **KHÔNG** tự nâng/hạ version · **KHÔNG** thêm dependency ngoài danh sách · **KHÔNG** đổi build tool. Cần lib mới thật sự bất khả thiếu → `DECISIONS.md` 1 dòng lý do trước, rồi mới thêm.
@@ -45,20 +47,20 @@ trả lời lại. **KHÔNG được code** khi chưa PASS. **PASS** → ghi `ST
 3. **Skill pattern (gọi TÊN cụ thể, không mơ hồ "skill"):**
    · **`stack-<tên>`** (`stack-spring-boot`/`stack-nextjs`/`stack-flutter`/`stack-bff`) — idiom CODE + `§review`
    · **`ref-<kind>-pattern`** — CẤU TRÚC: `ref-backend-pattern` (Layered mặc định · JPA `@Entity` ở package `entities/` tên `{Resource}Entity` · layer trách nhiệm · interface/impl · response & error shape · forbidden patterns) · `ref-frontend-pattern` (layout thư mục + tổ chức component)
-   · **`ref-backend-{config,kafka,redis,logging,restclient}`** — nạp khi target dùng đúng mảnh đó
+   · **`ref-backend-{config,kafka,redis,logging,restclient}`** (backend) · **`ref-frontend-config`** (web — **Dockerfile FE multi-stage → nginx** + block compose service) — nạp khi target dùng đúng mảnh đó
    → TÔN TRỌNG cấu trúc thư mục · layer · error shape · forbidden patterns của chúng. **KHÔNG tự chế cấu trúc riêng.**
 4. **`docs/CONVENTIONS.md`** (đặt tên · error envelope · API design — mọi target theo) + **`docs/SECURITY.md`** (baseline).
 
 Scaffold vào **đúng nhóm theo `kind`** bằng **CLI chính chủ** (không chép boilerplate):
 · `backend` → `services/boundaries/{name}/` · `web` → `services/web/{name}/` · `bff` → `services/bff/{name}/` · `mobile` → `services/mobile/{name}/`
 **Có KG** → áp lại NGAY §Invariants + §Gotchas (chống lặp bug cũ: env tường minh, JWT local, soft-delete...).
-Artifact chạy local → `deployment/local/` (docker-compose · `.env` từ `.env.example` · seed theo PRD). Điền `make` 6 lệnh.
+Artifact chạy local → `deployment/local/` (docker-compose · `.env` từ `.env.example` · seed theo PRD). **Mỗi target container hoá (backend/bff/web) phải có `Dockerfile` trong thư mục service + 1 service trong docker-compose** (mobile không container). Điền `make` 6 lệnh.
 Xong → `git add -A && git commit`.
 
 ## Bước 4 — Walking skeleton (thông 1 đường TRƯỚC, đắp thịt sau)
 Bản mỏng nhất **CHẠY được**, theo `kind`:
 - **backend / bff**: `make dev` (app+db lên) → health 200 → 1 thao tác **ghi→đọc DB** (dù xấu)
-- **web**: `make dev` (dev server) → 1 màn rỗng render → **gọi 1 API thật** (backend đã có) hiện dữ liệu
+- **web**: `make dev` (dev server, hot-reload — chỉ để code/check nhanh; **hệ container hoá thật ở Bước 6**) → 1 màn rỗng render → **gọi 1 API thật** (backend đã có) hiện dữ liệu
 - **mobile**: build + chạy **emulator** → 1 màn render → gọi 1 API
 
 → `git commit`. Chưa thông đường mỏng này thì **KHÔNG** làm gì khác — đừng đắp UI đẹp lên đường chưa thông.
@@ -81,14 +83,14 @@ Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được
 
 ## Bước 6 — Chạy thật (theo `kind` — VERIFY sẽ đánh trên đây)
 - **backend / bff**: `docker compose -f deployment/local/docker-compose.yml up -d --build` → health 200
-- **web**: dev/preview server chạy (trỏ backend thật)
+- **web**: `docker compose -f deployment/local/docker-compose.yml up -d --build` → health 200 (nginx serve `dist/`, trỏ backend thật)
 - **mobile**: build + chạy **emulator** (KHÔNG docker)
 
 ## Bước cuối — Chốt
 1. `make check` xanh
 2. **Đã commit** mọi thứ (build/test pass mà không commit = coi như CHƯA làm — đây là nguyên nhân từng mất code)
-3. **`python scripts/capture_proof.py`** → sinh `tracking/wave-N/proof.json` (**make check + health THẬT** — máy verify, không tin tick tay)
-4. `python scripts/gate.py` (phase BUILD) xanh (đọc `proof.json`) → tick gate BUILD trong `STATE.md` → gợi ý `/verify`
+3. **`python scripts/capture_proof.py`** → sinh `tracking/wave-N/proof.json` (make check + **health per-target tự đọc `docker compose ps`** — không cần gõ URL; máy verify, không tin tick tay). Mọi target container hoá của wave phải **đang chạy** (Bước 6 `up -d --build` cho HẾT) để capture bắt được `healthy`.
+4. `python scripts/gate.py` (phase BUILD) xanh (đọc `proof.json`, **đối chiếu ROADMAP §1 cột Target — thiếu/không-healthy target nào = đỏ**) → tick gate BUILD (gồm ô "mọi target đã build") trong `STATE.md` → gợi ý `/verify`
 
 ## Ranh giới
 - Không sửa AC (`docs/feat/**`) cho dễ làm — không làm được → `STATE.md §Blocker`, báo cuối buổi

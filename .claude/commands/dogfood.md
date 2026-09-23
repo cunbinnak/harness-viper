@@ -11,7 +11,7 @@ auto-test chỉ chạy **TC đã viết** → chỉ tìm thứ ai đó đã ngh�
 cảnh rỗng không nói gì · lỗi nuốt im lặng · bấm 2 lần ra 2 bản ghi · vai A chạm dữ liệu vai B · nút chính tràn màn nhỏ.
 
 ## Điều kiện vào
-Hệ **đang chạy thật** (từ BUILD Bước 6: docker / dev server / emulator theo kind). Chết → STOP, quay `/build`.
+Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend/bff/web · emulator cho mobile). Chết → STOP, quay `/build`.
 **Không dogfood ảo** — 1 lượt trên hệ chết còn tệ hơn không chạy (để lại vết "đã kiểm"). Cần `docs/PERSONAS.md` có
 **ma trận vai×hành động** (phép thử của `breaker`) + persona cho mỗi vai.
 

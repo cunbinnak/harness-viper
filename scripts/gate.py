@@ -21,6 +21,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 STATE = ROOT / "STATE.md"
 
+# kind chạy dưới dạng container (có health qua docker) — mobile chạy emulator, không proof qua docker.
+CONTAINERIZED = {"backend", "bff", "web"}
+
 # Windows console (cp1252) không in được Unicode — ép UTF-8.
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -122,6 +125,15 @@ def roadmap_wave_row(wave: str) -> list[str]:
     return []
 
 
+def parse_wave_targets(wave: str) -> list[tuple[str, str]]:
+    """ROADMAP §1 cột Target → [(name, kind)]. Ô dạng `name (kind), name (kind)`."""
+    row = roadmap_wave_row(wave)
+    idx = _col_index("Target")
+    if not row or idx is None or idx >= len(row):
+        return []
+    return [(n, k.lower()) for n, k in re.findall(r"([\w.\-]+)\s*\(\s*(\w+)\s*\)", row[idx])]
+
+
 def wave_declares_ship(wave: str) -> bool:
     row = roadmap_wave_row(wave)
     return any("SHIP" in c.upper() for c in row)
@@ -191,11 +203,22 @@ def gate_build(r: Report) -> None:
         r.note("wave 1 — miễn wave_reviewed (fresh từ DOCUMENT)")
     r.check(git_commit_count() >= 1, "đã có commit")
     proof = read_proof(wave)   # bằng chứng MÁY-sinh (capture_proof.py) — không tin tick tay
-    if proof:
-        r.check(bool(proof.get("check", {}).get("ok")), "make check xanh (proof.json — máy sinh)")
-        r.check(bool(proof.get("health")) and all(h.get("ok") for h in proof["health"]), "health 2xx (proof.json)")
-    else:
-        r.check(False, "thiếu tracking/wave-N/proof.json — chạy `python scripts/capture_proof.py` (make check + health)")
+    if not proof:
+        r.check(False, "thiếu tracking/wave-N/proof.json — chạy `python scripts/capture_proof.py`")
+        _state_checkboxes(r, "BUILD")
+        return
+    r.check(bool(proof.get("check", {}).get("ok")), "make check xanh (proof.json — máy sinh)")
+    # target phủ đủ wave — đối chiếu ROADMAP §1 cột Target ↔ proof.targets (chống "khai 2 làm 1")
+    declared = parse_wave_targets(wave)
+    if not declared:
+        r.check(False, f"ROADMAP §1 wave {wave}: cột Target không parse được target nào (không xác nhận được phủ đủ)")
+    ptargets = {t.get("target"): t for t in proof.get("targets", [])}
+    for name, kind in declared:
+        if kind in CONTAINERIZED:
+            t = ptargets.get(name)
+            r.check(bool(t) and bool(t.get("healthy")), f"target `{name}` ({kind}) chạy thật — proof healthy")
+        else:  # mobile — không proof qua docker, dựa tick STATE (emulator)
+            r.note(f"target `{name}` ({kind}) — emulator, không proof docker; dựa ô tick STATE")
     _state_checkboxes(r, "BUILD")
 
 
