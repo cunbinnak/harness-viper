@@ -52,14 +52,14 @@ Soi như **team-lead** (Google eng-practices): design hợp lý · quá phức t
 naming khớp Glossary · context (không giảm sức khoẻ hệ). Chỗ đáng nhìn:
 
 - **Cấu trúc khớp KIẾN TRÚC đã chốt** — nguyên tắc phán: **soi HÌNH DẠNG CÂY trước, đọc code KHÔNG thay được** (dump cây → phân loại Layered/Hexagonal/phẳng → khớp pattern đã chốt chưa). **Quy trình 4 bước + lệnh + cây chuẩn: `review-<kind> §Trục 5 (Bước 5.0)`** — chạy đúng nó, rồi phán: trộn kiểu/phẳng/tự chế = MAJOR (đồng thời chạm A = BLOCKER) · lệch nhỏ có lý do thực dụng = MINOR.
-- **Convert DTO**: nhiều field map tay từng getter/setter → cân nhắc MapStruct (hoặc idiom convert của stack).
+- **Convert DTO**: **idiom mapper của stack là DEFAULT** (backend: **MapStruct**; kind khác theo idiom convert của stack đó). **Map tay CHỈ khi idiom không biểu diễn nổi** (logic biến đổi/điều kiện/tính chéo field/kiểu không map thẳng) — và **nêu lý do**. Căn cứ finding = **bản chất, không phải số field**: thấy map tay **thuần 1-1** `.setX(src.getX())` (mapper thừa sức) → finding, chuyển sang mapper; map tay **có lý do chính đáng** (mapper bất lực) → **THA** (kể cả nhiều field).
 - **Logic đúng tầng** · đặt tên khớp thuật ngữ nghiệp vụ.
 - **Chất lượng test** — test theo **hành vi** (không theo hiện thực) · phủ ca xấu/biên · không test rỗng / `assertDoesNotThrow` suông.
   *(chi tiết: `review-<kind> §Trục 6`. `bug-hunter` lo ĐỦ AC; bạn lo test có Ý NGHĨA — không đè nhau.)*
 
 **Luật trục B (vừa chống nitpick vừa chống cứng):**
 1. Chỉ báo khi nêu được **chi phí bảo trì CỤ THỂ trong ngữ cảnh này** — vd *"20 field map tay, thêm field dễ sót → nên MapStruct"* · *"để business logic ở controller, người mới sửa nhầm tầng"*. Một luật **tồn tại** KHÔNG tự thành finding.
-2. **Style tùy ca → mặc định THA**: `var` khi kiểu hiển nhiên (`var o = new Order()`) · naming nhỏ · map 2–3 field tay · tách/gộp file. Chỉ nêu khi **thật sự che mất ý** (vd `var x = svc.process(r)` kiểu mờ, người đọc phải lần).
+2. **Style tùy ca → mặc định THA**: `var` khi kiểu hiển nhiên (`var o = new Order()`) · naming nhỏ · map tay **có lý do chính đáng** (MapStruct không biểu diễn nổi) · tách/gộp file. Chỉ nêu khi **thật sự che mất ý** (vd `var x = svc.process(r)` kiểu mờ, người đọc phải lần).
 3. **Cấu trúc lệch kiểu đã chốt** (Layered↔Hexagonal trộn · tầng tự đặt) = nhất quán thật → nêu **MAJOR**; lệch nhỏ có lý do thực dụng → MINOR + hỏi, đừng ép.
 4. **KHÔNG BLOCKER** — trừ khi đồng thời chạm trục A.
 5. Cấm khẩu vị thuần: thích tên khác · abstraction "để sau dễ mở rộng" · perf chưa đo · coverage%.
