@@ -36,6 +36,8 @@ Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu h�
 - **"Trục nào ổn → nói ổn, đừng bịa finding."** Lệnh `grep` cụ thể ở `.claude/agents/reviewer.md` · `bug-hunter.md`.
 Học được điều mới về target → append `knowledge-base/{name}.md`.
 
+> **MAIN chưa sửa gì.** Chờ cả hai agent trả finding → tổng hợp vào `STATE §Findings` → sang Bước 3. Sửa tập trung ở Bước 5 sau khi thu đủ finding từ tất cả góc.
+
 ## Bước 3 — Thiết kế + chạy test case (black-box) — **`test-writer` chủ trì**
 > Spawn `test-writer` (sub-agent **độc lập MAIN**): **thiết kế `tracking/wave-N/test-cases.md` + CHẠY** trên hệ thật → PASS/FAIL.
 > **MAIN KHÔNG tự ra đề** (người code không tự-chấm-bài-mình) — MAIN chỉ SỬA ở Bước 5. TC sâu (contract/perf/security/e2e) → nạp `specialist-testing`.
