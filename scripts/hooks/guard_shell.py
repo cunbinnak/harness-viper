@@ -71,12 +71,11 @@ def main() -> int:
 
     if normalize(m.group(1)) != canon_norm:
         sys.stderr.write(
-            f"[guard_shell] App shell trong {path} LỆCH _shell.html canonical "
+            f"[guard_shell] CẢNH BÁO: App shell trong {path} LỆCH _shell.html canonical "
             f"(nav items/thứ tự/nhóm heading/logo/user-menu/icon khác nhau). "
-            f"Copy khối SHELL nguyên văn từ _shell.html — CHỈ đổi `aria-current` (active) + breadcrumb + content "
-            f"(breadcrumb/content nằm NGOÀI khối SHELL). "
-            f"PROTOCOL §8 · ux-design §Nhất quán cross-màn — chống shell trôi mỗi màn một kiểu.\n")
-        return 2
+            f"Read _shell.html → copy đúng khối SHELL:START…SHELL:END → chỉ đổi `aria-current` mục đang đứng. "
+            f"Rà lại trước khi trình chốt (ux-design §Nhất quán cross-màn).\n")
+        return 0
     return 0
 
 

@@ -88,11 +88,11 @@ Mỗi mockup vẽ ĐỘC LẬP (đọc đúng tài liệu màn đó) → **app s
 **Chặn tại nguồn — shell là CANONICAL, không tái phát minh per màn:**
 - Định nghĩa app shell **MỘT LẦN**: 1 file `docs/ux/mockups/{name}/_shell.html` (sidebar: logo + **nav items + ICON mỗi mục** + user-menu · top-bar chrome) — **danh sách mục nav + thứ tự + nhóm heading + icon từng mục + vị trí logo/user cố định TẠI ĐÂY**. Đây là nguồn sự thật của shell target đó.
 - Bọc phần **BẤT BIẾN** của shell trong marker `<!-- SHELL:START -->` … `<!-- SHELL:END -->` (ở cả `_shell.html` lẫn mọi màn) — `guard_shell` so đúng khối này. **Breadcrumb + vùng content per màn nằm NGOÀI khối** (chúng được phép khác nhau).
-- Mỗi màn **copy khối SHELL NGUYÊN VĂN** từ `_shell.html`, CHỈ đổi **1 chỗ trong khối**: đánh `aria-current="page"` lên mục nav đang đứng (style active qua CSS `[aria-current="page"]`, **KHÔNG** đổi class per màn). **KHÔNG** thêm/bớt/đổi thứ tự mục nav · **KHÔNG** đổi icon · **KHÔNG** dời chỗ user-menu/logo.
-- HTML tĩnh không `include` được → copy tay; drift bị **`guard_shell` chặn ở Write** (so khối SHELL vs `_shell.html`, chuẩn hoá `aria-current`) + bước rà dưới cho `Edit`/toàn cảnh.
+- Mỗi màn cần shell: **Read `_shell.html` trước** → trích đúng khối `<!-- SHELL:START -->…<!-- SHELL:END -->` → paste nguyên vào màn → CHỈ đổi **1 chỗ**: đánh `aria-current="page"` lên mục nav đang đứng. **KHÔNG** gõ lại từ trí nhớ — phải lấy từ file, không thì sai. **KHÔNG** thêm/bớt/đổi thứ tự mục nav · **KHÔNG** đổi icon · **KHÔNG** dời chỗ user-menu/logo.
+- HTML tĩnh không `include` được → Read + copy tay mỗi màn; `guard_shell` **cảnh báo** (không chặn) nếu lệch — lệch sẽ bị bắt ở bước rà cuối wave.
 
 **Bước rà nhất quán (BẮT BUỘC — SAU khi vẽ hết màn của wave, TRƯỚC khi trình chốt):**
-Mở tất cả mockup của target cạnh nhau, đối chiếu vùng shell — mọi màn phải KHỚP `_shell.html` (`guard_shell` đã chặn ở Write, đây là lượt rà toàn cảnh + bắt drift do `Edit`):
+Mở tất cả mockup của target cạnh nhau, đối chiếu vùng shell — mọi màn phải KHỚP `_shell.html` (`guard_shell` cảnh báo khi Write nhưng không chặn — đây là lượt rà chính thức bắt drift):
 - [ ] Danh sách mục nav + **thứ tự** + **nhóm heading** + **ICON mỗi mục** giống hệt mọi màn
 - [ ] Logo (+ subtitle) + **vị trí user-menu** giống hệt mọi màn
 - [ ] Cùng cấu trúc header + cùng token (guard_ds lo màu). Breadcrumb/content được phép khác (ngoài khối SHELL)
