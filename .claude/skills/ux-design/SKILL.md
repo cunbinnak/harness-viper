@@ -19,7 +19,7 @@ Input: `PRD.md` (persona, platform, design system / ADR ui-kit + **§6 Glossary 
 
 ## ĐƯỜNG TẮT TEMPLATE — ưu tiên khi có template hợp (nhanh + đẹp hơn tự vẽ)
 Đừng tự vẽ từ đầu thứ đã có người làm đẹp sẵn. Trước khi vẽ tay, **tìm template/UI-kit hợp domain** (admin dashboard: Tabler/TailAdmin/AdminLTE · landing/app: HTML template MIT trên GitHub · **marketplace: ThemeForest** — demo free để neo phong cách; template **user đã mua license** → dùng luôn làm nền) và **LẤY LUÔN làm nền mockup**:
-1. **Chọn** template license cho phép (MIT/Apache/CC, hoặc template trả phí **user đã sở hữu license** — ghi **tên + URL + license** vào `DESIGN-SYSTEM §1` làm neo). User đưa template có sẵn (file/link) → ưu tiên tuyệt đối cái đó.
+1. **Chọn** template license cho phép (MIT/Apache/CC, hoặc template trả phí **user đã sở hữu license** — ghi **tên + URL + license** vào `DESIGN-SYSTEM §1` làm neo). User đưa template có sẵn (file/link) → ưu tiên tuyệt đối cái đó. **Link → dùng `browse` skill (Playwright) mở xem trực tiếp** thay vì WebFetch — template cần JS/CSS render thật mới thấy đúng giao diện; WebFetch chỉ trả raw HTML, mất style.
 2. **Trích** đúng màn gần nhất với màn cần vẽ (đừng bê cả bộ) — giữ layout/component/CSS của nó.
 3. **Token-hoá**: rút palette/spacing/radius của template vào **`:root` token §2** (SoT + qua `guard_ds` — hex chỉ được ở `:root`); class giữ nguyên, giá trị trỏ `var(--…)`. Đổi ý về màu sau này = sửa token, lan mọi màn.
 4. **Thay nội dung** bằng dữ liệu mẫu `PRD §7` + thuật ngữ `§6 Glossary` (luật BÁM NGHIỆP VỤ ở trên) — template đẹp mà nội dung generic vẫn vô nghĩa.
@@ -63,7 +63,7 @@ Ghi vào `docs/DESIGN-SYSTEM.md §3` (kho component — dev implement + reviewer
 1. **Research — BẮT BUỘC, không chỉ khi "chưa rõ"**: trước khi chốt token hay vẽ mockup đầu tiên, chủ động tìm THẬT sản phẩm/template cùng loại qua WebSearch/trình duyệt.
    - **Từ khoá tự suy TỪ CHÍNH dự án đang làm** (đọc `PRD.md` + loại màn sắp vẽ). KHÔNG dùng lại cụm từ/link cố định của lần trước hay của dự án khác — vd dự án quản lý kho thì tìm "warehouse/inventory dashboard UI", dự án đặt lịch thì tìm "booking/scheduling app UI".
    - Lấy **ít nhất 2-3 tham chiếu CỤ THỂ** (không mô tả chung chung "hiện đại, sạch sẽ"). Ghi **tên sản phẩm/template + URL + đặc điểm cụ thể định vay mượn** (bố cục thẻ số liệu, cách dùng màu xu hướng, kiểu bảng, spacing…) vào `docs/DESIGN-SYSTEM.md §1` làm **neo tham chiếu** — kể cả khi user chưa đưa ví dụ nào. **Tham chiếu là template mã nguồn mở dùng LUÔN được → đi §Đường tắt template** (lấy làm nền, không chỉ nhìn).
-   - User đưa ví dụ/link cụ thể → **ưu tiên đúng cái đó**; agent tìm THÊM để bổ sung góc nhìn, không thay thế link user đã cho.
+   - User đưa ví dụ/link cụ thể → **ưu tiên đúng cái đó**; dùng **`browse` skill (Playwright) mở link đó** (không WebFetch) để thấy giao diện render thật trước khi neo phong cách; agent tìm THÊM để bổ sung góc nhìn, không thay thế link user đã cho.
    - Trang chặn bot (Cloudflare/403…) → thử nguồn khác (blog tổng hợp, ảnh chụp trên trang review, Dribbble, tìm ảnh). KHÔNG bỏ bước này, KHÔNG ghi nguồn chưa thật sự xem qua.
    - Tham khảo cùng lúc: UX pattern cho loại sản phẩm (form/table/dashboard), WCAG 2.1 AA, design system doanh nghiệp (Ant/Material/Atlassian), mobile-first.
    - Vì sao bắt buộc: không có mẫu thật thì giao diện ra theo gu của agent, và người vận hành phải tự đi tìm mẫu rồi bắt làm lại. Ô neo §1 phải có ít nhất một URL.
