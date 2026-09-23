@@ -42,7 +42,7 @@ URL production  : —
 - [ ] `docs/ROADMAP.md`: chia wave; mỗi wave khai **target** + **phases chạy** (BUILD,VERIFY[,SHIP])
 - [ ] Challenge DOCUMENT **PASS** (≥3 câu khó, trả lời CHỈ bằng tài liệu) — §Challenge log
 - [ ] ≥2 dòng `docs/DECISIONS.md`
-- [ ] **PRE-LOCK AUDIT PASS** (2 phần) — (1) **khớp**: trace 5 chiều (AC↔API · data model nuôi đủ field · consumes↔provider · luồng E2E) + UI↔AC 2 chiều, không tham chiếu treo (amendment đã CASCADE) · (2) **không thiếu**: `pre-mortem` quét taxonomy ca biên + đối chiếu ngoài, mọi nghi vấn đã xử (thêm AC / hỏi / DECISIONS). *KÍCH HOẠT tại lời chốt của Author (Bước cuối /document) khi ô chưa tick. Sửa spec doc sau khi tick → `trace_docsync` TỰ BỎ TICK — lời chốt kế re-run audit trên bản mới rồi mới tick lại, KHÔNG tick chay*
+- [ ] **PRE-LOCK AUDIT PASS** (2 phần) — (1) **khớp**: trace 5 chiều (AC↔API · data model nuôi đủ field · consumes↔provider · luồng E2E) + UI↔AC 2 chiều, không tham chiếu treo (amendment đã CASCADE) · (2) **không thiếu**: `pre-mortem` quét taxonomy ca biên + đối chiếu ngoài, mọi nghi vấn đã xử (thêm AC / hỏi / DECISIONS). *LUÔN chạy tại lời chốt của Author (Bước cuối /document) — KỂ CẢ ô đang tick: tick là dấu ghi nhận, không phải vé skip. Sửa spec doc sau khi tick → `trace_docsync` TỰ BỎ TICK. KHÔNG tick chay*
 - [ ] **Scope khoá** — từ đây không hỏi Authority nữa (trừ ngoại lệ "hỏi thật", xem PROTOCOL §3)
 
 ### BUILD (wave hiện tại) — rời phase khi:

@@ -192,7 +192,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 | Demo đẹp chạy xấu (UI khớp ảnh, cấu trúc sai) | `persona-picky` BACKSTOP screenshot-diff (E1) |
 | App shell trôi (mỗi mockup một kiểu sidebar/nav/icon) | `guard_shell` (so khối SHELL vs `_shell.html`) + ux-design §Nhất quán cross-màn |
 | Point-edit lệch doc (sửa FEAT quên arch/API/mockup) | `trace_docsync` nhắc CASCADE + pre-lock audit (trace 5 chiều + UI↔AC) trước khoá scope |
-| Tick PRE-LOCK ôi (audit xong rồi doc còn đổi tiếp, tick cũ thành bằng chứng giả) | `trace_docsync` TỰ BỎ TICK khi sửa spec doc sau tick — gate đỏ tới khi re-run audit |
+| Tick PRE-LOCK ôi (audit xong rồi doc còn đổi tiếp, tick cũ thành bằng chứng giả) | `trace_docsync` TỰ BỎ TICK khi sửa spec doc sau tick + **lời chốt LUÔN chạy audit kể cả đang tick** (bịt tick chay + sửa ngoài tool hook không thấy) |
 | Test xanh giả (pass nhờ H2/mock, không chạy thật) | `capture_proof.py` MÁY-sinh `proof.json` — gate không tin tick |
 | Chạy mù kế hoạch cũ | `wave_reviewed` + RÀ LẠI (loop engineering) |
 | Agent giả tick proof | `guard_proof` chặn Write/Edit `*proof.json` |
