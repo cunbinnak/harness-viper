@@ -177,6 +177,33 @@ public class MapperComponent {
 }
 ```
 
+**HYBRID — field KHÔNG map 1-1** (lỗi hay gặp: vài field đặc biệt → hand-map CẢ CỤM. SAI: mapper vẫn lo phần trùng, chỉ field dưới mới khai/set tay):
+
+| Loại field | Cách khai (không hand-map cả cụm) |
+|---|---|
+| **Generated** (id · `employeeNumber` sinh runtime) | `@Mapping(target=..., ignore=true)` → **set tay ở service** sau khi gọi mapper |
+| **Hằng** (`status = PENDING_ACTIVATION`) | `@Mapping(target="status", constant="PENDING_ACTIVATION")` |
+| **Điều kiện / theo quyền** (`baseSalary` che theo role — DEC) | thêm **param** + `@Mapping(target="baseSalary", expression="java(canView ? e.getBaseSalary() : null)")` |
+| **Đa nguồn** (`departmentName` từ `Department`) | **tham số thứ 2** + `@Mapping(target="departmentName", source="dept.name")` |
+
+```java
+@Mapping(target = "id", ignore = true)
+@Mapping(target = "employeeNumber", ignore = true)              // generated → set tay ở service
+@Mapping(target = "status", constant = "PENDING_ACTIVATION")    // hằng
+EmployeeEntity toEntity(CreateEmployeeRequest request);
+
+@Mapping(target = "departmentName", source = "dept.name")       // đa nguồn (tham số thứ 2)
+@Mapping(target = "baseSalary",
+         expression = "java(canViewSalary ? emp.getBaseSalary() : null)")  // điều kiện/quyền
+EmployeeDetailResponse toDetailResponse(EmployeeEntity emp, DepartmentEntity dept, boolean canViewSalary);
+```
+```java
+// service — chỉ field generated set tay:
+EmployeeEntity emp = employeeMapper.toEntity(request);
+emp.setEmployeeNumber(generateEmployeeNumber());
+```
+> Reviewer: hand-map field **trùng 1-1** mà mapper làm được = finding → chuyển mapper; set tay/expression field **có lý do** (4 loại trên) = tha. Che field null theo quyền → `@JsonInclude(NON_NULL)` đặt **trên field đó**, KHÔNG cả class (kẻo nuốt field null-có-nghĩa như `probationEndDate`).
+
 ## 6. Response & error shape (common)
 Envelope response nhất quán toàn boundary — contract cụ thể chốt ở `docs/arch/{name}.md §3 API` (§Common error format), pattern này mô tả khung chung.
 
