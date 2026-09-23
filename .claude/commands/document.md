@@ -81,7 +81,7 @@ vá (INTERVIEW: **hỏi Authority thêm** · INTAKE: dịch lại + vá lỗ) �
 phản ánh ĐÚNG ý Author** (không còn chỗ đoán, không còn lệch ý) — **không giới hạn số vòng**. **PASS** mới đi tiếp.
 Ghi mỗi vòng vào `STATE.md §Challenge log`.
 
-**PRE-LOCK AUDIT (bắt buộc, sau khi hết vòng vá — TRƯỚC khoá scope) — 2 phần:**
+**PRE-LOCK AUDIT (bắt buộc — ĐIỂM KÍCH HOẠT: Author nói "chốt scope"/"chốt tài liệu" ở Bước cuối mà ô `PRE-LOCK AUDIT PASS` chưa tick. Chạy sớm hơn chỉ phí: doc còn đổi theo nhận xét thì audit trên bản trung gian là audit vứt đi) — 2 phần:**
 
 **(1) Khớp nhau — consistency** (đọc TRỌN doc set, báo mọi **tham chiếu treo**):
 - **AC↔API 2 chiều** · **data model nuôi đủ field mọi AC cần** · **consumes↔provider khớp** · **luồng E2E không đứt** (`technical-design §Trọn vẹn`).
@@ -92,13 +92,18 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 - MAIN nhận nghi vấn → mỗi cái **quyết**: thêm AC (CASCADE) · hỏi Authority (còn DOCUMENT nên được hỏi) · ghi giả định `DECISIONS.md`. **KHÔNG bỏ lửng.**
 
 > Cả 2 phần là việc **NGỮ NGHĨA** — làm bằng đọc/đối chiếu + agent độc lập, **KHÔNG** phải hook. Hook `trace_docsync` chỉ TRIGGER nhắc; audit này mới KIỂM. Còn tham chiếu treo HOẶC nghi vấn pre-mortem chưa xử = **chưa được khoá scope**.
+>
+> **Tick ô `PRE-LOCK AUDIT PASS` (STATE §Gate DOCUMENT) CHỈ khi xong CẢ 2 phần** — xong mỗi (1) chưa được tick. Tick rồi mà còn sửa spec doc (Authority nhận xét thêm) → `trace_docsync` TỰ BỎ TICK: xử CASCADE xong, tới lời chốt kế phải **re-run audit trên bản mới** rồi mới tick lại.
+>
+> **Re-run có trọng tâm** (đỡ phí — tick rụng như nhau, khác độ SÂU lượt audit lại): sửa chữ nghĩa/trình bày không đổi AC/field/luồng → re-trace quanh vùng đổi là đủ, khỏi re-spawn. Đổi AC/luồng/field/màn → re-trace + spawn `pre-mortem` quét lại FEAT/luồng bị ảnh hưởng (+3 câu xuyên-luồng nếu luồng đổi).
 
 ## Bước cuối — Chốt + khoá scope
-1. `python scripts/gate.py` (phase DOCUMENT) phải **xanh**.
-1b. **Consistency-audit PASS** (Bước 10): trace 5 chiều + UI↔AC sạch, không tham chiếu treo. Tick gate `consistency-audit`.
-2. ≥2 dòng `docs/DECISIONS.md`.
-3. **Trình Authority đọc** toàn bộ doc set → OK = duyệt.
-4. Tick hết gate DOCUMENT + `Scope khoá` trong `STATE.md`. **Từ đây không hỏi Authority nữa.**
+1. **Trình Authority đọc** toàn bộ doc set → nhận xét → sửa (CASCADE, `trace_docsync` nhắc + rụng tick nếu có) → lặp tới khi Authority nói **"chốt scope" / "chốt tài liệu"**.
+2. **Lời chốt = ỦY QUYỀN, không phải bằng chứng** — nó KÍCH HOẠT lượt kiểm cuối, không nhảy cóc qua được:
+   · `python scripts/gate.py` (phase DOCUMENT) phải **xanh**.
+   · Ô `PRE-LOCK AUDIT PASS` **chưa tick** (chưa chạy lần nào / đã rụng vì doc đổi sau audit) → **CHẠY PRE-LOCK AUDIT NGAY LÚC NÀY** (khối Bước 10: trace 5 chiều + UI↔AC + spawn `pre-mortem`) trên ĐÚNG bản sẽ khoá — đây là điểm kích hoạt CHÍNH của audit. Đã có audit cũ → re-run có trọng tâm (khối Bước 10). Nghi vấn xử hết (thêm AC / hỏi Authority — vẫn DOCUMENT nên còn được hỏi / DECISIONS) → mới tick. KHÔNG tick chay.
+3. ≥2 dòng `docs/DECISIONS.md`.
+4. Rà TỪNG ô gate DOCUMENT — ô nào chưa tick thì **làm cho đạt rồi mới tick** (KHÔNG tick gộp cho đủ bộ) → cuối cùng tick `Scope khoá` trong `STATE.md`. **Từ đây không hỏi Authority nữa.**
 5. Báo: tài liệu xong — **đã chia thành N wave** (đọc `docs/ROADMAP.md §1`, liệt kê `w1: <target/FEAT> · w2: … · wN: …`), chạy `/build 1` để vào wave đầu.
 
 ## Ranh giới

@@ -15,8 +15,11 @@ Input: mô tả project user truyền (`$ARGUMENTS`) hoặc tài liệu trong `i
 > **Đây là một trong những chỗ được hỏi nhiều nhất.** Mọi thứ không đào ra ở đây sẽ phải trả bằng
 > một lần ngắt giữa lúc code, hoặc tệ hơn — bằng một quyết định agent tự đoán. Hỏi cho đủ và cho SÂU.
 
-## Research TRƯỚC khi phỏng vấn — chống hallucination
-Domain/module mới chưa biết đi thế nào → **research là bước đầu, đừng bịa**: pattern ngành + thuật ngữ + cách sản phẩm cùng loại giải (WebSearch nếu có). Vì sao bắt buộc: hiểu biết domain của model không research = trí nhớ mù → **bịa có cấu trúc (hallucination)**. Mọi kiến thức domain phải có **NGUỒN**: research (ghi link) / Authority trả lời / intake — không từ "cảm giác". Research xong hỏi mới trúng (probe hóc búa cần hiểu ngành để xoáy).
+## Research xen vào phỏng vấn — chống hallucination + hỏi mù
+
+**Trình tự (tránh research mù):** câu mở đầu nắm HẠT GIỐNG — Author muốn làm gì (hoặc đọc `intake/`) → **research domain đúng cái đó NGAY** (gọi `WebSearch`/`WebFetch`: pattern ngành + thuật ngữ + cách sản phẩm cùng loại giải) → bám kết quả research để **probe SÂU**. Chưa có hạt giống thì research dễ trúng generic/nhầm hướng; research xong hỏi mới trúng (probe hóc búa cần hiểu ngành để xoáy). Giữ mạch LIỀN — research là bước **xen giữa**, không phải gate dừng lại. Domain rộng → có thể research thêm giữa buổi khi mở mục mới.
+
+**Bắt buộc, không "nếu có":** `WebSearch`/`WebFetch` luôn sẵn — domain mới mà không research = **trí nhớ mù → bịa có cấu trúc (hallucination)**. Mọi kiến thức domain phải có **NGUỒN**: research (ghi link vào PRD §6) / Authority trả lời / intake — KHÔNG từ "cảm giác".
 
 ## Ngân sách là THỜI GIAN, không phải số câu
 
@@ -94,7 +97,7 @@ Chỗ user không trả lời được, hoặc chưa quyết: (1) tìm trong tà
 
 1. **PRD §1 Vấn đề (pain)** — ai đau + đau gì (status quo) + hệ quả (cost of inaction) + **dòng `Bằng chứng:` không rỗng**. Vision narrative (vấn đề gì, cho ai, vì sao bây giờ) mở đầu §1.
 2. **PRD §2 Giả thuyết + rủi ro** — **1 giả thuyết chính = success metric** (con số + ngưỡng go/pivot/kill, ghi TRƯỚC khi nhìn số) + rủi ro chính. Giả thuyết phụ (nếu có) thêm dòng cùng bảng — tùy chọn, KHÔNG ép số lượng.
-3. **Nguồn** — ghi vào **PRD §6 Glossary + Nguồn** (tài liệu tham chiếu: intake / phỏng vấn).
+3. **Nguồn** — ghi vào **PRD §6 Glossary + Nguồn**: **≥1 link research** (không chỉ "phỏng vấn"/"intake") — dấu vết đã tra domain. §6 không có URL research = **chưa research**, quay lại làm.
 4. **Lỗ hổng & cách xử** — ≥1 dòng, mỗi lỗ có cách xử + vết (trỏ `docs/DECISIONS.md`).
 
 ## Dấu hiệu hời hợt — dính ≥2 thì quay lại hỏi tiếp
@@ -115,4 +118,4 @@ Chỗ user không trả lời được, hoặc chưa quyết: (1) tìm trong tà
 - KHÔNG icon/emoji trong tài liệu.
 
 ## Done
-- `docs/PRD.md` (§1 Vấn đề + §2 Giả thuyết + rủi ro) đầy đủ + đã playback + user confirm → tiếp Bước 2 (PRD trọn §1-6) → Bước 3 `domain-ba` (persona + ma trận) → Bước 4 `capability-mapping`.
+- `docs/PRD.md` (§1 Vấn đề + §2 Giả thuyết + rủi ro) đầy đủ + **§6 Nguồn có ≥1 link research** + đã playback + user confirm → tiếp Bước 2 (PRD trọn §1-6) → Bước 3 `domain-ba` (persona + ma trận) → Bước 4 `capability-mapping`.

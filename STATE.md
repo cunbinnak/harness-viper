@@ -29,7 +29,7 @@ URL production  : —
 - [ ] Đường vào xác định (Bước 0):
       · (INTERVIEW) `docs/INTERVIEW.md` đủ dòng bằng chứng — từ phỏng vấn Authority
       · (INTAKE) `intake/*.md` render thật + marker `NGUỒN: INTAKE` + bảng truy vết intake→FEAT
-- [ ] `docs/PRD.md`: vấn đề + đối tượng + out-of-scope + ≥1 success metric có số
+- [ ] `docs/PRD.md`: vấn đề + đối tượng + out-of-scope + ≥1 success metric có số + **§6 Nguồn có ≥1 link research** (đã tra domain, không hỏi mù)
 - [ ] `docs/PERSONAS.md`: persona + ma trận vai×hành động (không ô trống)
 - [ ] `docs/CAPABILITIES-MAP.md`: capability→outcome→FEAT; mọi FEAT truy về 1 capability
 - [ ] `docs/feat/FEAT-*.md`: mỗi FEAT có AC (BDD, **gồm ca biên**) + field kỹ thuật (enforcement/consumes) điền
@@ -41,8 +41,8 @@ URL production  : —
       chốt · backend-only → marker `KHÔNG CÓ UI`
 - [ ] `docs/ROADMAP.md`: chia wave; mỗi wave khai **target** + **phases chạy** (BUILD,VERIFY[,SHIP])
 - [ ] Challenge DOCUMENT **PASS** (≥3 câu khó, trả lời CHỈ bằng tài liệu) — §Challenge log
-- [ ] **PRE-LOCK AUDIT PASS** (2 phần) — (1) **khớp**: trace 5 chiều (AC↔API · data model nuôi đủ field · consumes↔provider · luồng E2E) + UI↔AC 2 chiều, không tham chiếu treo (amendment đã CASCADE) · (2) **không thiếu**: `pre-mortem` quét taxonomy ca biên, mọi nghi vấn đã xử (thêm AC / hỏi / DECISIONS)
 - [ ] ≥2 dòng `docs/DECISIONS.md`
+- [ ] **PRE-LOCK AUDIT PASS** (2 phần) — (1) **khớp**: trace 5 chiều (AC↔API · data model nuôi đủ field · consumes↔provider · luồng E2E) + UI↔AC 2 chiều, không tham chiếu treo (amendment đã CASCADE) · (2) **không thiếu**: `pre-mortem` quét taxonomy ca biên + đối chiếu ngoài, mọi nghi vấn đã xử (thêm AC / hỏi / DECISIONS). *KÍCH HOẠT tại lời chốt của Author (Bước cuối /document) khi ô chưa tick. Sửa spec doc sau khi tick → `trace_docsync` TỰ BỎ TICK — lời chốt kế re-run audit trên bản mới rồi mới tick lại, KHÔNG tick chay*
 - [ ] **Scope khoá** — từ đây không hỏi Authority nữa (trừ ngoại lệ "hỏi thật", xem PROTOCOL §3)
 
 ### BUILD (wave hiện tại) — rời phase khi:
