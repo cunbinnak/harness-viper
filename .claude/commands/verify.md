@@ -61,7 +61,7 @@ Tên TC nói **hỏng gì khi đỏ** ("2 order cùng bàn", không "test order 
 `make test` xanh (unit/integration MAIN đã viết ở BUILD). **KHÔNG sửa source để test xanh** (→ Bước 5).
 
 ## Bước 4 — Dogfood
-**Chạy `/dogfood`** (Skill tool — NẠP TƯƠI chỉ dẫn tại thời điểm này; KHÔNG làm theo trí nhớ/tóm tắt, chỉ dẫn đầy đủ nằm trong file lệnh đó): MAIN tự dùng bằng **trình duyệt thật** TRƯỚC, rồi 6 persona × 2 đợt. **Chưa chạy `/dogfood` = chưa xong VERIFY.**
+**Chạy `/dogfood`** (Skill tool — NẠP TƯƠI chỉ dẫn tại thời điểm này; KHÔNG làm theo trí nhớ/tóm tắt, chỉ dẫn đầy đủ nằm trong file lệnh đó): MAIN **đóng persona chính** tự dùng bằng **trình duyệt thật** TRƯỚC, rồi mới spawn 6 persona × 2 đợt. **Chưa chạy `/dogfood` = chưa xong VERIFY.**
 Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên vai) → báo Authority theo **mẫu tổng kết** (`/dogfood`).
 
 ## Bước 5 — Fix-loop (MAIN) — lặp theo LƯỢT, mỗi lượt đủ 4 nhịp
