@@ -4,7 +4,7 @@ description: VERIFY — code review (2 vai) + test-writer thiết kế/chạy bl
 # /verify [<wave>] — Phase VERIFY
 
 > Kiểm trên hệ **ĐANG CHẠY** (BUILD đã đưa hệ chạy thật theo `kind`). Agent (review + persona) **CHỈ trả finding — MAIN sửa**.
-> **Kỷ luật spawn** (mọi Bước dưới): spawn bằng **Task tool + prompt ngắn TAY viết** (KHÔNG `build_prompt`, KHÔNG generator). Ranh giới cấm là **PRODUCT code — chỉ MAIN viết/sửa** (không phải "cấm viết mọi thứ"). Phân vai ghi/đọc:
+> **Kỷ luật spawn** (mọi Bước dưới): spawn bằng **Task tool + prompt ngắn TAY viết** (KHÔNG `build_prompt`, KHÔNG generator). **Foreground — CẤM `run_in_background`** (các bước ăn chung 1 hệ + 1 DB, chạy chồng là đè trạng thái nhau; foreground = turn MAIN tự đứng lại tới khi agent trả kết quả — barrier bằng CƠ CHẾ, không phải lời dặn). Ranh giới cấm là **PRODUCT code — chỉ MAIN viết/sửa** (không phải "cấm viết mọi thứ"). Phân vai ghi/đọc:
 > · `reviewer` · `bug-hunter` · `persona-*` → **READ-ONLY** — chỉ đọc, trả finding, không viết gì (đã chặn `Write`/`Edit` bằng frontmatter).
 > · `test-writer` → **QA độc lập, CÓ viết**: thiết kế `tracking/wave-N/test-cases.md` + viết test code trong `test/` (đó là việc của nó) — CHỈ **không đụng product code**.
 > Mọi agent thấy product code sai → **TRẢ finding**, MAIN sửa (**góc nhìn độc lập** — *fresh eyes*: người kiểm không phải người viết, nên MAIN không tự-chấm-bài-mình).
@@ -17,7 +17,7 @@ description: VERIFY — code review (2 vai) + test-writer thiết kế/chạy bl
 - Hệ chạy thật (từ BUILD), theo `kind`: backend/bff/web → `docker ps` + health 200 (web = nginx container) · mobile → emulator. Chưa chạy → đưa lên trước.
 
 ## Bước 2 — Code review (2 vai góc-nhìn-độc-lập, checklist đúng `kind` — KHÔNG sửa)
-Spawn 2 agent, **chỉ đọc code, trả finding** — hai vai soi hai câu hỏi KHÁC nhau:
+Spawn 2 agent **cùng 1 message (song song), foreground**, **chỉ đọc code, trả finding** — hai vai soi hai câu hỏi KHÁC nhau:
 > **Cả 2 agent nạp thêm skill `review-<kind>`** (review-backend/web/bff/mobile — checklist review theo `kind` của target đang review) BÊN CẠNH `stack-<x> §review`.
 
 **`reviewer` — code có AN TOÀN chạy + BẢO TRÌ được không?** (senior/team-lead, **2 trục** — chi tiết `.claude/agents/reviewer.md`)
@@ -60,24 +60,19 @@ Tên TC nói **hỏng gì khi đỏ** ("2 order cùng bàn", không "test order 
 **FAIL = bug TÌM ĐƯỢC (finding hợp lệ), KHÔNG phải test dở** → báo cho MAIN sửa ở Bước 5; `test-writer` **KHÔNG sửa product code** (thấy code sai thì báo).
 `make test` xanh (unit/integration MAIN đã viết ở BUILD). **KHÔNG sửa source để test xanh** (→ Bước 5).
 
-## Bước 4 — Dogfood (chi tiết `/dogfood`)
-**TRƯỚC HẾT — MAIN tự dùng** (bắt buộc, trước khi spawn vai nào): đích thân mở trình duyệt, đóng **persona chính**, vào từ trang đầu, đi hết luồng lõi đầu→cuối — kiểm từng AC làm được THẬT + đối chiếu mockup đã chốt (lệch = phát hiện). *"Eat your own shit": MAIN nếm trước.*
-Rồi mới **6 persona**, **2 đợt tránh đè trạng thái** (server + DB dùng chung):
-- **Đợt 1 (DB sạch)**: `edge` (rỗng/lỗi) · `newbie` · `picky` (đo giao diện thật vs mockup + token)
-- **seed lại** `deployment/local/`
-- **Đợt 2 (DB có data)**: `rushed` · `breaker` (chạy đủ **ma trận vai×hành động**) · `mobile`
+## Bước 4 — Dogfood
+**Chạy `/dogfood`** (Skill tool — NẠP TƯƠI chỉ dẫn tại thời điểm này; KHÔNG làm theo trí nhớ/tóm tắt, chỉ dẫn đầy đủ nằm trong file lệnh đó): MAIN tự dùng bằng **trình duyệt thật** TRƯỚC, rồi 6 persona × 2 đợt. **Chưa chạy `/dogfood` = chưa xong VERIFY.**
+Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên vai) → báo Authority theo **mẫu tổng kết** (`/dogfood`).
 
-Phát hiện (MAIN + 6 vai) → `STATE.md §Findings` (Nguồn = tên vai) → báo Authority theo **mẫu tổng kết** (`/dogfood`).
-
-## Bước 5 — Sửa tới sạch (MAIN)
+## Bước 5 — Fix-loop (MAIN) — lặp theo LƯỢT, mỗi lượt đủ 4 nhịp
 > **PHÂN LOẠI finding trước khi xử — bug ≠ thiếu-AC:**
 > - **Bug** (AC/spec ĐÃ có mà code sai) → **MAIN sửa code**, không đụng doc.
-> - **Thiếu-AC** (dogfood/bug-hunter chạm case **không AC nào phủ**, mà đáng ra phải có) → KHÔNG chỉ vá code lặng lẽ: **tag `nghi thiếu AC`** vào `§Findings` + đẩy `ROADMAP §backlog` (ghi FEAT liên đới) → `/next-wave` cân nhắc `/document` top-up **thành AC mới** (spec giàu dần — loop engineering). Vá code tạm cho qua VERIFY thì vẫn phải để lại vết backlog, đừng để case chìm.
-- TC **FAIL** hoặc finding **BLOCKER/MAJOR** → **MAIN sửa code** → **re-run** TC + dogfood liên quan → cập nhật
-  `test-cases.md` thành PASS, đánh dấu finding đã xử.
-- **Không hội tụ** — finding mới cứ nảy sau **~3 vòng** sửa→re-test → DỪNG, ghi `STATE.md §Blocker`, báo cuối buổi (đừng sửa vô hạn — max-turns safety, học từ loop-engineering).
+> - **Thiếu-AC** (dogfood/bug-hunter chạm case **không AC nào phủ**, mà đáng ra phải có) → **tag `nghi thiếu AC`** vào `§Findings` + đẩy `ROADMAP §backlog` (ghi FEAT liên đới) → `/next-wave` cân nhắc `/document` top-up **thành AC mới** (spec giàu dần — loop engineering). **Vá code tạm CHỈ khi case chặn luồng lõi wave này; không chặn → để nguyên tag + backlog, KHÔNG vá** (vá không có spec đỡ = spec rỗng dần).
+
+**1 lượt sửa** = (1) sửa batch finding open (TC FAIL + BLOCKER/MAJOR) → (2) target container hoá: **rebuild image + up lại** (sửa code mà re-test trên bundle cũ = CHƯA sửa) → (3) re-run các TC FAIL + TC smoke luồng lõi (TC **ĐÃ CÓ** trong `test-cases.md`, không thiết kế mới) → (4) MAIN mở **browser** bấm lại đúng màn/luồng vừa sửa (finding của persona nào → re-check theo góc vai đó) → cập nhật `test-cases.md` + đánh dấu §Findings. `git commit` mỗi lượt · học được gì → `knowledge-base/{name}.md`.
+- **Thoát vòng**: không TC FAIL + không BLOCKER/MAJOR open → Bước cuối.
+- **Cắt vòng**: hết lượt 3 vẫn sinh BLOCKER/MAJOR **mới** → DỪNG, ghi `STATE §Blocker` + số lượt đã chạy (1 dòng §Findings), báo cuối buổi — đừng sửa vô hạn (max-turns safety, loop-engineering).
 - Nhỏ / ngoài scope → `docs/ROADMAP.md §backlog` (wave sau).
-- `git commit` sau mỗi fix. Học được gì mới → `knowledge-base/{name}.md`.
 
 ## Bước cuối — Chốt
 1. `tracking/wave-N/test-cases.md`: mọi AC in-scope có TC **PASS**, không TC **FAIL**.

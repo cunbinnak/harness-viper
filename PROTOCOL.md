@@ -65,7 +65,7 @@ không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (
 5. **Cỡ sản phẩm theo đường vào** (§0).
 6. **Không secret trong code, không bypass test/lint. Đã code xong → git commit** (không commit = coi như chưa làm).
 7. **Tiếng Việt có dấu** cho văn bản người đọc (giữ tiếng Anh cho identifier/API/schema/tên lệnh/tên file).
-8. **Im lặng với Authority, đối kháng nội bộ.** Challenge trước khi code + dogfood trước khi báo xong.
+8. **Im lặng với Authority, đối kháng nội bộ.** Challenge trước khi code + dogfood trước khi báo xong. Dogfood = **trình duyệt thật** (skill `browse`) — **curl không tính** (trừ target `KHÔNG CÓ UI`); MAIN tự dùng trước rồi mới spawn persona.
 9. **Dọn rác tạm.** Artifact tạm (screenshot/trace/log/temp phân tích) dùng xong **dọn ngay** — không commit, không tích tụ, để scratch dir. Build artifact (node_modules/target/dist…) trong `.gitignore`. Docker/seed → teardown ở `/next-wave`.
 
 ---
