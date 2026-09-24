@@ -35,8 +35,12 @@ Code ở `services/boundaries/{name}/`.
 ```bash
 ./gradlew test jacocoTestReport checkstyleMain     # Maven chỉ khi ADR chọn: mvn -q test jacoco:report
 # coverage: build/reports/jacoco/test/jacocoTestReport.xml, counter LINE — ngưỡng backend 80%
+# mapper: pom/build.gradle có mapstruct mà 0 @Mapper trong source = dep chết + toàn map tay
+grep -c mapstruct pom.xml build.gradle 2>/dev/null; grep -rl "@Mapper" src/main/java | wc -l
+grep -rnE "\.set[A-Z]\w+\(\w+\.(get|is)[A-Z]" src/main/java --include="*.java" | wc -l   # đếm dòng setX(getX())
 ```
 Build/test đỏ → BLOCKER `type=test`, dẫn tên test + dòng lỗi. Coverage < 80% → BLOCKER.
+Có mapstruct trong build mà **0 `@Mapper`** = finding MINOR ngay (dep chết + convention vỡ); dòng `setX(getX())` nhiều bất thường (>10) → mở từng cụm phân loại 1-1 thuần vs có-lý-do (chi tiết trục 5 dòng MapStruct) — **số đếm ở đây là bằng chứng phải ghi vào báo cáo**, không được bỏ qua vì "MINOR".
 
 ## 4. Soi theo trục
 
