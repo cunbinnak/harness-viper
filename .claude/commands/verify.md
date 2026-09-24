@@ -64,6 +64,7 @@ Tên TC nói **hỏng gì khi đỏ** ("2 order cùng bàn", không "test order 
 `make test` xanh (unit/integration MAIN đã viết ở BUILD). **KHÔNG sửa source để test xanh** (→ Bước 5).
 
 ## Bước 4 — Dogfood
+Trước tiên: DB đang đầy rác test của Bước 3 → **reset DB sạch + seed tối thiểu** (chi tiết trong `/dogfood` — đợt 1 cần rỗng thật). Việc nội bộ local, dựng lại được bằng seed — **KHÔNG hỏi Authority**.
 **Chạy `/dogfood`** (Skill tool — NẠP TƯƠI chỉ dẫn tại thời điểm này; KHÔNG làm theo trí nhớ/tóm tắt, chỉ dẫn đầy đủ nằm trong file lệnh đó): MAIN **đóng persona chính** tự dùng bằng **trình duyệt thật** TRƯỚC, rồi mới spawn 6 persona × 2 đợt. **Chưa chạy `/dogfood` = chưa xong VERIFY.**
 Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên vai) → báo Authority theo **mẫu tổng kết** (`/dogfood`).
 
@@ -88,4 +89,4 @@ Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên v
 - **KHÔNG build/sửa source để test qua** — test black-box đo hành vi thật; lỗi thì sửa ở Bước 5 rồi re-test.
 - Agent (review/persona) **chỉ trả finding** — chỉ MAIN sửa (giữ **góc nhìn độc lập** — *fresh eyes*).
 - Không thả 6 persona cùng lúc (đè trạng thái nhau + trạng thái rỗng chết khi có bản ghi đầu tiên).
-- **Dọn rác**: screenshot/trace/video Playwright chụp để phân tích → **xoá sau khi xong**, KHÔNG commit, để scratch dir (không tích tụ). Seed test-data → cleanup cuối phase. test-logs/k6 output → archive theo wave hoặc xoá.
+- **Dọn rác**: screenshot/trace/video Playwright chụp để phân tích → **xoá sau khi xong**, KHÔNG commit, để scratch dir (không tích tụ). Seed test-data → dọn tại **chuyển bước** (Bước 3→4: dogfood đợt 1 cần DB sạch) + cuối phase. test-logs/k6 output → archive theo wave hoặc xoá.
