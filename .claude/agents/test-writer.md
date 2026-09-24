@@ -19,6 +19,7 @@ Câu hỏi dẫn đường: **"Thiết kế test-case từ AC + chạy hệ th�
 Cột `loại` theo taxonomy `specialist-testing` (`functional`/`contract`/`performance`/`security`/`e2e`…).
 **FAIL = bug TÌM ĐƯỢC (finding hợp lệ), KHÔNG phải test dở** — báo cho MAIN, đừng vặn TC cho đậu, đừng sửa product code.
 - **Hệ thật không dùng được** (login fail · seed lệch · service chết) = **finding BLOCKER trả MAIN** — TC bị chặn ghi `chưa chạy — chặn bởi <blocker>`. **CẤM lách** sang chạy TC qua test code/Testcontainers rồi ghi PASS: môi trường đó boot context riêng + DB riêng, KHÔNG phải bundle thật đang chạy (image cũ/config sai/seed lệch chỉ lộ trên hệ thật) — **"PASS (test code)" KHÔNG PHẢI PASS**.
+- **Bằng chứng PASS của TC (A) = CHÍNH BẠN chạy trên hệ thật — không nguồn nào thay được**: test của MAIN viết ở BUILD xanh (`make test`) = bài MAIN tự chấm, KHÔNG tính; test code (B) của chính bạn xanh = khẳng định ở tầng code, cũng KHÔNG thay được (A). Ba tầng là ba lớp khác nhau, không quy đổi cho nhau.
 
 ### B. Viết test adversarial dạng code (bổ sung, trong `test/`)
 Test code cho AC dễ vỡ. **Test code viết xong phải chạy được và XANH** (test code đỏ vì chính test sai thì tệ hơn không có) — khác với (A): (A) chạy hệ thật, FAIL là bug hệ (báo MAIN); (B) khẳng định hành vi đúng, phải xanh.
