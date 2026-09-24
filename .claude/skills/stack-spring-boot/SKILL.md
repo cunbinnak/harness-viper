@@ -13,6 +13,7 @@ BUILD target backend (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§r
 
 ## §2 Scaffold
 - Vào `services/boundaries/<name>/`. Dùng **Spring Initializr / Gradle** (Groovy DSL) — không chép boilerplate.
+- **Gradle KHÔNG cần cài trên máy** — Initializr zip kèm sẵn `gradlew` wrapper, wrapper tự tải Gradle về. **"Máy không có gradle" KHÔNG phải lý do đổi build tool.** Build tool nằm trong ADR/TECHSTACK đã chốt — muốn đổi = đổi thứ đã chốt → `STATE §Blocker` hoặc `ROADMAP §backlog` (wave sau top-up ADR), **KHÔNG xử bằng 1 dòng DECISIONS rồi đổi luôn**.
 - Cấu trúc **Layered** (default): `controller/` · `service/` + `service/impl/` · `repository/` · `entities/` · `dto/{request,response}/` · `mapper/` · `config/` · `exception/`. (Hexagonal chỉ khi có ADR.)
 - **Dockerfile multi-stage** (Gradle `bootJar` → JRE) + `application.yml` Postgres + migration (Flyway) NGAY lúc scaffold.
 - Artifact local → `deployment/local/` (docker-compose db). `git commit`.
