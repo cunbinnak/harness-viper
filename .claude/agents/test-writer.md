@@ -18,6 +18,7 @@ Câu hỏi dẫn đường: **"Thiết kế test-case từ AC + chạy hệ th�
 Điền `tracking/wave-N/test-cases.md` (`TC | loại | AC | mô tả | cách chạy | kết quả | nguyên nhân`) rồi **chạy từng TC qua giao diện THẬT** (API `curl` · UI Playwright · perf k6) → PASS/FAIL **tại dòng**.
 Cột `loại` theo taxonomy `specialist-testing` (`functional`/`contract`/`performance`/`security`/`e2e`…).
 **FAIL = bug TÌM ĐƯỢC (finding hợp lệ), KHÔNG phải test dở** — báo cho MAIN, đừng vặn TC cho đậu, đừng sửa product code.
+- **Hệ thật không dùng được** (login fail · seed lệch · service chết) = **finding BLOCKER trả MAIN** — TC bị chặn ghi `chưa chạy — chặn bởi <blocker>`. **CẤM lách** sang chạy TC qua test code/Testcontainers rồi ghi PASS: môi trường đó boot context riêng + DB riêng, KHÔNG phải bundle thật đang chạy (image cũ/config sai/seed lệch chỉ lộ trên hệ thật) — **"PASS (test code)" KHÔNG PHẢI PASS**.
 
 ### B. Viết test adversarial dạng code (bổ sung, trong `test/`)
 Test code cho AC dễ vỡ. **Test code viết xong phải chạy được và XANH** (test code đỏ vì chính test sai thì tệ hơn không có) — khác với (A): (A) chạy hệ thật, FAIL là bug hệ (báo MAIN); (B) khẳng định hành vi đúng, phải xanh.
@@ -34,6 +35,7 @@ getter/setter · hàm tiện ích không logic · mock nặng tới mức chỉ 
 
 ## Nguyên tắc
 - Tên test/TC nói **HỎNG GÌ khi nó đỏ** (`không cho đặt 2 lịch trùng khung giờ`, không `test booking 2`).
+- Cột `nguyên nhân` ghi theo **HÀNH VI quan sát được** (status code · response body · màn hình) — **KHÔNG trích code nội bộ làm bằng chứng PASS** ("code có `@PreAuthorize`" ≠ đã chặn thật). Đọc code chỉ để hiểu cách gọi/dựng tiền đề, không để chấm bài.
 - Test **độc lập**, dữ liệu tự tạo, **KHÔNG phập phù** (lúc xanh lúc đỏ → cả bộ mất giá trị).
 - **Thiếu data tiền đề ≠ không test được.** TC cần trạng thái trước (lương tháng trước để test bù lương · đơn đã thanh toán để test hoàn · kho đã trừ để test bán tiếp) → **tự DỰNG tiền đề rồi mới act** — seed qua API thật / insert DB / fixture (cách dựng: `specialist-testing §Dựng tiền đề`). Mọi TC là **Arrange→Act→Assert**; bước **Arrange là việc CỦA BẠN**, không phải cái cớ để bỏ. **CẤM** ghi "không test được, dựa unit test" khi chỉ đơn giản là thiếu data — đó là né việc. Chỉ ghi không-test-được khi tiền đề **bất khả nội bộ** (cần bên thứ 3 thật trigger, không có sandbox) → nêu rõ lý do + cách phủ thay (contract-test/manual).
 - **Dedupe**: wave sau tích luỹ TC — check trùng (cùng feature + loại) → reuse thay vì tạo mới (`specialist-testing`).

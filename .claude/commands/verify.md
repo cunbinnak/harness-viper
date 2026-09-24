@@ -60,6 +60,7 @@ Tên TC nói **hỏng gì khi đỏ** ("2 order cùng bàn", không "test order 
 ### 3b — CHẠY (test-writer, black-box, hệ đang chạy)
 `test-writer` chạy từng TC qua giao diện THẬT (API `curl`/REST · UI Playwright · perf k6) → điền `kết quả` PASS/FAIL + nguyên nhân **tại dòng**.
 **FAIL = bug TÌM ĐƯỢC (finding hợp lệ), KHÔNG phải test dở** → báo cho MAIN sửa ở Bước 5; `test-writer` **KHÔNG sửa product code** (thấy code sai thì báo).
+**Hệ thật không dùng được** (login fail/seed lệch/service chết) = finding **BLOCKER trả MAIN** — TC bị chặn ghi `chưa chạy`, **CẤM thay bằng test code/Testcontainers rồi ghi PASS** (context riêng + DB riêng ≠ bundle thật — image cũ/config sai chỉ lộ trên hệ thật).
 `make test` xanh (unit/integration MAIN đã viết ở BUILD). **KHÔNG sửa source để test xanh** (→ Bước 5).
 
 ## Bước 4 — Dogfood
