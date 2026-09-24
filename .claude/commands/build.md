@@ -60,7 +60,7 @@ Xong → `git add -A && git commit`.
 ## Bước 4 — Walking skeleton (thông 1 đường TRƯỚC, đắp thịt sau)
 Bản mỏng nhất **CHẠY được**, theo `kind`:
 - **backend / bff**: `make dev` (app+db lên) → health 200 → 1 thao tác **ghi→đọc DB** (dù xấu)
-- **web**: `make dev` (dev server, hot-reload — chỉ để code/check nhanh; **hệ container hoá thật ở Bước 6**) → 1 màn rỗng render → **gọi 1 API thật** (backend đã có) hiện dữ liệu
+- **web**: `make dev` (dev server, hot-reload — chỉ để code/check nhanh; **hệ container hoá thật ở Bước 6**) → **app shell dịch từ `docs/ux/mockups/<target>/_shell.html`** (Read file đó → dựng Layout: nav items/thứ tự/nhóm/logo/user-menu/icon KHỚP khối SHELL — HTML→JSX, không hook nào chặn code FE) + 1 màn rỗng render TRONG shell → **gọi 1 API thật** (backend đã có) hiện dữ liệu
 - **mobile**: build + chạy **emulator** → 1 màn render → gọi 1 API
 
 → `git commit`. Chưa thông đường mỏng này thì **KHÔNG** làm gì khác — đừng đắp UI đẹp lên đường chưa thông.
@@ -70,7 +70,11 @@ Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được
 
 ## Bước 5 — Luồng lõi (mỗi AC in-scope)
 `làm → tự bấm thử ở local → tick ROADMAP → commit`. Trong lúc làm:
-- **UI**: bám mockup `docs/ux/`, đổ **token** vào theme (thứ DUY NHẤT chép nguyên từ DOCUMENT), đủ trạng thái rỗng/lỗi
+- **UI = HỢP ĐỒNG HÌNH ẢNH** (mockup Authority đã chốt — code FE không hook nào canh, tự kỷ luật ở đây, backstop là `picky` ở VERIFY):
+  - TRƯỚC khi code màn nào → **Read mockup màn đó** (`docs/ux/mockups/<target>/<màn>.html`), nắm khối component (stat-card/toolbar/status-pill/cell-person...) — app phải dùng ĐÚNG khối đó, không thay bằng bảng/tag trần
+  - **Token map vào theme config TRƯỚC màn đầu tiên** (Tailwind: `theme.extend.colors/spacing` từ `DESIGN-SYSTEM §2` · antd: `ConfigProvider` · plain-CSS: `:root`) — màu mặc định framework (Tailwind blue...) xuất hiện trên màn = CHƯA map, dừng lại map đã
+  - **Mỗi mockup in-scope = 1 route thật** — thiếu màn = AC chưa xong; màn KHÔNG có mockup = ngoài scope, muốn thêm → `ROADMAP §backlog`, KHÔNG tự chế
+  - Tick AC màn nào → **tự so màn render vs mockup màn đó** (mở cả hai) xong mới tick · đủ trạng thái rỗng/lỗi
 - **Phân quyền**: mỗi ô `cấm` trong ma trận vai phải bị chặn ở **server**, không tự quyết lại
 - **Ranh giới module** theo `arch/{name}.md` — logic sai tầng là lỗi, không phải phong cách
 - **Ca biên** (trong AC): xử **ngay khi làm phần liên quan**, đừng để cuối

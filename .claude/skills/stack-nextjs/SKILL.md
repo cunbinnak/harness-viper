@@ -14,7 +14,7 @@ BUILD target web (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§revie
 ## §2 Scaffold
 - Vào `services/web/<name>/`. Dùng CLI chính chủ (Vite/Next create). TypeScript `strict: true`.
 - Layout: `pages`/`components`/`hooks`/`api`/`stores`/`router`.
-- **Design token**: nếu ADR chọn ui-kit (khuyến nghị **Ant Design 5**) → map `docs/DESIGN-SYSTEM.md §2` vào theme (`ConfigProvider`), dùng component library thật. Nếu plain-CSS → copy token vào `:root`, dùng `var(--...)`.
+- **Design token**: nếu ADR chọn ui-kit (khuyến nghị **Ant Design 5**) → map `docs/DESIGN-SYSTEM.md §2` vào theme (`ConfigProvider`), dùng component library thật. Nếu **Tailwind** → map token vào `theme.extend.colors/spacing/borderRadius` trong `tailwind.config` — **CẤM dùng palette mặc định** (`blue-600`...): primary trên màn phải là token §2, không phải màu Tailwind gốc. Nếu plain-CSS → copy token vào `:root`, dùng `var(--...)`. Map **trước màn đầu tiên** — theme config là việc của scaffold, không phải "để sau".
 
 ## §3 Convention (React/TS — bắt buộc)
 - **Data layer**: API client tách `api/` theo target; **KHÔNG `fetch`/`axios` rải rác trong component**. Type từ `arch/<backend> §3 API` (hoặc codegen). Server-state qua **React Query/SWR** (query key tập trung); không tự chế cache.
