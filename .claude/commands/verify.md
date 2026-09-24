@@ -8,12 +8,14 @@ description: VERIFY — code review (2 vai) + test-writer thiết kế/chạy bl
 > · `reviewer` · `bug-hunter` · `persona-*` → **READ-ONLY** — chỉ đọc, trả finding, không viết gì (đã chặn `Write`/`Edit` bằng frontmatter).
 > · `test-writer` → **QA độc lập, CÓ viết**: thiết kế `tracking/wave-N/test-cases.md` + viết test code trong `test/` (đó là việc của nó) — CHỈ **không đụng product code**.
 > Mọi agent thấy product code sai → **TRẢ finding**, MAIN sửa (**góc nhìn độc lập** — *fresh eyes*: người kiểm không phải người viết, nên MAIN không tự-chấm-bài-mình).
+> **THU ĐỦ → SỬA SAU**: finding từ Bước 2/3/4 chỉ **GOM** vào `STATE §Findings` — MAIN **CẤM đụng product code trước Bước 5**. Sửa sớm = phá snapshot mà test-writer/dogfood đang đo trên đó → finding các nguồn không map được nhau + rebuild lắt nhắt nhiều lượt thay vì 1 lượt batch.
 > Không hỏi Authority (mơ hồ → `DECISIONS.md` · ngoài scope → `ROADMAP §backlog` · chặn cứng → `STATE §Blocker`).
 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: VERIFY`.
 
 ## Bước 1 — Nạp + xác nhận hệ đang chạy
 - `docs/ROADMAP.md` wave-N (AC in-scope) + `docs/feat/FEAT-*` (AC + ca biên) + `docs/CONVENTIONS.md §API` + `arch/{name}.md` (**`kind`** + §API)
+- File nào vừa Read còn **tươi trong context** (chưa qua compact) → **KHÔNG Read lại** — chỉ nạp phần thiếu/đã cũ (nạp đúp = phí context, không thêm thông tin)
 - Hệ chạy thật (từ BUILD), theo `kind`: backend/bff/web → `docker ps` + health 200 (web = nginx container) · mobile → emulator. Chưa chạy → đưa lên trước.
 
 ## Bước 2 — Code review (2 vai góc-nhìn-độc-lập, checklist đúng `kind` — KHÔNG sửa)
@@ -30,7 +32,7 @@ Spawn 2 agent **cùng 1 message (song song), foreground**, **chỉ đọc code, 
 3. Phân quyền: **mọi truy vấn lấy bản ghi theo id có kèm điều kiện chủ sở hữu không?** (lỗ hay gặp + nặng nhất)
 4. Việc dở (TODO/FIXME) chặn AC · lỗi bị nuốt (`catch{}` rỗng) · secret hardcode
 
-**Cả hai** → `STATE.md §Findings`, format `[nặng/vừa/nhẹ] (+trục A|B nếu reviewer) + file:dòng + "hỏng/tốn thế nào" + đề xuất 1 câu`.
+**Cả hai** → `STATE.md §Findings`, format `[nặng/vừa/nhẹ] (+trục A|B nếu reviewer) + file:dòng + "hỏng/tốn thế nào" + đề xuất 1 câu`. **1 dòng = 1 vấn đề** — agent trả finding gộp nhiều vế → MAIN **TÁCH** thành nhiều dòng khi ghi (dòng gộp = fix 1 vế rồi tick cả dòng, vế còn lại chết chìm).
 - **Trục A · bug-hunter**: chỉ nêu **hậu quả THẬT** (mất/lộ dữ liệu · sai kết quả · chặn AC).
 - **Trục B**: nêu **chi phí bảo trì CỤ THỂ** — **vẫn cấm** khẩu vị thuần (tên đẹp không lý do · abstraction "để sau" · perf chưa đo · coverage%) + style tùy-ca **tha**.
 - **"Trục nào ổn → nói ổn, đừng bịa finding."** Lệnh `grep` cụ thể ở `.claude/agents/reviewer.md` · `bug-hunter.md`.
@@ -70,7 +72,8 @@ Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên v
 > - **Thiếu-AC** (dogfood/bug-hunter chạm case **không AC nào phủ**, mà đáng ra phải có) → **tag `nghi thiếu AC`** vào `§Findings` + đẩy `ROADMAP §backlog` (ghi FEAT liên đới) → `/next-wave` cân nhắc `/document` top-up **thành AC mới** (spec giàu dần — loop engineering). **Vá code tạm CHỈ khi case chặn luồng lõi wave này; không chặn → để nguyên tag + backlog, KHÔNG vá** (vá không có spec đỡ = spec rỗng dần).
 
 **1 lượt sửa** = (1) sửa batch finding open (TC FAIL + BLOCKER/MAJOR) → (2) target container hoá: **rebuild image + up lại** (sửa code mà re-test trên bundle cũ = CHƯA sửa) → (3) re-run các TC FAIL + TC smoke luồng lõi (TC **ĐÃ CÓ** trong `test-cases.md`, không thiết kế mới) → (4) MAIN mở **browser** bấm lại đúng màn/luồng vừa sửa (finding của persona nào → re-check theo góc vai đó) → cập nhật `test-cases.md` + đánh dấu §Findings. `git commit` mỗi lượt · học được gì → `knowledge-base/{name}.md`.
-- **Thoát vòng**: không TC FAIL + không BLOCKER/MAJOR open → Bước cuối.
+- **Finding không đo được bằng TC/browser** (cấu trúc/convention — trục B): cột Xử lý phải kèm **bằng chứng CÙNG LOẠI với cách phát hiện** — finding từ dump cây → fix xong dump cây lại đính vào; từ grep → chạy lại đúng lệnh grep đó. **Tick chay = CHƯA fix.**
+- **Thoát vòng** (soi FILE, không theo trí nhớ): mở `tracking/wave-N/test-cases.md` — không còn dòng **FAIL**; mở `STATE §Findings` — không còn BLOCKER/MAJOR **open**. Vòng này có BLOCKER/MAJOR **trục B** đánh fixed → re-spawn `reviewer` **re-review** (chỉ soi các finding đã fixed, mở đúng file:dòng — cơ chế `review-<kind> §2`) xác nhận hết thật rồi mới thoát → Bước cuối.
 - **Cắt vòng**: hết lượt 3 vẫn sinh BLOCKER/MAJOR **mới** → DỪNG, ghi `STATE §Blocker` + số lượt đã chạy (1 dòng §Findings), báo cuối buổi — đừng sửa vô hạn (max-turns safety, loop-engineering).
 - Nhỏ / ngoài scope → `docs/ROADMAP.md §backlog` (wave sau).
 

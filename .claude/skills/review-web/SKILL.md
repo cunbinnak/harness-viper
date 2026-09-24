@@ -19,7 +19,7 @@ Chỉ đọc. Không hỏi user.
 | `docs/arch/{backend}.md §3 API` hoặc integration BFF trong `docs/arch/{name}.md` | trục 4 |
 | `docs/arch/{name}.md §6.1` ca biên | trục 1 |
 | `docs/PERSONAS.md §2` (ma trận vai × hành động) | trục 2 |
-| skill `stack-nextjs §review` (forbidden patterns React/TS) | trục 3, 6 |
+| skill `stack-nextjs §review` — **ĐÃ nạp ở Bước 0 (định nghĩa agent), KHÔNG Read lại** | trục 3, 6 |
 | `docs/DECISIONS.md` · `docs/adr/ADR-*.md` (ui-kit, state, auth) | trục 7 |
 | Wave ≥ 2: `docs/BACKWARD-COMPAT.md` §1 · `archive/wave-*/` | trục 7 |
 

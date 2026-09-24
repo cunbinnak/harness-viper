@@ -18,7 +18,7 @@ Chỉ đọc. Không hỏi user.
 | `docs/arch/{name}.md` §4 kiến trúc · §6 ca biên | trục 1, 5 |
 | `docs/arch/{name}.md §3 API` · data model · events · integrations trong `docs/arch/{name}.md` | trục 4 |
 | `docs/PERSONAS.md §2` (ma trận vai × hành động) | trục 2 |
-| skill `stack-spring-boot §review` (forbidden patterns Java/Spring) | trục 3, 5 |
+| skill `stack-spring-boot §review` — **ĐÃ nạp ở Bước 0 (định nghĩa agent), KHÔNG Read lại** | trục 3, 5 |
 | `docs/DECISIONS.md` · `docs/adr/ADR-*.md` | trục 7 |
 | Wave ≥ 2: `docs/BACKWARD-COMPAT.md` §1 · `archive/wave-*/` | trục 4 |
 
@@ -149,7 +149,7 @@ ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ n�
 | Đúng tầng: controller map + validate + gọi service interface · nghiệp vụ + transaction ở service · query ở repository · convert ở mapper · không nghiệp vụ trong controller/repository/mapper/config/migration | Đọc controller + mapper | MAJOR |
 | Bean Validation cho input; nghiệp vụ + chuyển trạng thái validate ở service | Đọc DTO + service | MAJOR |
 | Lỗi không lọt 500: exception map qua `GlobalExceptionHandler` → error code typed; input null/rỗng → 400 typed; catch phải log + ném lại/map | Lệnh trục 3 (catch, `.get()`) | BLOCKER |
-| `stack-spring-boot §review` §Coding checklist — đi từng dòng: interface/impl, inject interface · `@RequiredArgsConstructor` + `private final` · MapStruct · `Instant` đúng tầng · id/tenant boxed · Specification thay JPQL `(:x IS NULL OR …)`, không `nativeQuery` vô cớ · error code từ enum · `@ConfigurationProperties` · không FQCN/wildcard import · theo convention sẵn có, không tự thêm pattern | `grep -rn -e "@Autowired" -e "LoggerFactory.getLogger" -e "ServiceImpl " J` | MAJOR · FQCN = MINOR |
+| `stack-spring-boot §review` §Coding checklist — đi từng dòng: interface/impl, inject interface · `@RequiredArgsConstructor` + `private final` · MapStruct · `Instant` đúng tầng · id/tenant boxed · Specification thay JPQL `(:x IS NULL OR …)`, `nativeQuery` phải kèm comment `// native: <lý do>` (thiếu = MAJOR) · error code từ enum · `@ConfigurationProperties` · không FQCN/wildcard import · theo convention sẵn có, không tự thêm pattern | `grep -rn -e "@Autowired" -e "LoggerFactory.getLogger" -e "ServiceImpl " J` | MAJOR · FQCN = MINOR |
 | **MapStruct là DEFAULT** (convention stack) — map tay CHỈ khi MapStruct **không biểu diễn nổi** (logic biến đổi/điều kiện/tính chéo field) + nêu lý do. Căn cứ = **bản chất, không đếm field**: map tay 1-1 thuần = finding→MapStruct; map tay có lý do = tha | tìm map tay: `grep -rnE "\.(set\|with)\w+\(.*\.(get\|is)\w+\(" src/main/java` → mở hàm xem là **gán 1-1 thuần** (→ finding) hay **có logic/điều kiện** MapStruct khó (→ tha) | MINOR (nêu "map tay 1-1 thuần, MapStruct làm được") |
 | Logging (`ref-backend-logging`): `@Slf4j`, JSON structured, MDC traceId/tenantId, mask PII, level đúng, log lỗi đủ ngữ cảnh, async/job có correlation | `grep -rn "MDC" J` | MAJOR |
 | Config (`ref-backend-config`): `application.yml` + `application-{dev,sit,prod}.yml`; Dockerfile multi-stage `bootJar` | `ls src/main/resources/application*.yml Dockerfile` | MAJOR |

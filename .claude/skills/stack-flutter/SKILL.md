@@ -5,7 +5,7 @@ description: Stack mobile Flutter/Dart — scaffold · convention · make · §r
 
 # stack-flutter
 
-> Port từ rules-mobile cũ. Idiom Flutter/Dart (cross-stack ở `docs/CONVENTIONS.md`; bảo mật ở `SECURITY.md`).
+> Idiom Flutter/Dart (cross-stack ở `docs/CONVENTIONS.md`; bảo mật ở `SECURITY.md`).
 > Load khi BUILD/VERIFY target có frontmatter `kind: mobile`.
 
 ## §1 Khi load

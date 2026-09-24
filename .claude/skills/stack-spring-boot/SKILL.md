@@ -5,7 +5,7 @@ description: Stack backend Java 21 + Spring Boot 4.x — scaffold · convention 
 
 # stack-spring-boot
 
-> Port từ rules-backend + ref-backend-* cũ. Idiom Java/Spring (cross-stack ở `docs/CONVENTIONS.md`; bảo mật ở `SECURITY.md`).
+> Idiom Java/Spring (cross-stack ở `docs/CONVENTIONS.md`; bảo mật ở `SECURITY.md`).
 > Load khi BUILD/VERIFY target có frontmatter `kind: backend, stack: spring-boot`.
 
 ## §1 Khi load
@@ -23,7 +23,7 @@ BUILD target backend (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§r
 - **DTO**: Request/Response DTO ở biên; **KHÔNG phơi `@Entity`**. Convert bằng **MapStruct** (mapper interface) — **HYBRID, KHÔNG hand-map cả cụm**: field trùng tên/kiểu → mapper tự map; field KHÔNG-1-1 khai `@Mapping` (generated → `ignore` rồi set tay ở service · hằng → `constant` · điều kiện/theo quyền → `expression`/param · đa nguồn → `source="b.x"` + tham số thứ 2). Set tay CHỈ field có lý do đó; dãy `setX(src.getX())` thuần = sai (dùng mapper). Chi tiết + ví dụ: `ref-backend-pattern §Mapper`.
 - **Exception**: `BusinessException` + error code **enum** theo domain; `@RestControllerAdvice` map tập trung. `orElseThrow(...)`, không `Optional.get()` trần.
 - **Transaction**: `@Transactional` ở service; read-only khi phù hợp. **Không gọi external chậm trong transaction.** Publish event **AFTER_COMMIT** / outbox.
-- **Persistence**: JPQL/Specification (filter động → Specification, không `(:x IS NULL OR ...)`); `nativeQuery` last-resort + `:tenantId`. Migration additive (không sửa file đã apply). Tránh N+1, list phải `Pageable`.
+- **Persistence**: JPQL/Specification (filter động → Specification, không `(:x IS NULL OR ...)`). **`nativeQuery` CHỈ khi JPQL/Specification không diễn đạt được** (window function · CTE · full-text search) — bắt buộc comment `// native: <lý do>` + bind param + `:tenantId`; thiếu lý do = dùng sai. Migration additive (không sửa file đã apply). Tránh N+1, list phải `Pageable`.
 - **Idempotency**: consumer/webhook/callback/job dedup theo id (inbox). **Multi-tenant**: mọi query filter `tenant_id` từ auth context.
 - **Timestamp**: `Instant` (entity/response/event) · `OffsetDateTime` (request) · `LocalDate` (date-only). **KHÔNG `LocalDateTime`**.
 - **Import**: không FQCN inline, không wildcard, không `var`. **Config**: `@ConfigurationProperties`, không hardcode; secret qua env.
@@ -51,6 +51,7 @@ migrate : ./gradlew flywayMigrate          # hoặc chạy lúc bootRun
 | `findById(id)` không kèm chủ sở hữu/tenant | User A đổi id URL đọc/sửa được của B | `findByIdAndTenantId` / Specification owner |
 | Lấy `userId`/`tenantId`/role từ body/param/header client | Client tự khai là người khác | Security context |
 | Nối chuỗi input vào JPQL/native; sort theo cột từ request | SQL injection; dò dữ liệu | Bind param; whitelist cột sort |
+| `nativeQuery` không có comment `// native: <lý do>` | JPQL/Spec làm được mà đi cửa sau — mất type-safety, schema-drift không bắt lúc compile | JPQL/Specification; native kèm comment lý do (window/CTE/full-text) |
 | `@Transactional` trên controller | Giữ connection cả lúc serialize | Đặt ở service, hẹp nhất |
 | Gọi HTTP/downstream chậm trong transaction | Cạn connection pool, service treo | Ngoài transaction; outbox |
 | Publish event/ghi cache trước commit | Consumer nhận event của dữ liệu đã rollback | `@TransactionalEventListener(AFTER_COMMIT)` |

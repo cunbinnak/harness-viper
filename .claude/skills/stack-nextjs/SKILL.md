@@ -5,7 +5,7 @@ description: Stack web frontend React 19 + Vite/Next — scaffold · convention 
 
 # stack-nextjs
 
-> Port từ rules-web + ref-frontend-* cũ. Idiom React/TS (cross-stack ở `docs/CONVENTIONS.md`; bảo mật ở `SECURITY.md`).
+> Idiom React/TS (cross-stack ở `docs/CONVENTIONS.md`; bảo mật ở `SECURITY.md`).
 > Load khi BUILD/VERIFY target có frontmatter `kind: web`.
 
 ## §1 Khi load

@@ -16,7 +16,7 @@ description: BUILD — MAIN tự code 1 wave: đọc KG/context → challenge �
 > hoạch vừa lập + Authority duyệt ở DOCUMENT.
 
 ## Bước 1 — Nạp context (CHỈ slice của wave — targeted, chống lost-in-middle)
-Đọc **đúng phần của wave**, KHÔNG đọc cả `docs/`:
+Đọc **đúng phần của wave**, KHÔNG đọc cả `docs/`. File vừa Read còn **tươi trong context** (chưa qua compact) → **KHÔNG Read lại** — chỉ nạp phần thiếu/đã cũ:
 - `docs/ROADMAP.md` wave-N: **target** (kind: backend/web/bff/mobile) + **AC in-scope** + phases khai
 - `docs/feat/FEAT-*` của các AC in-scope (AC + ca biên + field kỹ thuật)
 - `docs/arch/{name}.md` của **mỗi target wave khai** — **đọc frontmatter lấy `kind`** (backend/web/bff/mobile) + `stack` + data/API/ranh giới (KHÔNG đọc target **ngoài wave**). `kind` quyết định scaffold ở đâu · skeleton kiểu gì · chạy thật ra sao. **Wave nhiều target → phủ HẾT, đọc/làm TỪNG target một** theo chiều phụ thuộc (Bước 4), không chỉ 1 cái.

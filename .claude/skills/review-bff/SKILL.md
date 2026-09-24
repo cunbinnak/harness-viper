@@ -18,7 +18,7 @@ Chỉ đọc. Không hỏi user.
 | `docs/arch/{name}.md §3 API` (schema GraphQL) · integration backend trong `docs/arch/{name}.md` (hợp đồng backend) | trục 4 |
 | `docs/arch/{name}.md §6.1` ca biên | trục 1 |
 | `docs/PERSONAS.md §2` (ma trận vai × hành động) | trục 2 |
-| skill `stack-bff` §review + §Done | trục 3, 5 |
+| skill `stack-bff` §review + §Done — **ĐÃ nạp ở Bước 0 (định nghĩa agent), KHÔNG Read lại** | trục 3, 5 |
 | `docs/DECISIONS.md` · `docs/adr/ADR-*.md` | trục 6 |
 | Wave ≥ 2: `docs/BACKWARD-COMPAT.md` §1 (field/type đã giao) · `archive/wave-*/` | trục 4 |
 

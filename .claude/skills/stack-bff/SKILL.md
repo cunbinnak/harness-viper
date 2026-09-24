@@ -5,7 +5,7 @@ description: Stack BFF — Apollo Server / NestJS GraphQL gateway (Node/TS) — 
 
 # stack-bff
 
-> Port từ rules-bff cũ. Idiom GraphQL gateway (cross-stack ở `docs/CONVENTIONS.md`; bảo mật ở `SECURITY.md`).
+> Idiom GraphQL gateway (cross-stack ở `docs/CONVENTIONS.md`; bảo mật ở `SECURITY.md`).
 > Load khi BUILD/VERIFY target có frontmatter `kind: bff`.
 
 ## §1 Khi load
