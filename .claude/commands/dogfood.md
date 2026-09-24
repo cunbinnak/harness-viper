@@ -19,10 +19,10 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend
 1. Lấy URL/endpoint thật của hệ đang chạy — **không đoán**.
 2. Đọc `docs/PERSONAS.md` (persona · ma trận quyền · gán vai↔persona) + luồng lõi/AC của wave + mockup đã chốt.
 3. **MAIN TỰ DÙNG TRƯỚC — bắt buộc, TRƯỚC khi spawn vai nào.** Đích thân mở trình duyệt *(skill `browse` — cách gọi tool `browser_*` + công thức + chứng minh đã dùng thật)*, đóng **persona chính**, vào **từ trang đầu** (không nhảy URL trong), đi hết luồng lõi đầu→cuối: kiểm **từng AC** làm được THẬT không · đối chiếu từng màn với **mockup đã chốt** (lệch = phát hiện, không phải thẩm mỹ) · soi token/trạng thái (nút gửi có khoá, lỗi đúng khuôn). Ghi mọi thứ vướng kể cả nhỏ. **curl KHÔNG PHẢI dogfood** — dogfood đo trải nghiệm qua UI thật; curl chỉ hợp lệ khi target backend-only `KHÔNG CÓ UI`. Chưa có **bằng chứng bộ ba** của CHÍNH MAIN → **CẤM sang bước 4** (spawn vai không thay được việc MAIN tự dùng). → *"Eat your own shit" gốc ở đây: MAIN nếm TRƯỚC, rồi mới giao 6 lăng kính.*
-4. **Đợt 1 (DB SẠCH)** — spawn 3 vai 1 lượt: `edge` (rỗng/lỗi) · `newbie` · `picky`.
+4. **Đợt 1 (DB SẠCH)** — 2 nhịp: **`edge` chạy MỘT MÌNH trước** (trạng thái rỗng là tài nguyên dùng-một-lần — `newbie` đi luồng chính là TẠO bản ghi, chạy song song thì bản ghi đầu tiên giết mọi màn rỗng edge đang soi) → edge trả xong mới spawn `newbie` + `picky` song song (newbie ghi không hại picky — picky soi visual, gần như read-only).
    > **DB SẠCH là TIỀN ĐỀ — MAIN tự dựng, KHÔNG hỏi**: DB đang mang rác (test-writer vừa chạy / lần dogfood trước) → reset TRƯỚC đợt 1: `docker compose down -v` → up → migrate → seed **tối thiểu** (tài khoản đăng nhập/roles — KHÔNG seed data nghiệp vụ, `edge` cần thấy rỗng thật). DB local dựng lại được bằng seed = **không phải hành động không-đảo-ngược** → không thuộc ngoại lệ "hỏi thật", hỏi quyền truncate/reset là hỏi sai luật #2.
 5. Đợi **đủ 3 vai** trả kết quả → **seed lại** `deployment/local/`.
-6. **Đợt 2 (DB CÓ DỮ LIỆU)** — spawn 3 vai (như đợt 1: cùng message, foreground): `rushed` · `breaker` (chạy đủ ma trận) · `mobile`.
+6. **Đợt 2 (DB CÓ DỮ LIỆU)** — 2 nhịp: spawn `rushed` + `mobile` song song trước → trả xong mới spawn **`breaker` MỘT MÌNH cuối** (nó đổ input bậy + deactivate account — chạy song song thì vai khác thấy rác của nó thành finding giả / bị 401 giữa chừng; để cuối thì không ai phải nhìn bãi nó phá). Mọi nhịp: cùng message khi song song, foreground.
 7. Gộp phát hiện (**MAIN Bước 3 + 6 vai**) → soi **dấu hiệu dogfood giả** → vai nào dính thì chạy lại vai đó.
 8. Agent **TRẢ VỀ** phát hiện → **MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file).
 9. Báo Authority theo **mẫu tổng kết** (dưới). Còn finding `sửa ngay` → `/verify` fix-loop. Sạch → quay `/verify` Bước cuối (gate VERIFY xanh) rồi mới `/ship`|`/next-wave`.
@@ -30,7 +30,7 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend
 ## Vì sao 2 đợt (KHÔNG phải dàn tải)
 Các vai dùng chung **1 hệ + 1 DB**: `breaker` đổ dữ liệu bậy, `rushed` tạo bản ghi trùng NGAY giữa lúc `newbie` nhìn màn →
 người này thấy cảnh người kia. Nặng nhất: **trạng thái rỗng (thứ `edge` coi trọng nhất) chết ngay khi vai nào tạo bản ghi đầu**.
-Ba ràng buộc **CỨNG**: ≤ **3 vai/đợt** · **không mở đợt 2 khi đợt 1 chưa xong** · **seed lại giữa 2 đợt**.
+Ràng buộc **CỨNG**: ≤ **3 vai/đợt** · **không mở đợt 2 khi đợt 1 chưa xong** · **seed lại giữa 2 đợt** · trong đợt: **`edge` một mình ĐẦU đợt 1** (nhạy trạng thái rỗng) · **`breaker` một mình CUỐI đợt 2** (phá — không ai phải nhìn bãi nó phá).
 
 ## Mỗi vai phải nhận gì
 | # | Nội dung | Thiếu thì |
