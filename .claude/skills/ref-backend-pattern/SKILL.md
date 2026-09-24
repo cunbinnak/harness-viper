@@ -3,7 +3,7 @@ name: ref-backend-pattern
 description: Cấu trúc backend boundary — DEFAULT Layered (classic Spring 3-tier); Hexagonal (Ports & Adapters) chỉ opt-in qua ADR khi domain phức tạp. JPA @Entity ở package entities/ tên {Resource}Entity. Layout artifact, layer responsibilities, interface/impl, response & error shape, forbidden patterns.
 ---
 
-> Situational ref cho stack-spring-boot — load khi BUILD backend boundary (layout cấu trúc). Port từ harness cũ, adapt fork viper-adlc.
+> Situational ref cho stack-spring-boot — load khi BUILD backend boundary (layout cấu trúc). Port từ harness cũ.
 
 # Reference: Backend Structure (Layered | Hexagonal)
 

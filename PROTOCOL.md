@@ -4,7 +4,7 @@
 > Router ngắn mỗi phiên: `CLAUDE.md`.
 >
 > **Trạng thái: HOÀN THIỆN — khung đã dựng, selftest xanh** (7 command · gate.py · 9 agent · hooks · skill library).
-> Bộ khung này là bản refactor tinh gọn, học phương pháp VIPER (1 lớp doc · MAIN tự code · inline prompt
+> Bộ khung này là bản refactor tinh gọn (1 lớp doc · MAIN tự code · inline prompt
 > · ít script + gate nhìn thấy được), thay cho harness cũ (17 state · ~58 gate · build_prompt · 2 lớp doc).
 
 ---
@@ -44,10 +44,10 @@ Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/
 
 **Wave**: DOCUMENT chạy 1 lần cho cả dự án (sinh kế hoạch mọi wave). BUILD/VERIFY/SHIP chạy **per wave**.
 Mỗi wave **khai báo phases nó chạy** trong `docs/ROADMAP.md` — wave nội bộ có thể bỏ SHIP; không ép mọi wave đủ phase.
-**FEAT-cap per wave**: DOCUMENT chia wave giới hạn **~3-4 FEAT/wave** (`feat_cap_per_wave`; học VIPER: loop nhỏ) để BUILD vừa
+**FEAT-cap per wave**: DOCUMENT chia wave giới hạn **~3-4 FEAT/wave** 
 context của MAIN (MAIN-code-hết, không dev-agent). Ngưỡng mềm, gate wave-plan cảnh báo khi vượt.
 
-**Loop engineering** (mở wave = RÀ LẠI — học VIPER): kế hoạch mọi wave lập 1 lần ở DOCUMENT (Authority ký 1 lần),
+**Loop engineering** (mở wave = RÀ LẠI): kế hoạch mọi wave lập 1 lần ở DOCUMENT (Authority ký 1 lần),
 NHƯNG mở wave nào `/next-wave` phải **rà lại kế hoạch wave đó đối chiếu KẾT QUẢ wave trước + §backlog**, chỉnh nếu
 lệch, rồi stamp `Rà lại wave N: <ngày>`. Gate `wave_reviewed` đòi dòng đó (ngày ≥ lúc mở wave) — thiếu = đang chạy
 mù theo kế hoạch cũ đã lệch. ROADMAP mỗi wave khai thêm: `phụ thuộc wave trước` · `legacy được phép phá`
@@ -59,7 +59,7 @@ không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (
 ## §2 — Luật nền
 
 1. **Scope khoá sau DOCUMENT.** Phát sinh → `docs/ROADMAP.md §backlog`, không chèn vào wave này.
-2. **Sau khi khoá scope: toàn quyền, không hỏi lại.** `AskUserQuestion` **chỉ ở DOCUMENT** (trước khoá scope — phỏng vấn/quyết định); BUILD/VERIFY/SHIP/NEXT-WAVE bị `guard_ask` chặn (port VIPER pha V — ô Scope khoá tick = chốt, chặn luôn dù phase còn ghi DOCUMENT). Ngoại lệ ra-ngoài/không-đảo-ngược: hỏi bằng lời.
+2. **Sau khi khoá scope: toàn quyền, không hỏi lại.** `AskUserQuestion` **chỉ ở DOCUMENT** (trước khoá scope — phỏng vấn/quyết định); BUILD/VERIFY/SHIP/NEXT-WAVE bị `guard_ask` chặn (ô Scope khoá tick = chốt, chặn luôn dù phase còn ghi DOCUMENT). Ngoại lệ ra-ngoài/không-đảo-ngược: hỏi bằng lời.
 3. **Mơ hồ → 1 dòng `docs/DECISIONS.md` (cột giả định + đảo-ngược-được-không) TRƯỚC khi code.**
 4. **Doc là nguồn sự thật — ĐÓNG BĂNG sau khoá scope.** Code lệch doc (trong AC đã khoá) → **KHÔNG sửa doc spec lúc BUILD** (guard_doc chặn); ghi `ROADMAP §backlog` → wave sau `/document` top-up đồng bộ. Mơ hồ → `DECISIONS.md` (sổ sống, được ghi). Giữ hợp đồng ổn định để review/dogfood đánh, tránh "vừa code vừa vặn doc".
 5. **Cỡ sản phẩm theo đường vào** (§0).
@@ -89,7 +89,6 @@ chỉ để đúng sự thật *trong scope đã khoá*, KHÔNG thêm scope. Khi
 
 Ranh giới 1 câu: **sửa cho doc khớp thực tế trong AC đã khoá = OK tại chỗ; thêm AC/luồng mới = backlog → wave sau.**
 `/next-wave` snapshot doc wave → `archive/wave-N/` → từ đó **bất biến**; đổi = FEAT version mới ở wave tương lai.
-(Giống bộ luật VIPER #1/#4/§1.2 — chỉ đổi "vòng" → "wave".)
 
 ---
 
@@ -142,7 +141,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 > - **SHIP** (gate đọc ROADMAP `phases` — wave **không khai SHIP** thì **skip** cả nhóm — G3): prod-ready 4 nhóm · BC §3 xanh · rollback thử
 > - **Cross**: contract-test present cho consumer · BACKWARD-COMPAT so `arch §API` (G4) · **phase-lock MIỄN tick tiến-độ ROADMAP lúc BUILD** (E, không phải đổi scope)
 >
-> **Kiến trúc gate.py** (1 file, mirror VIPER): shared readers `read/filled/read_live/count_rows/section/table_cells/challenge_last`
+> **Kiến trúc gate.py** (1 file): shared readers `read/filled/read_live/count_rows/section/table_cells/challenge_last`
 > + 1 hàm/phase `gate_document/build/verify/ship/next_wave` + `phase_from_state()` đọc `STATE.md`. In đạt/thiếu từng mục, exit 1 nếu thiếu — KHÔNG chặn tool.
 ## §7 — Agents (MAIN tự code; agent CHỈ để verification + dogfood)
 
@@ -168,9 +167,9 @@ Mỗi `stack-<tên>` skill = **PORT** rules-<kind> + ref-<kind>-* cũ (idiom cod
 Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) sang đúng stack skill.
 
 **Chất lượng bắt buộc (VERIFY = cổng chất lượng):** mỗi agent phải có **lệnh `grep` cụ thể** + thứ tự soi ưu tiên +
-"**UI disable KHÔNG tính — phải server/DB**". KHÔNG checklist mơ hồ (port độ sâu từ VIPER agents + review-{kind} cũ).
+"**UI disable KHÔNG tính — phải server/DB**". KHÔNG checklist mơ hồ.
 ## §8 — Hooks (guard_ask / guard_bc / guard_ds + **reanchor**: nhồi lại luật sau compact)
-> - **guard_ask** (port VIPER pha V): `AskUserQuestion` **chỉ dùng được ở DOCUMENT** (phỏng vấn + quyết định, trước khoá scope). Chặn ở BUILD/VERIFY/SHIP/NEXT-WAVE; **ô Scope khoá tick = chặn luôn** dù dòng phase còn ghi DOCUMENT. go/pivot/kill (NEXT-WAVE) hỏi bằng LỜI.
+> - **guard_ask**: `AskUserQuestion` **chỉ dùng được ở DOCUMENT** (phỏng vấn + quyết định, trước khoá scope). Chặn ở BUILD/VERIFY/SHIP/NEXT-WAVE; **ô Scope khoá tick = chặn luôn** dù dòng phase còn ghi DOCUMENT. go/pivot/kill (NEXT-WAVE) hỏi bằng LỜI.
 > - **guard_bc**: chặn deploy khi BACKWARD-COMPAT §3 chưa xanh (wave ≥2). · **guard_ds**: chặn ghi mockup/token lệch design-system.
 > - **guard_shell**: chặn ghi mockup có **app shell lệch `_shell.html` canonical** (nav items/thứ tự/nhóm/logo/user-menu/icon) — so khối `<!-- SHELL:START/END -->`, chuẩn hoá `aria-current`. Chặn chắc ở Write; Edit chạm khối = báo mềm. Chống shell trôi mỗi màn một kiểu.
 > - **guard_archive**: chặn Write/Edit vào `archive/**` (wave đã đóng = hợp đồng bất biến — §3/§5).
@@ -181,7 +180,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 > - **reanchor**: SessionStart(compact) → nhồi lại §2 + STATE.
 > Agent read-only (review/persona `disallowedTools: Write/Edit`) + `test-writer` chỉ `test/` → không cần hook owned_paths/kernel-protect như harness cũ.
 ## §9 — Failure modes (đã có cơ chế chặn)
-> Kiểu hỏng gặp thật (retro harness cũ + VIPER) và chốt chặn tương ứng — mã trong ngoặc = ref rải rác trong doc.
+> Kiểu hỏng gặp thật (retro) và chốt chặn tương ứng — mã trong ngoặc = ref rải rác trong doc.
 
 | Triệu chứng | Chặn bởi |
 |---|---|
@@ -203,5 +202,5 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 
 ## §10 — Quản lý context (van an toàn cho MAIN-code-hết)
 > - **reanchor** — hook `SessionStart(compact)`: sau compact, đọc lại PROTOCOL §2 + STATE → inject. BẮT BUỘC.
-> - **compact.py** — report CHỈ-ĐỌC doc phình (DECISIONS/ROADMAP backlog), gấp tay sang `archive/ledger/`, KHÔNG `--go`. Nhẹ hơn VIPER (STATE mình wave-scoped). Chạy ở next-wave.
+> - **compact.py** — report CHỈ-ĐỌC doc phình (DECISIONS/ROADMAP backlog), gấp tay sang `archive/ledger/`, KHÔNG `--go`. STATE wave-scoped, không phình theo thời gian. Chạy ở next-wave.
 > - **FEAT-cap per wave** — xem §1.

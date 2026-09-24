@@ -1,4 +1,4 @@
-# {{PROJECT_NAME}} — CLAUDE.md  (fork VIPER-style · feat/viper-adlc)
+# {{PROJECT_NAME}} — CLAUDE.md
 
 > **Router. Đọc top-to-bottom mỗi phiên.** Chi tiết → [PROTOCOL.md](PROTOCOL.md). Trạng thái sống → [STATE.md](STATE.md).
 
@@ -17,7 +17,7 @@
 ## MAIN TỰ CODE
 MAIN viết **toàn bộ code sản phẩm + unit/integration test** (ở BUILD). Agent CHỈ để **verification**: `reviewer`/`bug-hunter` trả finding · `test-writer` (QA độc lập) thiết kế+chạy black-box `test-cases.md` + viết test — **KHÔNG đụng product code** · **dogfood** (6 persona). MAIN ghi §Findings + sửa. **Không dev-agent, không build_prompt** — spawn bằng Task tool + prompt ngắn tay. **Mọi spawn: foreground — CẤM `run_in_background`** (turn MAIN đứng lại tới khi agent trả kết quả — barrier bằng cơ chế).
 
-## DOGFOOD (luật cứng — VIPER #8b)
+## DOGFOOD (luật cứng)
 Trước khi báo xong (cuối VERIFY; và trên production nếu wave khai SHIP): chạy `/dogfood` — MAIN **đóng persona chính, tự tay dùng TRƯỚC** bằng trình duyệt thật (skill `browse`, tool `browser_*` Playwright), vào từ trang đầu đi hết luồng lõi, đối chiếu từng màn với mockup đã chốt; RỒI mới 6 persona × 2 đợt (≤3 vai/đợt, seed lại giữa đợt). **curl KHÔNG PHẢI dogfood** (chỉ hợp lệ khi target `KHÔNG CÓ UI`). `picky` là lớp canh design-system + mockup **DUY NHẤT** sau DOCUMENT (`guard_ds`/`guard_shell` chỉ soi mockup HTML, không soi code render) — bỏ picky = không gì bắt UI lệch bản chốt. Duyệt web trong dự án này CHỈ bằng skill `browse` — kể cả khi cấu hình toàn cục chỉ định công cụ khác.
 
 ## HAI ĐƯỜNG VÀO

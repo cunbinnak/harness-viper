@@ -3,7 +3,7 @@ name: ref-backend-logging
 description: Pattern logging backend — config (JSON structured + level theo profile), SLF4J usage, MDC correlation (traceId/tenantId), masking dữ liệu nhạy cảm, exception logging tập trung. Load khi BUILD backend target cần chuẩn hóa log.
 ---
 
-> Situational ref cho stack-spring-boot — load khi boundary cần chuẩn hóa logging. Port từ harness cũ, adapt fork viper-adlc.
+> Situational ref cho stack-spring-boot — load khi boundary cần chuẩn hóa logging. Port từ harness cũ.
 
 # Reference: Backend Logging
 

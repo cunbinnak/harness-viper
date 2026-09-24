@@ -11,7 +11,7 @@ description: >
 
 # Reference — Backend Config Patterns
 
-> Situational ref cho stack-spring-boot — load khi target backend cần config pattern cụ thể. Port từ harness cũ, adapt fork viper-adlc.
+> Situational ref cho stack-spring-boot — load khi target backend cần config pattern cụ thể. Port từ harness cũ.
 
 > Config patterns cho backend service. Consult khi scaffold target backend mới hoặc cần config cụ thể (stack-spring-boot §situational trỏ tới).
 

@@ -3,7 +3,7 @@ name: ref-backend-restclient
 description: Pattern gọi downstream HTTP cho backend — @HttpExchange interface + RestClient proxy factory, config per-client (base-url/timeout/retry/pool), error handler (4xx→BusinessException, 5xx/timeout→EXTERNAL_SERVICE_ERROR), header propagation (Authorization/X-Tenant-ID/X-Correlation-ID). Load khi BUILD backend target gọi external / cross-boundary qua HTTP.
 ---
 
-> Situational ref cho stack-spring-boot — load khi boundary gọi external / cross-boundary qua HTTP. Port từ harness cũ, adapt fork viper-adlc.
+> Situational ref cho stack-spring-boot — load khi boundary gọi external / cross-boundary qua HTTP. Port từ harness cũ.
 
 # Reference: Backend RestClient (downstream HTTP)
 

@@ -3,7 +3,7 @@ name: ref-backend-kafka
 description: Pattern Kafka cho backend — config đầy đủ (producer idempotent/acks, consumer manual-ack/JSON, error handler + DLT), EventPublisher + Consumer đầy đủ function, publish after-commit, consumer idempotent. Load khi BUILD backend target phát/nhận event.
 ---
 
-> Situational ref cho stack-spring-boot — load khi boundary dùng Kafka. Port từ harness cũ, adapt fork viper-adlc.
+> Situational ref cho stack-spring-boot — load khi boundary dùng Kafka. Port từ harness cũ.
 
 # Reference: Backend Kafka (event producer + consumer)
 
