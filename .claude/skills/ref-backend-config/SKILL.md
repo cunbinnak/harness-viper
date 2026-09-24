@@ -11,8 +11,7 @@ description: >
 
 # Reference — Backend Config Patterns
 
-> Situational ref cho stack-spring-boot — load khi target backend cần config pattern cụ thể. Port từ harness cũ.
-
+> Situational ref cho stack-spring-boot — load khi target backend cần config pattern cụ thể.
 > Config patterns cho backend service. Consult khi scaffold target backend mới hoặc cần config cụ thể (stack-spring-boot §situational trỏ tới).
 
 > **Version = `docs/TECHSTACK.md` + ADR CHỐT (nguồn sự thật); skill này chỉ THAM CHIẾU.** Mẫu dưới cho **Spring Boot 4.1** (bản đang được hỗ trợ, 9/2026). Dòng **3.x đã EOL 30/6/2026** (bản OSS cuối 3.5.16) — chỉ dùng khi bảo trì codebase cũ, KHÔNG chọn cho dự án mới. Nâng 3.x→4.x là **major, KHÔNG phải đổi số**: Jackson 2→3 (đổi groupId/annotation), `@MockBean`/`@SpyBean`→`@MockitoBean`/`@MockitoSpyBean`, vài property đổi tên → chạy `spring-boot-properties-migrator` dò, gỡ Undertow/JUnit4. Java baseline vẫn **21**.

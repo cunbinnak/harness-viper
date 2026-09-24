@@ -3,8 +3,7 @@ name: ref-backend-redis
 description: Pattern Redis cho backend — config đầy đủ (Lettuce connection + RedisTemplate<String,Object> serializer JSON), RedisService interface + impl đầy đủ function (value/hash/list/set/zset/key/counter/lock), TTL từ config, cache-aside. Load khi BUILD backend target dùng Redis.
 ---
 
-> Situational ref cho stack-spring-boot — load khi boundary dùng Redis. Port từ harness cũ.
-
+> Situational ref cho stack-spring-boot — load khi boundary dùng Redis.
 # Reference: Backend Redis (Spring Data Redis)
 
 > **Load khi:** BUILD backend target dùng Redis (stack-spring-boot §situational trỏ tới).
