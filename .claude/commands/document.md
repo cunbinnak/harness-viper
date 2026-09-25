@@ -17,7 +17,7 @@ description: DOCUMENT — interview|intake → doc set (PRD/PERSONAS/FEAT/ARCHIT
 > **SỬA/BỔ SUNG doc = CASCADE qua đồ thị phụ thuộc, KHÔNG point-edit.** Khi Authority đọc lại phát hiện thiếu (vd "quản lý thêm thông tin X") → **không chỉ sửa doc được nhắc tên**, phải lần hết doc liên đới:
 > - Thêm **field/thông tin** → `feat/FEAT-*` (AC + field kỹ thuật) · `arch/{name}.md` (**data model** + **§3 API** request/response) · `ux/mockup` (ô nhập/hiển thị) (+ `CAPABILITIES-MAP` nếu năng lực mới).
 > - Thêm **luồng/AC** → FEAT · `arch` (API + events + luồng) · `ux` (màn) (+ `ROADMAP` nếu đổi scope).
-> Sau MỖI amendment: **re-run trace 5 chiều** (`technical-design §Trọn vẹn`) + chiều **UI↔AC**. Còn **tham chiếu treo** — phần tử ở doc này mà doc liên đới KHÔNG có phần tương ứng cấp cho nó (vd: field trong AC nhưng **data model thiếu cột** · AC cần API nhưng **arch §3 thiếu endpoint** · màn mockup nhưng **không FEAT/AC nào đứng sau**) — = **chưa xong**. Authority chỉ nói cái họ THẤY thiếu — **agent tự truy các doc liên đới**, không để họ dò lỗ hộ. *(Hook `trace_docsync` nhắc mỗi lần Edit spec doc ở DOCUMENT.)*
+> Sau MỖI amendment: **re-run trace 6 chiều** (`technical-design §Trọn vẹn`) + chiều **UI↔AC**. Còn **tham chiếu treo** — phần tử ở doc này mà doc liên đới KHÔNG có phần tương ứng cấp cho nó (vd: field trong AC nhưng **data model thiếu cột** · AC cần API nhưng **arch §3 thiếu endpoint** · màn mockup nhưng **không FEAT/AC nào đứng sau**) — = **chưa xong**. Authority chỉ nói cái họ THẤY thiếu — **agent tự truy các doc liên đới**, không để họ dò lỗ hộ. *(Hook `trace_docsync` nhắc mỗi lần Edit spec doc ở DOCUMENT.)*
 
 ## Bước 0 — Nhận diện đường vào
 - `intake/` có tài liệu đã điền thật (không phải template `_*.md` trơ)? → **ĐƯỜNG INTAKE**: ghi marker
@@ -33,6 +33,7 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
   > · **Quyết định** (stack/auth/thu tiền/deploy) → `AskUserQuestion` với **option cụ thể + đánh đổi** ("Clerk 20' có phí vs Auth.js 1-2h free").
 - **INTAKE**: đọc `intake/*.md` — **KHÔNG phỏng vấn lại**. Dịch/render sang doc set bên dưới, lập **bảng truy
   vết** `intake → FEAT` trong `docs/INTERVIEW.md`. `intake/TECHSTACK` **thắng** default của stack skill.
+  > **Intake là LỜI KHAI, không phải SỰ THẬT ĐỦ — bỏ phỏng vấn ≠ bỏ RÀ.** Render xong vẫn chạy đủ: research domain **bắt buộc** (tài liệu người ta đưa không thay được tra ngành — đổ ra danh sách luồng chuẩn ngành vào PRD §6 như đường interview) + lưới cạnh-có-chủ/seam (`domain-po`) + 6 họ phổ quát (`pre-mortem`). Lỗ tìm thấy → đang ở DOCUMENT, **được hỏi Authority** hoặc DECISIONS — xử tại chỗ. **Bảng "Lỗ hổng & cách xử" áp cho cả intake — bảng trống = CHƯA rà, không phải intake hoàn hảo.**
 
 ## Bước 2 — PRD (`docs/PRD.md`)
 Vấn đề (pain) + đối tượng cụ thể + **out-of-scope tường minh** + ≥1 success metric **có số**.
@@ -49,7 +50,7 @@ Mỗi capability → ≥1 FEAT. Mỗi FEAT: **AC dạng BDD** (Given/When/Then) 
 
 ## Bước 6 — Architecture (`docs/arch/`)  → **Nạp 3 skill THEO THỨ TỰ: `Skill("event-storming")` → `Skill("boundary-charter")` → `Skill("technical-design")`** (nạp từng cái đúng lúc dùng)**
 - Thứ tự + phân đất: `event-storming` ghi **OVERVIEW §4** (events/aggregates/hot-spots per domain) → `boundary-charter` đọc §4, ghi **OVERVIEW §1** (bản đồ target) + **khởi tạo** `arch/{name}.md` §Mission (target = boundary, cùng tên file) → `technical-design` điền **chi tiết** `arch/{name}.md`.
-- **Rời bước 6 CHỈ KHI trace 5 chiều PASS** (`technical-design §Trọn vẹn`): AC↔API 2 chiều · endpoint đủ ruột · consumes↔provider khớp · luồng E2E không đứt — **tự rà, KHÔNG để Authority phát hiện lỗ hộ**.
+- **Rời bước 6 CHỈ KHI trace 6 chiều PASS** (`technical-design §Trọn vẹn`): AC↔API 2 chiều · endpoint đủ ruột · consumes↔provider khớp · luồng E2E không đứt — **tự rà, KHÔNG để Authority phát hiện lỗ hộ**.
 - `docs/arch/OVERVIEW.md`: topology — có target nào, ai gọi ai, ranh giới hệ.
 - `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ nằm ở đây; FEAT chỉ khai `consumes_contracts`.
 
@@ -77,7 +78,7 @@ Bảng wave: mỗi wave khai **target** (kind: backend/web/bff/mobile) + **phase
 `Wave giao` ở CAPABILITIES-MAP. Để trống `§backlog` (amendment tương lai đổ vào đây).
 
 ## Bước 10 — Challenge DOCUMENT (luật #8 — tới khi hiểu ĐÚNG Ý AUTHOR)  → **Nạp `Skill("business-analysis")` để rà chéo**
-Tự ra **≥3 câu hỏi khó nhất**, trả lời **CHỈ bằng tài liệu vừa viết**. Câu nào phải đoán = **một lỗ tài liệu** →
+Tự ra **≥3 câu hỏi khó nhất**, trả lời **CHỈ bằng tài liệu vừa viết** — trong đó **≥1 câu dạng JOURNEY-WALK**: lấy persona + dữ liệu mẫu PRD §7, đi bộ xuyên doc *"dẫn 〈persona X〉 từ zero đến làm được 〈việc Y〉 — từng bước trích doc"* (câu hỏi ĐIỂM bắt lỗ cục bộ; walk bắt luồng đứt/vắng — kẹt ở bước không trích được = lỗ ngay tại đó). Câu nào phải đoán = **một lỗ tài liệu** →
 vá (INTERVIEW: **hỏi Authority thêm** · INTAKE: dịch lại + vá lỗ) — vá theo **luật CASCADE** (đầu file): mỗi vá lan hết doc liên đới, không point-edit. **Lặp tới khi tài liệu trả lời được HẾT và
 phản ánh ĐÚNG ý Author** (không còn chỗ đoán, không còn lệch ý) — **không giới hạn số vòng**. **PASS** mới đi tiếp.
 Ghi mỗi vòng vào `STATE.md §Challenge log`.
@@ -102,7 +103,7 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 1. **Trình Authority đọc** toàn bộ doc set → nhận xét → sửa (CASCADE, `trace_docsync` nhắc + rụng tick nếu có) → lặp tới khi Authority nói **"chốt scope" / "chốt tài liệu"**.
 2. **Lời chốt = ỦY QUYỀN, không phải bằng chứng** — nó KÍCH HOẠT lượt kiểm cuối, không nhảy cóc qua được:
    · `python scripts/gate.py` (phase DOCUMENT) phải **xanh**.
-   · **CHẠY PRE-LOCK AUDIT NGAY LÚC NÀY — LUÔN LUÔN, kể cả ô đang tick** (tick không phải vé skip — có thể là tick chay đời trước, hoặc doc bị sửa ngoài tool mà hook không thấy). Trên ĐÚNG bản sẽ khoá (khối Bước 10: trace 5 chiều + UI↔AC + spawn `pre-mortem`). Độ sâu: lời chốt ĐẦU → đủ CẢ 2 phần; lời chốt lặp (đã audit đủ ở lời chốt trước, chỉ sửa theo nhận xét) → re-run có trọng tâm (khối Bước 10). Nghi vấn xử hết (thêm AC / hỏi Authority — vẫn DOCUMENT nên còn được hỏi / DECISIONS) → mới tick. KHÔNG tick chay.
+   · **CHẠY PRE-LOCK AUDIT NGAY LÚC NÀY — LUÔN LUÔN, kể cả ô đang tick** (tick không phải vé skip — có thể là tick chay đời trước, hoặc doc bị sửa ngoài tool mà hook không thấy). Trên ĐÚNG bản sẽ khoá (khối Bước 10: trace 6 chiều + UI↔AC + spawn `pre-mortem`). Độ sâu: lời chốt ĐẦU → đủ CẢ 2 phần; lời chốt lặp (đã audit đủ ở lời chốt trước, chỉ sửa theo nhận xét) → re-run có trọng tâm (khối Bước 10). Nghi vấn xử hết (thêm AC / hỏi Authority — vẫn DOCUMENT nên còn được hỏi / DECISIONS) → mới tick. KHÔNG tick chay.
 3. ≥2 dòng `docs/DECISIONS.md`.
 4. Rà TỪNG ô gate DOCUMENT — ô nào chưa tick thì **làm cho đạt rồi mới tick** (KHÔNG tick gộp cho đủ bộ) → cuối cùng tick `Scope khoá` trong `STATE.md`. **Từ đây không hỏi Authority nữa.**
 5. Báo: tài liệu xong — **đã chia thành N wave** (đọc `docs/ROADMAP.md §1`, liệt kê `w1: <target/FEAT> · w2: … · wN: …`), chạy `/build 1` để vào wave đầu.

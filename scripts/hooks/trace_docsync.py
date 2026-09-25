@@ -4,7 +4,7 @@
 Vấn đề: khi Authority đọc lại rồi bảo "thêm thông tin X vào FEAT", agent point-edit đúng FEAT nhưng
 QUÊN propagate sang arch data model / §3 API / mockup → doc lệch nhau, lọt tới BUILD. Văn xuôi dặn thì
 sau compact trôi. Hook này biến thành TRIGGER: mỗi lần Edit spec doc ở DOCUMENT → nhắc chạy propagation
-+ trace 5 chiều. **Hook KHÔNG tự trace** (đó là việc ngữ nghĩa của LLM) — chỉ kích đúng lúc + đúng state.
++ trace 6 chiều. **Hook KHÔNG tự trace** (đó là việc ngữ nghĩa của LLM) — chỉ kích đúng lúc + đúng state.
 
 + MỘT việc máy làm được: ô `PRE-LOCK AUDIT PASS` đang [x] mà spec doc vừa đổi → audit đó chấm trên
 bản CŨ = tick ôi → hook TỰ BỎ TICK trong STATE.md (nhắc thì lơ được, gate đỏ thì không — muốn khoá
@@ -38,14 +38,14 @@ REMINDER = (
     "NẾU đây là AMENDMENT (đọc lại → bổ sung/sửa để chốt tài liệu): 1 thay đổi = CASCADE, KHÔNG point-edit.\n"
     "  · field/thông tin mới → FEAT + arch data model + arch §3 API + mockup (+ CAPABILITIES nếu năng lực mới)\n"
     "  · luồng/AC mới       → FEAT + arch API/events/luồng + mockup màn (+ ROADMAP nếu đổi scope)\n"
-    "Rồi RE-RUN trace 5 chiều (technical-design §Trọn vẹn) + chiều UI↔AC. Còn tham chiếu treo = CHƯA xong.\n"
+    "Rồi RE-RUN trace 6 chiều (technical-design §Trọn vẹn) + chiều UI↔AC. Còn tham chiếu treo = CHƯA xong.\n"
     "(Đang authoring lần ĐẦU theo Bước tuần tự → trace đã ở Bước 6; bỏ qua nhắc này.)\n"
 )
 
 UNTICKED_NOTE = (
     "[trace_docsync] Ô 'PRE-LOCK AUDIT PASS' trong STATE.md ĐÃ BỊ BỎ TICK tự động — audit trước đó\n"
     "chấm trên bản doc CŨ, spec vừa đổi thì kết quả đó hết giá trị. Xử xong CASCADE + re-trace thì\n"
-    "RE-RUN pre-lock audit (spawn pre-mortem + trace 5 chiều) rồi mới tick lại. KHÔNG tick chay.\n"
+    "RE-RUN pre-lock audit (spawn pre-mortem + trace 6 chiều) rồi mới tick lại. KHÔNG tick chay.\n"
 )
 
 PRELOCK_RE = re.compile(r"(-\s*)\[[xX]\](\s*\*\*PRE-LOCK AUDIT PASS\*\*)")

@@ -28,7 +28,7 @@ Thêm 3 câu xuyên-luồng (thứ chỉ lộ khi ghép, Author dễ miss):
 
 ## Cách săn 2 — đối chiếu NGOÀI (bắt mảng Author MISS TRẮNG — taxonomy không thấy vì không FEAT nào chạm)
 Cách săn 1 chỉ soi được cái ĐÃ VIẾT. Thiếu sót nghiệp vụ đắt nhất là **mảng không có FEAT nào chạm** — HRMS quên thử việc, bán hàng quên đổi-trả, đặt bàn quên no-show. Bắt bằng kiến thức NGOÀI doc:
-1. Đọc `PRD §6 Nguồn` (link research đã có từ discovery) — nạp lại hiểu biết domain đã tra.
+1. Đọc `PRD §6 Nguồn` (link research + **danh sách luồng chuẩn ngành** discovery đã đổ ra) — nạp lại hiểu biết domain đã tra; danh sách đó là điểm khởi đầu của bước 3 dưới.
 2. **WebSearch thêm theo góc VẬN HÀNH** (khác góc discovery): "quy trình <domain> chuẩn", "<domain> software features list", cách sản phẩm trưởng thành cùng ngành chia module — 2-3 nguồn, ghi link. Nguồn đáng xem là **demo/tour sản phẩm thật** (trang JS-heavy) → mở bằng **browser** (`mcp__browser__browser_navigate` + `browser_snapshot`) xem menu/module nó CÓ những mảng gì — mục lục nav của sản phẩm trưởng thành chính là danh sách quy trình ngành.
 3. Lập nhanh danh sách **quy trình/mảng chuẩn của ngành** → đối chiếu `CAPABILITIES-MAP` + `feat/FEAT-*`: mảng ngành CÓ mà doc **không nhắc chữ nào** (không FEAT, không out-of-scope PRD §4, không DECISIONS) = nghi vấn `[MISS-MẢNG]`.
 4. Mảng doc ĐÃ ghi out-of-scope/defer → **không báo** — đó là quyết định, không phải điểm mù.
@@ -42,14 +42,23 @@ Cách săn 1 chỉ soi được cái ĐÃ VIẾT. Thiếu sót nghiệp vụ đ�
 - **thanh toán** → cổng nào (sandbox)? · **lịch/định kỳ** → job runner nào? · **realtime** → WebSocket/SSE?
 Feature chạm mà **không có dòng TECHSTACK/ADR** tương ứng = nghi vấn (đề xuất: chốt ADR / hỏi Authority).
 
-## Chỉ báo case ĐÁNG (không nitpick)
+## Cách săn 3 — 6 HỌ LUỒNG PHỔ QUÁT (cố định, KHÔNG phụ thuộc domain — research không nhắc vì "hiển nhiên", Author không kể vì "đương nhiên")
+Khác cách săn 2 (luồng ngành, biến thiên theo domain): 6 họ này tồn tại trong MỌI sản phẩm. Mỗi họ phải **map vào FEAT/AC** hoặc có dòng **`n/a`/out-of-scope tường minh** — họ nào không cả hai = nghi vấn `[MISS-HỌ]`:
+| Họ | Câu hỏi bắt buộc có lời đáp trong doc |
+|---|---|
+| **Định danh & truy cập** | Actor mới vào bằng đường nào? Credential cấp lần đầu / quên / reset / thu hồi khi rời — từng cạnh có AC? |
+| **Vòng đời đơn vị trung tâm** | Sinh → biến đổi → kết thúc/huỷ/hoàn: cạnh nào của state machine không có chủ? Ai tạo cái ĐẦU TIÊN, cái CUỐI đi đâu? |
+| **Tiền / giá trị** (điểm · quota · credit cũng tính) | Thu ở đâu, hoàn ở đâu, lệch thì ai đối soát? |
+| **Giao tiếp ra ngoài** | Hệ thống báo NGƯỜI THẬT bằng cơ chế gì (email/SMS/push/in giấy)? — seam giữa các FEAT có cơ chế được viết chưa? |
+| **Dữ liệu vào / ra** | Ngày đầu dữ liệu cũ vào bằng gì (Excel/hệ cũ — migration)? Xuất/báo cáo ai cần, dạng gì? |
+| **Vận hành & sửa sai** | Ai xem được ai-đã-làm-gì (audit)? Sai thì ai được sửa/undo? Config đổi giữa chừng thì dữ liệu cũ ra sao? |
 Ưu tiên hậu quả thật: **mất/sai tiền · mất/lộ dữ liệu · lỗ phân quyền/tenant · luồng kẹt · nghiệp vụ sai**. Bỏ qua vặt (đặt tên, "nên có thêm cho đẹp"). Case đã có trong DECISIONS/n/a → **không báo lại**. Không chắc case có thật → nói không chắc + vì sao nghi.
 
 ## TRẢ VỀ (final message — MAIN ghi vào đâu MAIN quyết)
 Hai loại nghi vấn — MAIN xử khác nhau (thiếu AC = vá FEAT · thiếu mảng = hỏi Authority/backlog, có thể đổi scope):
 ```
 Đã nạp: <file/skill thực đọc>
-Đã quét: <n> FEAT × <taxonomy kỹ thuật + nghiệp vụ> + 3 câu xuyên-luồng + đối chiếu ngoài (<nguồn research/demo đã xem, kèm link>)
+Đã quét: <n> FEAT × <taxonomy kỹ thuật + nghiệp vụ> + 3 câu xuyên-luồng + đối chiếu ngoài (<nguồn research/demo đã xem, kèm link>) + 6 họ phổ quát (<họ nào map · họ nào n/a · họ nào THIẾU>)
 
 [cao|vừa] <case Author có thể MISS>
   FEAT/luồng: <ở đâu>

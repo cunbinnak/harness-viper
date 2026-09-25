@@ -40,6 +40,9 @@ Neo về nền dự án: `docs/PRD.md`, `docs/PERSONAS.md`, `docs/CAPABILITIES-M
   - **partial-failure**: ghi DB xong nhưng event/cache/email fail → bù/hoàn thế nào
   - **thứ tự**: sự kiện tới lệch thứ tự · phụ thuộc bước trước chưa xong
   > Danh sách này còn là **danh sách săn** cho `pre-mortem` audit (cuối DOCUMENT). FEAT chạm trạng thái mà AC không nói tới trục nào = để hở cho lúc code đoán.
+- **LƯỚI LUỒNG — cạnh-có-chủ + seam** (chống miss luồng; cùng idiom n/a-tường-minh với taxonomy):
+  - **Cạnh-có-chủ**: FEAT đụng entity có trạng thái → mọi **cạnh chuyển trạng thái** (state machine `arch §1`, kể cả cạnh ngoài-hạnh-phúc: chưa-kích-hoạt · bị-khoá · thu hồi · rời đi) phải có AC phủ **hoặc** 1 dòng `n/a`/out-of-scope. Cạnh không chủ = luồng miss.
+  - **Seam**: FEAT nối FEAT khác (consumes / dữ liệu chảy qua) → trả lời được *"output của FEAT này đến tay ACTOR của FEAT kia bằng CƠ CHẾ gì?"* (email · SMS · notification · in giấy · admin đưa tay). Cơ chế chưa được viết ở đâu = luồng thiếu — viết luôn thành AC, không để "hiển nhiên".
 - Field kỹ thuật ĐI CÙNG AC trong cùng file (fork 1 lớp): AC business + `consumes_contracts`/ranh giới ngồi chung — không tách business rồi dịch.
 
 ## Không hỏi user (fork rule)

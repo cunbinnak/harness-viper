@@ -58,6 +58,8 @@ chọn góc đang mờ mà xoáy; mỗi probe đào ra chi tiết → về đún
 - **Xung đột vai**: "Vai [A] và [B] có chỗ nào mâu thuẫn lợi ích? (nhanh vs kiểm soát · doanh số vs rủi ro)"
 - **Compliance/ràng buộc**: "Có quy định pháp lý / hợp đồng / SLA nào bắt buộc phải theo không?"
 - **JTBD**: "Không có sản phẩm này thì họ đang 'thuê' cái gì để làm việc đó?" — lộ đối thủ thật + tiêu chí thắng.
+- **Vòng đời trọn (probe DÒNG — các probe trên cắt ngang, cái này chạy DỌC)**: xác định **đơn vị nghiệp vụ trung tâm** ("thứ gì chảy qua hệ thống, mang giá trị, qua tay nhiều người, sai thì đau nhất?" — đơn hàng · nhân viên · kỳ lương · booking) rồi: "Kể lần gần nhất MỘT 〈đơn vị đó〉 đi TRỌN vòng đời, từ sinh ra đến kết thúc — từng bước, ai làm, bằng gì?" Luồng miss thường sống ở đoạn Authority coi là hiển nhiên. Đầu ra nuôi event-storming + state machine `arch §1`.
+- **Ngày đầu / ngày cuối (per persona chính)**: "Người mới toanh, ngày ĐẦU TIÊN, từ chưa-có-gì đến dùng-được — diễn ra sao?" · "Ngày họ RỜI ĐI thì sao?" — nhà của cấp credential, bàn giao, thu hồi quyền (họ luồng Định danh phổ quát — `pre-mortem` sẽ đối chiếu).
 
 **Ngôn ngữ**: user là người hiểu nghiệp vụ, không nhất thiết là kỹ sư. Hỏi bằng ngôn ngữ nghiệp vụ.
 Term kỹ thuật bắt buộc phải dùng thì giảng giải theo hướng nghiệp vụ TRƯỚC khi hỏi — không hiểu câu
@@ -97,7 +99,7 @@ Chỗ user không trả lời được, hoặc chưa quyết: (1) tìm trong tà
 
 1. **PRD §1 Vấn đề (pain)** — ai đau + đau gì (status quo) + hệ quả (cost of inaction) + **dòng `Bằng chứng:` không rỗng**. Vision narrative (vấn đề gì, cho ai, vì sao bây giờ) mở đầu §1.
 2. **PRD §2 Giả thuyết + rủi ro** — **1 giả thuyết chính = success metric** (con số + ngưỡng go/pivot/kill, ghi TRƯỚC khi nhìn số) + rủi ro chính. Giả thuyết phụ (nếu có) thêm dòng cùng bảng — tùy chọn, KHÔNG ép số lượng.
-3. **Nguồn** — ghi vào **PRD §6 Glossary + Nguồn**: **≥1 link research** (không chỉ "phỏng vấn"/"intake") — dấu vết đã tra domain. §6 không có URL research = **chưa research**, quay lại làm.
+3. **Nguồn** — ghi vào **PRD §6 Glossary + Nguồn**: **≥1 link research** (không chỉ "phỏng vấn"/"intake") — dấu vết đã tra domain. §6 không có URL research = **chưa research**, quay lại làm. **Kèm theo: danh sách LUỒNG CHUẨN NGÀNH** (5-10 bullet cạnh link — "mọi 〈ngành X〉 đều có: ...") — đây là lưới đối chiếu cho `pre-mortem` + PRE-LOCK dùng sau; research mà không đổ ra danh sách này = research để đó, không chống được miss luồng.
 4. **Lỗ hổng & cách xử** — ≥1 dòng, mỗi lỗ có cách xử + vết (trỏ `docs/DECISIONS.md`).
 
 ## Dấu hiệu hời hợt — dính ≥2 thì quay lại hỏi tiếp

@@ -51,12 +51,13 @@ Mỗi concern ghi rõ ở ADR / `arch/{name}.md` (§2/§4) / §API (không để
 6. docker-compose skeleton.
 
 ## TRỌN VẸN API + luồng — tự rà, KHÔNG để Authority nhắc (cái ăn tiền của bước này)
-Thiết kế xong PHẢI **tự trace 5 chiều** trước khi trình — Authority phát hiện lỗ hộ = bước này thất bại:
+Thiết kế xong PHẢI **tự trace 6 chiều** trước khi trình — Authority phát hiện lỗ hộ = bước này thất bại:
 1. **AC → API/luồng**: MỌI AC của FEAT in-scope trace được tới endpoint (§3) hoặc bước trong luồng (§2) xử nó. AC không có chỗ xử = lỗ thiết kế, vá ngay.
 2. **API → AC**: chiều ngược — endpoint không phục vụ AC nào = thừa (YAGNI, cắt) hoặc AC bị sót chưa viết.
 3. **Endpoint đủ ruột**: mỗi dòng §3 đủ method/path + request/response + error codes (ref catalog) + status + authz (vai nào gọi được — đối chiếu ma trận PERSONAS §2) + pagination nếu list. Ô nào trống = contract chưa xong, consumer sẽ đoán.
 4. **Consumer ↔ provider**: mọi `consumes_contracts` trong FEAT/frontmatter FE → có endpoint THẬT ở arch BE §3 (tên khớp). Mọi màn `SCREEN-MAP` (has_ui) → API nó gọi tồn tại. Trỏ hụt = FE lúc code sẽ bịa endpoint.
 5. **Luồng E2E không đứt**: luồng chính (OVERVIEW) đi xuyên target — mỗi bước chuyển target có contract (REST/event) nêu tên; kèm nhánh lỗi ở điểm gãy (downstream chết thì bước đó trả gì).
+6. **Lifecycle & seam (soi cái VẮNG MẶT — 5 chiều trên chỉ soi cái đã viết)**: mọi **cạnh chuyển trạng thái** của entity chính (state machine §1, kể cả cạnh ngoài-hạnh-phúc) có AC/luồng chủ hoặc `n/a` tường minh · mọi **seam FEAT→FEAT** có CƠ CHẾ truyền được viết (output đến tay actor bên kia bằng gì) · đối chiếu **6 họ luồng phổ quát** (`pre-mortem` Cách săn 3) + **danh sách luồng chuẩn ngành** (PRD §6) — mỗi dòng map hoặc out-of-scope, không bỏ trắng.
 
 + **Chừa chỗ cho tương lai đã biết** (capability Phase 2/N ở CAPABILITIES-MAP): data model + API không chặn đường mở rộng đã khai (status enum mở được · naming không khoá vào MVP · quan hệ chừa chỗ) — nhưng **chừa chỗ ≠ xây trước** (YAGNI: KHÔNG code/endpoint/bảng cho Phase 2 khi chưa tới wave nó).
 
@@ -78,7 +79,7 @@ Thiết kế xong PHẢI **tự trace 5 chiều** trước khi trình — Author
 - [ ] Ref FEAT/persona/business-rule bằng id canonical ĐẦY ĐỦ (`FEAT-<slug>` · `PERSONA-…`…), KHÔNG rút gọn — tránh ID drift.
 - [ ] `consumes` frontmatter + §Ranh giới khớp topology (ai gọi ai) — đối chiếu được với `docs/arch/OVERVIEW.md` và ROADMAP depends_on.
 - [ ] ≥ 1 integration thật (cross-target / external).
-- [ ] **Trace 5 chiều PASS** (mục Trọn vẹn): AC↔API 2 chiều · endpoint đủ ruột (authz theo ma trận) · consumes↔provider khớp · luồng E2E không đứt — tự rà xong mới trình, KHÔNG để Authority phát hiện lỗ.
+- [ ] **Trace 6 chiều PASS** (mục Trọn vẹn): AC↔API 2 chiều · endpoint đủ ruột (authz theo ma trận) · consumes↔provider khớp · luồng E2E không đứt — tự rà xong mới trình, KHÔNG để Authority phát hiện lỗ.
 - [ ] Enterprise concerns đều addressed: auth · observability · resilience · caching · rate limit · idempotency · health check.
 - [ ] `deployment/local/docker-compose.yml` skeleton có service cho target trong scope.
 - [ ] (Nếu research) ≥ 1 nguồn thật, ghi link.
