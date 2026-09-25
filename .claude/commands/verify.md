@@ -83,7 +83,7 @@ Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên v
 ## Bước cuối — Chốt
 1. `tracking/wave-N/test-cases.md`: mọi AC in-scope có TC **PASS**, không TC **FAIL**.
 2. `STATE.md §Findings`: hết finding **BLOCKER/MAJOR** open.
-3. `python scripts/gate.py` (VERIFY) xanh → tick gate VERIFY → gợi ý `/ship` (nếu wave khai SHIP) hoặc `/next-wave`.
+3. `python scripts/gate.py` (VERIFY) xanh → tick gate VERIFY → **DỪNG — báo Authority kết quả VERIFY** (mẫu tổng kết dogfood + trạng thái gate). **`/ship`/`/next-wave` do AUTHORITY gọi — MAIN KHÔNG tự chạy** (đóng wave = quyết định go/pivot/kill của Authority, kể cả wave không khai metric; MAIN tự đóng là chiếm quyền).
 
 ## Ranh giới
 - **KHÔNG build/sửa source để test qua** — test black-box đo hành vi thật; lỗi thì sửa ở Bước 5 rồi re-test.

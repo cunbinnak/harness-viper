@@ -3,6 +3,7 @@ description: NEXT-WAVE — đóng wave (snapshot, KHÔNG reset) → rà lại + 
 ---
 # /next-wave — Phase NEXT-WAVE
 
+> **Lệnh này chạy khi AUTHORITY gọi — MAIN KHÔNG tự phát.** VERIFY xanh → MAIN báo kết quả rồi DỪNG chờ; đóng wave là quyết định **go/pivot/kill của Authority** (kể cả wave không khai metric). Đang chạy lệnh này mà không có lời gọi của Authority trong phiên = dừng lại, báo, chờ.
 > Khép vòng: đóng wave hiện tại + mở wave kế. **KHÔNG reset gì** — chỉ snapshot theo wave (reset = mất trí nhớ giữa wave).
 > **Loop engineering**: mở wave nào phải **rà lại kế hoạch wave đó đối chiếu KẾT QUẢ wave trước** (không chạy mù kế hoạch cũ).
 
@@ -10,7 +11,7 @@ description: NEXT-WAVE — đóng wave (snapshot, KHÔNG reset) → rà lại + 
 
 ## Bước 1 — Chốt kết quả wave vừa xong
 - Xác nhận đã qua VERIFY: `tracking/wave-N/test-cases.md` mọi AC **PASS** · `STATE §Findings` hết BLOCKER/MAJOR.
-- (nếu wave có metric) trình Authority **go / pivot / kill** — so **số thật vs ngưỡng ghi TRƯỚC** (ở FEAT/ROADMAP), **KHÔNG chỉnh ngưỡng sau khi nhìn số** → `docs/DECISIONS.md`.
+- Trình Authority **go / pivot / kill** — **LUÔN, không phụ thuộc metric**: wave có metric → so **số thật vs ngưỡng ghi TRƯỚC** (ở FEAT/ROADMAP), **KHÔNG chỉnh ngưỡng sau khi nhìn số**; wave không metric → vẫn phải có lời chốt của Authority mới đóng. Ghi kết quả → `docs/DECISIONS.md`.
 - Gom vào `docs/ROADMAP.md §backlog` **TRƯỚC khi xoá trắng STATE** (không để mất): amendment trong wave (luồng thiếu, scope mới) + **finding minor còn lại** ở §Findings + blocker treo.
 
 ## Bước 2 — Snapshot (KHÔNG reset, copy HẾT)
