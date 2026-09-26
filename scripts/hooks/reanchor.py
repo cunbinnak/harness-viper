@@ -131,6 +131,9 @@ def build_context(source: str) -> str:
         live_state() or "_(chưa đọc được STATE.md)_",
         "",
         f"→ Chạy `python scripts/gate.py` xem gate phase {phase()} còn thiếu gì. Làm nốt việc dở, đừng mở việc mới.",
+        f"→ Đang GIỮA phase {phase()} → **NẠP LẠI Skill lệnh `/{phase().lower()}`** trước khi làm tiếp bước dở — "
+        "bản tóm tắt KHÔNG phải chỉ dẫn (nó rơi chi tiết: bằng-chứng-cùng-loại · 1-dòng-1-vấn-đề · Màn-soi-x/y · thoát-vòng-soi-file...); "
+        "chỉ dẫn đầy đủ CHỈ nằm trong file lệnh.",
     ])
 
 
