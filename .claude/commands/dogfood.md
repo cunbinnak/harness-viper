@@ -54,6 +54,7 @@ Thiếu vế đầu = suy từ code chứ chưa chạy. Vế cuối không dẫn
 ## Dấu hiệu dogfood giả (soi ở Workflow bước 7 — dính vai nào chạy lại vai đó)
 - **Cả 6 vai đều báo "không thấy vấn đề gì" ngay lần đầu** — gần như chắc chắn CHƯA thực sự dùng (sản phẩm mới dựng luôn có chỗ vướng). Kiểm agent có mở trình duyệt thật không hay đọc code rồi suy ra → chạy lại, bắt nêu **thao tác cụ thể đã làm** + **thứ nhìn thấy trên màn hình**.
 - **`picky` báo "khớp hết" mà không nêu được MỘT giá trị computed style nào** (`rgb(37, 99, 235)`, `13px` + selector) = đọc `DESIGN-SYSTEM.md` rồi suy, chưa mở trình duyệt — không có số đo thì không tính là đã soi.
+- **`picky` "Màn soi x/y" THIẾU màn in-scope** — đối chiếu dòng `Màn soi` trong báo cáo với danh sách màn wave (SCREEN-MAP/ROADMAP): finding dồn hết vào 1-2 màn còn các màn kia không dòng nào = mới soi một góc rồi dừng, KHÔNG phải các màn kia khớp → chạy lại picky với các màn còn thiếu.
 - **Không nêu được mình đóng persona nào**, hoặc đi luồng chẳng liên quan luồng chính của persona = thử như "người dùng nói chung", đúng thứ `PERSONAS.md` sinh ra để tránh.
 - **Chỉ có log curl/response JSON, không có mô tả màn hình** = chưa nhìn UI — với target có UI, đây là dogfood giả dù mọi API trả 200.
 - **Áp cho cả MAIN ở bước 3** — thiếu bằng chứng bộ ba của chính MAIN = chưa dogfood.
