@@ -148,13 +148,22 @@ def missing_wave_mockups(wave: str) -> list[str]:
     ô Mockup KHÔNG trỏ tới file .html tồn tại. Bắt "khai màn con nhưng lười không vẽ" —
     lỗ này lan chuỗi: picky không có mockup để so + arch §3 không ai đòi API cho nó."""
     feats = parse_wave_feats(wave)
-    if not feats:
+    row = roadmap_wave_row(wave)
+    wave_text = " ".join(row)   # wave UI-only/làm mịn không có FEAT — nêu tên màn thẳng trong hàng ROADMAP
+    if not feats and not row:
         return []
     existing = {p.name for p in (ROOT / "docs" / "ux" / "mockups").rglob("*.html")}
     missing = []
     for cells in table_rows(read("docs/ux/SCREEN-MAP.md")):
         rowtext = " ".join(cells)
-        if not any(f in rowtext for f in feats):        # không phải màn của wave này
+        stems = [h[:-5] for h in re.findall(r"([\w\-]+\.html)", rowtext)]
+        tag = re.search(r"\(\s*Wave\s*(\d+)", rowtext, re.I)   # ô Mockup `_(Wave N)_` = màn khai thẳng thuộc wave N
+        if tag:
+            in_scope = tag.group(1) == str(wave)
+        else:
+            in_scope = (any(f in rowtext for f in feats)
+                        or any(re.search(rf"(?<![\w-]){re.escape(s)}(?![\w-])", wave_text) for s in stems))
+        if not in_scope:                               # không phải màn của wave này
             continue
         if not re.search(r"\b(web|mobile)\b", rowtext):  # không phải màn UI
             continue
@@ -162,6 +171,22 @@ def missing_wave_mockups(wave: str) -> list[str]:
         if not htmls or not any(h in existing for h in htmls):
             missing.append(cells[0].strip() if cells else "?")
     return missing
+
+
+def pending_topup(wave: str) -> list[str]:
+    """ROADMAP §backlog: item xếp vào wave này mà CẦN top-up doc (tag `thiếu AC` hoặc Xử đòi `top-up`)
+    nhưng cột Xử chưa ghi `đã top-up` = sắp code thứ không có spec/mockup đỡ."""
+    out = []
+    m = re.search(r"^#{1,4}[^\n]*Backlog[^\n]*$(.*?)(?=^#{1,4}\s|\Z)",
+                  read_live("docs/ROADMAP.md"), flags=re.MULTILINE | re.DOTALL)
+    for cells in table_rows(m.group(1) if m else ""):
+        if len(cells) < 4:
+            continue
+        what, xu = cells[1], cells[-1]
+        needs = "thiếu ac" in (what + xu).lower() or "top-up" in xu.lower()
+        if needs and re.search(rf"\bwave\s*{re.escape(str(wave))}\b", xu, re.I) and "đã top-up" not in xu.lower():
+            out.append(what[:60])
+    return out
 
 
 def wave_declares_ship(wave: str) -> bool:
@@ -240,6 +265,9 @@ def gate_build(r: Report) -> None:
     miss = missing_wave_mockups(wave)
     r.check(not miss, f"màn UI in-scope wave {wave} đều có mockup"
             + (f" — THIẾU: {', '.join(miss)} (→ /document top-up dựng mockup TRƯỚC khi code)" if miss else ""))
+    todo = pending_topup(wave)
+    r.check(not todo, f"backlog xếp wave {wave} cần top-up đều đã top-up"
+            + (f" — CHƯA: {' | '.join(todo)} (→ /document top-up, xong ghi `đã top-up → …` ở cột Xử)" if todo else ""))
     proof = read_proof(wave)   # bằng chứng MÁY-sinh (capture_proof.py) — không tin tick tay
     if not proof:
         r.check(False, "thiếu tracking/wave-N/proof.json — chạy `python scripts/capture_proof.py`")

@@ -6,6 +6,7 @@ description: DOCUMENT — interview|intake → doc set (PRD/PERSONAS/FEAT/ARCHIT
 > Đây là chỗ **DUY NHẤT được hỏi Authority**. Cuối phase = **KHOÁ SCOPE**, từ đó im lặng (BUILD trở đi tự quyết).
 > Gọi lại = chạy tiếp từ chốt đang dở. Gọi **sau `/next-wave`** = *top-up* (bổ sung doc + chia lại kế hoạch),
 > đọc `docs/ROADMAP.md §backlog` trước — phần bù chen vào wave kế, KHÔNG sửa doc wave đã ship (`archive/`).
+> Top-up xử xong item backlog nào (thêm AC · dựng mockup · sửa mockup) → cột **Xử** ghi `đã top-up → <FEAT-x AC-y | màn.html>` — gate BUILD (`pending_topup`) đọc dấu này, thiếu = coi như chưa top-up.
 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: DOCUMENT` (nếu đang ở phase khác = back-edge top-up).
 `gate.py` + `guard_ask` đọc dòng này — không sửa thì máy tưởng còn phase cũ.

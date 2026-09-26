@@ -36,6 +36,7 @@ Copy vào `archive/wave-N/` — **snapshot TRỌN lát cắt wave, không chọn
 2. **Re-arm `BACKWARD-COMPAT.md §3`** (checklist rà mỗi wave): bỏ tick §3 để wave mới rà lại. **§1 (sổ hợp đồng) KHÔNG đụng** — surface wave 1 giao vẫn là hợp đồng ở wave 9.
 3. Xoá trắng phần **wave-scoped** của `STATE.md`: gate BUILD/VERIFY + `§Findings` + 3 log → set `Wave: N+1`.
 4. **Amendment thành hiện thực** (đây là điểm định tuyến của "sửa doc = wave sau" — PROTOCOL §3):
+   > **Nối từ mục 1 — luật cứng**: item backlog tag `nghi thiếu AC` hoặc cần mockup/màn mới, **xếp vào wave nào** (kể cả wave làm mịn UI-only) → **BẮT BUỘC `/document` top-up TRƯỚC `/build` wave đó** — không được đi nhánh "chỉ đổi thứ tự". Gate BUILD chặn bằng máy (`pending_topup` + `missing_wave_mockups`). Ghi 1 dòng ROADMAP §2 *"đường đã chọn + lý do"* cho wave kế.
    - **Chỉ đổi thứ tự / phạm vi wave** (không đổi nội dung FEAT) → đã chỉnh ROADMAP ở 4.1 → `/build <N+1>`.
    - **Wave kế có màn UI chưa dựng mockup** (SCREEN-MAP đã khai từ DOCUMENT, mockup để trống — mockup dựng theo wave) →
      `/document` top-up: dựng mockup các màn in-scope wave kế **từ token đã chốt** → **Authority chốt mockup wave đó** → `/build`.
