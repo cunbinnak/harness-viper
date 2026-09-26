@@ -21,14 +21,15 @@ Mockup (`docs/ux/mockups/`) + `docs/DESIGN-SYSTEM.md` là hợp đồng hình �
 
 ## Bước phải chạy (theo thứ tự)
 
-**1. Đi hết luồng lõi 1 lượt** của target web để mở đủ màn. Đừng kết luận cả sản phẩm từ 1 màn.
+**1. Danh sách màn = MỌI row `docs/ux/SCREEN-MAP.md` có Wave = wave đang verify** (màn + màn con tab/modal/form). Không tự chọn, không bỏ row — báo cáo phải có đủ `x/x`.
 
-**2. CẤU TRÚC component (screenshot-diff — BACKSTOP E1, quan trọng nhất)**
-Với mỗi màn in-scope: `browser_navigate` tới route thật → `browser_snapshot` + `browser_take_screenshot`. **Mở mockup BẰNG BROWSER** — `browser_navigate` tới `file:///<đường dẫn tuyệt đối>/docs/ux/mockups/<target>/<màn>.html` (mockup là HTML tĩnh, thiết kế để mở `file://` được) → cũng snapshot + screenshot. **So CÙNG LOẠI dữ liệu**: tree đấu tree (khối/heading/cột) · ảnh đấu ảnh (bố cục) · computed đấu computed — **đọc source HTML KHÔNG thay được render** (source cho danh sách khối nhưng không cho thấy bố cục/khoảng cách/wrap thật CSS tạo ra). So **KHỐI component** app dùng vs mockup vẽ:
-- mockup có `cell-person` (avatar tròn + tên) → app hiện tên hay **UUID thô**?
-- mockup có `status-pill` (nhãn màu) → app dùng nhãn màu hay `<Tag>` trần mặc định?
-- mockup có `stat-card`/`card`/`toolbar` → app có, hay chỉ `<Table>` trần?
-→ **App dùng 0% khối của mockup (dù màu token đúng) = finding NẶNG** — đây đúng lỗ E1. Đính kèm cả 2 ảnh.
+**2. Mỗi row — so CÙNG LOẠI dữ liệu, đo không nhìn** (quan trọng nhất — BACKSTOP E1):
+a. **Mở hai bên**: mockup `browser_navigate` tới `file:///<tuyệt đối>/docs/ux/mockups/<target>/<Mockup cột>` (vd `employee.html#EMP-DETAIL--modal-deactivate`); app: **URL mẫu** + làm đúng cột **Mở từ**. App không mở ra được màn đó = finding MAJOR (thiếu màn/luồng đứt).
+b. **Đúng màn**: `data-screen` hai bên = Mã màn. App không gắn mã = MAJOR (BUILD bỏ luật `stack-nextjs`).
+c. **Khối** (`browser_evaluate`): tập + thứ tự `[data-ds]` trong màn hai bên → `mockup − app` = **khối THIẾU (MAJOR)** · `app − mockup` = khối lạ · thứ tự khác = bố cục lệch.
+d. **Token**: mỗi cặp khối cùng `data-ds` → `getComputedStyle` (màu·nền·font·cỡ·padding·gap·bo góc) hai bên, khác = ghi cả hai giá trị + selector.
+e. **Khuôn**: mockup có `data-state` rỗng/lỗi/tải → ép ở app (DB rỗng · chặn `**/api/**`) → app phải ra khuôn đó.
+Screenshot hai bên chỉ **đính làm bằng chứng**, không dùng để phán.
 
 **3. Token màu/spacing (§2 DESIGN-SYSTEM)**
 Gom `getComputedStyle`: `color`/`background`/`border` mọi phần tử hiển thị → giá trị KHÔNG có trong token §2 = **màu lạ** (ghi mã + selector + màn). Đặc biệt đo **`gap`/`margin` giữa các nút trong 1 cụm** (table-row actions) — không chỉ màu (retro A3).
@@ -43,8 +44,10 @@ Gom `getComputedStyle`: `color`/`background`/`border` mọi phần tử hiển t
 
 ## Báo cáo (final message — MAIN ghi §Findings)
 ```
-Persona <tên> · Target web <tên> · Màn soi <S1,S2…>
-Cấu trúc:   <x>/<y> màn dùng đúng khối mockup — lệch: <màn · app dùng gì · mockup vẽ gì · [ảnh]>   ← E1
+Persona <tên> · Target web <tên> · Màn soi <x>/<tổng row wave>
+Fidelity (1 dòng/Mã màn — MAIN chép nguyên vào tracking/wave-N/fidelity.md):
+| Mã màn | Khối thiếu | Token lệch | Khuôn | Kết quả |
+| EMP-DETAIL--modal-deactivate | C8 | C5 nền mock rgb(220,38,38) ≠ app rgb(255,77,79) | — | LỆCH |
 Token:      <x>/<y> giá trị khớp §2 — lạ: <mã · selector · màn> · gap cụm: <đo được vs mock>
 Tương phản: <x>/<y> cặp đạt — thiếu: <cặp · tỉ số>
 Component:  trạng thái thiếu: <C· trạng thái>

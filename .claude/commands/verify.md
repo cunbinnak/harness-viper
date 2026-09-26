@@ -66,6 +66,7 @@ Tên TC nói **hỏng gì khi đỏ** ("2 order cùng bàn", không "test order 
 ## Bước 4 — Dogfood
 Trước tiên: DB đang đầy rác test của Bước 3 → **reset DB sạch + seed tối thiểu** (chi tiết trong `/dogfood` — đợt 1 cần rỗng thật). Việc nội bộ local, dựng lại được bằng seed — **KHÔNG hỏi Authority**.
 **Chạy `/dogfood`** (Skill tool — NẠP TƯƠI chỉ dẫn tại thời điểm này; KHÔNG làm theo trí nhớ/tóm tắt, chỉ dẫn đầy đủ nằm trong file lệnh đó): MAIN **đóng persona chính** tự dùng bằng **trình duyệt thật** TRƯỚC, rồi mới spawn 6 persona × 2 đợt. **Chưa chạy `/dogfood` = chưa xong VERIFY.**
+Bảng fidelity của `picky` (1 dòng/Mã màn) → MAIN chép nguyên vào `tracking/wave-N/fidelity.md` (gate VERIFY đọc: đủ mã in-scope + không còn LỆCH).
 Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên vai) → báo Authority theo **mẫu tổng kết** (`/dogfood`).
 
 ## Bước 5 — Fix-loop (MAIN) — lặp theo LƯỢT, mỗi lượt đủ 4 nhịp
@@ -77,7 +78,7 @@ Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên v
 **1 lượt sửa** = (1) sửa batch finding open (TC FAIL + BLOCKER/MAJOR) → (2) target container hoá: **rebuild image + up lại** (sửa code mà re-test trên bundle cũ = CHƯA sửa) → (3) re-run các TC FAIL + TC smoke luồng lõi (TC **ĐÃ CÓ** trong `test-cases.md`, không thiết kế mới) → (4) MAIN mở **browser** bấm lại đúng màn/luồng vừa sửa (finding của persona nào → re-check theo góc vai đó) → cập nhật `test-cases.md` + đánh dấu §Findings. `git commit` mỗi lượt · học được gì → `knowledge-base/{name}.md`.
 - **Sửa theo CHUẨN, không theo phỏng đoán**: trước khi sửa finding nào, **nạp đúng nguồn chuẩn finding đó trỏ tới** (ADR/`arch §4`/`stack-<x> §review`/`ref-<kind>-pattern §cây chuẩn`) — agent nạp trong cửa sổ RIÊNG của nó, MAIN không thừa hưởng; finding cấu trúc mà MAIN chưa Read cây chuẩn = sửa mù, dễ ra cấu trúc sai kiểu khác.
 - **Finding không đo được bằng TC/browser** (cấu trúc/convention — trục B): cột Xử lý phải kèm **bằng chứng CÙNG LOẠI với cách phát hiện** — finding từ dump cây → fix xong dump cây lại đính vào; từ grep → chạy lại đúng lệnh grep đó. **Tick chay = CHƯA fix.**
-- **Thoát vòng** (soi FILE, không theo trí nhớ): mở `tracking/wave-N/test-cases.md` — không còn dòng **FAIL**; mở `STATE §Findings` — không còn BLOCKER/MAJOR **open**. Vòng này có BLOCKER/MAJOR **trục B** đánh fixed → re-spawn `reviewer` **re-review** (chỉ soi các finding đã fixed, mở đúng file:dòng — cơ chế `review-<kind> §2`) xác nhận hết thật rồi mới thoát → Bước cuối.
+- **Thoát vòng** (soi FILE, không theo trí nhớ): mở `tracking/wave-N/test-cases.md` — không còn dòng **FAIL**; mở `STATE §Findings` — không còn BLOCKER/MAJOR **open**; mở `fidelity.md` — không còn **LỆCH** (sửa xong → spawn `picky` chỉ với các mã LỆCH, cập nhật dòng). Vòng này có BLOCKER/MAJOR **trục B** đánh fixed → re-spawn `reviewer` **re-review** (chỉ soi các finding đã fixed, mở đúng file:dòng — cơ chế `review-<kind> §2`) xác nhận hết thật rồi mới thoát → Bước cuối.
 - **Cắt vòng**: hết lượt 3 vẫn sinh BLOCKER/MAJOR **mới** → DỪNG, ghi `STATE §Blocker` + số lượt đã chạy (1 dòng §Findings), báo cuối buổi — đừng sửa vô hạn (max-turns safety, loop-engineering).
 - Nhỏ / ngoài scope → `docs/ROADMAP.md §backlog` (wave sau).
 

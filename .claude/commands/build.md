@@ -71,10 +71,10 @@ Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được
 ## Bước 5 — Luồng lõi (mỗi AC in-scope)
 `làm → tự bấm thử ở local → tick ROADMAP → commit`. Trong lúc làm:
 - **UI = HỢP ĐỒNG HÌNH ẢNH** (mockup Authority đã chốt — code FE không hook nào canh, tự kỷ luật ở đây, backstop là `picky` ở VERIFY):
-  - TRƯỚC khi code màn nào → **Read mockup màn đó** (`docs/ux/mockups/<target>/<màn>.html`), nắm khối component (stat-card/toolbar/status-pill/cell-person...) — app phải dùng ĐÚNG khối đó, không thay bằng bảng/tag trần
+  - TRƯỚC khi code màn nào → **Read mockup màn đó** (ô Mockup SCREEN-MAP: `<module>.html#<Mã màn>`), nắm khối component (stat-card/toolbar/status-pill/cell-person...) — app phải dùng ĐÚNG khối đó, không thay bằng bảng/tag trần
   - **Token map vào theme config TRƯỚC màn đầu tiên** (Tailwind: `theme.extend.colors/spacing` từ `DESIGN-SYSTEM §2` · antd: `ConfigProvider` · plain-CSS: `:root`) — màu mặc định framework (Tailwind blue...) xuất hiện trên màn = CHƯA map, dừng lại map đã
   - **Mỗi mockup in-scope = 1 route thật** — thiếu màn = AC chưa xong; màn KHÔNG có mockup = ngoài scope, muốn thêm → `ROADMAP §backlog`, KHÔNG tự chế
-  - Tick AC màn nào → **tự so màn render vs mockup màn đó** (mở cả hai) xong mới tick · đủ trạng thái rỗng/lỗi
+  - Gắn `data-screen`/`data-ds` đúng mã mockup (`stack-nextjs`) · đủ trạng thái rỗng/lỗi — so khớp là việc `picky` ở VERIFY
 - **Phân quyền**: mỗi ô `cấm` trong ma trận vai phải bị chặn ở **server**, không tự quyết lại
 - **Ranh giới module** theo `arch/{name}.md` — logic sai tầng là lỗi, không phải phong cách
 - **Ca biên** (trong AC): xử **ngay khi làm phần liên quan**, đừng để cuối

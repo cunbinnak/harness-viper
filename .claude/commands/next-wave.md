@@ -16,7 +16,7 @@ description: NEXT-WAVE — đóng wave (snapshot, KHÔNG reset) → rà lại + 
 
 ## Bước 2 — Snapshot (KHÔNG reset, copy HẾT)
 Copy vào `archive/wave-N/` — **snapshot TRỌN lát cắt wave, không chọn lọc** ("chép doc nào" là phán đoán sẽ mục): `STATE.md` (gate+logs) ·
-`tracking/wave-N/test-cases.md` · **phần `docs/` in-scope wave**. **Lát cắt lấy từ `ROADMAP.md §1` wave-N**: cột `Target (kind)` → `arch/{target}.md` của đúng target đó · cột `AC in-scope` → các `FEAT` chứa AC đó. (Wave BE-only → chỉ `arch/backend.md` + FEAT-BE, KHÔNG kéo target khác vào.) Từ đây **BẤT BIẾN — là hợp đồng**.
+`tracking/wave-N/test-cases.md` + `fidelity.md` · **phần `docs/` in-scope wave**. **Lát cắt lấy từ `ROADMAP.md §1` wave-N**: cột `Target (kind)` → `arch/{target}.md` của đúng target đó · cột `AC in-scope` → các `FEAT` chứa AC đó. (Wave BE-only → chỉ `arch/backend.md` + FEAT-BE, KHÔNG kéo target khác vào.) Từ đây **BẤT BIẾN — là hợp đồng**.
 - **`archive/wave-N/` tồn tại = cờ "wave đã đóng"** → có rồi thì TỪ CHỐI đóng lại (đóng 2 lần = ghi đè, mất vết).
 - **Shipped surface** (test-cases PASS + `arch §API`) = hợp đồng wave sau phải giữ → wave sau **chỉ THÊM** (additive), ghi vào `docs/BACKWARD-COMPAT.md §1` (sổ tích luỹ, **không wave nào xoá**).
 

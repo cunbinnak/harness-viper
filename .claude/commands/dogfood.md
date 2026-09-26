@@ -18,7 +18,7 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend
 ## Workflow
 1. Lấy URL/endpoint thật của hệ đang chạy — **không đoán**.
 2. Đọc `docs/PERSONAS.md` (persona · ma trận quyền · gán vai↔persona) + luồng lõi/AC của wave + mockup đã chốt.
-3. **MAIN TỰ DÙNG TRƯỚC — bắt buộc, TRƯỚC khi spawn vai nào.** Đích thân mở trình duyệt *(skill `browse` — cách gọi tool `browser_*` + công thức + chứng minh đã dùng thật)*, đóng **persona chính**, vào **từ trang đầu** (không nhảy URL trong), đi hết luồng lõi đầu→cuối: kiểm **từng AC** làm được THẬT không · đối chiếu từng màn với **mockup đã chốt** (lệch = phát hiện, không phải thẩm mỹ) · soi token/trạng thái (nút gửi có khoá, lỗi đúng khuôn). Ghi mọi thứ vướng kể cả nhỏ. **curl KHÔNG PHẢI dogfood** — dogfood đo trải nghiệm qua UI thật; curl chỉ hợp lệ khi target backend-only `KHÔNG CÓ UI`. Chưa có **bằng chứng bộ ba** của CHÍNH MAIN → **CẤM sang bước 4** (spawn vai không thay được việc MAIN tự dùng). → *"Eat your own shit" gốc ở đây: MAIN nếm TRƯỚC, rồi mới giao 6 lăng kính.*
+3. **MAIN TỰ DÙNG TRƯỚC — bắt buộc, TRƯỚC khi spawn vai nào.** Đích thân mở trình duyệt *(skill `browse` — cách gọi tool `browser_*` + công thức + chứng minh đã dùng thật)*, đóng **persona chính**, vào **từ trang đầu** (không nhảy URL trong), đi hết luồng lõi đầu→cuối: kiểm **từng AC** làm được THẬT không · lệch **mockup** thấy rõ thì ghi (đo chi tiết là việc `picky`) · nút gửi có khoá, lỗi đúng khuôn. Ghi mọi thứ vướng kể cả nhỏ. **curl KHÔNG PHẢI dogfood** — dogfood đo trải nghiệm qua UI thật; curl chỉ hợp lệ khi target backend-only `KHÔNG CÓ UI`. Chưa có **bằng chứng bộ ba** của CHÍNH MAIN → **CẤM sang bước 4** (spawn vai không thay được việc MAIN tự dùng). → *"Eat your own shit" gốc ở đây: MAIN nếm TRƯỚC, rồi mới giao 6 lăng kính.*
 4. **Đợt 1 (DB SẠCH)** — 2 nhịp: **`edge` chạy MỘT MÌNH trước** (trạng thái rỗng là tài nguyên dùng-một-lần — `newbie` đi luồng chính là TẠO bản ghi, chạy song song thì bản ghi đầu tiên giết mọi màn rỗng edge đang soi) → edge trả xong mới spawn `newbie` + `picky` song song (newbie ghi không hại picky — picky soi visual, gần như read-only).
    > **DB SẠCH là TIỀN ĐỀ — MAIN tự dựng, KHÔNG hỏi**: DB đang mang rác (test-writer vừa chạy / lần dogfood trước) → reset TRƯỚC đợt 1: `docker compose down -v` → up → migrate → seed **tối thiểu** (tài khoản đăng nhập/roles — KHÔNG seed data nghiệp vụ, `edge` cần thấy rỗng thật). DB local dựng lại được bằng seed = **không phải hành động không-đảo-ngược** → không thuộc ngoại lệ "hỏi thật", hỏi quyền truncate/reset là hỏi sai luật #2.
 5. Đợi **đủ 3 vai** trả kết quả → **seed lại** `deployment/local/`.
@@ -39,9 +39,9 @@ Ràng buộc **CỨNG**: ≤ **3 vai/đợt** · **không mở đợt 2 khi đ�
 | 2 | **Persona được giao** (chân dung + năng lực + luồng) | thử như "người dùng nói chung" |
 | 3 | Luồng lõi + AC của wave | không biết đúng/sai theo gì |
 | 4 | `breaker`: ma trận đầy đủ + tài khoản từng vai | không có danh sách phép thử |
-| 5 | `picky`: màn liên quan + `docs/DESIGN-SYSTEM.md` token + **mockup** | không có gì đối chiếu |
+| 5 | `picky`: wave đang verify (nó tự lấy mọi row SCREEN-MAP của wave) + URL app | không có gì đối chiếu |
 
-> **`picky` đo CẢ CẤU TRÚC component vs mockup (screenshot-diff), KHÔNG chỉ màu token** — vá retro E1 (app dùng đúng màu mà cấu trúc lệch mockup). `picky` là lớp canh design-system + mockup **DUY NHẤT** sau DOCUMENT: `guard_ds`/`guard_shell` chỉ soi mockup HTML lúc DOCUMENT, code render thật chỉ còn dogfood đo được — bỏ/làm ẩu picky = không gì bắt UI lệch bản chốt.
+> Cách `picky` so mockup: nguồn duy nhất `persona-picky`. picky là lớp canh mockup **DUY NHẤT** trên app thật — bỏ/làm ẩu = không gì bắt UI lệch bản chốt.
 
 ## Bằng chứng bộ ba (không có = không tính)
 ```

@@ -127,8 +127,6 @@ Tương phản thì đọc cặp chữ/nền của đúng phần tử đang nghi
 
 Ép hiện trạng thái component: `browser_hover` cho hover · bấm submit rồi `browser_snapshot` ngay để bắt "đang gửi" · `page.route('**/api/**', r => r.abort())` cho khuôn lỗi.
 
-Screenshot-diff cấu trúc (backstop E1): `browser_take_screenshot` màn thật + mở mockup cùng route (`docs/ux/mockups/<target>/<màn>.html`) — so KHỐI component, không chỉ màu.
-
 ## 4. Chứng minh đã dùng thật
 
 Mọi phát hiện phải nêu được **thao tác cụ thể** và **thứ thấy trên màn hình**. Ba thứ này là bằng chứng:

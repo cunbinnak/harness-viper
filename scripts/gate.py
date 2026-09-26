@@ -143,34 +143,75 @@ def parse_wave_feats(wave: str) -> set[str]:
     return set(re.findall(r"FEAT-[\w-]+", row[idx]))
 
 
-def missing_wave_mockups(wave: str) -> list[str]:
-    """Màn UI in-scope wave (SCREEN-MAP row có FEAT in-scope + target web/mobile) mà
-    ô Mockup KHÔNG trỏ tới file .html tồn tại. Bắt "khai màn con nhưng lười không vẽ" —
-    lỗ này lan chuỗi: picky không có mockup để so + arch §3 không ai đòi API cho nó."""
+def _screen_map_rows() -> list[dict]:
+    """SCREEN-MAP -> list dict theo header (mỗi bảng con tự dò header lại). Bỏ dòng tách + dòng nhóm."""
+    rows, head = [], None
+    for ln in read("docs/ux/SCREEN-MAP.md").splitlines():
+        s = ln.strip()
+        if not s.startswith("|"):
+            head = None if not s else head
+            continue
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        if re.match(r"^[\s:|-]+$", s):
+            continue
+        if any(c.lower() == "mockup" for c in cells):          # dòng header
+            head = [c.lower() for c in cells]
+            continue
+        if head and len(cells) == len(head):
+            rows.append(dict(zip(head, cells)))
+    return rows
+
+
+def wave_screens(wave: str) -> list[dict]:
+    """Màn UI in-scope wave. Format mới (cột `wave` + `mã màn`): lọc theo cột Wave.
+    Format cũ: tag `(Wave N)` ô Mockup > FEAT in-scope > tên màn nêu trong hàng ROADMAP."""
     feats = parse_wave_feats(wave)
-    row = roadmap_wave_row(wave)
-    wave_text = " ".join(row)   # wave UI-only/làm mịn không có FEAT — nêu tên màn thẳng trong hàng ROADMAP
-    if not feats and not row:
-        return []
-    existing = {p.name for p in (ROOT / "docs" / "ux" / "mockups").rglob("*.html")}
-    missing = []
-    for cells in table_rows(read("docs/ux/SCREEN-MAP.md")):
-        rowtext = " ".join(cells)
-        stems = [h[:-5] for h in re.findall(r"([\w\-]+\.html)", rowtext)]
-        tag = re.search(r"\(\s*Wave\s*(\d+)", rowtext, re.I)   # ô Mockup `_(Wave N)_` = màn khai thẳng thuộc wave N
-        if tag:
-            in_scope = tag.group(1) == str(wave)
+    wave_text = " ".join(roadmap_wave_row(wave))
+    out = []
+    for r in _screen_map_rows():
+        text = " ".join(r.values())
+        if "wave" in r:
+            in_scope = re.sub(r"\D", "", r["wave"]) == str(wave)
         else:
-            in_scope = (any(f in rowtext for f in feats)
-                        or any(re.search(rf"(?<![\w-]){re.escape(s)}(?![\w-])", wave_text) for s in stems))
-        if not in_scope:                               # không phải màn của wave này
-            continue
-        if not re.search(r"\b(web|mobile)\b", rowtext):  # không phải màn UI
-            continue
-        htmls = re.findall(r"([\w\-]+\.html)", rowtext)
-        if not htmls or not any(h in existing for h in htmls):
-            missing.append(cells[0].strip() if cells else "?")
+            tag = re.search(r"\(\s*Wave\s*(\d+)", r.get("mockup", ""), re.I)
+            stems = [h[:-5] for h in re.findall(r"([\w\-]+\.html)", text)]
+            in_scope = (tag.group(1) == str(wave)) if tag else (
+                any(f in text for f in feats)
+                or any(re.search(rf"(?<![\w-]){re.escape(s)}(?![\w-])", wave_text) for s in stems))
+        if in_scope and re.search(r"\b(web|mobile)\b", text):
+            r["_code"] = r.get("mã màn") or next(iter(r.values()), "?")
+            out.append(r)
+    return out
+
+
+def missing_wave_mockups(wave: str) -> list[str]:
+    """Màn UI in-scope wave mà ô Mockup KHÔNG trỏ tới mockup tồn tại — file, và (nếu có `#Mã`) section
+    `id` đúng mã trong file. Bắt "khai màn/màn con (tab/modal/form) nhưng lười không vẽ" — lỗ lan chuỗi:
+    picky không có gì để so + arch §3 không ai đòi API cho nó."""
+    files = {p.name: p for p in (ROOT / "docs" / "ux" / "mockups").rglob("*.html")}
+    missing = []
+    for r in wave_screens(wave):
+        refs = re.findall(r"([\w\-]+\.html)(?:#([\w\-]+))?", r.get("mockup", ""))
+        ok = False
+        for fname, anchor in refs:
+            f = files.get(fname)
+            html = f.read_text(encoding="utf-8", errors="ignore") if f else ""
+            if f and (not anchor or re.search(r"id=[\"']" + re.escape(anchor) + r"[\"']", html)):
+                ok = True
+                break
+        if not ok:
+            missing.append(r["_code"])
     return missing
+
+
+def fidelity_gaps(wave: str) -> tuple[list[str], list[str]]:
+    """tracking/wave-N/fidelity.md (MAIN ghi từ báo cáo picky, 1 dòng/Mã màn): (mã in-scope THIẾU dòng, mã còn LỆCH)."""
+    rows = table_rows(read(f"tracking/wave-{wave}/fidelity.md"))
+    seen = {c[0].strip(): " ".join(c).upper() for c in rows if c}
+    codes = [r["_code"] for r in wave_screens(wave)]
+    absent = [c for c in codes if c not in seen]
+    off = [c for c, txt in seen.items() if "LỆCH" in txt]
+    return absent, off
 
 
 def pending_topup(wave: str) -> list[str]:
@@ -301,6 +342,12 @@ def gate_verify(r: Report) -> None:
                   if len(row) >= 5 and any(s in row[2].upper() for s in ("BLOCKER", "MAJOR"))
                   and not row[4].strip()]
     r.check(not open_major, "§Findings: hết BLOCKER/MAJOR chưa xử")
+    if wave_screens(wave):   # có màn UI in-scope → picky phải phủ đủ + khớp (bằng chứng ở fidelity.md)
+        absent, off = fidelity_gaps(wave)
+        r.check(not absent, f"tracking/wave-{wave}/fidelity.md phủ đủ màn in-scope"
+                + (f" — THIẾU dòng: {', '.join(absent)} (picky chưa soi)" if absent else ""))
+        r.check(not off, "fidelity.md không còn màn LỆCH mockup"
+                + (f" — LỆCH: {', '.join(off)}" if off else ""))
     _state_checkboxes(r, "VERIFY")
 
 
