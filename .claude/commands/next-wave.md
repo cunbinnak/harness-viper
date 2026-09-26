@@ -39,6 +39,7 @@ Copy vào `archive/wave-N/` — **snapshot TRỌN lát cắt wave, không chọn
    - **Chỉ đổi thứ tự / phạm vi wave** (không đổi nội dung FEAT) → đã chỉnh ROADMAP ở 4.1 → `/build <N+1>`.
    - **Wave kế có màn UI chưa dựng mockup** (SCREEN-MAP đã khai từ DOCUMENT, mockup để trống — mockup dựng theo wave) →
      `/document` top-up: dựng mockup các màn in-scope wave kế **từ token đã chốt** → **Authority chốt mockup wave đó** → `/build`.
+     > **BẮT BUỘC — gate BUILD chặn bằng máy** (`missing_wave_mockups`): mọi màn UI in-scope wave kế phải có file mockup TỒN TẠI + SCREEN-MAP row trỏ đúng `.html`. Thiếu = gate đỏ, KHÔNG được `/build` — không tự ý đẩy thẳng sang BUILD/đóng wave khi mockup còn trống (đây là lỗ đã gặp: skip rà mockup, code chay theo màn không có bản chốt).
    - **Cần FEAT / arch / capability MỚI hoặc SỬA** → `/document` (top-up): re-enter DOCUMENT → sửa **docs SỐNG** (`docs/`)
      theo `§backlog` → re-challenge → **Authority duyệt lại = re-lock scope** (đóng back-edge — chống retro F1 kẹt DRAFT).
      · Docs đã ship ở `archive/` **BẤT BIẾN** — chỉ sửa `docs/` sống. · Đổi surface đã giao phải **additive** (BACKWARD-COMPAT §1).

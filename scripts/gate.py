@@ -134,6 +134,36 @@ def parse_wave_targets(wave: str) -> list[tuple[str, str]]:
     return [(n, k.lower()) for n, k in re.findall(r"([\w.\-]+)\s*\(\s*(\w+)\s*\)", row[idx])]
 
 
+def parse_wave_feats(wave: str) -> set[str]:
+    """FEAT id in-scope của wave — từ ROADMAP §1 cột AC in-scope."""
+    row = roadmap_wave_row(wave)
+    idx = _col_index("AC in-scope")
+    if not row or idx is None or idx >= len(row):
+        return set()
+    return set(re.findall(r"FEAT-[\w-]+", row[idx]))
+
+
+def missing_wave_mockups(wave: str) -> list[str]:
+    """Màn UI in-scope wave (SCREEN-MAP row có FEAT in-scope + target web/mobile) mà
+    ô Mockup KHÔNG trỏ tới file .html tồn tại. Bắt "khai màn con nhưng lười không vẽ" —
+    lỗ này lan chuỗi: picky không có mockup để so + arch §3 không ai đòi API cho nó."""
+    feats = parse_wave_feats(wave)
+    if not feats:
+        return []
+    existing = {p.name for p in (ROOT / "docs" / "ux" / "mockups").rglob("*.html")}
+    missing = []
+    for cells in table_rows(read("docs/ux/SCREEN-MAP.md")):
+        rowtext = " ".join(cells)
+        if not any(f in rowtext for f in feats):        # không phải màn của wave này
+            continue
+        if not re.search(r"\b(web|mobile)\b", rowtext):  # không phải màn UI
+            continue
+        htmls = re.findall(r"([\w\-]+\.html)", rowtext)
+        if not htmls or not any(h in existing for h in htmls):
+            missing.append(cells[0].strip() if cells else "?")
+    return missing
+
+
 def wave_declares_ship(wave: str) -> bool:
     row = roadmap_wave_row(wave)
     return any("SHIP" in c.upper() for c in row)
@@ -185,6 +215,11 @@ def gate_document(r: Report) -> None:
     r.check(bool(waves), "ROADMAP §1 có ≥1 wave")
     r.check(bool(waves) and all(any("BUILD" in c.upper() for c in row) for row in waves),
             "mỗi wave khai phases (≥ BUILD)")
+    # mockup wave đầu (wave 1 dựng lúc DOCUMENT) — màn UI in-scope đều có file, không khai suông
+    first_wave = waves[0][0].strip() if waves and waves[0] else "1"
+    miss = missing_wave_mockups(first_wave)
+    r.check(not miss, f"mockup màn UI in-scope wave {first_wave} đều có file"
+            + (f" — THIẾU: {', '.join(miss)} (khai trong SCREEN-MAP nhưng chưa dựng .html)" if miss else ""))
     r.check(challenge_pass("DOCUMENT"), "Challenge DOCUMENT PASS (§Challenge log)")
     dec_rows = [ln for ln in read_live("docs/DECISIONS.md").splitlines()
                 if ln.strip().startswith("| DEC-") and "{{" not in ln]
@@ -202,6 +237,9 @@ def gate_build(r: Report) -> None:
     else:
         r.note("wave 1 — miễn wave_reviewed (fresh từ DOCUMENT)")
     r.check(git_commit_count() >= 1, "đã có commit")
+    miss = missing_wave_mockups(wave)
+    r.check(not miss, f"màn UI in-scope wave {wave} đều có mockup"
+            + (f" — THIẾU: {', '.join(miss)} (→ /document top-up dựng mockup TRƯỚC khi code)" if miss else ""))
     proof = read_proof(wave)   # bằng chứng MÁY-sinh (capture_proof.py) — không tin tick tay
     if not proof:
         r.check(False, "thiếu tracking/wave-N/proof.json — chạy `python scripts/capture_proof.py`")
