@@ -90,17 +90,20 @@ def main() -> int:
               "persona-rushed", "persona-breaker", "persona-mobile"}
     hava = {p.stem for p in (ROOT / ".claude/agents").glob("*.md")}
     check(agents <= hava, f"9 agent đủ ({len(agents & hava)}/9)")
-    # frontmatter YAML phải parse được — hỏng là Claude Code lặng lẽ bỏ agent ("not available"),
-    # MAIN thay bằng general-purpose. Hay dính: `description:` có ": " giữa câu mà không bọc nháy.
+    # frontmatter YAML phải parse được — hỏng là Claude Code lặng lẽ bỏ agent ("not available", MAIN thay
+    # general-purpose) / skill / command. Hay dính: `description:` có ": " giữa câu mà không bọc nháy.
     bad = []
-    for p in sorted((ROOT / ".claude/agents").glob("*.md")):
+    fm_files = (list((ROOT / ".claude/agents").glob("*.md")) + list((ROOT / ".claude/commands").glob("*.md"))
+                + list((ROOT / ".claude/skills").glob("*/SKILL.md")))
+    for p in sorted(fm_files):
         m = re.match(r"^---\r?\n(.*?)\r?\n---", p.read_text(encoding="utf-8"), re.S)
         try:
             if not m or not isinstance(yaml.safe_load(m.group(1)), dict):
-                bad.append(p.stem)
+                bad.append(p.parent.name if p.name == "SKILL.md" else p.stem)
         except yaml.YAMLError:
-            bad.append(p.stem)
-    check(not bad, "frontmatter agent parse được YAML" + (f" — HỎNG: {', '.join(bad)} (bọc description trong \"…\")" if bad else ""))
+            bad.append(p.parent.name if p.name == "SKILL.md" else p.stem)
+    check(not bad, f"frontmatter agent/command/skill parse được YAML ({len(fm_files)} file)"
+          + (f" — HỎNG: {', '.join(bad)} (bọc description trong \"…\")" if bad else ""))
 
     stacks = {"stack-spring-boot", "stack-nextjs", "stack-bff", "stack-flutter"}
     have_sk = {p.name for p in (ROOT / ".claude/skills").glob("*") if p.is_dir()}
