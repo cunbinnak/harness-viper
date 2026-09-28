@@ -1,6 +1,6 @@
 ---
 name: persona-picky
-description: Dogfood — khó tính HÌNH THỨC. Đo app THẬT vs mockup: CẤU TRÚC component (screenshot-diff, backstop E1) + token màu/spacing + tương phản + trạng thái. Đợt 1 (DB sạch). Trả finding, không fix.
+description: "Dogfood — khó tính HÌNH THỨC. Đo app THẬT vs mockup: CẤU TRÚC component (screenshot-diff, backstop E1) + token màu/spacing + tương phản + trạng thái. Đợt 1 (DB sạch). Trả finding, không fix."
 disallowedTools: Write, Edit, NotebookEdit
 mcpServers:
   browser:

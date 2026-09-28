@@ -1,6 +1,6 @@
 ---
 name: persona-mobile
-description: Dogfood — màn NHỎ (viewport 375): layout vỡ, nút tràn, overflow text, touch target nhỏ. Đợt 2 (DB có data). Trả finding, không fix.
+description: "Dogfood — màn NHỎ (viewport 375): layout vỡ, nút tràn, overflow text, touch target nhỏ. Đợt 2 (DB có data). Trả finding, không fix."
 disallowedTools: Write, Edit, NotebookEdit
 mcpServers:
   browser:

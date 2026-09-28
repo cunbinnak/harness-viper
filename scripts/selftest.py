@@ -9,9 +9,12 @@ Usage: python scripts/selftest.py
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
+
+import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 try:
@@ -87,6 +90,17 @@ def main() -> int:
               "persona-rushed", "persona-breaker", "persona-mobile"}
     hava = {p.stem for p in (ROOT / ".claude/agents").glob("*.md")}
     check(agents <= hava, f"9 agent đủ ({len(agents & hava)}/9)")
+    # frontmatter YAML phải parse được — hỏng là Claude Code lặng lẽ bỏ agent ("not available"),
+    # MAIN thay bằng general-purpose. Hay dính: `description:` có ": " giữa câu mà không bọc nháy.
+    bad = []
+    for p in sorted((ROOT / ".claude/agents").glob("*.md")):
+        m = re.match(r"^---\r?\n(.*?)\r?\n---", p.read_text(encoding="utf-8"), re.S)
+        try:
+            if not m or not isinstance(yaml.safe_load(m.group(1)), dict):
+                bad.append(p.stem)
+        except yaml.YAMLError:
+            bad.append(p.stem)
+    check(not bad, "frontmatter agent parse được YAML" + (f" — HỎNG: {', '.join(bad)} (bọc description trong \"…\")" if bad else ""))
 
     stacks = {"stack-spring-boot", "stack-nextjs", "stack-bff", "stack-flutter"}
     have_sk = {p.name for p in (ROOT / ".claude/skills").glob("*") if p.is_dir()}
