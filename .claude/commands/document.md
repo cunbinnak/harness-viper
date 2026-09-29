@@ -36,6 +36,9 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
   vết** `intake → FEAT` trong `docs/INTERVIEW.md`. `intake/TECHSTACK` **thắng** default của stack skill.
   > **Intake là LỜI KHAI, không phải SỰ THẬT ĐỦ — bỏ phỏng vấn ≠ bỏ RÀ.** Render xong vẫn chạy đủ: research domain **bắt buộc** (tài liệu người ta đưa không thay được tra ngành — đổ ra danh sách luồng chuẩn ngành vào PRD §6 như đường interview) + lưới cạnh-có-chủ/seam (`domain-po`) + 6 họ phổ quát (`pre-mortem`). Lỗ tìm thấy → đang ở DOCUMENT, **được hỏi Authority** hoặc DECISIONS — xử tại chỗ. **Bảng "Lỗ hổng & cách xử" áp cho cả intake — bảng trống = CHƯA rà, không phải intake hoàn hảo.**
 
+## Bước 1b — Luồng nghiệp vụ đã xác nhận (cả 2 đường vào — TRƯỚC khi viết bất kỳ doc nào)
+Dựng bảng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận` (phương pháp: `discovery-hypothesis` Bước 1b). Ô `CHƯA HỎI` → hỏi Authority ngay (INTERVIEW) / đánh dấu lỗ + hỏi (INTAKE). **Authority ký bảng rồi mới sang Bước 2.** Từ đây actor của AC, ô ma trận PERSONAS §2, hành trình `arch/<web>.md §2` đều **chỉ được lấy từ bảng này** — chống suy diễn "người có nhu cầu = người thao tác".
+
 ## Bước 2 — PRD (`docs/PRD.md`)
 Vấn đề (pain) + đối tượng cụ thể + **out-of-scope tường minh** + ≥1 success metric **có số**.
 
@@ -46,7 +49,7 @@ Persona + năng lực được cấp + **ma trận vai × hành động** — m�
 ## Bước 4 — CAPABILITIES-MAP (`docs/CAPABILITIES-MAP.md`)  → **Nạp `Skill("capability-mapping")` trước**
 `capability → outcome → FEAT`. **Mọi FEAT truy về ≥1 capability**; capability TRƯỚC feature. Cột `Wave giao` để trống (điền ở Bước 9).
 
-## Bước 5 — FEAT (`docs/feat/FEAT-*.md`)  → **Nạp `Skill("domain-po")` trước · viết xong → nạp `Skill("business-analysis")` để rà**
+## Bước 5 — FEAT (`docs/feat/FEAT-*.md`)  → **Nạp `Skill("domain-po")` trước · viết xong → nạp `Skill("business-analysis")` rà — trong đó actor mỗi AC đối chiếu cột Ai LÀM của bảng luồng (1b), lệch = sai không phải nitpick**
 Mỗi capability → ≥1 FEAT. Mỗi FEAT: **AC dạng BDD** (Given/When/Then) **gồm ca biên** (rỗng/đầy/lỗi/quyền) + **field kỹ thuật** (`enforcement` rule · `consumes_contracts` = target nào cấp API/event). Mỗi FEAT truy về ≥1 capability + ≥1 persona.
 
 ## Bước 6 — Architecture (`docs/arch/`)  → **Nạp 3 skill THEO THỨ TỰ: `Skill("event-storming")` → `Skill("boundary-charter")` → `Skill("technical-design")`** (nạp từng cái đúng lúc dùng)**

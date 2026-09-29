@@ -28,7 +28,7 @@ Bước phân tích nghiệp vụ của `/document` — vai **Business Analyst**
 
 ## Cách viết
 - **Business-rule**: §Phát biểu (1 câu rõ) + §Lý do (**reference nguồn**: luật/policy/contract/quyết định — KHÔNG "best practice") + §Khi nào áp dụng + §Ngoại lệ + §Hệ quả + **≥2 ví dụ** (1 happy + 1 vi phạm, số liệu — QC seed test) + `severity` CORNERSTONE/NORMAL + **`related_features` ≥1** (rule chỉ 1 FEAT → đáng lẽ là AC, đưa thành AC trong FEAT đó). §**Enforce ở đâu** trỏ nơi CHẶN được (unique index · cột `version` · idempotency key · DB constraint · state machine) — viết chung file với contract (fork 1 lớp, không TODO-engineer để dịch sau).
-- **PERSONA**: role/goals/pains/workflow narrative. **Anti-persona BẮT BUỘC**. Cập nhật ma trận vai × hành động (ai được/cấm làm gì) trong `docs/PERSONAS.md §2`.
+- **PERSONA**: role/goals/pains/workflow narrative. **Anti-persona BẮT BUỘC**. Cập nhật ma trận vai × hành động (ai được/cấm làm gì) trong `docs/PERSONAS.md §2` — **ô `có` sinh từ cột Ai LÀM của bảng luồng `INTERVIEW §Luồng nghiệp vụ đã xác nhận`**, không suy từ FEAT (FEAT viết sau ma trận; suy ngược = sai đồng bộ, trace không bắt). Vai không có dòng bằng chứng nào cho hành động đó = `cấm`.
 
 ## Không hỏi user (fork rule)
 `/document` đã phỏng vấn Authority hoặc có `intake/`. Thứ tự khi bí: **(1)** tìm trong `PRD`/`PERSONAS`/`CAPABILITIES-MAP`/`INTERVIEW`/`intake` · **(2)** mơ hồ → 1 dòng `docs/DECISIONS.md` (what/why dẫn về artifact/assume/reversible) · **(3)** tắc cứng → `STATE.md §Blocker` · ngoài scope → `docs/ROADMAP.md §backlog`.

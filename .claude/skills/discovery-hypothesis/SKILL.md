@@ -84,10 +84,25 @@ Ngờ scope quá lớn → **nói thẳng ngay tại đây**, đề xuất cắt
 Điền `docs/PRD.md` (**§1 Vấn đề** + **§2 Giả thuyết + rủi ro**) dần theo `templates/TEMPLATE.prd.md`. Không đợi hỏi xong hết mới viết:
 viết muộn là viết theo trí nhớ đã bị làm mượt.
 
-## Playback trước khi chốt
+## Bước 1b — DỰNG luồng nghiệp vụ thành BẢNG, rồi mới playback (chỗ hay hiểu sai nhất)
 
-Trước khi báo xong: tóm tắt lại từng mục, đọc cho user nghe — *"tôi hiểu là X, đúng chưa?"*.
-Sai chỗ nào sửa tại chỗ. Hiểu sai bắt được ở đây tốn một phút; lọt tới BUILD tốn nửa ngày code sai.
+Lời kể của Authority là văn xuôi ("bộ phận có nhu cầu liên hệ HR → HR đăng tin → …"). Nhảy thẳng từ văn xuôi sang AC là
+chỗ model **suy diễn actor**: "có nhu cầu" biến thành "là người tạo" — sai này lọt qua mọi trace vì FEAT/ma trận/API sai
+**đồng bộ** với nhau, chỉ lộ khi đã thành code. Chặn ở đây:
+1. Với **mỗi nghiệp vụ** Authority đã kể → dựng 1 bảng vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận` (khung ở
+   `templates/TEMPLATE.interview.md`): `# · Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào → đầu ra · Bằng chứng`. 4-8 dòng/luồng.
+2. **Ai LÀM ≠ Ai NHỜ/duyệt** — hai cột riêng, bắt buộc. Người nêu nhu cầu / người phê duyệt ngoài hệ thống KHÔNG phải actor.
+   Vai chuyên trách theo ngành là mặc định (tuyển dụng = HR, tính lương = C&B); giao cho vai khác phải có dòng bằng chứng.
+3. **Cột Bằng chứng trỏ số dòng §1.** Ô không trỏ được → ghi `CHƯA HỎI` — **đó là câu hỏi kế tiếp**, hỏi ngay, không đoán,
+   không ghi DECISIONS thay cho việc hỏi (đang DOCUMENT, hỏi là hợp lệ và rẻ nhất).
+4. Bảng này là **nguồn duy nhất** cho: actor của AC (`domain-po`) · ô `có/cấm` ma trận PERSONAS §2 (`domain-ba`) ·
+   hành trình persona ở `arch/<web>.md §2`. Không nơi nào được tự suy actor ngoài bảng.
+
+## Playback trước khi chốt — đọc BẢNG, không đọc văn xuôi
+
+Trước khi báo xong: đọc cho user **từng dòng bảng luồng** ("bước 1: HR đăng tin, bộ phận chỉ nhờ — đúng không?") rồi mới
+tới các mục còn lại. Sai actor lộ ra trên một dòng bảng trong 5 giây; giấu trong văn xuôi thì tới wave 4 mới thấy.
+Authority gật → ghi `chốt bởi Authority: <ngày>` trên bảng. Sai chỗ nào sửa tại chỗ.
 
 ## Lỗ hổng → xử tại chỗ, không treo sang bước sau
 
@@ -120,4 +135,4 @@ Chỗ user không trả lời được, hoặc chưa quyết: (1) tìm trong tà
 - KHÔNG icon/emoji trong tài liệu.
 
 ## Done
-- `docs/PRD.md` (§1 Vấn đề + §2 Giả thuyết + rủi ro) đầy đủ + **§6 Nguồn có ≥1 link research** + đã playback + user confirm → tiếp Bước 2 (PRD trọn §1-6) → Bước 3 `domain-ba` (persona + ma trận) → Bước 4 `capability-mapping`.
+- `docs/PRD.md` (§1 Vấn đề + §2 Giả thuyết + rủi ro) đầy đủ + **§6 Nguồn có ≥1 link research** + **bảng luồng nghiệp vụ (1b) không còn ô `CHƯA HỎI`, Authority đã ký** + đã playback + user confirm → tiếp Bước 2 (PRD trọn §1-6) → Bước 3 `domain-ba` (persona + ma trận) → Bước 4 `capability-mapping`.

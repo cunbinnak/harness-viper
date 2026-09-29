@@ -40,6 +40,7 @@ Input: `docs/{PRD.md, feat/FEAT-*.md}` (BR nằm trong FEAT §field hoặc `docs
 - **rà chéo**: soi gap/độ phủ giữa các lớp doc + báo `affected_docs`/`boundaries_affected`.
 
 ## Quality checklist (khi review / phân tích)
+- [ ] **Actor mỗi AC = cột Ai LÀM của bảng luồng đã ký** (`INTERVIEW §Luồng nghiệp vụ đã xác nhận`); ô `có` ma trận PERSONAS §2 trỏ được về dòng bảng. Lệch = SAI (báo, sửa AC/ma trận), không phải nitpick — đây là kiểm "đúng với Authority", các trace khác chỉ kiểm "đúng với nhau".
 - [ ] Mỗi user story có ≥ 1 AC testable (Cho/Khi/Thì), gồm non-happy-path.
 - [ ] BR-* có nguồn tham chiếu + ≥2 ví dụ + `related_features` ≥1.
 - [ ] Scope rõ (§Ngoài phạm vi đủ cho QC); bounded context rõ.
