@@ -24,7 +24,7 @@ Viết **THẲNG** vào 1 lớp doc:
 
 ## A. Dựng luồng nghiệp vụ thành BẢNG — Authority ký (việc lõi của BA, làm ĐẦU TIÊN)
 Lời kể là văn xuôi ("bộ phận có nhu cầu liên hệ HR → HR đăng tin → …"); AC cần actor cụ thể. Khoảng trống giữa hai thứ đó là nơi sai actor sinh ra. Chặn bằng bảng:
-1. **Research trước** khi domain lạ: business process pattern của ngành, cách sản phẩm cùng ngành chia bước, compliance — 2-3 nguồn ghi link (PRD §6). Domain quá quen mới bỏ, ghi 1 dòng lý do. KHÔNG bịa nguồn.
+1. **Đọc lại research của discovery** (PRD §6 — 4 loại: quy trình chuẩn từng nghiệp vụ · vai chuyên trách · menu sản phẩm cùng loại · ràng buộc ngoài). Nghiệp vụ nào Author kể mà PRD §6 **chưa có nguồn loại 1/2** → research bù ngay (cùng bảng 4 loại ở `discovery-hypothesis`), ghi link vào §6. KHÔNG dựng bảng luồng cho nghiệp vụ chưa có chuẩn ngành làm mốc — không có mốc thì không biết Author nói khác hay thiếu. KHÔNG bịa nguồn.
 2. **Liệt kê actor** (role / system / external) từ INTERVIEW — chưa gán việc, chỉ liệt kê. Actor lộ ra ở đây là gợi ý bounded context (chốt ở `boundary-charter`).
 3. **Mỗi nghiệp vụ Authority đã kể → 1 bảng** `# · Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào → đầu ra · Bằng chứng`, 4-8 dòng, đi trọn vòng đời (ai tạo cái đầu tiên, cái cuối đi đâu, đường lùi/huỷ).
    - **Ai LÀM ≠ Ai NHỜ/duyệt** — hai cột riêng, bắt buộc. Người nêu nhu cầu / phê duyệt ngoài hệ thống KHÔNG phải actor; có thao tác riêng thì thành dòng riêng.
