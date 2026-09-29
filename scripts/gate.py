@@ -281,7 +281,7 @@ def gate_document(r: Report) -> None:
     r.check(bool(waves), "ROADMAP §1 có ≥1 wave")
     r.check(bool(waves) and all(any("BUILD" in c.upper() for c in row) for row in waves),
             "mỗi wave khai phases (≥ BUILD)")
-    # Bước 1b — bảng luồng nghiệp vụ: có, Authority ký, không còn ô CHƯA HỎI (chống suy diễn actor)
+    # domain-ba A — bảng luồng nghiệp vụ: có, Authority ký, không còn ô CHƯA HỎI (chống suy diễn actor)
     flows = section("docs/INTERVIEW.md", "Luồng nghiệp vụ đã xác nhận")
     n_flow = len(re.findall(r"^\*\*Luồng:", flows, flags=re.M))
     unsigned = len(re.findall(r"chốt bởi Authority:\s*(\{\{|\s*$|—)", flows, flags=re.M))

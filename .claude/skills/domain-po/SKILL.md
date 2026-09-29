@@ -8,7 +8,7 @@ description: Phương pháp Product-Owner cho /document Bước 5 — viết FEA
 # Product-Owner Method (viết FEAT)
 
 ## Khi dùng
-Bước 5 (viết FEAT) của `/document` — vai **Product Owner**. Chia sản phẩm nhỏ theo capability, viết **THẲNG** vào **`docs/feat/`** theo `templates/TEMPLATE.feat.md` — AC BDD + field kỹ thuật chung một file. Fork 1 lớp doc: **KHÔNG** viết business VN rồi dịch, **KHÔNG** stage business riêng. **KHÔNG Epic/Journey** (khái niệm harness cũ — gom nhóm đã có frontmatter `capability`; hành trình UI đã có `docs/ux/SCREEN-MAP.md`).
+Bước 5 (viết FEAT) của `/document` — **viết yêu cầu TỪ phân tích BA đã ký** (bảng luồng + use case ở `domain-ba` A, ma trận PERSONAS §2). Không phải chỗ quyết *ai làm gì* — cái đó BA đã chốt với Authority ở Bước 3; đây là chỗ biến nó thành AC kiểm được. Chia sản phẩm nhỏ theo capability, viết **THẲNG** vào **`docs/feat/`** theo `templates/TEMPLATE.feat.md` — AC BDD + field kỹ thuật chung một file. Fork 1 lớp doc: **KHÔNG** viết business VN rồi dịch, **KHÔNG** stage business riêng. **KHÔNG Epic/Journey** (khái niệm harness cũ — gom nhóm đã có frontmatter `capability`; hành trình UI đã có `docs/ux/SCREEN-MAP.md`).
 
 ## Output
 | Đối tượng | Output |
@@ -28,7 +28,7 @@ Neo về nền dự án: `docs/PRD.md`, `docs/PERSONAS.md`, `docs/CAPABILITIES-M
 
 ## Cách viết AC BDD tốt (giá trị — giữ nguyên)
 - **Cho/Khi/Thì (Given/When/Then)** — mỗi AC 1 hành vi kiểm được, có kết quả quan sát được (không "hệ thống hoạt động đúng").
-- **Actor của AC = cột Ai LÀM trong bảng luồng đã ký** (`INTERVIEW §Luồng nghiệp vụ đã xác nhận`) — CẤM lấy từ cột Ai NHỜ/duyệt, CẤM suy từ "ai có nhu cầu". AC cần actor mà bảng không có dòng → quay Bước 1b hỏi Authority (còn DOCUMENT), không tự gán rồi ghi DECISIONS.
+- **Actor của AC = cột Ai LÀM trong bảng luồng đã ký** (`INTERVIEW §Luồng nghiệp vụ đã xác nhận`) — CẤM lấy từ cột Ai NHỜ/duyệt, CẤM suy từ "ai có nhu cầu". AC cần actor mà bảng không có dòng → quay `domain-ba` A hỏi Authority (còn DOCUMENT), không tự gán rồi ghi DECISIONS.
 - Phủ **4 loại nền tối thiểu**: happy path · validation (input sai) · error/failure · a11y (bàn phím/screen-reader/tương phản khi là UI).
 - **TAXONOMY CA BIÊN — quét MỖI FEAT qua TỪNG trục.** Trục nào FEAT chạm → **phải có AC**; không chạm → ghi `n/a`, **KHÔNG bỏ trắng** (bỏ trắng = điểm mù Author lọt thẳng tới code — đây là chỗ Author hay miss nhất):
   - **rỗng/đầy/biên**: 0 bản ghi · đúng 1 · rất nhiều (phân trang) · min/max/tràn độ dài

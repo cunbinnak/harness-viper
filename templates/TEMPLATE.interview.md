@@ -10,7 +10,7 @@
 ### Wave 1 — phỏng vấn nền
 - {{câu hỏi Authority}} → **Bằng chứng**: {{trả lời}}  · _(FEAT: {{FEAT-… hoặc — nếu là nền chung}})_
 
-### Luồng nghiệp vụ đã xác nhận  *(Bước 1b — 1 bảng/nghiệp vụ; Authority đọc từng dòng rồi ký)*
+### Luồng nghiệp vụ đã xác nhận  *(domain-ba mục A — 1 bảng/nghiệp vụ; Authority đọc từng dòng rồi ký)*
 <!-- Ai LÀM = người thao tác trong hệ thống → actor của AC + ô `có` trong ma trận PERSONAS §2.
      Ai NHỜ/duyệt = người nêu nhu cầu hoặc phê duyệt — KHÔNG phải actor, trừ khi họ có thao tác riêng (dòng riêng).
      Bằng chứng = số dòng §1. Không có → ghi `CHƯA HỎI` → đó là câu hỏi kế tiếp, không được đoán. -->
