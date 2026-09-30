@@ -101,12 +101,14 @@ def scope_locked() -> bool:
     return bool(re.search(r"- \[[xX]\].*Scope khoá", read("STATE.md")))
 
 
+def challenge_count(phase: str) -> int:
+    """Số dòng §Challenge log của phase này có kết quả PASS (1 dòng = 1 câu hỏi)."""
+    return sum(1 for cells in table_rows(section("STATE.md", "Challenge log"))
+               if len(cells) >= 4 and cells[1].upper().startswith(phase[:3]) and "PASS" in cells[3].upper())
+
+
 def challenge_pass(phase: str) -> bool:
-    """§Challenge log có ≥1 dòng phase này = PASS."""
-    for cells in table_rows(section("STATE.md", "Challenge log")):
-        if len(cells) >= 4 and cells[1].upper().startswith(phase[:3]) and "PASS" in cells[3].upper():
-            return True
-    return False
+    return challenge_count(phase) >= 1
 
 
 def git_commit_count() -> int:
@@ -294,11 +296,17 @@ def gate_document(r: Report) -> None:
     miss = missing_wave_mockups(first_wave)
     r.check(not miss, f"mockup màn UI in-scope wave {first_wave} đều có file"
             + (f" — THIẾU: {', '.join(miss)} (khai trong SCREEN-MAP nhưng chưa dựng .html)" if miss else ""))
-    r.check(challenge_pass("DOCUMENT"), "Challenge DOCUMENT PASS (§Challenge log)")
+    n_ch = challenge_count("DOCUMENT")
+    r.check(n_ch >= 3, f"Challenge DOCUMENT: {n_ch} câu PASS (cần ≥3, trong đó ≥1 journey-walk) — §Challenge log")
     dec_rows = [ln for ln in read_live("docs/DECISIONS.md").splitlines()
                 if ln.strip().startswith("| DEC-") and "{{" not in ln]
     r.check(len(dec_rows) >= 2, "≥2 dòng DECISIONS (đã điền, không placeholder)")
-    r.check(scope_locked(), "Scope khoá (STATE tick)")
+    sec = section("STATE.md", "DOCUMENT")
+    for item in re.findall(r"- \[ \] (.+)", sec):
+        if "Scope khoá" not in item:
+            r.check(False, f"[STATE chưa tick] {item[:70]}")
+    # Scope khoá là ô CUỐI: tick sau khi mọi mục trên xanh (document.md Bước cuối) → đỏ ở đây trước lúc đó là đúng
+    r.check(scope_locked(), "Scope khoá (STATE tick) — ô cuối, tick sau khi mọi mục trên xanh")
 
 
 def gate_build(r: Report) -> None:

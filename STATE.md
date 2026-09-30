@@ -30,20 +30,21 @@ URL production  : —
       · (INTERVIEW) `docs/INTERVIEW.md` đủ dòng bằng chứng — từ phỏng vấn Authority
       · (INTAKE) `intake/*.md` render thật + marker `NGUỒN: INTAKE` + bảng truy vết intake→FEAT
 - [ ] `docs/PRD.md`: vấn đề + đối tượng + out-of-scope + ≥1 success metric có số + **§6 Nguồn có ≥1 link research** (đã tra domain, không hỏi mù)
-- [ ] `docs/PERSONAS.md`: persona + ma trận vai×hành động (không ô trống)
+- [ ] `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`: bảng luồng + màn nháp mọi nghiệp vụ, Authority ký, không ô `CHƯA HỎI` (domain-ba A)
+- [ ] `docs/PERSONAS.md`: persona + ma trận vai×hành động (không ô trống) — sinh từ bảng luồng
 - [ ] `docs/CAPABILITIES-MAP.md`: capability→outcome→FEAT; mọi FEAT truy về 1 capability
 - [ ] `docs/feat/FEAT-*.md`: mỗi FEAT có AC (BDD, **gồm ca biên**) + field kỹ thuật (enforcement/consumes) điền
 - [ ] `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md`: frontmatter **`kind`/`stack`/`consumes`** + data model + luồng + API + §ranh-giới (**per target**)
-- [ ] `docs/TECHSTACK.md` chốt + 1 dòng lý do ở `docs/DECISIONS.md`
+- [ ] `docs/TECHSTACK.md` chốt qua lượt hỏi Author (Bước 7) — không lựa chọn nào Author quan tâm bị tự quyết
 - [ ] `docs/CONVENTIONS.md` + `docs/SECURITY.md` (**framework có sẵn**) — rà; chỉnh §API error-envelope/header nếu project khác default
 - [ ] Design system: có UI → `docs/DESIGN-SYSTEM.md` (token) + `docs/ux/SCREEN-MAP.md` (MỌI màn, cả dự án)
       khoá TRƯỚC · mockup **chỉ màn wave đang mở** (wave 1 lúc DOCUMENT; wave sau `/document` top-up), Authority
       chốt · backend-only → marker `KHÔNG CÓ UI`
 - [ ] `docs/ROADMAP.md`: chia wave; mỗi wave khai **target** + **phases chạy** (BUILD,VERIFY[,SHIP])
-- [ ] Challenge DOCUMENT **PASS** (≥3 câu khó, trả lời CHỈ bằng tài liệu) — §Challenge log
+- [ ] Challenge DOCUMENT **PASS** (≥3 câu khó, ≥1 journey-walk, trả lời CHỈ bằng tài liệu) — §Challenge log, 1 dòng/câu
 - [ ] ≥2 dòng `docs/DECISIONS.md`
-- [ ] **PRE-LOCK AUDIT PASS** (2 phần) — (1) **khớp**: trace 6 chiều (AC↔API · data model nuôi đủ field · consumes↔provider · luồng E2E) + UI↔AC 2 chiều, không tham chiếu treo (amendment đã CASCADE) · (2) **không thiếu**: `pre-mortem` quét taxonomy ca biên + đối chiếu ngoài, mọi nghi vấn đã xử (thêm AC / hỏi / DECISIONS). *LUÔN chạy tại lời chốt của Author (Bước cuối /document) — KỂ CẢ ô đang tick: tick là dấu ghi nhận, không phải vé skip. Sửa spec doc sau khi tick → `trace_docsync` TỰ BỎ TICK. KHÔNG tick chay*
-- [ ] **Scope khoá** — *tick CHỈ ngay sau khi PRE-LOCK audit của CHÍNH lời chốt này vừa chạy xong + sạch; mọi ô trên đều [x] CHƯA đủ điều kiện tick ô này* — từ đây không hỏi Authority nữa (trừ ngoại lệ "hỏi thật", xem PROTOCOL §3)
+- [ ] **PRE-LOCK AUDIT PASS** — cách chạy + điều kiện tick: `/document` Bước 10 (khối PRE-LOCK AUDIT). Sửa spec doc sau khi tick → `trace_docsync` tự bỏ tick.
+- [ ] **Scope khoá** — *tick CHỈ ngay sau khi PRE-LOCK audit của CHÍNH lời chốt này vừa chạy xong + sạch; mọi ô trên đều [x] CHƯA đủ điều kiện tick ô này* — từ đây không hỏi Authority nữa (trừ ngoại lệ "hỏi thật", xem PROTOCOL §2.2)
 
 ### BUILD (wave hiện tại) — rời phase khi:
 - [ ] Đã set `Phase hiện tại: BUILD` (việc ĐẦU TIÊN khi vào phase)

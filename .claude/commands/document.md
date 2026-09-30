@@ -105,7 +105,7 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 ## Bước cuối — Chốt + khoá scope
 1. **Trình Authority đọc** toàn bộ doc set → nhận xét → sửa (CASCADE, `trace_docsync` nhắc + rụng tick nếu có) → lặp tới khi Authority nói **"chốt scope" / "chốt tài liệu"**.
 2. **Lời chốt = ỦY QUYỀN, không phải bằng chứng** — nó KÍCH HOẠT lượt kiểm cuối, không nhảy cóc qua được:
-   · `python scripts/gate.py` (phase DOCUMENT) phải **xanh**.
+   · `python scripts/gate.py` (phase DOCUMENT) phải **xanh mọi mục TRỪ dòng `Scope khoá`** (ô đó tick cuối cùng, bước 4).
    · **CHẠY PRE-LOCK AUDIT NGAY LÚC NÀY — LUÔN LUÔN, kể cả ô đang tick** (tick không phải vé skip — có thể là tick chay đời trước, hoặc doc bị sửa ngoài tool mà hook không thấy). Trên ĐÚNG bản sẽ khoá (khối Bước 10: trace 6 chiều + UI↔AC + spawn `pre-mortem`). Độ sâu: lời chốt ĐẦU → đủ CẢ 2 phần; lời chốt lặp (đã audit đủ ở lời chốt trước, chỉ sửa theo nhận xét) → re-run có trọng tâm (khối Bước 10). Nghi vấn xử hết (thêm AC / hỏi Authority — vẫn DOCUMENT nên còn được hỏi / DECISIONS) → mới tick. KHÔNG tick chay.
 3. ≥2 dòng `docs/DECISIONS.md`.
 4. Rà TỪNG ô gate DOCUMENT — ô nào chưa tick thì **làm cho đạt rồi mới tick** (KHÔNG tick gộp cho đủ bộ) → cuối cùng tick `Scope khoá` trong `STATE.md`. **Từ đây không hỏi Authority nữa.**
