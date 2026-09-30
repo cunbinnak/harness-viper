@@ -17,8 +17,8 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend
 
 ## Workflow
 1. Lấy URL/endpoint thật của hệ đang chạy — **không đoán**.
-2. Đọc `docs/PERSONAS.md` (persona · ma trận quyền · gán vai↔persona) + luồng lõi/AC của wave + mockup đã chốt.
-3. **MAIN TỰ DÙNG TRƯỚC — bắt buộc, TRƯỚC khi spawn vai nào.** Đích thân mở trình duyệt *(skill `browse` — cách gọi tool `browser_*` + công thức + chứng minh đã dùng thật)*, đóng **persona chính**, vào **từ trang đầu** (không nhảy URL trong), đi hết luồng lõi đầu→cuối: kiểm **từng AC** làm được THẬT không · lệch **mockup** thấy rõ thì ghi (đo chi tiết là việc `picky`) · nút gửi có khoá, lỗi đúng khuôn. Ghi mọi thứ vướng kể cả nhỏ. **curl KHÔNG PHẢI dogfood** — dogfood đo trải nghiệm qua UI thật; curl chỉ hợp lệ khi target backend-only `KHÔNG CÓ UI`. Chưa có **bằng chứng bộ ba** của CHÍNH MAIN → **CẤM sang bước 4** (spawn vai không thay được việc MAIN tự dùng). → *"Eat your own shit" gốc ở đây: MAIN nếm TRƯỚC, rồi mới giao 6 lăng kính.*
+2. Đọc `docs/PERSONAS.md` (persona · ma trận quyền · gán vai↔persona) + luồng nghiệp vụ/AC của wave + mockup đã chốt.
+3. **MAIN TỰ DÙNG TRƯỚC — bắt buộc, TRƯỚC khi spawn vai nào.** Đích thân mở trình duyệt *(skill `browse` — cách gọi tool `browser_*` + công thức + chứng minh đã dùng thật)*, đóng **persona chính**, vào **từ trang đầu** (không nhảy URL trong), đi hết luồng nghiệp vụ đầu→cuối: kiểm **từng AC** làm được THẬT không · lệch **mockup** thấy rõ thì ghi (đo chi tiết là việc `picky`) · nút gửi có khoá, lỗi đúng khuôn. Ghi mọi thứ vướng kể cả nhỏ. **curl KHÔNG PHẢI dogfood** — dogfood đo trải nghiệm qua UI thật; curl chỉ hợp lệ khi target backend-only `KHÔNG CÓ UI`. Chưa có **bằng chứng bộ ba** của CHÍNH MAIN → **CẤM sang bước 4** (spawn vai không thay được việc MAIN tự dùng). → *"Eat your own shit" gốc ở đây: MAIN nếm TRƯỚC, rồi mới giao 6 lăng kính.*
 4. **Đợt 1 (DB SẠCH)** — 2 nhịp: **`edge` chạy MỘT MÌNH trước** (trạng thái rỗng là tài nguyên dùng-một-lần — `newbie` đi luồng chính là TẠO bản ghi, chạy song song thì bản ghi đầu tiên giết mọi màn rỗng edge đang soi) → edge trả xong mới spawn `newbie` + `picky` song song (newbie ghi không hại picky — picky soi visual, gần như read-only).
    > **DB SẠCH là TIỀN ĐỀ — MAIN tự dựng, KHÔNG hỏi**: DB đang mang rác (test-writer vừa chạy / lần dogfood trước) → reset TRƯỚC đợt 1 **chỉ ở tầng schema, KHÔNG xoá volume**: `docker compose -f deployment/local/docker-compose.yml exec -T <db-service> psql -U <user> -d <db> -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"` → restart backend (migration chạy lại) → seed **tối thiểu** (tài khoản đăng nhập/roles — KHÔNG seed data nghiệp vụ, `edge` cần thấy rỗng thật). **KHÔNG dùng `docker compose down -v`/`--volumes`**: lệnh đó nằm trong rule `ask` của `settings.json` (canh teardown thật ở `/next-wave`), gọi là bị đòi quyền giữa dogfood; drop schema không chạm rule nào, nhanh hơn, giữ nguyên MinIO/mail/image. DB local dựng lại được = **không phải hành động không-đảo-ngược** → không hỏi.
 5. Đợi **đủ 3 vai** trả kết quả → **seed lại** `deployment/local/`.
@@ -37,7 +37,7 @@ Ràng buộc **CỨNG**: ≤ **3 vai/đợt** · **không mở đợt 2 khi đ�
 |---|---|---|
 | 1 | URL/endpoint thật | vai không thử được |
 | 2 | **Persona được giao** (chân dung + năng lực + luồng) | thử như "người dùng nói chung" |
-| 3 | Luồng lõi + AC của wave | không biết đúng/sai theo gì |
+| 3 | Luồng nghiệp vụ của wave (các bước trong `INTERVIEW §Luồng nghiệp vụ đã xác nhận` thuộc wave) + AC | không biết đúng/sai theo gì |
 | 4 | `breaker`: ma trận đầy đủ + tài khoản từng vai | không có danh sách phép thử |
 | 5 | `picky`: wave đang verify (nó tự lấy mọi row SCREEN-MAP của wave) + URL app | không có gì đối chiếu |
 
@@ -63,7 +63,7 @@ Thiếu vế đầu = suy từ code chứ chưa chạy. Vế cuối không dẫn
 ```
 Đã dùng thử ở <local|prod>, MAIN đóng <persona chính> + 6 vai × 2 đợt
 
-Luồng lõi:     đi hết được / gãy ở bước <n>
+Luồng nghiệp vụ:     đi hết được / gãy ở bước <n>
 AC:            <x>/<y> làm được thật
 Phân quyền:    <x>/<y> ô ✗ ma trận đã thử, chặn đúng hết / thủng ở <đâu>
 Mockup:        khớp bản đã chốt / lệch ở <màn> (n/a nếu KHÔNG CÓ UI)

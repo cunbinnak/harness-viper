@@ -19,11 +19,11 @@ description: SHIP — (opt-in theo wave) prod-ready → deploy production → sm
 **Xác nhận Authority** (deploy = ra ngoài, không đảo ngược) → `make deploy` → production sống → health 200.
 
 ## Bước 4 — Smoke + rollback
-- Smoke test luồng lõi trên **production THẬT** (không phải staging/local).
+- Smoke test luồng nghiệp vụ trên **production THẬT** (không phải staging/local).
 - **Thử rollback MỘT lần** (`make doctor` + đường rollback ở deploy doc) — chưa thử = chưa chắc rollback được.
 
 ## Bước 5 — Dogfood lần 2 (trên production)
-Chạy lại luồng lõi trên production (MAIN tự dùng + persona nếu cần). Phát hiện → `STATE §Findings` → sửa hoặc backlog.
+Chạy lại luồng nghiệp vụ trên production (MAIN tự dùng + persona nếu cần). Phát hiện → `STATE §Findings` → sửa hoặc backlog.
 
 ## Bước cuối — Chốt
 `python scripts/gate.py` (SHIP) xanh → tick gate SHIP trong `STATE.md` → gợi ý `/next-wave`.

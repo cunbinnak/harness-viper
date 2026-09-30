@@ -17,8 +17,9 @@ provides_api: true               # có phơi API cho consumer? → §3 là HỢP
 ## §1 Data model
 {{entity + quan hệ}}
 
-<!-- §2: luồng lõi — các bước xử lý chính (request → ghi/đọc → response). -->
-## §2 Luồng lõi
+<!-- §2: luồng xử lý KỸ THUẬT — request → ghi/đọc → response (happy + lỗi chính). Mỗi luồng ghi 1 dòng
+     `Phục vụ: <luồng nghiệp vụ> bước N` (INTERVIEW §Luồng nghiệp vụ). KHÁC luồng nghiệp vụ: cái đó do BA viết, Author ký. -->
+## §2 Luồng xử lý (kỹ thuật)
 {{luồng}}
 
 <!-- §3: API = CONTRACT consumer đọc. Theo docs/CONVENTIONS.md §API (error envelope · status · header X-Tenant-ID · versioning). -->

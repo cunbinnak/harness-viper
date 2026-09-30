@@ -1,5 +1,5 @@
 ---
-description: "BUILD — MAIN tự code 1 wave: đọc KG/context → challenge → scaffold → walking skeleton → luồng lõi → chạy thật"
+description: "BUILD — MAIN tự code 1 wave: đọc KG/context → challenge → scaffold → walking skeleton → luồng nghiệp vụ → chạy thật"
 ---
 # /build [<wave>] — Phase BUILD
 
@@ -38,7 +38,7 @@ Trả lời thẳng, tự chấm PASS/FAIL trung thực. **FAIL** (đoán / phá
 trả lời lại. **KHÔNG được code** khi chưa PASS. **PASS** → ghi `STATE.md §Challenge log` → đi tiếp.
 > 1 câu/mảng việc lớn ở mức BUILD (confirm hiểu trước khi code). Việc soi lỗ tài liệu **3–5 câu** đã làm ở DOCUMENT.
 
-> **Wave nhiều target — Bước 3-6 là VÒNG LẶP theo target, KHÔNG phải 1 lượt:** lặp scaffold→skeleton→luồng lõi→chạy thật cho **MỖI target ROADMAP §1 cột Target khai**, theo thứ tự **provider→consumer** (Bước 4). BUILD **chưa xong** khi còn 1 target chưa chạy thật — làm BE xong nhảy VERIFY để quên FE là lỗi gate (đối chiếu ROADMAP↔proof). Nhớ đủ target: reanchor nhồi lại "Target còn nợ" sau mỗi compact.
+> **Wave nhiều target — Bước 3-6 là VÒNG LẶP theo target, KHÔNG phải 1 lượt:** lặp scaffold→skeleton→luồng nghiệp vụ→chạy thật cho **MỖI target ROADMAP §1 cột Target khai**, theo thứ tự **provider→consumer** (Bước 4). BUILD **chưa xong** khi còn 1 target chưa chạy thật — làm BE xong nhảy VERIFY để quên FE là lỗi gate (đối chiếu ROADMAP↔proof). Nhớ đủ target: reanchor nhồi lại "Target còn nợ" sau mỗi compact.
 
 ## Bước 3 — Scaffold
 **Bốn nguồn ràng buộc — theo ĐÚNG, KHÔNG tự chế / KHÔNG lệch** (đây là chỗ hay đi lệch nhất):
@@ -65,10 +65,10 @@ Bản mỏng nhất **CHẠY được**, theo `kind`:
 
 → `git commit`. Chưa thông đường mỏng này thì **KHÔNG** làm gì khác — đừng đắp UI đẹp lên đường chưa thông.
 **Wave nhiều target — THỨ TỰ theo chiều phụ thuộc, KHÔNG song song:** **provider TRƯỚC, consumer SAU.**
-Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được** (health 200 + gọi được) TRƯỚC → rồi web/bff/mobile mới build **gọi API thật đó** (FE consume `consumes_contracts`). Skeleton = **1 đường xuyên suốt qua cụm ĐÚNG chiều phụ thuộc** (backend luồng lõi → frontend luồng lõi), nhánh còn lại nối sau.
+Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được** (health 200 + gọi được) TRƯỚC → rồi web/bff/mobile mới build **gọi API thật đó** (FE consume `consumes_contracts`). Skeleton = **1 đường xuyên suốt qua cụm ĐÚNG chiều phụ thuộc** (backend luồng nghiệp vụ → frontend luồng nghiệp vụ), nhánh còn lại nối sau.
 **CẤM code BE và FE "song song mỗi cái một nửa"** · **CẤM mock API để FE chạy trước** khi backend chưa có endpoint thật — FE dựng trên contract chưa chạy = đường CHƯA THÔNG, đắp thịt lên đó là retro. Provider chưa thông thì consumer chưa được bắt đầu.
 
-## Bước 5 — Luồng lõi (mỗi AC in-scope)
+## Bước 5 — Luồng nghiệp vụ (mỗi AC in-scope)
 `làm → tự bấm thử ở local → tick ROADMAP → commit`. Trong lúc làm:
 - **UI = HỢP ĐỒNG HÌNH ẢNH** (mockup Authority đã chốt — code FE không hook nào canh, tự kỷ luật ở đây, backstop là `picky` ở VERIFY):
   - TRƯỚC khi code màn nào → **Read mockup màn đó** (ô Mockup SCREEN-MAP: `<module>.html#<Mã màn>`), nắm khối component (stat-card/toolbar/status-pill/cell-person...) — app phải dùng ĐÚNG khối đó, không thay bằng bảng/tag trần

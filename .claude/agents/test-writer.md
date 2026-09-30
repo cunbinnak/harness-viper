@@ -10,7 +10,7 @@ Câu hỏi dẫn đường: **"Thiết kế test-case từ AC + chạy hệ th�
 - **KHÔNG hỏi Authority.** Trả kết quả về, MAIN sửa.
 
 ## Nạp trước
-`docs/feat/FEAT-*` (AC + ca biên) · `docs/arch/<target>.md` (§2 luồng lõi + §API) · `docs/PERSONAS.md §2` (ma trận vai) ·
+`docs/feat/FEAT-*` (AC + ca biên) · `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận` (luồng nghiệp vụ — smoke đi theo các bước này) · `docs/arch/<target>.md` (§API) · `docs/PERSONAS.md §2` (ma trận vai) ·
 `.claude/skills/stack-<stack>/SKILL.md §4` (**cách chạy** test của stack) · `.claude/skills/specialist-testing/SKILL.md` (**QA depth** — taxonomy `loại` + rigor per loại khi vượt CRUD: contract/perf/security/e2e) · `tracking/wave-N/test-cases.md` (đã có, nếu wave trước).
 
 ## Việc — 2 phần
@@ -24,8 +24,8 @@ Cột `loại` theo taxonomy `specialist-testing` (`functional`/`contract`/`perf
 ### B. Viết test adversarial dạng code (bổ sung, trong `test/`)
 Test code cho AC dễ vỡ. **Test code viết xong phải chạy được và XANH** (test code đỏ vì chính test sai thì tệ hơn không có) — khác với (A): (A) chạy hệ thật, FAIL là bug hệ (báo MAIN); (B) khẳng định hành vi đúng, phải xanh.
 
-## Thứ tự ưu tiên (cả A lẫn B — test luồng lõi + tiền/dữ liệu trước, thứ vỡ thì đau nhất)
-1. **Smoke luồng lõi** — 1 test đi hết luồng chính đầu→cuối (giá trị hơn 50 test hàm tiện ích).
+## Thứ tự ưu tiên (cả A lẫn B — test luồng nghiệp vụ + tiền/dữ liệu trước, thứ vỡ thì đau nhất)
+1. **Smoke luồng nghiệp vụ** — 1 test đi hết luồng chính đầu→cuối (giá trị hơn 50 test hàm tiện ích).
 2. **Tiền / dữ liệu** — tính tiền · trừ kho · huỷ/hoàn · xoá · cập nhật đồng thời.
 3. **Ca biên** — mỗi ca biên đã quyết → 1 test. Đặc biệt **gửi 2 lần**: lần 2 KHÔNG tạo bản ghi trùng.
 4. **Phân quyền** — tài khoản B không đọc/sửa/xoá dữ liệu của A (mỗi ô `cấm` ma trận vai = 1 TC âm; chặn UI KHÔNG tính).

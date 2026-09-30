@@ -69,7 +69,7 @@ Ghi vào `docs/DESIGN-SYSTEM.md §3` (kho component — dev implement + reviewer
    - Tham khảo cùng lúc: UX pattern cho loại sản phẩm (form/table/dashboard), WCAG 2.1 AA, design system doanh nghiệp (Ant/Material/Atlassian), mobile-first.
    - Vì sao bắt buộc: không có mẫu thật thì giao diện ra theo gu của agent, và người vận hành phải tự đi tìm mẫu rồi bắt làm lại. Ô neo §1 phải có ít nhất một URL.
 2. **SCREEN-MAP trước** (mục lục màn): **xuất phát từ màn nháp của BA** (`INTERVIEW §Luồng nghiệp vụ đã xác nhận`) + FEAT `has_ui` → hoàn thiện danh sách MÀN (thêm màn con tab/modal/form cho từng AC) → gán target theo luật (hint → persona → hỏi) → ghi bảng SCREEN-MAP.md. Đây là kế hoạch thiết kế — user thấy được toàn cảnh màn nào thuộc đâu trước khi vẽ.
-3. **Thiết kế TỪNG MÀN** (đơn vị công việc — đi theo SCREEN-MAP, ưu tiên màn trong luồng lõi của wave):
+3. **Thiết kế TỪNG MÀN** (đơn vị công việc — đi theo SCREEN-MAP, ưu tiên màn trong luồng nghiệp vụ của wave):
    - Đọc đúng tài liệu của màn: FEAT:AC trong row + `docs/arch/{name}.md §3 API` mà flow gọi + dòng bảng luồng liên quan.
    - **Mockup HTML** (`docs/ux/mockups/{name}/{module}.html`, mỗi màn 1 section): THIẾT KẾ giao diện hoàn chỉnh — app shell + nội dung screen thật, compose từ token ở `docs/DESIGN-SYSTEM.md §2`. Mockup là SoT về look — làm "đẹp" ở ĐÂY theo §Visual polish, không tả suông, không skeleton chờ điền.
    - **Component states đầy đủ**: default / hover / disabled / loading / error / empty — state chính render trong mockup, behavior ghi ở cột Ghi chú SCREEN-MAP.
@@ -140,7 +140,7 @@ Dừng thêm một lần giữa bước UX là hỏi cùng một câu hai lần 
 Việc của chốt này là **để lại thứ đáng xem**:
 
 1. Ghi vào `SCREEN-MAP.md` §Chốt: danh sách đường dẫn mockup + **mở thẳng bằng trình duyệt**
-   (`file://`, không cần server) + màn nên xem trước (màn đầu của luồng lõi) + đi thử theo
+   (`file://`, không cần server) + màn nên xem trước (màn đầu của luồng nghiệp vụ) + đi thử theo
    persona nào.
 2. Mỗi màn phải bấm được và thấy đủ ba khuôn (rỗng · lỗi · đang tải) — không có thì không có gì
    để user đánh giá, và họ sẽ chốt một thứ chưa tồn tại.

@@ -37,7 +37,7 @@ Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/
 | Phase | Làm gì | Ai | Hỏi Authority? | Gate rời phase (chuẩn ở STATE.md §Gate) |
 |---|---|---|---|---|
 | **DOCUMENT** | interview\|intake → PRD·PERSONAS·CAPABILITIES·FEAT·ARCHITECTURE·DESIGN-SYSTEM·ux → chia wave → **khoá scope** | MAIN viết | CÓ — chỗ duy nhất | doc set đủ mục · challenge PASS · ≥2 decisions · scope khoá |
-| **BUILD** | challenge → đọc KG → scaffold → walking skeleton → luồng lõi → **chạy thật (docker up)** | **MAIN tự code** | KHÔNG — tự quyết → DECISIONS.md | skeleton thông · make check xanh · đã commit · health 200 |
+| **BUILD** | challenge → đọc KG → scaffold → walking skeleton → luồng nghiệp vụ → **chạy thật (docker up)** | **MAIN tự code** | KHÔNG — tự quyết → DECISIONS.md | skeleton thông · make check xanh · đã commit · health 200 |
 | **VERIFY** | 3 bước: **code review** (2 vai) + **`test-writer` thiết kế/chạy black-box test-case** + **dogfood** (6 persona 2 đợt) | MAIN + reviewer/bug-hunter/test-writer + 6 persona | KHÔNG | make test xanh · test-cases PASS · dogfood xong · hết finding BLOCKER/MAJOR |
 | **SHIP** | prod-ready → deploy → smoke → rollback thử → dogfood prod | MAIN | KHÔNG (deploy = ngoại lệ "hỏi thật") | chỉ chạy khi wave khai SHIP; prod sống · rollback thử |
 | **NEXT-WAVE** | go/pivot/kill → snapshot archive → mở wave kế (không reset) | MAIN | (go/pivot/kill) | backlog gộp · snapshot · wave kế mở hoặc teardown |
@@ -82,7 +82,7 @@ chỉ để đúng sự thật *trong scope đã khoá*, KHÔNG thêm scope. Khi
 │  kỹ thuật của AC đang làm)                 → sửa DOC cùng commit (doc wave đang mở CHƯA đóng băng)
 ├─ THIẾU HẲN luồng / scope MỚI (ngoài AC khoá) → docs/ROADMAP.md §backlog (thiếu gì · đụng FEAT nào ·
 │                                              wave phát hiện) → KHÔNG build → wave sau top-up
-└─ Luồng thiếu CHẶN CỨNG luồng lõi wave này   → STATE.md §Blocker, báo cuối buổi; buộc phải có →
+└─ Luồng thiếu CHẶN CỨNG luồng nghiệp vụ wave này   → STATE.md §Blocker, báo cuối buổi; buộc phải có →
                                                back-edge DOCUMENT top-up cho wave này (hiếm — DOCUMENT hụt)
 ```
 
@@ -98,12 +98,12 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 | File | Vai trò |
 |---|---|
 | `docs/PRD.md` | vấn đề · đối tượng · out-of-scope · success metric |
-| `docs/INTERVIEW.md` | bằng chứng phỏng vấn (+ marker `NGUỒN: INTAKE` nếu đường intake) |
+| `docs/INTERVIEW.md` | bằng chứng phỏng vấn (+ marker `NGUỒN: INTAKE` nếu đường intake) + **§Luồng nghiệp vụ đã xác nhận = "luồng nghiệp vụ"**: từng bước ai làm gì, bằng lời nghiệp vụ, Author ký. Mọi chỗ nói "luồng nghiệp vụ" (build · verify · dogfood · test-writer) trỏ về đây, lọc theo wave qua màn/AC |
 | `docs/PERSONAS.md` | persona + ma trận vai×hành động (nguồn phân quyền + TC âm) |
 | `docs/CAPABILITIES-MAP.md` | capability→outcome→FEAT (truy vết) |
 | `docs/TECHSTACK.md` | stack chốt + biến môi trường |
 | `docs/feat/FEAT-*.md` | AC (BDD, gồm ca biên hành vi + hệ thống) + field kỹ thuật CHUNG file (bỏ translate) |
-| `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md` | **per target**: frontmatter `kind`(backend/web/bff/mobile)·`stack`·`consumes` + data model · luồng · API · §ranh-giới (fold hld/api/data/events/integ). BUILD nạp đúng slice |
+| `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md` | **per target**: frontmatter `kind`(backend/web/bff/mobile)·`stack`·`consumes` + data model · luồng xử lý (kỹ thuật) · API · §ranh-giới (fold hld/api/data/events/integ). BUILD nạp đúng slice |
 | `docs/CONVENTIONS.md` **(framework)** | quy ước chung + §API error-envelope/header **default** (project chỉnh nếu khác) — KHÔNG author lại |
 | `docs/SECURITY.md` **(framework)** | baseline bảo mật — tick ở PRODUCTION-READY khi SHIP |
 | `docs/DESIGN-SYSTEM.md` + `docs/ux/` | token (khoá trước, cả dự án) + SCREEN-MAP (mọi màn) + mockups HTML **dựng theo wave** (màn wave đang mở; wave sau `/document` top-up) |

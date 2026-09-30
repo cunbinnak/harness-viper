@@ -16,7 +16,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) +
 2. **Boundary decomposition** — chốt các **target**: mỗi target + **kind** (`backend`/`bff`/`web`/`mobile`) + **stack đề xuất** (chốt ở Bước 7; version lấy từ description skill `stack-<tên>`, không từ trí nhớ). Ghi nhận **tech situational per-target** (phát/nhận event, dùng cache/lock, external đặc thù) — input cho bước chia wave gắn `ref_skills`.
 3. **`docs/arch/OVERVIEW.md`** — bức tranh tổng: danh sách target + kind/stack + quan hệ (ai gọi ai, depends_on), luồng E2E chính, cross-cutting chung.
 4. **Per target** — `docs/arch/{name}.md` (frontmatter `kind`/`stack`/`consumes` — theo `templates/TEMPLATE.arch.md`), điền chi tiết vào file `boundary-charter` đã khởi tạo (§0 Mission có rồi — KHÔNG viết lại):
-   - **§2 Luồng lõi** — key flows (happy + critical error) · consistency & transaction *(nếu multi-write/event)* · failure & resilience *(nếu outbound)*.
+   - **§2 Luồng xử lý (kỹ thuật)** — mỗi bước thao tác trên hệ thống của luồng nghiệp vụ (`INTERVIEW §Luồng nghiệp vụ đã xác nhận`) mở ra ≥1 luồng xử lý: request → ghi/đọc → response (happy + critical error), ghi `Phục vụ: <luồng> bước N`; bước nghiệp vụ không có luồng xử lý = thiếu thiết kế, luồng xử lý không phục vụ bước nào = thừa · consistency & transaction *(nếu multi-write/event)* · failure & resilience *(nếu outbound)*.
    - **§4 Kiến trúc + ranh giới** — **CHỐT kiến trúc target (Layered/Hexagonal) + layer/package** (layout → `ref-{kind}-pattern`) · auth & permission enforce ở tầng nào.
    - **§API (contract)** — REST/OpenAPI 3.1 / GraphQL + **Domain error code catalog** (→ `{Domain}ErrorEnum`; map mỗi business-rule / invalid-state transition → 1 code). Common error envelope + generic codes (400/401/403/404/409/429/500) **GIỐNG NHAU mọi target** (chuẩn chung); per-endpoint Errors chỉ **ref** code trong catalog. `kind=bff` aggregation ≥2 backend → thêm §BFF-aggregation (DataLoader/N+1, timeout cascade, graceful degrade, circuit breaker, caching, resolver).
    - **§1 Data-model** (backend) — ownership · entities + **mục đích từng bảng** · schema (**no FK** — liên kết qua id, app-layer) · state machine (entity có status) · migration approach.
@@ -44,7 +44,7 @@ Mỗi concern ghi rõ ở ADR / `arch/{name}.md` (§2/§4) / §API (không để
 1. **Research — MẶC ĐỊNH LÀM TRƯỚC** (target/domain chưa biết đi thế nào → research trước, đừng thiết kế từ giấy trắng thứ đã có lời giải chuẩn): pattern từ production system (CQRS / Saga / Outbox / Event-Sourcing), API convention ngành, data consistency ở scale, service decomposition. Domain quá quen mới bỏ qua (ghi lý do). KHÔNG bịa nguồn.
 2. Đọc FEAT → chốt danh sách target + kind + quan hệ (depends_on, ai gọi ai) → `docs/arch/OVERVIEW.md`.
 3. ADR nền trước (stack, kiến trúc backend, auth, event) → design sau tuân ADR.
-4. Per target (theo thứ tự § của `TEMPLATE.arch.md`): §1 Data-model (backend) → §2 Luồng lõi → §3 API (contract + error) → §4 Kiến trúc/ranh giới → §5 Events → §6 Ca biên (TRA), tất cả trong `docs/arch/{name}.md` (§0 Mission: boundary-charter đã khởi tạo). (FE target: §2/§4 ở đây; UX = bước riêng sau khi §API sẵn.)
+4. Per target (theo thứ tự § của `TEMPLATE.arch.md`): §1 Data-model (backend) → §2 Luồng xử lý → §3 API (contract + error) → §4 Kiến trúc/ranh giới → §5 Events → §6 Ca biên (TRA), tất cả trong `docs/arch/{name}.md` (§0 Mission: boundary-charter đã khởi tạo). (FE target: §2/§4 ở đây; UX = bước riêng sau khi §API sẵn.)
 5. Integrations: cross-target + external.
 6. docker-compose skeleton.
 

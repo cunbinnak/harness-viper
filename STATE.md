@@ -53,7 +53,7 @@ URL production  : —
 - [ ] **Scaffold đúng ràng buộc**: `docs/TECHSTACK.md` version + `docs/adr/*` + skill `stack-<tên>`/`ref-<kind>-pattern` — cấu trúc/layer/error-shape khớp · KHÔNG tự chế cấu trúc · KHÔNG lệch version / thêm dep ngoài danh sách
 - [ ] `make dev` · `make check` · `make migrate` có thân
 - [ ] Walking skeleton: app+db lên · health 200 · 1 thao tác ghi→đọc DB được (dù xấu)
-- [ ] Luồng lõi end-to-end bấm được ở local (theo AC in-scope wave)
+- [ ] Luồng nghiệp vụ end-to-end bấm được ở local (theo AC in-scope wave)
 - [ ] `make check` xanh + health 2xx → **`python scripts/capture_proof.py`** sinh `proof.json` (gate đọc, MÁY-verify không tin tick)
 - [ ] **Đã commit code** (ngoài commit khởi tạo) — build/test pass mà không commit = coi như CHƯA làm
 - [ ] Chạy thật: `docker up`, health 200 (để VERIFY có hệ mà đánh)

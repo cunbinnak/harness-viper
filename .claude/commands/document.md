@@ -40,7 +40,7 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 Vấn đề (pain) + đối tượng cụ thể + **out-of-scope tường minh** + ≥1 success metric **có số**.
 
 ## Bước 3 — Phân tích BA: bảng luồng → business-rule → PERSONAS  → **Nạp `Skill("domain-ba")` trước**
-**Trình tự PO → BA → yêu cầu**: khám phá (Bước 1-2) là việc PO; Bước 3 là BA **phân tích quy trình TRƯỚC khi ai viết AC** — (A) dựng bảng luồng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`, ô `CHƯA HỎI` → hỏi Authority ngay (cả 2 đường vào), **Authority ký bảng** → (B) business-rule → (C) persona + ma trận sinh TỪ bảng. Từ đây actor của AC (Bước 5), ô ma trận, hành trình `arch/<web>.md §2` **chỉ lấy từ bảng** — chống suy diễn \"người có nhu cầu = người thao tác\".
+**Trình tự PO → BA → yêu cầu**: khám phá (Bước 1-2) là việc PO; Bước 3 là BA **phân tích quy trình TRƯỚC khi ai viết AC** — (A) dựng bảng luồng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`, ô `CHƯA HỎI` → hỏi Authority ngay (cả 2 đường vào), **Authority ký bảng** → (B) business-rule → (C) persona + ma trận sinh TỪ bảng. Từ đây actor của AC (Bước 5), ô ma trận, luồng nghiệp vụ mà build/verify/dogfood đi theo **chỉ lấy từ bảng** — chống suy diễn \"người có nhu cầu = người thao tác\".
 Persona + năng lực được cấp + **ma trận vai × hành động** — mỗi ô `có`/`cấm`, **KHÔNG ô trống**
 (đây là spec phân quyền khi code + nguồn TC âm khi test + danh sách phép thử của vai `breaker` ở dogfood).
 

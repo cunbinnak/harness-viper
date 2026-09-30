@@ -19,7 +19,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE          (SHIP opt-in th
 | Lệnh | Việc |
 |---|---|
 | `/document` | phỏng vấn\|intake → doc set (PRD/PERSONAS/CAPABILITIES/FEAT/arch/UX) → **chia wave** → khoá scope |
-| `/build [<wave>]` | MAIN code 1 wave: đọc KG → challenge → scaffold → walking skeleton → luồng lõi → chạy thật |
+| `/build [<wave>]` | MAIN code 1 wave: đọc KG → challenge → scaffold → walking skeleton → luồng nghiệp vụ → chạy thật |
 | `/verify` | review 2 vai + `test-writer` thiết kế/chạy test-cases + dogfood 6 persona → MAIN sửa tới sạch |
 | `/ship` | *(chỉ khi wave khai SHIP)* prod-ready → deploy → smoke → thử rollback |
 | `/next-wave` | đóng wave (snapshot, KHÔNG reset) → rà lại + mở wave kế |
