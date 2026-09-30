@@ -3,8 +3,6 @@ name: capability-mapping
 description: Phương pháp map capability cho /document — ĐỌC persona (domain-ba đã viết) rồi map capability-map (persona × capability → outcome → candidate domain → wave giao). Capability TRƯỚC feature. KHÔNG tự viết persona/ma trận.
 ---
 
-> Phương pháp cho /document (fork gộp discovery vào DOCUMENT). Không phải stage riêng.
-
 # Capability Mapping Skill
 
 ## Khi load
@@ -12,15 +10,7 @@ Phương pháp **map capability** cho `/document`. Map **personas → capabiliti
 
 Input: `docs/PRD.md` (vision/problem/hypotheses) + `docs/PERSONAS.md` (persona + ma trận vai × hành động — **read-only**, để map capability về persona).
 
-## Hai chế độ hỏi (như khi khai thác ý tưởng — không đổi)
-
-| Loại mục | Cách hỏi |
-|---|---|
-| **Khám phá** — persona này làm được gì, capability nào còn thiếu, vì sao | **Hội thoại MỞ**. KHÔNG dùng AskUserQuestion — option mớm lời |
-| **Quyết định** — gom capability nào vào domain nào, ưu tiên MVP hay Phase 2 | `AskUserQuestion` + đánh đổi cụ thể |
-
-**Không giới hạn số câu.** Bốn luật đào sâu áp nguyên: hỏi quá khứ cụ thể · mỗi capability phải
-dẫn được về persona thật (đã có trong PERSONAS) · "thường/nhiều" quy ra số · đào theo mạch.
+Cách hỏi: như `discovery-hypothesis` (khám phá = hội thoại mở, KHÔNG AskUserQuestion · quyết định = AskUserQuestion + đánh đổi).
 
 Lỗ hổng → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → làm · chuẩn ngành → research, ghi `[C]` + link · chỉ Author biết → hỏi, đừng treo.
 
@@ -41,7 +31,7 @@ Lỗ hổng → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → 
 
 ## Capability-map là bảng SỐNG, không chết sau khi map
 
-Cột `Wave giao` để `_PLAN_` lúc map (chưa chốt được khi chưa chia wave), điền khi chia wave — cắt lát được
+Cột `Wave giao` để trống lúc map (chưa chốt được khi chưa chia wave), điền khi chia wave — cắt lát được
 (`1 (scaffold), 3 (đầy đủ)`). Cột `Trạng thái` cập nhật ở `/next-wave`. Nhờ hai cột này trả lời được
 "còn bao nhiêu năng lực chưa giao" từ MỘT file, không phải đọc lại mọi wave.
 

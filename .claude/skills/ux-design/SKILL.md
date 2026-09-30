@@ -35,7 +35,7 @@ User đưa template cụ thể → **dùng đúng cái đó**. Không tìm đư�
 - **Shared design tokens:** `docs/DESIGN-SYSTEM.md §2` là SoT token dùng chung MỌI web target (`--color-*`/`--font-*`/`--space-*`/`--radius-*` + dark/hc theme). Mockup tham chiếu token NÀY (không bịa palette per-target). Web FE consume qua `var(--...)`; mobile map `ThemeData`/`ColorScheme`. Hook `guard_ds` ép plain-CSS phải dùng `var(--...)`.
 
 ## Chuẩn chuyên nghiệp + ANTI-PATTERNS (bắt buộc — mockup xấu = fail review)
-**BƯỚC 0 — neo phong cách qua ARCHETYPE màn** (áp cho MỌI đề bài): 1 Dashboard · 2 Bảng danh sách · 3 Form · 4 Trang chi tiết · 5 Timeline/lịch tài nguyên · 6 Feedback states. Mỗi màn sắp vẽ: xác định thuộc archetype nào (hoặc ghép archetype nào) → đối chiếu về bố cục/mật độ/màu/states — đó là mức chất lượng TỐI THIỂU. **Research tham chiếu là OPTIONAL** (không có file mẫu bắt buộc mở): khi cần neo cụ thể hơn, tìm 2-3 sản phẩm tham chiếu THẬT qua WebSearch/trình duyệt (xem §Phương pháp bước 1) và ghi vào `docs/DESIGN-SYSTEM.md §1`. KHÔNG copy nội dung — chỉ neo phong cách. Vẽ xong tự so với archetype: thua chuẩn = làm lại trước khi trình user.
+**BƯỚC 0 — neo phong cách qua ARCHETYPE màn** (áp cho MỌI đề bài): 1 Dashboard · 2 Bảng danh sách · 3 Form · 4 Trang chi tiết · 5 Timeline/lịch tài nguyên · 6 Feedback states. Mỗi màn sắp vẽ: xác định thuộc archetype nào (hoặc ghép archetype nào) → đối chiếu về bố cục/mật độ/màu/states — đó là mức chất lượng TỐI THIỂU. **Research tham chiếu BẮT BUỘC** (quy định ở §Phương pháp bước 1): tìm 2-3 sản phẩm tham chiếu THẬT qua WebSearch/trình duyệt (xem §Phương pháp bước 1) và ghi vào `docs/DESIGN-SYSTEM.md §1`. KHÔNG copy nội dung — chỉ neo phong cách. Vẽ xong tự so với archetype: thua chuẩn = làm lại trước khi trình user.
 
 **LUẬT MÀU — neutral-first (lỗi hay phạm nhất):**
 - NỀN luôn trung tính (`--color-surface`/`--color-surface-alt`). **CẤM sơn màu semantic (xanh lá/đỏ/vàng) lên mảng lớn** — màu chỉ để NHẤN (block/badge/button/status), chiếm ~10% màn hình.
@@ -72,7 +72,7 @@ Ghi vào `docs/DESIGN-SYSTEM.md §3` (kho component — dev implement + reviewer
 3. **Thiết kế TỪNG MÀN** (đơn vị công việc — đi theo SCREEN-MAP, ưu tiên màn trong luồng lõi của wave):
    - Đọc đúng tài liệu của màn: FEAT:AC trong row + `docs/arch/{name}.md §3 API` mà flow gọi + dòng bảng luồng liên quan.
    - **Mockup HTML** (`docs/ux/mockups/{name}/{module}.html`, mỗi màn 1 section): THIẾT KẾ giao diện hoàn chỉnh — app shell + nội dung screen thật, compose từ token ở `docs/DESIGN-SYSTEM.md §2`. Mockup là SoT về look — làm "đẹp" ở ĐÂY theo §Visual polish, không tả suông, không skeleton chờ điền.
-   - **Component states đầy đủ**: default / hover / disabled / loading / error / empty — state chính render trong mockup, bảng behavior ở ux-*.md.
+   - **Component states đầy đủ**: default / hover / disabled / loading / error / empty — state chính render trong mockup, behavior ghi ở cột Ghi chú SCREEN-MAP.
    - **Bản kê trong mockup (BẮT BUỘC)**: `data-screen="<Mã màn SCREEN-MAP>"` trên MỖI section màn/màn con (= `id` của nó) · `data-ds="<mã #, vd C3>"` trên MỖI khối, chỉ lấy từ `docs/DESIGN-SYSTEM.md §3` · `data-state="empty|loading|error"` trên section trạng thái phụ. Vẽ xong màn thì cập nhật cột "Dùng ở màn" của §3 cho khớp — đối chiếu hai chiều. Đây là thứ biến mockup từ ảnh để nhìn thành bản code FE lắp theo được.
    - **API calls**: trigger → endpoint → method → loading state, khớp `docs/arch/{name}.md §3 API`.
    - **Validation FE-side**: field · required · rule · error message.

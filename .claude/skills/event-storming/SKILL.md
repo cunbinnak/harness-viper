@@ -3,8 +3,6 @@ name: event-storming
 description: Phương pháp event-storming cho /document — đọc candidate domains ở CAPABILITIES §2, facilitate event storming cho 1 domain → events ≥10 + commands + aggregates + hot-spots + external systems, ghi vào docs/arch/OVERVIEW.md §4. Làm từng domain một.
 ---
 
-> Phương pháp cho /document (fork gộp discovery vào DOCUMENT). Không phải stage riêng.
-
 # Event Storming Skill
 
 ## Khi load

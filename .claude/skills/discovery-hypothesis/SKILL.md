@@ -3,12 +3,10 @@ name: discovery-hypothesis
 description: Phương pháp phỏng vấn khai thác cho /document Bước 1 (đường interview) — đào SÂU pain có bằng chứng (probe nghiệp vụ hóc búa) + 1 cược đo được (success metric + go/pivot/kill) + lỗ hổng. Bức tranh tổng quan TRƯỚC khi map capability/event-storming/boundary.
 ---
 
-> Phương pháp cho /document (fork gộp discovery vào DOCUMENT). Không phải stage riêng.
-
 # Discovery Hypothesis Skill
 
 ## Khi load
-Phương pháp **khai thác ý tưởng** cho `/document` (vai **Business Authority**): biến ý tưởng/brief project thành **bức tranh tổng quan dạng giả thuyết** để đồng thuận vấn đề + đối tượng + cược gì, TRƯỚC khi map capability / event-storming / boundary. Load khi phỏng vấn Authority (đường interview) hoặc khi đọc `intake/`.
+Phương pháp **khai thác ý tưởng** cho `/document` (vai **PO khám phá**): biến ý tưởng/brief project thành **bức tranh tổng quan dạng giả thuyết** để đồng thuận vấn đề + đối tượng + cược gì, TRƯỚC khi map capability / event-storming / boundary. Load khi phỏng vấn Authority (đường interview) hoặc khi đọc `intake/`.
 
 Input: mô tả project user truyền (`$ARGUMENTS`) hoặc tài liệu trong `intake/`. Không có → mở bằng câu hỏi mở, KHÔNG bằng option.
 
@@ -130,4 +128,4 @@ Mọi lỗ hổng ghi lại kèm cách xử — bảng lỗ hổng trống = ch�
 - KHÔNG icon/emoji trong tài liệu.
 
 ## Done
-- `docs/PRD.md` (§1 Vấn đề + §2 Giả thuyết + rủi ro) đầy đủ + **§6 Nguồn có ≥1 link research** + đã playback + user confirm → tiếp Bước 2 (PRD trọn §1-6) → Bước 3 `domain-ba` (persona + ma trận) → Bước 4 `capability-mapping`.
+- `docs/PRD.md` (§1 Vấn đề + §2 Giả thuyết + rủi ro) đầy đủ + **§6 Nguồn có ≥1 link research** + đã playback + user confirm → tiếp Bước 2 (PRD trọn §1-7) → Bước 3 `domain-ba` (bảng luồng → rule → persona + ma trận) → Bước 4 `capability-mapping`.

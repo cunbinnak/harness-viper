@@ -1,9 +1,7 @@
 ---
 name: implementation-plan
-description: Phương pháp chia wave cho /document — plan toàn dự án vào docs/ROADMAP.md §1 (wave + phases + phụ thuộc + legacy) + KG skeleton knowledge-base/{name}.md. Nhiều wave=sprint phụ thuộc nhau.
+description: Phương pháp chia wave cho /document — plan toàn dự án vào docs/ROADMAP.md §1 (wave + phases + phụ thuộc + legacy)
 ---
-
-> Phương pháp cho /document (fork gộp DOMAIN/DESIGN/PLAN vào DOCUMENT, 1 lớp doc). Không stage riêng, không translate.
 
 # Chia-wave Method (bước chia wave của /document)
 
@@ -20,13 +18,12 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) +
 ## Deliverable
 1. **`docs/ROADMAP.md §1`** (copy từ `templates/TEMPLATE.roadmap.md` — frontmatter `feat_cap_per_wave` sẵn; **số wave = số dòng §1**) — roadmap toàn dự án: chia **toàn bộ** target/FEAT thành **nhiều wave** theo phụ thuộc. Mỗi wave khai:
    - `goal` + `targets[]` (name từ `docs/arch/`) + `features[]` (FEAT-id) + `phases` (thứ tự dev trong wave: foundation trước) + **`dependencies` (cần gì từ wave trước)** + `legacy` (surface đã giao ở wave trước mà wave này build tiếp — additive) + `exit_criteria`.
-   - Wave nào **opt-in SHIP** → khai `ship: true` (mặc định không ship).
+   - Wave nào **opt-in SHIP** → cột `phases` thêm `SHIP` (mặc định không ship).
    - `features_by_wave`: nếu 1 target sống qua ≥2 wave, tách rõ FEAT nào thuộc wave nào (tránh FEAT wave sau lọt vào scope wave hiện tại).
 2. **`docs/ROADMAP.md §backlog`** — chỗ chứa scope hoãn / phát sinh sau (sửa doc đã chốt = wave sau đổ về đây).
-3. **KG skeleton per target** — `knowledge-base/{name}.md` (chỉ metadata; section va-vấp còn RỖNG). **KHÔNG điền entities/rules/events** — docs còn sửa qua `/document`. Phần va vấp do MAIN append lúc BUILD/VERIFY.
 
 ## Phương pháp chia wave (giá trị — giữ nguyên)
-1. **Map FEAT → target**: từ `docs/arch/` (kind/consumes) + FEAT `epic` + decomposition.
+1. **Map FEAT → target**: từ `docs/arch/` (kind/consumes) + decomposition.
 2. **Dựng đồ thị phụ thuộc** target/FEAT (`depends_on` từ `docs/arch/{name}.md consumes` + OVERVIEW): cái gì cần cái gì ready trước.
 3. **Topological → wave** (sprint):
    - **Wave 1 = foundation mỏng** (auth/shared + 1–2 capability core) đủ chạy **E2E sớm** (login + 1 luồng nghiệp vụ chính).
@@ -36,7 +33,6 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) +
      - "Nhét cho gọn số wave" KHÔNG phải lý do. Ít quá (1 FEAT lẻ) không cần tách.
    - Lặp tới khi **mọi** target/FEAT đã vào 1 wave.
 4. **Viết ROADMAP §1** đủ mọi wave (goal/targets/features/phases/dependencies/legacy/exit_criteria).
-5. **KG skeleton** per target.
 
 ## Chia lại sau khi đã chạy wave (giá trị — giữ nguyên)
 Kế hoạch không cố định. Chạy xong wave k (`/next-wave` đã lưu `archive/wave-k/`) mà phát hiện thiếu → quay lại `/document` bổ sung, rồi tới đây **chia lại**. Nhận biết: có thư mục `archive/wave-*`. Wave kế = wave đóng gần nhất + 1.
@@ -69,8 +65,7 @@ wave 4: D, E         wave 4: C, D        ← C bị đẩy xuống
 - [ ] Mỗi wave trong ngưỡng `feat_cap_per_wave` (~3-4 FEAT). Vượt vì tách sẽ đứt luồng → điền `rationale`.
 - [ ] Chia lại sau khi đóng wave (có `archive/wave-*`): wave đã đóng không đổi · phần bù ở wave kế (hoặc `placement_rationale`) · không FEAT nào rơi mất.
 - [ ] **Deferred-scope tường minh**: AC/feature chủ động hoãn (auth/idempotency/event ở wave CRUD…) ghi vào wave §Deferred (token `FEAT-NNN[:AC-M]`/`BR-NNN`) — SoT để test skip.
-- [ ] KG skeleton mọi target (`knowledge-base/{name}.md`, metadata; section va-vấp rỗng).
 - [ ] **Không `TBD` / section trống mơ hồ** — chỗ chưa chốt ghi `Open question` (cần ai quyết + vì sao) hoặc dòng `docs/DECISIONS.md`.
 
 ## Done
-- `docs/ROADMAP.md §1` đủ mọi wave (goal/targets/features/phases/dependencies/legacy/exit_criteria) + §backlog + KG skeleton mọi target. Tiếp: **khoá scope** (kết `/document`) → `/build`.
+- `docs/ROADMAP.md §1` đủ mọi wave (goal/targets/features/phases/dependencies/legacy/exit_criteria) + §backlog. Tiếp: **khoá scope** (kết `/document`) → `/build`.

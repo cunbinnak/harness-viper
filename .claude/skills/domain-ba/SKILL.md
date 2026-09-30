@@ -3,8 +3,6 @@ name: domain-ba
 description: "Phương pháp Business-Analyst cho /document Bước 3 — PHÂN TÍCH nghiệp vụ trước khi ai viết yêu cầu: dựng bảng luồng (Ai LÀM / Ai NHỜ / bằng chứng) → Authority ký → business-rule + persona + ma trận vai×hành động sinh TỪ bảng. Actor của mọi AC về sau lấy từ đây. Hỏi Authority chỗ CHƯA HỎI (đang DOCUMENT)."
 ---
 
-> Phương pháp cho /document (fork gộp DOMAIN/DESIGN/PLAN vào DOCUMENT, 1 lớp doc). Không stage riêng, không translate.
-
 # Business-Analyst Method (Luồng nghiệp vụ → Business-rule → Persona)
 
 ## Khi dùng
@@ -12,7 +10,7 @@ Bước 3 của `/document` — vai **Business Analyst**, chạy **sau khám ph�
 
 Viết **THẲNG** vào 1 lớp doc:
 - **Bảng luồng nghiệp vụ** → `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận` (khung `templates/TEMPLATE.interview.md`).
-- **Business-rule** → **FEAT `docs/feat/*` §3 Field kỹ thuật** (rule gắn 1-2 feature; ghi nháp, điền khi Bước 5 chạy) · rule nền/cross-cutting → **`docs/adr/`**.
+- **Business-rule** → **FEAT `docs/feat/*` §3 Field kỹ thuật** (rule gắn ≥2 feature — rule chỉ 1 FEAT thì viết thành AC của FEAT đó; ghi nháp, điền khi Bước 5 chạy) · rule nền/cross-cutting → **`docs/adr/`**.
 - **Persona + ma trận vai × hành động** → **`docs/PERSONAS.md`**.
 
 > Mockup/visual KHÔNG thuộc method này (UX: `docs/ux/` + `docs/DESIGN-SYSTEM.md`). Nhưng **danh sách màn nháp** (A.5) thì có — UX dựng SCREEN-MAP từ nó, không suy lại.
@@ -37,7 +35,7 @@ Lời kể là văn xuôi ("bộ phận có nhu cầu liên hệ HR → HR đăn
 Bảng + màn nháp là **nguồn duy nhất** cho: ô `có/cấm` ma trận PERSONAS §2 (mục C dưới) · actor của AC (`domain-po`) · actor của event-storming · SCREEN-MAP (`ux-design`) · hành trình persona `arch/<web>.md §2`. Không nơi nào được tự suy actor ngoài bảng.
 
 ## B. Business-rule (từ bảng luồng + INTERVIEW)
-§Phát biểu (1 câu rõ) + §Lý do (**reference nguồn**: luật/policy/contract/quyết định — KHÔNG "best practice") + §Khi nào áp dụng + §Ngoại lệ + §Hệ quả + **≥2 ví dụ** (1 happy + 1 vi phạm, số liệu — QC seed test) + `severity` CORNERSTONE/NORMAL + **`related_features` ≥1** (rule chỉ 1 FEAT → đáng lẽ là AC, đưa thành AC trong FEAT đó). §**Enforce ở đâu** trỏ nơi CHẶN được (unique index · cột `version` · idempotency key · DB constraint · state machine) — viết chung file với contract (fork 1 lớp, không TODO-engineer để dịch sau).
+§Phát biểu (1 câu rõ) + §Lý do (**reference nguồn**: luật/policy/contract/quyết định — "best practice" chung chung không tính; chuẩn ngành phải kèm link) + §Khi nào áp dụng + §Ngoại lệ + §Hệ quả + **≥2 ví dụ** (1 happy + 1 vi phạm, số liệu — QC seed test) + `severity` CORNERSTONE/NORMAL + **`related_features` ≥1** (rule chỉ 1 FEAT → đáng lẽ là AC, đưa thành AC trong FEAT đó). §**Enforce ở đâu** trỏ nơi CHẶN được (unique index · cột `version` · idempotency key · DB constraint · state machine) — viết chung file với contract (fork 1 lớp, không TODO-engineer để dịch sau).
 
 ## C. Persona + ma trận vai × hành động (sinh TỪ bảng luồng)
 role/goals/pains/workflow narrative. **Anti-persona BẮT BUỘC.** Ma trận `docs/PERSONAS.md §2`: **ô `có` = có dòng bảng luồng mà vai đó ở cột Ai LÀM**; vai không có dòng nào cho hành động đó = `cấm`. KHÔNG suy từ FEAT (FEAT viết sau ma trận; suy ngược = sai đồng bộ, trace không bắt). Không ô trống.
@@ -48,7 +46,6 @@ role/goals/pains/workflow narrative. **Anti-persona BẮT BUỘC.** Ma trận `d
 ## Quy tắc
 - ID `BR-<slug>` (nếu tách rule) / persona đặt trong `PERSONAS.md`. Cross-ref bằng ID canonical đầy đủ.
 - Enforce viết chung file với contract (fork 1 lớp — KHÔNG `docs/domain/`, KHÔNG bước translate/TODO-engineer).
-- Sửa doc đã chốt = **wave sau** (`ROADMAP §backlog` → `/next-wave` → `/document` top-up).
 
 ## Done
 - Bảng luồng mọi nghiệp vụ đã kể: Authority ký, không ô `CHƯA HỎI` + Business-rule (≥2 ví dụ + nguồn + Enforce ở đâu) đặt đúng chỗ + Persona + ma trận (ô `có` trỏ được về dòng bảng) + mọi chỗ tự quyết có dòng `DECISIONS.md` → tiếp Bước 4 `capability-mapping` (đọc PERSONAS vừa viết).

@@ -3,12 +3,10 @@ name: domain-po
 description: "Viết yêu cầu cho /document Bước 5 — FEAT (AC BDD + ca biên + field kỹ thuật) THẲNG vào docs/feat/, TỪ phân tích BA đã ký (bảng luồng + ma trận). Actor AC = cột Ai LÀM. Chỗ chưa rõ theo 3 tầng PROTOCOL §2.3."
 ---
 
-> Phương pháp cho /document (fork gộp DOMAIN/DESIGN/PLAN vào DOCUMENT, 1 lớp doc). Không stage riêng, không translate.
-
 # Product-Owner Method (viết FEAT)
 
 ## Khi dùng
-Bước 5 (viết FEAT) của `/document` — **viết yêu cầu TỪ phân tích BA đã ký** (bảng luồng + use case ở `domain-ba` A, ma trận PERSONAS §2). Không phải chỗ quyết *ai làm gì* — cái đó BA đã chốt với Authority ở Bước 3; đây là chỗ biến nó thành AC kiểm được. Chia sản phẩm nhỏ theo capability, viết **THẲNG** vào **`docs/feat/`** theo `templates/TEMPLATE.feat.md` — AC BDD + field kỹ thuật chung một file. Fork 1 lớp doc: **KHÔNG** viết business VN rồi dịch, **KHÔNG** stage business riêng. **KHÔNG Epic/Journey** (khái niệm harness cũ — gom nhóm đã có frontmatter `capability`; hành trình UI đã có `docs/ux/SCREEN-MAP.md`).
+Bước 5 (viết FEAT) của `/document` — **viết yêu cầu TỪ phân tích BA đã ký** (bảng luồng + use case ở `domain-ba` A, ma trận PERSONAS §2). Không phải chỗ quyết *ai làm gì* — cái đó BA đã chốt với Authority ở Bước 3; đây là chỗ biến nó thành AC kiểm được. Chia sản phẩm nhỏ theo capability, viết **THẲNG** vào **`docs/feat/`** theo `templates/TEMPLATE.feat.md` — AC BDD + field kỹ thuật chung một file. Fork 1 lớp doc: **KHÔNG** viết business VN rồi dịch, **KHÔNG** stage business riêng.
 
 ## Output
 | Đối tượng | Output |
@@ -24,7 +22,7 @@ Neo về nền dự án: `docs/PRD.md`, `docs/PERSONAS.md`, `docs/CAPABILITIES-M
 4. FEAT liên quan đã có trong `docs/feat/` (tránh trùng ID).
 
 ## Cách viết
-- **FEATURE**: frontmatter `capability: CAP-<id>` (truy về CAPABILITIES-MAP — mọi FEAT phải có) + `has_ui` + `outcome_persona` + `demo_signature` (1 câu chứng minh khi xong). **≥4 AC BDD (Cho/Khi/Thì)** phủ happy + validation + error + a11y. **§3 field kỹ thuật**: `enforcement_location` (server/DB — UI disable KHÔNG tính) + `consumes_contracts` trỏ `docs/arch/{name}.md` contract thật. Business-rule gắn feature → ghi ở §3 (enforcement) hoặc ref `docs/adr/` (rule nền — domain-ba viết). §Ngoài phạm vi.
+- **FEATURE**: frontmatter `capability: CAP-<id>` (truy về CAPABILITIES-MAP — mọi FEAT phải có) + `has_ui`. **≥4 AC BDD (Cho/Khi/Thì)** phủ happy + validation + error + a11y. **§3 field kỹ thuật**: `enforcement_location` (server/DB — UI disable KHÔNG tính) + `consumes_contracts` trỏ `docs/arch/{name}.md` contract thật. Business-rule gắn feature → ghi ở §3 (enforcement) hoặc ref `docs/adr/` (rule nền — domain-ba viết). §Ngoài phạm vi.
 
 ## Cách viết AC BDD tốt (giá trị — giữ nguyên)
 - **Cho/Khi/Thì (Given/When/Then)** — mỗi AC 1 hành vi kiểm được, có kết quả quan sát được (không "hệ thống hoạt động đúng").

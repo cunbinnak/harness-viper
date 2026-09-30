@@ -1,9 +1,7 @@
 ---
 name: technical-design
-description: Phương pháp Architecture cho /document Bước 6 (sau event-storming + boundary-charter) — chốt kind/stack, ADR (docs/adr), điền chi tiết arch/{name}.md theo TEMPLATE.arch (§1 data · §2 luồng · §3 API · §4 kiến trúc/ranh giới · §5 events · §6 ca biên TRA), integrations, docker-compose skeleton. UX/UI là bước riêng (kind web/mobile).
+description: Phương pháp Architecture cho /document Bước 6 (sau event-storming + boundary-charter) — chốt kind, ĐỀ XUẤT stack (chốt ở Bước 7 bằng hỏi Author), ADR kiến trúc (docs/adr), điền chi tiết arch/{name}.md theo TEMPLATE.arch (§1 data · §2 luồng · §3 API · §4 kiến trúc/ranh giới · §5 events · §6 ca biên TRA), integrations, docker-compose skeleton. UX/UI là bước riêng (kind web/mobile).
 ---
-
-> Phương pháp cho /document (fork gộp DOMAIN/DESIGN/PLAN vào DOCUMENT, 1 lớp doc). Không stage riêng, không translate.
 
 # Architecture Method (bước ARCHITECTURE của /document)
 
@@ -79,7 +77,7 @@ Thiết kế xong PHẢI **tự trace 6 chiều** trước khi trình — Author
 - [ ] Ref FEAT/persona/business-rule bằng id canonical ĐẦY ĐỦ (`FEAT-<slug>` · `PERSONA-…`…), KHÔNG rút gọn — tránh ID drift.
 - [ ] `consumes` frontmatter + §Ranh giới khớp topology (ai gọi ai) — đối chiếu được với `docs/arch/OVERVIEW.md` và ROADMAP depends_on.
 - [ ] ≥ 1 integration thật (cross-target / external).
-- [ ] **Trace 6 chiều PASS** (mục Trọn vẹn): AC↔API 2 chiều · endpoint đủ ruột (authz theo ma trận) · consumes↔provider khớp · luồng E2E không đứt — tự rà xong mới trình, KHÔNG để Authority phát hiện lỗ.
+- [ ] **Trace 6 chiều PASS** (mục Trọn vẹn — cả chiều 6 lifecycle & seam) — tự rà xong mới trình, KHÔNG để Authority phát hiện lỗ.
 - [ ] Enterprise concerns đều addressed: auth · observability · resilience · caching · rate limit · idempotency · health check.
 - [ ] `deployment/local/docker-compose.yml` skeleton có service cho target trong scope.
 - [ ] (Nếu research) ≥ 1 nguồn thật, ghi link.

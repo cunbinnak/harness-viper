@@ -44,8 +44,7 @@ Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/
 
 **Wave**: DOCUMENT chạy 1 lần cho cả dự án (sinh kế hoạch mọi wave). BUILD/VERIFY/SHIP chạy **per wave**.
 Mỗi wave **khai báo phases nó chạy** trong `docs/ROADMAP.md` — wave nội bộ có thể bỏ SHIP; không ép mọi wave đủ phase.
-**FEAT-cap per wave**: DOCUMENT chia wave giới hạn **~3-4 FEAT/wave** 
-context của MAIN (MAIN-code-hết, không dev-agent). Ngưỡng mềm, gate wave-plan cảnh báo khi vượt.
+**FEAT-cap per wave**: DOCUMENT chia wave giới hạn **~3-4 FEAT/wave** để BUILD vừa context của MAIN (MAIN-code-hết, không dev-agent). Ngưỡng mềm (`implementation-plan`), không gate cứng.
 
 **Loop engineering** (mở wave = RÀ LẠI): kế hoạch mọi wave lập 1 lần ở DOCUMENT (Authority ký 1 lần),
 NHƯNG mở wave nào `/next-wave` phải **rà lại kế hoạch wave đó đối chiếu KẾT QUẢ wave trước + §backlog**, chỉnh nếu
@@ -141,7 +140,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 > - **SHIP** (gate đọc ROADMAP `phases` — wave **không khai SHIP** thì **skip** cả nhóm — G3): prod-ready 4 nhóm · BC §3 xanh · rollback thử
 > - **Cross**: contract-test present cho consumer · BACKWARD-COMPAT so `arch §API` (G4) · **phase-lock MIỄN tick tiến-độ ROADMAP lúc BUILD** (E, không phải đổi scope)
 >
-> **Kiến trúc gate.py** (1 file): shared readers `read/filled/read_live/count_rows/section/table_cells/challenge_last`
+> **Kiến trúc gate.py** (1 file): shared readers `read/filled/read_live/count_rows/section/table_rows/challenge_count`
 > + 1 hàm/phase `gate_document/build/verify/ship/next_wave` + `phase_from_state()` đọc `STATE.md`. In đạt/thiếu từng mục, exit 1 nếu thiếu — KHÔNG chặn tool.
 ## §7 — Agents (MAIN tự code; agent CHỈ để verification + dogfood)
 
@@ -176,7 +175,7 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 > - **guard_proof**: chặn Write/Edit vào `*proof.json` (bằng chứng runtime CHỈ `capture_proof.py` sinh — agent không giả tick).
 > - **guard_makefile**: chặn Write/Edit vào **ROOT `Makefile`** (hợp đồng 6 lệnh, bất biến) — MAIN điền THÂN ở per-target `services/<nhóm>/<tên>/Makefile`, không sửa root lúc BUILD.
 > - **guard_doc**: chặn Write/Edit vào **doc SPEC** (`docs/**` trừ DECISIONS/ROADMAP/BACKWARD-COMPAT/PRODUCTION-READY) khi phase ≠ DOCUMENT — doc đóng băng sau khoá scope, lệch/thiếu dồn `ROADMAP §backlog` → wave sau top-up. Sổ sống + DOCUMENT/top-up vẫn sửa được.
-> - **trace_docsync** (PostToolUse Edit|MultiEdit): sửa spec doc (`docs/feat|arch|ux/**` · PRD/PERSONAS/CAPABILITIES/DESIGN-SYSTEM) ở pha **DOCUMENT** (scope chưa khoá) → **nhắc CASCADE** (propagate FEAT↔arch data model↔§3 API↔mockup) + **re-run trace 6 chiều + UI↔AC** + **TỰ BỎ TICK ô `PRE-LOCK AUDIT PASS`** nếu đang tick (audit chấm trên bản cũ = tick ôi; re-run xong mới tick lại). Là **TRIGGER nhắc + vô hiệu tick cơ học**, KHÔNG trace hộ (việc ngữ nghĩa của LLM/pre-lock audit). exit 2 đưa nhắc lại model, không undo.
+> - **trace_docsync** (PostToolUse Edit|MultiEdit): sửa spec doc ở DOCUMENT → nhắc CASCADE (đầu `/document`) + tự bỏ tick PRE-LOCK nếu đang tick. Trigger, không trace hộ; Write không bắt → lời chốt LUÔN re-run audit.
 > - **reanchor**: SessionStart(compact) → nhồi lại §2 + STATE.
 > Agent read-only (review/persona `disallowedTools: Write/Edit`) + `test-writer` chỉ `test/` → không cần hook owned_paths/kernel-protect như harness cũ.
 ## §9 — Failure modes (đã có cơ chế chặn)

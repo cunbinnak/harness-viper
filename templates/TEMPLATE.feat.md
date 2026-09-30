@@ -26,11 +26,14 @@ consumes_contracts: []           # consumer (FE/bff): [order-service.api, ...] �
 - *Ca biên*: {{gửi 2 lần → lần 2 không tạo bản ghi trùng · rỗng → hiện trạng thái rỗng}}
 
 <!-- §3: enforcement_location = chặn/kiểm Ở ĐÂU. Phải server/DB, UI disable KHÔNG tính. 1 dòng/AC hoặc /rule.
-     Business-rule gắn 1-2 feature (domain-ba viết) ghi ở ĐÂY (dòng `BR-<slug>` + enforcement); rule nền/cross-cutting → docs/adr/. -->
+     Business-rule gắn ≥2 feature (domain-ba viết; chỉ 1 FEAT → là AC) ghi ở ĐÂY (dòng `BR-<slug>` + enforcement); rule nền/cross-cutting → docs/adr/. -->
 ## §3 Field kỹ thuật
 | AC / rule | enforcement_location | Ghi chú |
 |---|---|---|
 | AC-1 | {{server: `OrderService.create` · DB: `unique(order, table_id) where active`}} | |
+
+## §Ngoài phạm vi
+- {{điều FEAT này KHÔNG làm — để QC biết không test gì}}
 
 ## §References
 - Capability: `CAP-{{id}}` · BR liên quan: {{BR-… / ADR-… nếu có}} · Màn UI: {{SCREEN-MAP mục … nếu has_ui}}

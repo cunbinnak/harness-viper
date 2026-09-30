@@ -7,7 +7,7 @@
 ### {{P-01}} — {{tên vai, vd Nhân viên order}}
 - **Chân dung**: {{ai · mục tiêu · bối cảnh dùng}}
 - **Năng lực được cấp**: {{tạo order · sửa order của mình · …}}
-- **Luồng chính**: {{FEAT/journey liên quan}}
+- **Luồng chính**: {{luồng ở INTERVIEW §Luồng nghiệp vụ mà vai này có dòng Ai LÀM}}
 
 <!-- §2: MA TRẬN vai × hành động. Mỗi ô `có`/`cấm` — KHÔNG ô trống (gate table_cells chặn).
      Đây là spec phân quyền khi code + nguồn TC âm + danh sách phép thử vai `breaker`. -->

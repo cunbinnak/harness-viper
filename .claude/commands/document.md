@@ -50,16 +50,16 @@ Persona + năng lực được cấp + **ma trận vai × hành động** — m�
 ## Bước 5 — FEAT (`docs/feat/FEAT-*.md`)  → **Nạp `Skill("domain-po")` trước · viết xong → nạp `Skill("business-analysis")` rà — trong đó actor mỗi AC đối chiếu cột Ai LÀM của bảng luồng (domain-ba A), lệch = sai không phải nitpick**
 Mỗi capability → ≥1 FEAT. Mỗi FEAT: **AC dạng BDD** (Given/When/Then) **gồm ca biên** (rỗng/đầy/lỗi/quyền) + **field kỹ thuật** (`enforcement` rule · `consumes_contracts` = target nào cấp API/event). Mỗi FEAT truy về ≥1 capability + ≥1 persona.
 
-## Bước 6 — Architecture (`docs/arch/`)  → **Nạp 3 skill THEO THỨ TỰ: `Skill("event-storming")` → `Skill("boundary-charter")` → `Skill("technical-design")`** (nạp từng cái đúng lúc dùng)**
+## Bước 6 — Architecture (`docs/arch/`)  → **Nạp 3 skill THEO THỨ TỰ: `Skill("event-storming")` → `Skill("boundary-charter")` → `Skill("technical-design")`** (nạp từng cái đúng lúc dùng)
 - Thứ tự + phân đất: `event-storming` ghi **OVERVIEW §4** (events/aggregates/hot-spots per domain) → `boundary-charter` đọc §4, ghi **OVERVIEW §1** (bản đồ target) + **khởi tạo** `arch/{name}.md` §Mission (target = boundary, cùng tên file) → `technical-design` điền **chi tiết** `arch/{name}.md`.
-- **Rời bước 6 CHỈ KHI trace 6 chiều PASS** (`technical-design §Trọn vẹn`): AC↔API 2 chiều · endpoint đủ ruột · consumes↔provider khớp · luồng E2E không đứt — **tự rà, KHÔNG để Authority phát hiện lỗ hộ**.
+- **Rời bước 6 CHỈ KHI trace 6 chiều PASS** (`technical-design §Trọn vẹn`, trừ vế màn↔API — rà ở Bước 8) — **tự rà, KHÔNG để Authority phát hiện lỗ hộ**.
 - `docs/arch/OVERVIEW.md`: topology — có target nào, ai gọi ai, ranh giới hệ.
 - `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ nằm ở đây; FEAT chỉ khai `consumes_contracts`.
 
 ## Bước 7 — TECHSTACK (`docs/TECHSTACK.md`)
 **Chỗ DUY NHẤT chốt tech** (Bước 6 chỉ đề xuất, không tự chốt). Lựa chọn Author sẽ thấy / phải vận hành / tốn tiền (stack · UI kit · đăng nhập & phiên · lưu file · cache · email/SMS · build tool · deploy) mà Author CHƯA nói → **hỏi bằng `AskUserQuestion`**, mỗi câu 2-3 option + đánh đổi 1 dòng + mặc định đề xuất. Author đã nói / intake đã khai → giữ nguyên, không hỏi lại. Chi tiết thuần nội bộ → tự quyết, `DECISIONS` loại `kỹ-thuật`. Kết quả → `docs/TECHSTACK.md` + ADR.
 > **VERSION mỗi stack: Read dòng `description` của skill `stack-<tên>` tương ứng lấy default + note EOL — CẤM điền version từ trí nhớ.** Knowledge cutoff của model CŨ hơn thực tại: "version mình nhớ là mới nhất" thường đã lỗi thời/EOL. Authority không chỉ định version → dùng default của skill + 1 dòng `DECISIONS.md`; Authority chỉ định khác default → theo Authority, ghi ADR.
-> **Quét FEAT xem feature nào NGẦM đòi tech/infra chưa chốt** (Author hay tả tính năng mà quên "chạy bằng gì"): **upload**→lưu trữ (S3/blob/disk) · **thông báo**→email/SMS/push provider · **tìm kiếm nâng cao**→search engine? · **xuất file**→PDF/Excel + sync/async · **thanh toán**→cổng · **lịch/định kỳ**→job runner · **realtime**→WS/SSE. Mỗi cái chạm mà chưa chốt → đưa vào lượt hỏi ở trên. (Sót thì `pre-mortem` bắt ở pre-lock audit, nhưng chốt sớm ở đây đỡ hơn.)
+> **Quét FEAT tìm feature NGẦM đòi tech/infra chưa chốt** (danh sách: `pre-mortem` mục "Feature NGẦM ĐÒI tech/infra") → đưa vào lượt hỏi ở trên.
 
 ## Bước 7b — Quy ước chung  *(đã có sẵn — framework default, KHÔNG author lại)*
 `docs/CONVENTIONS.md` + `docs/SECURITY.md` là **doc framework cố định**. Chỉ **rà + chỉnh §API error-envelope/header/versioning**
@@ -89,11 +89,11 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 **PRE-LOCK AUDIT (bắt buộc — ĐIỂM KÍCH HOẠT: Author nói "chốt scope"/"chốt tài liệu" ở Bước cuối. LUÔN chạy tại lời chốt, KỂ CẢ ô `PRE-LOCK AUDIT PASS` đang tick — tick là dấu ghi nhận, KHÔNG phải vé skip: bịt tick chay + sửa doc ngoài tool mà hook không thấy. Chạy sớm hơn lời chốt chỉ phí: doc còn đổi theo nhận xét thì audit trên bản trung gian là audit vứt đi) — 2 phần:**
 
 **(1) Khớp nhau — consistency** (đọc TRỌN doc set, báo mọi **tham chiếu treo**):
-- **AC↔API 2 chiều** · **data model nuôi đủ field mọi AC cần** · **consumes↔provider khớp** · **luồng E2E không đứt** (`technical-design §Trọn vẹn`).
+- **Trace 6 chiều** (`technical-design §Trọn vẹn` — gồm chiều 6 lifecycle & seam) + **mỗi vùng dữ liệu trên màn có API** (SCREEN-MAP ↔ `arch §3`).
 - **UI↔AC 2 chiều — chấm TỪNG AC, không chấm gộp per-FEAT**: lập danh sách 2 cột **mọi AC `has_ui` in-scope** ↔ **màn + phần tử/khuôn xử nó** (từ SCREEN-MAP) — AC không có dòng = **màn con thiếu** (form/detail/modal bị lười), bổ sung mockup + API cho nó TRƯỚC khi khoá ("FEAT có 1 màn list" KHÔNG phải bằng chứng phủ). Chiều ngược: mỗi phần tử tương tác trong mockup (search/filter/sort/nút/phân trang) có 1 AC — phần tử **không AC = quyết NGAY** (thêm AC · hoặc bỏ khỏi mockup), **KHÔNG silent-defer wave sau**. Kèm: mỗi **vùng dữ liệu** trên mockup (kể cả read-only) có API fetch trong `arch §3` (khai ở SCREEN-MAP behavior).
 
 **(2) Không thiếu — completeness** (con mắt ĐỘC LẬP, bù điểm mù Author + MAIN-tự-vấn):
-- **Spawn `pre-mortem`** (sub-agent độc lập MAIN) → quét mỗi FEAT/luồng qua **taxonomy ca biên** (`domain-po`) + 3 câu xuyên-luồng → trả **nghi vấn case Author MISS**.
+- **Spawn `pre-mortem`** (sub-agent độc lập MAIN) → quét mỗi FEAT/luồng qua **taxonomy ca biên** (`domain-po`) + 3 câu xuyên-luồng + 6 họ luồng phổ quát + đối chiếu ngành → trả **nghi vấn case Author MISS**.
 - MAIN nhận nghi vấn → mỗi cái **quyết**: thêm AC (CASCADE) · hỏi Authority (còn DOCUMENT nên được hỏi) · chuẩn ngành có link → `DECISIONS` (PROTOCOL §2.3). **KHÔNG bỏ lửng, không đoán.**
 
 > Cả 2 phần là việc **NGỮ NGHĨA** — làm bằng đọc/đối chiếu + agent độc lập, **KHÔNG** phải hook. Hook `trace_docsync` chỉ TRIGGER nhắc; audit này mới KIỂM. Còn tham chiếu treo HOẶC nghi vấn pre-mortem chưa xử = **chưa được khoá scope**.

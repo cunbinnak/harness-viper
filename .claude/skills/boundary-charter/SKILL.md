@@ -3,7 +3,6 @@ name: boundary-charter
 description: Phương pháp boundary + charter cho /document Bước 6 — identify boundary từ event-storming (OVERVIEW §4) → boundary map (OVERVIEW §1) + KHỞI TẠO charter docs/arch/{name}.md §Mission; technical-design điền chi tiết sau. Target = boundary (cùng tên file). KHÔNG sinh FEAT/BR, KHÔNG đụng PRD.
 ---
 
-> Phương pháp cho /document Bước 6 (fork gộp discovery vào DOCUMENT). Không phải stage riêng.
 > **Thứ tự trong Bước 6**: `event-storming` (OVERVIEW §4) → **`boundary-charter` (bước này)** → `technical-design` (chi tiết per-target).
 
 # Boundary Charter Skill
