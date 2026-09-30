@@ -42,7 +42,7 @@ Bảng này là **nguồn duy nhất** cho: ô `có/cấm` ma trận PERSONAS §
 role/goals/pains/workflow narrative. **Anti-persona BẮT BUỘC.** Ma trận `docs/PERSONAS.md §2`: **ô `có` = có dòng bảng luồng mà vai đó ở cột Ai LÀM**; vai không có dòng nào cho hành động đó = `cấm`. KHÔNG suy từ FEAT (FEAT viết sau ma trận; suy ngược = sai đồng bộ, trace không bắt). Không ô trống.
 
 ## Hỏi hay không hỏi
-Đang DOCUMENT → **được hỏi Authority**, và chỗ đúng để hỏi là ô `CHƯA HỎI` của bảng luồng. Chỉ khi Authority không trả lời được → (1) tìm `PRD`/`INTERVIEW`/`intake` · (2) mơ hồ → 1 dòng `docs/DECISIONS.md` (what/why/assume/reversible) · (3) tắc cứng → `STATE.md §Blocker` · ngoài scope → `docs/ROADMAP.md §backlog`.
+Ô bảng luồng chưa có bằng chứng → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → làm · chuẩn ngành → research, ghi `[C]` + link · chỉ Author biết → hỏi. Ô chuẩn ngành ghi `[C] <link>` (vẫn đọc cho Authority ở playback); ô tầng 3 ghi `CHƯA HỎI` rồi hỏi ngay.
 
 ## Quy tắc
 - ID `BR-<slug>` (nếu tách rule) / persona đặt trong `PERSONAS.md`. Cross-ref bằng ID canonical đầy đủ.

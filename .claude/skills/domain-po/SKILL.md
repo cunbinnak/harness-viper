@@ -1,6 +1,6 @@
 ---
 name: domain-po
-description: Phương pháp Product-Owner cho /document Bước 5 — viết FEAT (BDD AC + ca biên + field kỹ thuật) THẲNG vào docs/feat/. Suy từ tài liệu khám phá, KHÔNG hỏi lại user; mơ hồ → docs/DECISIONS.md.
+description: "Viết yêu cầu cho /document Bước 5 — FEAT (AC BDD + ca biên + field kỹ thuật) THẲNG vào docs/feat/, TỪ phân tích BA đã ký (bảng luồng + ma trận). Actor AC = cột Ai LÀM. Chỗ chưa rõ theo 3 tầng PROTOCOL §2.3."
 ---
 
 > Phương pháp cho /document (fork gộp DOMAIN/DESIGN/PLAN vào DOCUMENT, 1 lớp doc). Không stage riêng, không translate.
@@ -46,9 +46,8 @@ Neo về nền dự án: `docs/PRD.md`, `docs/PERSONAS.md`, `docs/CAPABILITIES-M
   - **Seam**: FEAT nối FEAT khác (consumes / dữ liệu chảy qua) → trả lời được *"output của FEAT này đến tay ACTOR của FEAT kia bằng CƠ CHẾ gì?"* (email · SMS · notification · in giấy · admin đưa tay). Cơ chế chưa được viết ở đâu = luồng thiếu — viết luôn thành AC, không để "hiển nhiên".
 - Field kỹ thuật ĐI CÙNG AC trong cùng file (fork 1 lớp): AC business + `consumes_contracts`/ranh giới ngồi chung — không tách business rồi dịch.
 
-## Không hỏi user (fork rule)
-`/document` đã phỏng vấn Authority (interview) hoặc đã có `intake/`. Bắt trả lời lại = hỏi hai lần cùng câu.
-Thứ tự khi bí: **(1)** tìm trong `PRD`/`PERSONAS`/`CAPABILITIES-MAP`/`INTERVIEW`/`intake` · **(2)** vẫn mơ hồ → ghi 1 dòng `docs/DECISIONS.md` (what/why dẫn về artifact/mục/assume/reversible) rồi đi tiếp · **(3)** tắc cứng thật → `STATE.md §Blocker`, chuyển việc khác, báo gộp cuối lượt · ngoài scope → `docs/ROADMAP.md §backlog`.
+## Chỗ chưa rõ
+Không hỏi lại điều Authority đã trả lời (INTERVIEW · bảng luồng đã ký). Chỗ còn thiếu → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → làm · chuẩn ngành → research, ghi `[C]` + link · chỉ Author biết → hỏi.
 
 ## Quy tắc
 - ID `FEAT-<slug>`. Cross-ref bằng ID canonical đầy đủ (không rút gọn).

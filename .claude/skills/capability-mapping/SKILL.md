@@ -22,7 +22,7 @@ Input: `docs/PRD.md` (vision/problem/hypotheses) + `docs/PERSONAS.md` (persona +
 **Không giới hạn số câu.** Bốn luật đào sâu áp nguyên: hỏi quá khứ cụ thể · mỗi capability phải
 dẫn được về persona thật (đã có trong PERSONAS) · "thường/nhiều" quy ra số · đào theo mạch.
 
-Lỗ hổng không giải được → ghi 1 dòng `docs/DECISIONS.md` (kèm giả định) rồi đi tiếp, đừng treo.
+Lỗ hổng → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → làm · chuẩn ngành → research, ghi `[C]` + link · chỉ Author biết → hỏi, đừng treo.
 
 ## Deliverable
 
@@ -33,7 +33,7 @@ Lỗ hổng không giải được → ghi 1 dòng `docs/DECISIONS.md` (kèm gi�
 > **Ma trận vai × hành động KHÔNG thuộc skill này.** Nó do domain-ba viết ở `docs/PERSONAS.md §2`. Skill này **ĐỌC** ma trận đó (danh sách persona + ai được/cấm) để map capability về đúng persona — KHÔNG tự tạo persona/ma trận.
 
 ## Phương pháp map
-1. **ĐỌC persona**: lấy danh sách persona + ma trận vai × hành động từ `docs/PERSONAS.md` (đã có, read-only). Không phát minh persona mới; capability không dẫn được về persona nào → 1 dòng `docs/DECISIONS.md`.
+1. **ĐỌC persona**: lấy danh sách persona + ma trận vai × hành động từ `docs/PERSONAS.md` (đã có, read-only). Không phát minh persona mới; capability không dẫn được về persona nào → hỏi Authority (persona thiếu hay capability thừa).
 2. **Capability**: mỗi persona "làm được gì?" (verb-noun: 'pay invoice', 'view order'). Tách capability rộng ("manage orders") thành atomic ("place order", "track order", "cancel order").
 3. **Outcome + priority**: mỗi capability → outcome + vì sao persona muốn + gắn **MVP / Phase 2 / Phase N** (feed wave-sequencing khi chia wave).
 4. **Candidate domain** (§2): capability chia sẻ core entity → 1 domain (group theo data/event similarity, KHÔNG theo tech). Đây là input cho event-storming.

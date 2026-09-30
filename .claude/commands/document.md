@@ -93,7 +93,7 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 
 **(2) Không thiếu — completeness** (con mắt ĐỘC LẬP, bù điểm mù Author + MAIN-tự-vấn):
 - **Spawn `pre-mortem`** (sub-agent độc lập MAIN) → quét mỗi FEAT/luồng qua **taxonomy ca biên** (`domain-po`) + 3 câu xuyên-luồng → trả **nghi vấn case Author MISS**.
-- MAIN nhận nghi vấn → mỗi cái **quyết**: thêm AC (CASCADE) · hỏi Authority (còn DOCUMENT nên được hỏi) · ghi giả định `DECISIONS.md`. **KHÔNG bỏ lửng.**
+- MAIN nhận nghi vấn → mỗi cái **quyết**: thêm AC (CASCADE) · hỏi Authority (còn DOCUMENT nên được hỏi) · chuẩn ngành có link → `DECISIONS` (PROTOCOL §2.3). **KHÔNG bỏ lửng, không đoán.**
 
 > Cả 2 phần là việc **NGỮ NGHĨA** — làm bằng đọc/đối chiếu + agent độc lập, **KHÔNG** phải hook. Hook `trace_docsync` chỉ TRIGGER nhắc; audit này mới KIỂM. Còn tham chiếu treo HOẶC nghi vấn pre-mortem chưa xử = **chưa được khoá scope**.
 >

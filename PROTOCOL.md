@@ -16,7 +16,7 @@ Nhận diện bằng đúng một dấu hiệu: `docs/INTERVIEW.md` có marker `
 | | **Đường INTERVIEW** | **Đường INTAKE** |
 |---|---|---|
 | Khi nào | Ý tưởng mới, chưa có tài liệu phân tích (greenfield, project nhỏ) | Đã có tài liệu MESH-render/phân tích sẵn ở `intake/` |
-| MAIN làm | **Phỏng vấn Authority** → `docs/INTERVIEW.md` đủ dòng bằng chứng → suy ra PRD/personas/… | **Dịch/render** `intake/*.md` vào doc set + bảng truy vết + marker `NGUỒN: INTAKE` — KHÔNG phỏng vấn lại |
+| MAIN làm | **Phỏng vấn Authority** → `docs/INTERVIEW.md` đủ dòng bằng chứng → suy ra PRD/personas/… | **Dịch/render** `intake/*.md` vào doc set + bảng truy vết + marker `NGUỒN: INTAKE` — không hỏi lại điều intake đã trả lời; chỗ intake không có → hỏi như đường interview |
 | Cỡ | nhỏ: 1 app, 3–7 AC, 2–3 persona | không trần: multi-boundary, AC truy về `CAPABILITIES-MAP.md` |
 
 Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/VERIFY như nhau — chỉ khác cách nạp nguyên liệu đầu vào. Đường vào quyết định ràng buộc cỡ, không phải quy trình.
@@ -60,12 +60,12 @@ không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (
 
 1. **Scope khoá sau DOCUMENT.** Phát sinh → `docs/ROADMAP.md §backlog`, không chèn vào wave này.
 2. **Sau khi khoá scope: toàn quyền, không hỏi lại.** `AskUserQuestion` **chỉ ở DOCUMENT** (trước khoá scope — phỏng vấn/quyết định); BUILD/VERIFY/SHIP/NEXT-WAVE bị `guard_ask` chặn (ô Scope khoá tick = chốt, chặn luôn dù phase còn ghi DOCUMENT). Ngoại lệ ra-ngoài/không-đảo-ngược: hỏi bằng lời.
-3. **Mơ hồ → 1 dòng `docs/DECISIONS.md` (cột giả định + đảo-ngược-được-không) TRƯỚC khi code.**
+3. **Chỗ chưa rõ → 3 tầng, CẤM đoán không nguồn.** (1) Có bằng chứng (INTERVIEW · bảng luồng đã ký · mockup · AC đã khoá) → làm theo. (2) Là thông lệ ngành → research 2-3 sản phẩm cùng loại / văn bản luật, làm theo, ghi `DECISIONS` loại `chuẩn-ngành` **kèm link**. (3) Chỉ Author biết (chính sách riêng, thị trường không thống nhất, lệch chuẩn) → **DOCUMENT: hỏi** · sau khoá scope: `STATE §Blocker`/`ROADMAP §backlog`, không tự quyết. Quyết định kỹ thuật nội bộ → `DECISIONS` loại `kỹ-thuật`, ghi lý do. **Vòng đời `DECISIONS`**: trước khoá scope **sửa tại chỗ** (1 chủ đề = 1 dòng, không thêm dòng lật dòng cũ); sau khoá **supersede** — dòng cũ `Trạng thái: thay bởi DEC-x`, dòng mới ghi `thay DEC-y`.
 4. **Doc là nguồn sự thật — ĐÓNG BĂNG sau khoá scope.** Code lệch doc (trong AC đã khoá) → **KHÔNG sửa doc spec lúc BUILD** (guard_doc chặn); ghi `ROADMAP §backlog` → wave sau `/document` top-up đồng bộ. Mơ hồ → `DECISIONS.md` (sổ sống, được ghi). Giữ hợp đồng ổn định để review/dogfood đánh, tránh "vừa code vừa vặn doc".
 5. **Cỡ sản phẩm theo đường vào** (§0).
 6. **Không secret trong code, không bypass test/lint. Đã code xong → git commit** (không commit = coi như chưa làm).
 7. **Tiếng Việt có dấu** cho văn bản người đọc (giữ tiếng Anh cho identifier/API/schema/tên lệnh/tên file).
-8. **Im lặng với Authority, đối kháng nội bộ.** Challenge trước khi code + dogfood trước khi báo xong. Dogfood = **trình duyệt thật** (skill `browse`) — **curl không tính** (trừ target `KHÔNG CÓ UI`); MAIN tự dùng trước rồi mới spawn persona.
+8. **Sau khoá scope im lặng với Authority, đối kháng nội bộ.** Challenge trước khi code + dogfood trước khi báo xong. Dogfood = **trình duyệt thật** (skill `browse`) — **curl không tính** (trừ target `KHÔNG CÓ UI`); MAIN tự dùng trước rồi mới spawn persona.
 9. **Dọn rác tạm.** Artifact tạm (screenshot/trace/log/temp phân tích) dùng xong **dọn ngay** — không commit, không tích tụ, để scratch dir. Build artifact (node_modules/target/dist…) trong `.gitignore`. Docker/seed → teardown ở `/next-wave`.
 
 ---
@@ -77,7 +77,7 @@ chỉ để đúng sự thật *trong scope đã khoá*, KHÔNG thêm scope. Khi
 
 ```
 ├─ Code sai so với spec đã chốt              → sửa CODE. Xong. (không đụng doc)
-├─ Spec mơ hồ (không nói rõ ca này)          → DECISIONS.md 1 dòng, tự quyết, đi tiếp. KHÔNG hỏi
+├─ Spec mơ hồ (không nói rõ ca này)          → 3 tầng §2.3: kỹ thuật/chuẩn ngành → DECISIONS (có nguồn), đi tiếp · ý-Author → backlog, KHÔNG tự bịa. KHÔNG hỏi
 ├─ Doc wave HIỆN TẠI lệch thực tế, vẫn trong
 │  AC đã khoá (đổi tên field, thêm chi tiết
 │  kỹ thuật của AC đang làm)                 → sửa DOC cùng commit (doc wave đang mở CHƯA đóng băng)

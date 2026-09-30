@@ -65,12 +65,12 @@ Hai loại nghi vấn — MAIN xử khác nhau (thiếu AC = vá FEAT · thiếu
   Trục: <rỗng|đồng thời|tiền|vòng đời|chu kỳ|luồng ngược|...>
   Kịch bản hỏng: <tình huống cụ thể → kết quả sai/kẹt>
   Chưa có AC/quyết: <đã soi FEAT-x/DECISIONS, không thấy phủ>
-  Đề xuất: <thêm AC ... | hỏi Authority ... | ghi DECISIONS giả định ...>
+  Đề xuất: <thêm AC ... | hỏi Authority ... | chuẩn ngành (link) ...>
 
 [MISS-MẢNG cao|vừa] <mảng nghiệp vụ ngành có mà doc không nhắc>
   Nguồn đối chiếu: <link/demo cho thấy ngành nào cũng có mảng này>
   Vì sao thiếu nó nghiệp vụ không tròn: <gắn với PRD/INTERVIEW — không phải "cho đủ bộ">
   Đã soi: <CAPABILITIES-MAP · PRD §4 out-of-scope · DECISIONS — không thấy nhắc>
-  Đề xuất: <hỏi Authority (thêm wave sau / out-of-scope tường minh) | ghi DECISIONS>
+  Đề xuất: <hỏi Authority (thêm wave sau / out-of-scope tường minh)>
 ```
 Không thấy lỗ ở FEAT nào → nói "FEAT-x: taxonomy phủ đủ". Đối chiếu ngoài không ra mảng thiếu → nói "đã so với <nguồn>, CAPABILITIES phủ đủ". **Báo "không có gì" mà không liệt kê đã quét trục nào / so nguồn nào = chưa săn thật.**

@@ -101,9 +101,8 @@ Sai chỗ nào sửa tại chỗ. Hiểu sai bắt được ở đây tốn mộ
 
 ## Lỗ hổng → xử tại chỗ, không treo sang bước sau
 
-Chỗ user không trả lời được, hoặc chưa quyết: (1) tìm trong tài liệu đã có → (2) hỏi user →
-(3) vẫn chưa có → **tự quyết phương án hợp lý nhất + ghi 1 dòng `docs/DECISIONS.md`** (kèm giả định
-đang mang) rồi đi tiếp. Mọi lỗ hổng ghi lại kèm cách xử — bảng lỗ hổng trống = chưa đào đủ.
+Chỗ user không trả lời được hoặc chưa quyết → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → làm · chuẩn ngành → research, ghi `[C]` + link · chỉ Author biết → hỏi.
+Mọi lỗ hổng ghi lại kèm cách xử — bảng lỗ hổng trống = chưa đào đủ.
 
 ## Deliverable (ghi vào `docs/PRD.md`)
 
