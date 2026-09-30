@@ -34,7 +34,7 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
   > · **Quyết định** (stack/auth/thu tiền/deploy) → `AskUserQuestion` với **option cụ thể + đánh đổi** ("Clerk 20' có phí vs Auth.js 1-2h free").
 - **INTAKE**: đọc `intake/*.md` — **KHÔNG phỏng vấn lại**. Dịch/render sang doc set bên dưới, lập **bảng truy
   vết** `intake → FEAT` trong `docs/INTERVIEW.md`. `intake/TECHSTACK` **thắng** default của stack skill.
-  > **Intake là LỜI KHAI, không phải SỰ THẬT ĐỦ — bỏ phỏng vấn ≠ bỏ RÀ.** Render xong vẫn chạy đủ: research domain **bắt buộc** (tài liệu người ta đưa không thay được tra ngành — đổ ra danh sách luồng chuẩn ngành vào PRD §6 như đường interview) + lưới cạnh-có-chủ/seam (`domain-po`) + 6 họ phổ quát (`pre-mortem`). Lỗ tìm thấy → đang ở DOCUMENT, **được hỏi Authority** hoặc DECISIONS — xử tại chỗ. **Bảng "Lỗ hổng & cách xử" áp cho cả intake — bảng trống = CHƯA rà, không phải intake hoàn hảo.**
+  > **Intake là LỜI KHAI, không phải SỰ THẬT ĐỦ — bỏ phỏng vấn ≠ bỏ RÀ.** Render xong vẫn chạy đủ: research domain **bắt buộc** (bảng 4 loại ở `Skill("discovery-hypothesis")` §Research) (tài liệu người ta đưa không thay được tra ngành — đổ ra danh sách luồng chuẩn ngành vào PRD §6 như đường interview) + lưới cạnh-có-chủ/seam (`domain-po`) + 6 họ phổ quát (`pre-mortem`). Lỗ tìm thấy → đang ở DOCUMENT, **được hỏi Authority** hoặc DECISIONS — xử tại chỗ. **Bảng "Lỗ hổng & cách xử" áp cho cả intake — bảng trống = CHƯA rà, không phải intake hoàn hảo.**
 
 ## Bước 2 — PRD (`docs/PRD.md`)
 Vấn đề (pain) + đối tượng cụ thể + **out-of-scope tường minh** + ≥1 success metric **có số**.

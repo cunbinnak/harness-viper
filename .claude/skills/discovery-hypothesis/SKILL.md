@@ -26,6 +26,7 @@ Input: mô tả project user truyền (`$ARGUMENTS`) hoặc tài liệu trong `i
 | 2 | **Vai chuyên trách trong ngành** — "〈ngành〉 ai chịu trách nhiệm 〈việc〉" / "HR vs line manager vs payroll responsibilities" | Mặc định cột **Ai LÀM** (tuyển dụng = HR, line manager chỉ phỏng vấn/duyệt); Author giao khác mặc định → phải có bằng chứng | `domain-ba` A + ma trận |
 | 3 | **Menu/module của 2-3 sản phẩm cùng loại** — "〈loại sản phẩm〉 features list", trang demo/tour (JS-heavy → skill `browse`) | Mục lục sản phẩm trưởng thành = danh sách nghiệp vụ ngành → bắt mảng Author quên | `pre-mortem` · PRE-LOCK |
 | 4 | **Ràng buộc bên ngoài của bối cảnh Author** — luật/quy định địa phương, tích hợp bắt buộc (máy chấm công, ngân hàng, thuế, hoá đơn) | Thứ Author coi là hiển nhiên nên không kể, sản phẩm vẫn phải theo | probe compliance · arch integrations |
+**Nguồn cho "ai làm bước nào"**: hướng dẫn sử dụng / help center của sản phẩm · văn bản luật · quy trình mẫu. Trang giới thiệu sản phẩm (marketing) chỉ dùng cho loại 3, không làm nguồn vai trò.
 Ghi PRD §6 **theo từng nghiệp vụ** (không một cụm link chung): mỗi nghiệp vụ Author kể có ≥1 nguồn loại 1 (+ loại 2 nếu nhiều vai). Nghiệp vụ không có nguồn = chưa research, `domain-ba` A.1 sẽ research bù trước khi dựng bảng.
 
 **Bắt buộc, không "nếu có":** `WebSearch`/`WebFetch` luôn sẵn — domain mới mà không research = **trí nhớ mù → bịa có cấu trúc (hallucination)**. Mọi kiến thức domain phải có **NGUỒN**: research (ghi link vào PRD §6) / Authority trả lời / intake — KHÔNG từ "cảm giác".

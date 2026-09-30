@@ -10,7 +10,7 @@ description: Phương pháp event-storming cho /document — đọc candidate do
 ## Khi load
 Phương pháp **event-storming** cho `/document` (Architecture + Business). Facilitate event storming cho **MỘT domain mỗi lần**, theo candidate domains ở `docs/CAPABILITIES-MAP.md §2`. Interactive — dùng AskUserQuestion nhiều.
 
-Input: `docs/CAPABILITIES-MAP.md §2` (candidate domains) + `docs/PERSONAS.md` (actors).
+Input: `docs/CAPABILITIES-MAP.md §2` (candidate domains) + **bảng luồng `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`** (actor + bước đã ký — không hỏi lại "ai issue").
 
 ## Deliverable
 Ghi vào `docs/arch/OVERVIEW.md §4 Event Storming` — **mỗi candidate domain (capability-map §2) một khối con** `### <domain>`. (Nếu domain phức tạp và tách file riêng thuận tiện hơn thì đặt tại `docs/arch/{domain}.md`; mặc định gom vào OVERVIEW §4.)
@@ -25,7 +25,7 @@ Mỗi khối con `### <domain>`:
 
 ## Phương pháp (4 phase)
 1. **Events (past tense)**: "Sự kiện gì xảy ra trong domain? (OrderPlaced, RefundIssued...)". Thu 10-30, đừng over-constrain sớm.
-2. **Commands + Actors**: mỗi event "command nào trigger? ai issue (persona/system)?".
+2. **Commands + Actors**: mỗi event "command nào trigger?" — actor lấy từ cột Ai LÀM của bảng luồng; event không map được dòng bảng nào = bước bảng thiếu → quay domain-ba.
 3. **Aggregates**: group events mutate cùng entity → tên aggregate + state machine proto.
 4. **Hot-spots + external + reactor**: cái chưa chắc/contentious, system ngoài, event→event chain.
 

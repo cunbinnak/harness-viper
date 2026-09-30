@@ -44,8 +44,13 @@
 |---|---|
 | {{term}} | {{định nghĩa nghiệp vụ}} |
 
-**Nguồn:**
-- {{vd: intake/brief.md · phỏng vấn Authority 2026-… · tài liệu X}}
+**Nguồn theo nghiệp vụ** (research 4 loại — `discovery-hypothesis`):
+| Nghiệp vụ | Chuẩn ngành làm thế nào / ai làm | Nguồn (link) |
+|---|---|---|
+| {{Tuyển dụng}} | {{HR đăng tin + lọc CV · trưởng bộ phận phỏng vấn/duyệt}} | {{link hướng dẫn sử dụng / luật}} |
+
+Luồng chuẩn ngành (bản đồ sản phẩm cùng loại): {{mọi HRM đều có: …}}
+Khác: {{intake/brief.md · phỏng vấn Authority 2026-…}}
 
 <!-- §7: bộ dữ liệu mẫu — MỘT nguồn nuôi 4 chỗ: mockup (Bước 8) · seed deployment/local/ · dogfood · test-cases.
      Ưu tiên dữ liệu THẬT Authority đang có; không có → MAIN research domain + tự chuẩn bị bộ realistic

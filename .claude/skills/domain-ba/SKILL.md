@@ -15,7 +15,7 @@ Viết **THẲNG** vào 1 lớp doc:
 - **Business-rule** → **FEAT `docs/feat/*` §3 Field kỹ thuật** (rule gắn 1-2 feature; ghi nháp, điền khi Bước 5 chạy) · rule nền/cross-cutting → **`docs/adr/`**.
 - **Persona + ma trận vai × hành động** → **`docs/PERSONAS.md`**.
 
-> Wireframe/UI KHÔNG thuộc method này — đó là UX: `docs/ux/` + `docs/DESIGN-SYSTEM.md`.
+> Mockup/visual KHÔNG thuộc method này (UX: `docs/ux/` + `docs/DESIGN-SYSTEM.md`). Nhưng **danh sách màn nháp** (A.5) thì có — UX dựng SCREEN-MAP từ nó, không suy lại.
 
 ## Boot sequence (targeted — Bước 3: CAPABILITIES-MAP/FEAT CHƯA tồn tại, đừng tìm)
 1. `STATE.md` + `PROTOCOL.md`.
@@ -29,11 +29,12 @@ Lời kể là văn xuôi ("bộ phận có nhu cầu liên hệ HR → HR đăn
 3. **Mỗi nghiệp vụ Authority đã kể → 1 bảng** `# · Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào → đầu ra · Bằng chứng`, 4-8 dòng, đi trọn vòng đời (ai tạo cái đầu tiên, cái cuối đi đâu, đường lùi/huỷ).
    - **Ai LÀM ≠ Ai NHỜ/duyệt** — hai cột riêng, bắt buộc. Người nêu nhu cầu / phê duyệt ngoài hệ thống KHÔNG phải actor; có thao tác riêng thì thành dòng riêng.
    - **Vai chuyên trách theo ngành là mặc định** (tuyển dụng = HR · tính lương = C&B · duyệt phép = quản lý trực tiếp). Giao cho vai khác phải có dòng bằng chứng.
-   - **Cột Bằng chứng trỏ số dòng INTERVIEW §1.** Ô không trỏ được → ghi `CHƯA HỎI` — **đó là câu hỏi kế tiếp, hỏi Authority ngay** (đang DOCUMENT, hỏi hợp lệ và rẻ nhất). KHÔNG đoán, KHÔNG ghi DECISIONS thay cho việc hỏi.
+   - **Cột Bằng chứng = 1 trong 3**: `§1 dòng N` (Author nói) · `[C] <link>` (chuẩn ngành — research: ưu tiên hướng dẫn sử dụng sản phẩm, văn bản luật, quy trình mẫu; trang marketing không tính) · `intake/<file>`. Ô không có cả 3 → ghi `CHƯA HỎI` — **đó là câu hỏi kế tiếp, hỏi Authority ngay** (đang DOCUMENT, hỏi hợp lệ và rẻ nhất). KHÔNG đoán, KHÔNG ghi DECISIONS thay cho việc hỏi.
 4. **Use case per dòng bảng** (khi dòng có nhánh): precondition · main flow · alternate · postcondition — mỗi nhánh ngoại lệ sau này là 1 AC/ca biên ở Bước 5. Ghi gọn ngay dưới bảng hoặc để `domain-po` lấy.
-5. **Playback đọc BẢNG, không đọc văn xuôi**: "bước 1: HR đăng tin, bộ phận chỉ nhờ — đúng không?". Sai actor lộ trên một dòng bảng trong 5 giây. Authority gật → ghi `chốt bởi Authority: <ngày ISO>` trên bảng. Gate DOCUMENT đòi: ≥1 bảng · đã ký · không ô `CHƯA HỎI`.
+5. **Màn nháp + câu hỏi có hệ quả** — ngay dưới bảng luồng: (a) **theo vai**: mỗi vai làm gì, làm thế nào (nguồn cho ma trận ở mục C); (b) **màn nháp** `Mã màn · Module · Vai dùng · Hành động phải có trên màn` — mỗi dòng bảng luồng có thao tác trên hệ thống phải có màn đứng; (c) mỗi ô `CHƯA HỎI` viết thành **câu hỏi kèm hệ quả A/B lên màn** ("HR lập tờ trình → nút ở EMP-DETAIL chỉ HR thấy · Quản lý lập → thêm lối vào + bước HR tiếp nhận"). Author trả lời theo hệ quả, không trả lời mơ hồ.
+6. **Playback đọc BẢNG, không đọc văn xuôi**: "bước 1: HR đăng tin, bộ phận chỉ nhờ — đúng không?". Sai actor lộ trên một dòng bảng trong 5 giây. Authority gật → ghi `chốt bởi Authority: <ngày ISO>` trên bảng. Gate DOCUMENT đòi: ≥1 bảng · đã ký · không ô `CHƯA HỎI`.
 
-Bảng này là **nguồn duy nhất** cho: ô `có/cấm` ma trận PERSONAS §2 (mục C dưới) · actor của AC (`domain-po`) · hành trình persona `arch/<web>.md §2`. Không nơi nào được tự suy actor ngoài bảng.
+Bảng + màn nháp là **nguồn duy nhất** cho: ô `có/cấm` ma trận PERSONAS §2 (mục C dưới) · actor của AC (`domain-po`) · actor của event-storming · SCREEN-MAP (`ux-design`) · hành trình persona `arch/<web>.md §2`. Không nơi nào được tự suy actor ngoài bảng.
 
 ## B. Business-rule (từ bảng luồng + INTERVIEW)
 §Phát biểu (1 câu rõ) + §Lý do (**reference nguồn**: luật/policy/contract/quyết định — KHÔNG "best practice") + §Khi nào áp dụng + §Ngoại lệ + §Hệ quả + **≥2 ví dụ** (1 happy + 1 vi phạm, số liệu — QC seed test) + `severity` CORNERSTONE/NORMAL + **`related_features` ≥1** (rule chỉ 1 FEAT → đáng lẽ là AC, đưa thành AC trong FEAT đó). §**Enforce ở đâu** trỏ nơi CHẶN được (unique index · cột `version` · idempotency key · DB constraint · state machine) — viết chung file với contract (fork 1 lớp, không TODO-engineer để dịch sau).
