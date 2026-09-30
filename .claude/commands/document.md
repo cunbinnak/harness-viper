@@ -39,7 +39,7 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 ## Bước 2 — PRD (`docs/PRD.md`)
 Vấn đề (pain) + đối tượng cụ thể + **out-of-scope tường minh** + ≥1 success metric **có số**.
 
-## Bước 3 — PERSONAS (`docs/PERSONAS.md`)  → **Nạp `Skill("domain-ba")` trước**
+## Bước 3 — Phân tích BA: bảng luồng → business-rule → PERSONAS  → **Nạp `Skill("domain-ba")` trước**
 **Trình tự PO → BA → yêu cầu**: khám phá (Bước 1-2) là việc PO; Bước 3 là BA **phân tích quy trình TRƯỚC khi ai viết AC** — (A) dựng bảng luồng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`, ô `CHƯA HỎI` → hỏi Authority ngay (cả 2 đường vào), **Authority ký bảng** → (B) business-rule → (C) persona + ma trận sinh TỪ bảng. Từ đây actor của AC (Bước 5), ô ma trận, hành trình `arch/<web>.md §2` **chỉ lấy từ bảng** — chống suy diễn \"người có nhu cầu = người thao tác\".
 Persona + năng lực được cấp + **ma trận vai × hành động** — mỗi ô `có`/`cấm`, **KHÔNG ô trống**
 (đây là spec phân quyền khi code + nguồn TC âm khi test + danh sách phép thử của vai `breaker` ở dogfood).
@@ -57,9 +57,9 @@ Mỗi capability → ≥1 FEAT. Mỗi FEAT: **AC dạng BDD** (Given/When/Then) 
 - `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ nằm ở đây; FEAT chỉ khai `consumes_contracts`.
 
 ## Bước 7 — TECHSTACK (`docs/TECHSTACK.md`)
-Chốt stack (khớp skill `stack-<tên>`) + **1 dòng lý do** ở `docs/DECISIONS.md`. INTAKE: giữ đúng lựa chọn của intake.
+**Chỗ DUY NHẤT chốt tech** (Bước 6 chỉ đề xuất, không tự chốt). Lựa chọn Author sẽ thấy / phải vận hành / tốn tiền (stack · UI kit · đăng nhập & phiên · lưu file · cache · email/SMS · build tool · deploy) mà Author CHƯA nói → **hỏi bằng `AskUserQuestion`**, mỗi câu 2-3 option + đánh đổi 1 dòng + mặc định đề xuất. Author đã nói / intake đã khai → giữ nguyên, không hỏi lại. Chi tiết thuần nội bộ → tự quyết, `DECISIONS` loại `kỹ-thuật`. Kết quả → `docs/TECHSTACK.md` + ADR.
 > **VERSION mỗi stack: Read dòng `description` của skill `stack-<tên>` tương ứng lấy default + note EOL — CẤM điền version từ trí nhớ.** Knowledge cutoff của model CŨ hơn thực tại: "version mình nhớ là mới nhất" thường đã lỗi thời/EOL. Authority không chỉ định version → dùng default của skill + 1 dòng `DECISIONS.md`; Authority chỉ định khác default → theo Authority, ghi ADR.
-> **Quét FEAT xem feature nào NGẦM đòi tech/infra chưa chốt** (Author hay tả tính năng mà quên "chạy bằng gì"): **upload**→lưu trữ (S3/blob/disk) · **thông báo**→email/SMS/push provider · **tìm kiếm nâng cao**→search engine? · **xuất file**→PDF/Excel + sync/async · **thanh toán**→cổng · **lịch/định kỳ**→job runner · **realtime**→WS/SSE. Mỗi cái chạm → chốt trong TECHSTACK/`adr/`. (Sót thì `pre-mortem` bắt ở pre-lock audit, nhưng chốt sớm ở đây đỡ hơn.)
+> **Quét FEAT xem feature nào NGẦM đòi tech/infra chưa chốt** (Author hay tả tính năng mà quên "chạy bằng gì"): **upload**→lưu trữ (S3/blob/disk) · **thông báo**→email/SMS/push provider · **tìm kiếm nâng cao**→search engine? · **xuất file**→PDF/Excel + sync/async · **thanh toán**→cổng · **lịch/định kỳ**→job runner · **realtime**→WS/SSE. Mỗi cái chạm mà chưa chốt → đưa vào lượt hỏi ở trên. (Sót thì `pre-mortem` bắt ở pre-lock audit, nhưng chốt sớm ở đây đỡ hơn.)
 
 ## Bước 7b — Quy ước chung  *(đã có sẵn — framework default, KHÔNG author lại)*
 `docs/CONVENTIONS.md` + `docs/SECURITY.md` là **doc framework cố định**. Chỉ **rà + chỉnh §API error-envelope/header/versioning**
@@ -69,7 +69,7 @@ nếu project khác default → sửa thẳng file + ghi `DECISIONS.md`.
 
 ## Bước 8 — Design system + UX  → **Nạp `Skill("ux-design")` trước** (nếu có UI; backend-only → ghi marker `KHÔNG CÓ UI`, bỏ qua bước này)
 Thứ tự bắt buộc: `docs/DESIGN-SYSTEM.md` (token — **khoá TRƯỚC**, cả dự án) → `docs/ux/SCREEN-MAP.md` (mục lục
-**mọi màn** ↔ target ↔ FEAT ↔ wave, cả dự án) → `docs/ux/mockups/<target>/*.html` **chỉ dựng màn in-scope
+**mọi màn** ↔ target ↔ FEAT ↔ wave, cả dự án) → **DỪNG, sang Bước 9 chia wave** (cột `Wave` của SCREEN-MAP điền ở Bước 9) → quay lại dựng `docs/ux/mockups/<target>/<module>.html` **chỉ màn in-scope
 wave đang mở** (ở DOCUMENT = wave 1; màn wave sau để trống, `/document` top-up khi `/next-wave` mở wave đó —
 vẽ tới đâu duyệt tới đó, không phí công mockup wave xa dễ đổi) → **rà nhất quán cross-màn** (app shell — sidebar/nav/logo/user-menu — phải giống hệt mọi mockup; lệch = sửa khớp `_shell.html` canonical, xem `ux-design §Nhất quán cross-màn`) → **Authority chốt mockup của wave đó**.
 Token là thứ **DUY NHẤT chép nguyên** sang code ở BUILD.
@@ -77,7 +77,8 @@ Token là thứ **DUY NHẤT chép nguyên** sang code ở BUILD.
 ## Bước 9 — Chia wave (`docs/ROADMAP.md`)
 Bảng wave: mỗi wave khai **target** (kind: backend/web/bff/mobile) + **phases chạy** (`BUILD,VERIFY[,SHIP]`) + **AC in-scope**.
 **FEAT-cap** = `feat_cap_per_wave` (frontmatter `docs/ROADMAP.md`, **mặc định ~3-4 FEAT/wave ≈ 15-20 AC**) — ngưỡng để **một phiên BUILD của MAIN làm nổi** (MAIN-code-hết, không dev-agent). KHUYẾN KHÍCH, **tròn luồng thắng con số**: tách mà đứt luồng → giữ tròn + ghi `rationale`; 1 FEAT quá to (nhiều AC) → tách nhỏ. **SỐ WAVE = số dòng §1** (phái sinh từ scope ÷ cap + phụ thuộc — không đặt tay). → **Nạp `Skill("implementation-plan")` để chia**. Điền cột
-`Wave giao` ở CAPABILITIES-MAP. Để trống `§backlog` (amendment tương lai đổ vào đây).
+`Wave giao` ở CAPABILITIES-MAP + cột `Wave` ở SCREEN-MAP. Để trống `§backlog` (amendment tương lai đổ vào đây).
+Có UI → **quay lại Bước 8 dựng mockup màn wave 1** (ux-design) rồi mới sang Bước 10.
 
 ## Bước 10 — Challenge DOCUMENT (luật #8 — tới khi hiểu ĐÚNG Ý AUTHOR)  → **Nạp `Skill("business-analysis")` để rà chéo**
 Tự ra **≥3 câu hỏi khó nhất**, trả lời **CHỈ bằng tài liệu vừa viết** — trong đó **≥1 câu dạng JOURNEY-WALK**: lấy persona + dữ liệu mẫu PRD §7, đi bộ xuyên doc *"dẫn 〈persona X〉 từ zero đến làm được 〈việc Y〉 — từng bước trích doc"* (câu hỏi ĐIỂM bắt lỗ cục bộ; walk bắt luồng đứt/vắng — kẹt ở bước không trích được = lỗ ngay tại đó). Câu nào phải đoán = **một lỗ tài liệu** →

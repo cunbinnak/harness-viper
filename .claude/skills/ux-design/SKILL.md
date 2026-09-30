@@ -134,7 +134,7 @@ Bốn mục §1/§2/§3/§4 phải đầy đủ trước khi khoá scope @ `/doc
 
 ## Chốt mockup — KHÔNG dừng ở đây
 
-Vẽ xong toàn bộ màn trong SCREEN-MAP thì **đi tiếp luôn** sang chốt kế. Việc user xem và chốt
+Vẽ xong các màn in-scope wave đang mở thì **đi tiếp luôn** sang chốt kế. Việc user xem và chốt
 giao diện xảy ra **một lần duy nhất, ở khoá scope `/document`** — nơi họ vốn đang đọc cả bộ tài liệu.
 Dừng thêm một lần giữa bước UX là hỏi cùng một câu hai lần ở hai chỗ.
 
@@ -167,4 +167,4 @@ Chốt bởi user: 2026-08-22
 ```
 
 ## Done
-- `docs/ux/SCREEN-MAP.md` đủ user flow + screens + states + a11y + permission UI cho mọi FEAT Must của web target.
+- `docs/ux/SCREEN-MAP.md` đủ row cho mọi AC `has_ui` (cả dự án, format `TEMPLATE.screen-map.md`); mockup đủ cho màn in-scope wave đang mở.
