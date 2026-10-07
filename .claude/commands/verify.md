@@ -9,7 +9,7 @@ description: VERIFY — code review (2 vai) + test-writer thiết kế/chạy bl
 > · `test-writer` → **QA độc lập, CÓ viết**: thiết kế `tracking/wave-N/test-cases.md` + viết test code trong `test/` (đó là việc của nó) — CHỈ **không đụng product code**.
 > Mọi agent thấy product code sai → **TRẢ finding**, MAIN sửa (**góc nhìn độc lập** — *fresh eyes*: người kiểm không phải người viết, nên MAIN không tự-chấm-bài-mình).
 > **THU ĐỦ → SỬA SAU**: finding từ Bước 2/3/4 chỉ **GOM** vào `STATE §Findings` — MAIN **CẤM đụng product code trước Bước 5**. Sửa sớm = phá snapshot mà test-writer/dogfood đang đo trên đó → finding các nguồn không map được nhau + rebuild lắt nhắt nhiều lượt thay vì 1 lượt batch.
-> Không hỏi Authority (mơ hồ → `DECISIONS.md` · ngoài scope → `ROADMAP §backlog` · chặn cứng → `STATE §Blocker`).
+> **Không dừng hỏi Authority, kể cả bằng lời** (PROTOCOL §2.2 — chỉ dừng ở Bước cuối báo kết quả): chỗ chưa rõ → 3 tầng §2.3 · ngoài scope → `ROADMAP §backlog` · chặn cứng → `STATE §Blocker`. Bước kế bắt buộc (dogfood, re-run, re-review) thì **LÀM**, không mời Authority quyết.
 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: VERIFY`.
 
@@ -72,6 +72,8 @@ Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên v
 ## Bước 5 — Fix-loop (MAIN) — lặp theo LƯỢT, mỗi lượt đủ 4 nhịp
 > **PHÂN LOẠI finding trước khi xử — bug ≠ thiếu-AC:**
 > - **Bug** (AC/spec ĐÃ có mà code sai) → **MAIN sửa code**, không đụng doc.
+> - **TC FAIL vì code lệch AC đã khoá → sửa CODE.** Chỉ được đổi kỳ vọng TC khi AC trái một nguồn bắt buộc **bên ngoài** (luật, hợp đồng khác đã khoá) — trích nguồn. **CẤM lấy `DECISIONS` do chính MAIN ghi làm căn cứ** (tự hợp thức hoá để gate xanh). AC sai mà không có nguồn ngoài → code theo AC + backlog top-up sửa AC.
+> - **Tiêu chí LỆCH / dung sai / `MOCKUP-LỖI` cố định ở `persona-picky` bước 2** — không đổi theo wave, không hỏi Authority để nới.
 > - **LỆCH MOCKUP ĐÃ CHỐT = BUG** (finding picky: thiếu khối/cột/nút mockup vẽ · token không apply · component trần) — mockup là **spec hình ảnh**, không cần AC chữ đứng sau. Sửa trong wave như mọi bug. **CẤM đổi nhãn thành "thiếu-AC" để đẩy backlog** — chỉ được backlog khi Authority quyết ĐỔI mockup (mà sau khoá scope thì không hỏi được → tức là sửa code cho khớp, hết đường xả).
 > - **Thiếu-AC** (dogfood/bug-hunter chạm case **không AC/mockup nào phủ**, mà đáng ra phải có) → **tag `nghi thiếu AC`** vào `§Findings` + đẩy `ROADMAP §backlog` (ghi FEAT liên đới) → `/next-wave` cân nhắc `/document` top-up **thành AC mới** (spec giàu dần — loop engineering). **Vá code tạm CHỈ khi case chặn luồng nghiệp vụ wave này; không chặn → để nguyên tag + backlog, KHÔNG vá** (vá không có spec đỡ = spec rỗng dần).
 
@@ -85,7 +87,7 @@ Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên v
 ## Bước cuối — Chốt
 1. `tracking/wave-N/test-cases.md`: mọi AC in-scope có TC **PASS**, không TC **FAIL**.
 2. `STATE.md §Findings`: hết finding **BLOCKER/MAJOR** open.
-3. `python scripts/gate.py` (VERIFY) xanh → tick gate VERIFY → **DỪNG — báo Authority kết quả VERIFY** (mẫu tổng kết dogfood + trạng thái gate). **`/ship`/`/next-wave` do AUTHORITY gọi — MAIN KHÔNG tự chạy** (đóng wave = quyết định go/pivot/kill của Authority, kể cả wave không khai metric; MAIN tự đóng là chiếm quyền).
+3. `python scripts/gate.py` (VERIFY) xanh → tick gate VERIFY → **DỪNG — báo Authority kết quả VERIFY** (mẫu tổng kết dogfood + trạng thái gate). Authority bảo đóng wave (kể cả nói trong chat) → chạy **`/next-wave`** (script `next_wave.py`), KHÔNG đóng tay. **`/ship`/`/next-wave` do AUTHORITY gọi — MAIN KHÔNG tự chạy** (đóng wave = quyết định go/pivot/kill của Authority, kể cả wave không khai metric; MAIN tự đóng là chiếm quyền).
 
 ## Ranh giới
 - **KHÔNG build/sửa source để test qua** — test black-box đo hành vi thật; lỗi thì sửa ở Bước 5 rồi re-test.

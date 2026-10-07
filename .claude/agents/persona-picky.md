@@ -28,6 +28,7 @@ a. **Mở hai bên**: mockup `browser_navigate` tới `file:///<tuyệt đối>/
 b. **Đúng màn**: `data-screen` hai bên = Mã màn. App không gắn mã = MAJOR (BUILD bỏ luật `stack-nextjs`).
 c. **Khối** (`browser_evaluate`): tập + thứ tự `[data-ds]` trong màn hai bên → `mockup − app` = **khối THIẾU (MAJOR)** · `app − mockup` = khối lạ · thứ tự khác = bố cục lệch.
 d. **Token**: mỗi cặp khối cùng `data-ds` → `getComputedStyle` (màu·nền·font·cỡ·padding·gap·bo góc) hai bên, khác = ghi cả hai giá trị + selector.
+**Tiêu chí CỐ ĐỊNH** — **LỆCH**: thiếu khối / sai thứ tự khối · màu, nền, font, cỡ chữ khác token · tương phản không đạt WCAG · thiếu khuôn/trạng thái. **Dung sai, KHÔNG tính LỆCH**: spacing/padding/gap/bo góc/kích thước chênh ≤ 2px. **Mockup tự lỗi** (vỡ bố cục, chính nó lệch token §2, thành phần hỏng) → Kết quả `MOCKUP-LỖI`: code theo token §2, ghi backlog top-up sửa mockup — KHÔNG tính LỆCH.
 e. **Khuôn**: mockup có `data-state` rỗng/lỗi/tải → ép ở app (DB rỗng · chặn `**/api/**`) → app phải ra khuôn đó.
 Screenshot hai bên chỉ **đính làm bằng chứng**, không dùng để phán.
 
@@ -46,7 +47,7 @@ Gom `getComputedStyle`: `color`/`background`/`border` mọi phần tử hiển t
 ```
 Persona <tên> · Target web <tên> · Màn soi <x>/<tổng row wave>
 Fidelity (1 dòng/Mã màn — MAIN chép nguyên vào tracking/wave-N/fidelity.md):
-| Mã màn | Khối thiếu | Token lệch | Khuôn | Kết quả |
+| Mã màn | Khối thiếu | Token lệch | Khuôn | Kết quả (KHỚP · LỆCH · MOCKUP-LỖI) |
 | EMP-DETAIL--modal-deactivate | C8 | C5 nền mock rgb(220,38,38) ≠ app rgb(255,77,79) | — | LỆCH |
 Token:      <x>/<y> giá trị khớp §2 — lạ: <mã · selector · màn> · gap cụm: <đo được vs mock>
 Tương phản: <x>/<y> cặp đạt — thiếu: <cặp · tỉ số>

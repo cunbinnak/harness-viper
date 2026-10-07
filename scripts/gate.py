@@ -319,6 +319,14 @@ def gate_build(r: Report) -> None:
     else:
         r.note("wave 1 — miễn wave_reviewed (fresh từ DOCUMENT)")
     r.check(git_commit_count() >= 1, "đã có commit")
+    # bất biến chuyển wave: đang BUILD thì VERIFY/SHIP chưa thể xong; wave trước phải đóng bằng next_wave.py + commit
+    leftover = [ph for ph in ("VERIFY", "SHIP") if re.search(r"- \[[xX]\]", section("STATE.md", ph))]
+    r.check(not leftover, "không còn ô VERIFY/SHIP đã tick khi đang BUILD"
+            + (f" — CÒN tick ở {', '.join(leftover)}: sót từ wave trước (đóng wave làm tay?) → chạy lại reset" if leftover else ""))
+    if wave.isdigit() and int(wave) >= 2:
+        prev = f"archive/wave-{int(wave) - 1}"
+        tracked = subprocess.run(["git", "ls-files", prev], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        r.check(bool(tracked), f"{prev} tồn tại + đã commit (đóng wave bằng next_wave.py)")
     miss = missing_wave_mockups(wave)
     r.check(not miss, f"màn UI in-scope wave {wave} đều có mockup"
             + (f" — THIẾU: {', '.join(miss)} (→ /document top-up dựng mockup TRƯỚC khi code)" if miss else ""))
@@ -421,6 +429,12 @@ def _state_checkboxes(r: Report, phase: str) -> None:
     unchecked = re.findall(r"- \[ \] (.+)", sec)
     for item in unchecked:
         r.check(False, f"[STATE chưa tick] {item[:70]}")
+    # tick mang số wave KHÁC wave đang chạy = tick cũ không được reset (đóng wave làm tay) → không tin
+    wave = state_wave()
+    for item in re.findall(r"- \[[xX]\] (.+)", sec):
+        old = [w for w in re.findall(r"wave-(\d+)/", item) if w != wave]   # chỉ đường dẫn bằng chứng (tracking/wave-N/…), không bắt lời ghi chú
+        if wave.isdigit() and old:
+            r.check(False, f"[STATE tick cũ wave {old[0]}] {item[:60]} — bỏ tick, đo lại cho wave {wave}")
     if not unchecked and sec:
         r.note(f"STATE gate {phase}: mọi mục đã tick")
 

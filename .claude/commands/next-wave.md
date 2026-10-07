@@ -14,8 +14,9 @@ description: NEXT-WAVE — đóng wave (snapshot, KHÔNG reset) → rà lại + 
 - Trình Authority **go / pivot / kill** — **LUÔN, không phụ thuộc metric**: wave có metric → so **số thật vs ngưỡng ghi TRƯỚC** (ở FEAT/ROADMAP), **KHÔNG chỉnh ngưỡng sau khi nhìn số**; wave không metric → vẫn phải có lời chốt của Authority mới đóng. Ghi kết quả → `docs/DECISIONS.md`.
 - Gom vào `docs/ROADMAP.md §backlog` **TRƯỚC khi xoá trắng STATE** (không để mất): amendment trong wave (luồng thiếu, scope mới) + **finding minor còn lại** ở §Findings + blocker treo.
 
-## Bước 2 — Snapshot (KHÔNG reset, copy HẾT)
-Copy vào `archive/wave-N/` — **snapshot TRỌN lát cắt wave, không chọn lọc** ("chép doc nào" là phán đoán sẽ mục): `STATE.md` (gate+logs) ·
+## Bước 2 — Snapshot + reset wave-scoped: **CHẠY `python scripts/next_wave.py --go`**
+Script làm trọn: copy HẾT vào `archive/wave-N/` · bỏ tick gate BUILD/VERIFY/SHIP · xoá log wave · `Wave: N+1` · từ chối nếu wave đã đóng. **CẤM làm tay** (chép archive tay, sửa tay dòng `Wave`) — đóng tay từng bỏ sót reset: ô VERIFY wave cũ còn `[x]` → gate wave mới "xanh" mà chưa dogfood. Xong → **`git add archive/wave-N STATE.md && git commit`** (archive chưa commit = snapshot có thể mất). Authority nói "đóng wave" trong chat → vẫn chạy lệnh này, không tự đóng.
+Nội dung snapshot `archive/wave-N/` — **snapshot TRỌN lát cắt wave, không chọn lọc** ("chép doc nào" là phán đoán sẽ mục): `STATE.md` (gate+logs) ·
 `tracking/wave-N/test-cases.md` + `fidelity.md` · **phần `docs/` in-scope wave**. **Lát cắt lấy từ `ROADMAP.md §1` wave-N**: cột `Target (kind)` → `arch/{target}.md` của đúng target đó · cột `AC in-scope` → các `FEAT` chứa AC đó. (Wave BE-only → chỉ `arch/backend.md` + FEAT-BE, KHÔNG kéo target khác vào.) Từ đây **BẤT BIẾN — là hợp đồng**.
 - **`archive/wave-N/` tồn tại = cờ "wave đã đóng"** → có rồi thì TỪ CHỐI đóng lại (đóng 2 lần = ghi đè, mất vết).
 - **Shipped surface** (test-cases PASS + `arch §API`) = hợp đồng wave sau phải giữ → wave sau **chỉ THÊM** (additive), ghi vào `docs/BACKWARD-COMPAT.md §1` (sổ tích luỹ, **không wave nào xoá**).
@@ -34,7 +35,7 @@ Copy vào `archive/wave-N/` — **snapshot TRỌN lát cắt wave, không chọn
    ghi dòng `điều chỉnh khi mở` nếu có đổi → **stamp `Rà lại wave N+1: <ngày ISO>`** vào ROADMAP.
    *(Gate `wave_reviewed` ở `/build` đòi đúng dòng này, ngày ≥ lúc mở — thiếu = chạy mù, không cho code.)*
 2. **Re-arm `BACKWARD-COMPAT.md §3`** (checklist rà mỗi wave): bỏ tick §3 để wave mới rà lại. **§1 (sổ hợp đồng) KHÔNG đụng** — surface wave 1 giao vẫn là hợp đồng ở wave 9.
-3. Xoá trắng phần **wave-scoped** của `STATE.md`: gate BUILD/VERIFY + `§Findings` + 3 log → set `Wave: N+1`.
+3. Phần **wave-scoped** của `STATE.md` (gate BUILD/VERIFY/SHIP · `§Findings` · log · `Wave`) đã được `next_wave.py` reset ở Bước 2 — **không làm tay**.
 4. **Amendment thành hiện thực** (đây là điểm định tuyến của "sửa doc = wave sau" — PROTOCOL §3):
    > **Nối từ mục 1 — luật cứng**: item backlog tag `nghi thiếu AC` hoặc cần mockup/màn mới, **xếp vào wave nào** (kể cả wave làm mịn UI-only) → **BẮT BUỘC `/document` top-up TRƯỚC `/build` wave đó** — không được đi nhánh "chỉ đổi thứ tự". Gate BUILD chặn bằng máy (`pending_topup` + `missing_wave_mockups`). Ghi 1 dòng ROADMAP §2 *"đường đã chọn + lý do"* cho wave kế.
    - **Chỉ đổi thứ tự / phạm vi wave** (không đổi nội dung FEAT) → đã chỉnh ROADMAP ở 4.1 → `/build <N+1>`.
