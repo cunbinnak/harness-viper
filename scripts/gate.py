@@ -439,6 +439,34 @@ def _state_checkboxes(r: Report, phase: str) -> None:
         r.note(f"STATE gate {phase}: mọi mục đã tick")
 
 
+def _state_shape(r: Report) -> None:
+    """STATE.md phải giữ khung templates/TEMPLATE.state.md: heading · chữ ô gate · trường đầu."""
+    tpl = read("templates/TEMPLATE.state.md")
+    if not tpl:
+        return
+    live = read("STATE.md")
+    lines, bad, sec = {ln.strip() for ln in live.splitlines()}, [], ""
+    for ln in tpl.splitlines():
+        s = ln.strip()
+        if s.startswith("## ") or s.startswith("### "):
+            sec = s
+            if s not in lines:
+                bad.append(f"heading thiếu/bị sửa: {s[:60]}")
+        box = re.match(r"- \[ \] (.+)", s)
+        # ô DOCUMENT tick 1 lần cho cả dự án (giữ chữ bản lúc chạy) → chỉ soi chữ ô wave-scoped (next_wave dựng lại mỗi wave)
+        if box and "DOCUMENT" not in sec and not re.search(rf"^\s*- \[[ xX]\] {re.escape(box.group(1))}", live, flags=re.M):
+            bad.append(f"ô gate thiếu/bị sửa chữ: {box.group(1)[:50]}")
+        fld = re.match(r"^([^\s:`>#|\-][^:]*?)\s+:\s", ln)
+        if fld and not re.search(rf"^{re.escape(fld.group(1))}\s+:", live, flags=re.M):
+            bad.append(f"thiếu trường đầu: {fld.group(1)}")
+    for b in bad:
+        r.check(False, f"[STATE lệch khung template] {b}")
+    if not bad:
+        r.note("STATE giữ đúng khung templates/TEMPLATE.state.md")
+    else:
+        r.note("→ trả heading/chữ ô/trường về đúng template; bằng chứng ghi dòng con dưới ô hoặc vào log")
+
+
 GATES = {
     "DOCUMENT": gate_document, "BUILD": gate_build, "VERIFY": gate_verify,
     "SHIP": gate_ship, "NEXT-WAVE": gate_next_wave,
@@ -452,6 +480,7 @@ def main(argv: list[str]) -> int:
         return 2
     print(f"[gate {phase}]  (nguồn: PROTOCOL.md §6)")
     r = Report()
+    _state_shape(r)
     GATES[phase](r)
     print(f"\n{'PASS — rời phase được' if r.ok else 'CÒN THIẾU — chưa rời phase'}")
     return 0 if r.ok else 1

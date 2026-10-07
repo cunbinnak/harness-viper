@@ -6,6 +6,7 @@
 
 | Template | Copy sang | Khi (DOCUMENT) |
 |---|---|---|
+| `TEMPLATE.state.md` | `STATE.md` | khung — bootstrap tạo · `next_wave.py` dựng lại phần wave · gate soi khớp |
 | `TEMPLATE.interview.md` | `docs/INTERVIEW.md` | Bước 1 |
 | `TEMPLATE.prd.md` | `docs/PRD.md` | Bước 2 |
 | `TEMPLATE.personas.md` | `docs/PERSONAS.md` | Bước 3 |

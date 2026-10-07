@@ -2,7 +2,8 @@
 """next_wave.py — đóng wave hiện tại (snapshot, KHÔNG reset docs) + mở wave kế.
 
 - Snapshot `archive/wave-N/` (copy HẾT, không chọn lọc) → sự tồn tại = cờ "đã đóng" (từ chối đóng 2 lần).
-- Reset phần **WAVE-SCOPED** của `STATE.md`: bỏ tick gate BUILD/VERIFY/SHIP · xoá dòng log · set `Wave: N+1`.
+- Dựng lại phần **WAVE-SCOPED** của `STATE.md` từ `templates/TEMPLATE.state.md` (gate BUILD/VERIFY/SHIP/NEXT-WAVE ·
+  3 log) — xoá luôn đuôi heading/chữ ô bị sửa tay · set `Wave: N+1` + `Phases wave này` từ ROADMAP §1.
 - **KHÔNG reset `docs/`** (trí nhớ qua wave). RÀ LẠI kế hoạch + stamp `Rà lại wave N+1` do MAIN làm ở `/next-wave`.
 
 Usage: python scripts/next_wave.py [--go]   (không --go = xem trước, không sửa gì)
@@ -16,6 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 STATE = ROOT / "STATE.md"
+TEMPLATE = ROOT / "templates" / "TEMPLATE.state.md"
 try:
     sys.stdout.reconfigure(encoding="utf-8")
 except Exception:
@@ -27,7 +29,38 @@ def state_field(text: str, name: str) -> str:
     return m.group(1).strip() if m else ""
 
 
+def _block(t: str, head: str) -> re.Match | None:
+    """Khối từ dòng `head…` tới heading cùng cấp/`---` kế tiếp (đuôi heading sửa tay vẫn bắt được)."""
+    lvl = head.split(" ")[0]
+    return re.search(rf"^{re.escape(head)}[^\n]*\n.*?(?=^{lvl} |^## |^---|\Z)", t, flags=re.M | re.S)
+
+
+def roadmap_phases(wave: int) -> str:
+    rm = ROOT / "docs" / "ROADMAP.md"
+    if not rm.exists():
+        return ""
+    for ln in rm.read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+        if ln.strip().startswith("|") and cells[0] == str(wave):
+            return next((c for c in cells[1:] if re.fullmatch(r"[A-Z, \-\[\]]*BUILD[A-Z, \-\[\]]*", c)), "")
+    return ""
+
+
 def reset_state(text: str, next_wave: int) -> str:
+    if not TEMPLATE.exists():
+        return _reset_state_legacy(text, next_wave)
+    tpl = TEMPLATE.read_text(encoding="utf-8")
+    for head in ("### BUILD", "### VERIFY", "### SHIP", "### NEXT-WAVE", "## Challenge log", "## Blocker", "## Findings"):
+        m, mt = _block(text, head), _block(tpl, head)
+        if m and mt:
+            text = text[:m.start()] + mt.group(0) + text[m.end():]
+    text = re.sub(r"(Wave\s*:\s*).+", rf"\g<1>{next_wave}", text, count=1)
+    phases = roadmap_phases(next_wave) or "—            (khai khi mở wave: BUILD,VERIFY[,SHIP])"
+    return re.sub(r"(Phases wave này\s*:\s*).+", lambda m: m.group(1) + phases, text, count=1)
+
+
+def _reset_state_legacy(text: str, next_wave: int) -> str:
+    """Dự án chưa có templates/TEMPLATE.state.md — bỏ tick + xoá dòng log như cũ."""
     def uncheck_section(t: str, header: str) -> str:
         m = re.search(rf"(### {header}.*?)(?=\n### |\n---|\Z)", t, flags=re.DOTALL)
         if not m:
@@ -78,7 +111,7 @@ def main(argv: list[str]) -> int:
     print(f"  Snapshot → archive/wave-{n}/ :")
     for s in srcs:
         print(f"    · {s}")
-    print(f"  Reset STATE: bỏ tick BUILD/VERIFY/SHIP · xoá 3 log · Wave → {n+1}")
+    print(f"  Reset STATE: dựng lại gate BUILD/VERIFY/SHIP/NEXT-WAVE + 3 log từ template · Wave → {n+1}")
     print("  KHÔNG đụng: docs/ sống · archive cũ · knowledge-base · DECISIONS")
     if not go:
         return 0

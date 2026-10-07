@@ -66,6 +66,9 @@ def main(argv: list[str]) -> int:
         "AUTHORITY_EMAIL": email,
     }
 
+    state, tpl = ROOT / "STATE.md", ROOT / "templates" / "TEMPLATE.state.md"
+    if not args.check and not state.exists() and tpl.exists():
+        state.write_text(tpl.read_text(encoding="utf-8"), encoding="utf-8")   # STATE sinh từ khung chuẩn
     files = text_files()
     if not args.check:
         changed = 0
