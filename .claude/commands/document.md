@@ -89,7 +89,7 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 **PRE-LOCK AUDIT (bắt buộc — ĐIỂM KÍCH HOẠT: Author nói "chốt scope"/"chốt tài liệu" ở Bước cuối. LUÔN chạy tại lời chốt, KỂ CẢ ô `PRE-LOCK AUDIT PASS` đang tick — tick là dấu ghi nhận, KHÔNG phải vé skip: bịt tick chay + sửa doc ngoài tool mà hook không thấy. Chạy sớm hơn lời chốt chỉ phí: doc còn đổi theo nhận xét thì audit trên bản trung gian là audit vứt đi) — 2 phần:**
 
 **(1) Khớp nhau — consistency** (đọc TRỌN doc set, báo mọi **tham chiếu treo**):
-- **Trace 6 chiều** (`technical-design §Trọn vẹn` — gồm chiều 6 lifecycle & seam) + **mỗi vùng dữ liệu trên màn có API** (SCREEN-MAP ↔ `arch §3`).
+- **Trace 6 chiều** (`technical-design §Trọn vẹn` — gồm chiều 6 lifecycle & seam) + **mỗi vùng dữ liệu/thao tác trên màn có API** (`data-api` trên mockup ↔ `arch §3` — gate `mockup_api_gaps` soi máy).
 - **UI↔AC 2 chiều — chấm TỪNG AC, không chấm gộp per-FEAT**: lập danh sách 2 cột **mọi AC `has_ui` in-scope** ↔ **màn + phần tử/khuôn xử nó** (từ SCREEN-MAP) — AC không có dòng = **màn con thiếu** (form/detail/modal bị lười), bổ sung mockup + API cho nó TRƯỚC khi khoá ("FEAT có 1 màn list" KHÔNG phải bằng chứng phủ). Chiều ngược: mỗi phần tử tương tác trong mockup (search/filter/sort/nút/phân trang) có 1 AC — phần tử **không AC = quyết NGAY** (thêm AC · hoặc bỏ khỏi mockup), **KHÔNG silent-defer wave sau**. Kèm: mỗi **vùng dữ liệu** trên mockup (kể cả read-only) có API fetch trong `arch §3` (khai ở SCREEN-MAP behavior).
 
 **(2) Không thiếu — completeness** (con mắt ĐỘC LẬP, bù điểm mù Author + MAIN-tự-vấn):

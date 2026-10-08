@@ -206,6 +206,57 @@ def missing_wave_mockups(wave: str) -> list[str]:
     return missing
 
 
+# phần tử mockup gọi server hoặc hiển thị dữ liệu server → phải khai `data-api` (tĩnh = "none")
+API_TAGS = re.compile(r"<(?:button|form|table|select)\b[^>]*>|<a\b[^>]*\bdownload\b[^>]*>"
+                      r"|<input\b[^>]*type=[\"']file[\"'][^>]*>", re.I)
+
+
+def _norm_api(s: str) -> str:
+    """`GET /api/v1/leave/{id}?x=1` → `GET /leave/{}` (bỏ tiền tố /api[/vN], query, tên tham số)."""
+    m = re.match(r"\s*(GET|POST|PUT|PATCH|DELETE)\s+(\S+)", s, re.I)
+    if not m:
+        return ""
+    path = re.sub(r"^/api(/v\d+)?", "", m.group(2).split("?")[0].rstrip("/"))
+    path = re.sub(r"\{[^}]*\}|:\w+|(?<=/)\d+(?=/|$)", "{}", path) or "/"
+    return f"{m.group(1).upper()} {path}"
+
+
+def arch_endpoints() -> set[str]:
+    eps = set()
+    for p in (ROOT / "docs" / "arch").glob("*.md"):
+        for m in re.finditer(r"\b(GET|POST|PUT|PATCH|DELETE)\s+(/[^\s`|]*)", p.read_text(encoding="utf-8", errors="ignore")):
+            eps.add(_norm_api(f"{m.group(1)} {m.group(2)}"))
+    return eps
+
+
+def mockup_api_gaps(wave: str) -> tuple[list[str], list[str]]:
+    """Mockup của màn in-scope wave: (phần tử thiếu `data-api`, `data-api` không có trong arch §3).
+    Bắt "màn có nút Tải xuống / bảng / dropdown nhưng arch §3 không có API nuôi nó"."""
+    files = {p.name: p for p in (ROOT / "docs" / "ux" / "mockups").rglob("*.html")}
+    names = {f for r in wave_screens(wave) for f in re.findall(r"([\w\-]+\.html)", r.get("mockup", ""))}
+    eps, untagged, unknown = arch_endpoints(), [], []
+    for n in sorted(names):
+        if n not in files:
+            continue   # thiếu file đã báo ở missing_wave_mockups
+        for m in API_TAGS.finditer(files[n].read_text(encoding="utf-8", errors="ignore")):
+            api = re.search(r"data-api=[\"']([^\"']*)[\"']", m.group(0))
+            if not api:
+                untagged.append(f"{n}: {m.group(0)[:60]}")
+                continue
+            for one in (a.strip() for a in api.group(1).split(";")):
+                if one and one.lower() != "none" and _norm_api(one) not in eps:
+                    unknown.append(f"{n}: {one}")
+    return untagged, unknown
+
+
+def _check_mockup_api(r: Report, wave: str) -> None:
+    untagged, unknown = mockup_api_gaps(wave)
+    r.check(not untagged, f"mockup wave {wave}: mọi nút/form/bảng/dropdown/tải file khai `data-api`"
+            + (f" — THIẾU {len(untagged)}: {' | '.join(untagged[:3])}" if untagged else ""))
+    r.check(not unknown, f"mockup wave {wave}: mọi `data-api` có endpoint trong arch §3"
+            + (f" — KHÔNG CÓ {len(unknown)}: {' | '.join(unknown[:5])} (→ bổ sung arch §3)" if unknown else ""))
+
+
 def fidelity_gaps(wave: str) -> tuple[list[str], list[str]]:
     """tracking/wave-N/fidelity.md (MAIN ghi từ báo cáo picky, 1 dòng/Mã màn): (mã in-scope THIẾU dòng, mã còn LỆCH)."""
     rows = table_rows(read(f"tracking/wave-{wave}/fidelity.md"))
@@ -296,6 +347,7 @@ def gate_document(r: Report) -> None:
     miss = missing_wave_mockups(first_wave)
     r.check(not miss, f"mockup màn UI in-scope wave {first_wave} đều có file"
             + (f" — THIẾU: {', '.join(miss)} (khai trong SCREEN-MAP nhưng chưa dựng .html)" if miss else ""))
+    _check_mockup_api(r, first_wave)
     n_ch = challenge_count("DOCUMENT")
     r.check(n_ch >= 3, f"Challenge DOCUMENT: {n_ch} câu PASS (cần ≥3, trong đó ≥1 journey-walk) — §Challenge log")
     dec_rows = [ln for ln in read_live("docs/DECISIONS.md").splitlines()
@@ -330,6 +382,7 @@ def gate_build(r: Report) -> None:
     miss = missing_wave_mockups(wave)
     r.check(not miss, f"màn UI in-scope wave {wave} đều có mockup"
             + (f" — THIẾU: {', '.join(miss)} (→ /document top-up dựng mockup TRƯỚC khi code)" if miss else ""))
+    _check_mockup_api(r, wave)
     todo = pending_topup(wave)
     r.check(not todo, f"backlog xếp wave {wave} cần top-up đều đã top-up"
             + (f" — CHƯA: {' | '.join(todo)} (→ /document top-up, xong ghi `đã top-up → …` ở cột Xử)" if todo else ""))
