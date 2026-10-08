@@ -29,6 +29,14 @@ Ghi PRD §6 **theo từng nghiệp vụ** (không một cụm link chung): mỗi
 
 **Bắt buộc, không "nếu có":** `WebSearch`/`WebFetch` luôn sẵn — domain mới mà không research = **trí nhớ mù → bịa có cấu trúc (hallucination)**. Mọi kiến thức domain phải có **NGUỒN**: research (ghi link vào PRD §6) / Authority trả lời / intake — KHÔNG từ "cảm giác".
 
+## Lời Author = luồng chính (happy path) — MAIN đề xuất phần Author chưa nói
+
+Author kể phần họ đang nghĩ tới; phần chưa nghĩ tới hoặc quên vẫn có thật. Đừng chỉ chép lời kể: sau MỖI nghiệp vụ Author kể, chạy 2 phép thử rồi **chủ động đề xuất**, không chờ Author tự nhớ:
+1. **Dữ liệu/cấu hình Author nhắc tới → luồng sinh ra và dùng nó.** Hỏi: ai/cái gì tạo ra nó · khi nào đổi · ai dùng · kết thúc thế nào. Ví dụ: Author nói "cấu hình loại phép có số dư" nhưng chưa nói **cấp phát** → thiếu cả vòng: cấp đầu năm / theo tháng cho người vào giữa năm · cộng thâm niên · trừ khi duyệt, hoàn khi huỷ · chuyển/hết hạn cuối năm · thanh toán khi nghỉ việc · HR chỉnh tay.
+2. **Bước của quy trình chuẩn (research loại 1) chưa có trong lời kể** → đề xuất. Gồm cả nhánh lỗi (từ chối · trả lại · huỷ · quá hạn · người duyệt vắng), nghiệp vụ liền kề (loại 3) và ràng buộc ngoài (loại 4).
+
+Nói thành **đề xuất cụ thể kèm nguồn + hệ quả lên sản phẩm**: "Luật cho người vào giữa năm hưởng phép theo số tháng làm việc [link] — hệ thống tự cấp hay HR nhập tay? Tự cấp → job đầu năm + khi tạo hồ sơ; nhập tay → màn điều chỉnh số dư." Author chọn: **cần** (ghi INTERVIEW) · **không cần** (PRD §4 out-of-scope) · **để sau** (backlog) — không để đề xuất treo. Đề xuất KHÔNG tự thành scope: chỉ vào doc khi Author nhận.
+
 ## Ngân sách là THỜI GIAN, không phải số câu
 
 **Không giới hạn số câu hỏi.** Một mục hỏi 3-4 lượt là bình thường. Xong trong 10 phút gần như
