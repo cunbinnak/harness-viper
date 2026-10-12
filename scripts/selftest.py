@@ -120,6 +120,15 @@ def main() -> int:
     stray = list((ROOT / "docs").rglob("TEMPLATE.*")) + list((ROOT / "knowledge-base").glob("TEMPLATE.*"))
     check(not stray, f"docs/ + knowledge-base/ không còn TEMPLATE lạc ({len(stray)} sót)")
 
+    # 7. công cụ máy (CẢNH BÁO, không tính FAIL — khung vẫn đúng; thiếu thì BUILD không chạy được make/proof)
+    import shutil
+    need = {"make": "Windows: `winget install ezwinports.make` · macOS: `xcode-select --install` · Linux: `apt install make`",
+            "sh": "Windows: cài Git for Windows, chạy trong Git Bash",
+            "docker": "cài Docker Desktop / Docker Engine"}
+    for tool, hint in need.items():
+        if not shutil.which(tool):
+            print(f"  ! thiếu `{tool}` — {hint} (README §Yêu cầu máy)")
+
     print(f"\n{'PASS — smoke sạch' if ok else 'FAIL — có mục gãy'}")
     return 0 if ok else 1
 

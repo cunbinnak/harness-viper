@@ -30,6 +30,16 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE          (SHIP opt-in th
 - **interview** — ý tưởng mới → `/document` phỏng vấn Authority.
 - **intake** — tài liệu phân tích sẵn thả vào `intake/` → `/document` dịch (marker `NGUỒN: INTAKE`).
 
+## Yêu cầu máy
+`make` (GNU make) + shell POSIX `sh` · Docker · Python 3. Lệnh `make` gọi 6 lệnh của từng target, thân lệnh viết cho `sh`.
+| Hệ điều hành | Cài |
+|---|---|
+| Windows | Git for Windows (Git Bash có `sh`, `find`) + `winget install ezwinports.make` (hoặc `choco install make` / `scoop install make`). **Chạy `make` trong Git Bash**, không từ PowerShell/cmd. Đường dẫn user có dấu cách (vd `C:\Users\Nguyen Van A`) vẫn chạy được: Makefile gốc đã bọc `"$(MAKE)"`; Makefile per-target cũng phải bọc ngoặc kép mọi đường dẫn. Đặt `git config core.autocrlf input` để script `gradlew`/`mvnw`/Makefile không bị đổi sang CRLF. |
+| macOS | `xcode-select --install` (nếu chưa có `make`) |
+| Linux | `sudo apt install make` (hoặc `build-essential`) |
+
+`python scripts/selftest.py` cảnh báo nếu thiếu công cụ. Ở BUILD, MAIN tự cài `make`/`sh` theo bảng trên khi thiếu (`/build` Bước 3).
+
 ## Bắt đầu
 ```bash
 python scripts/bootstrap.py --name "Tên dự án" --authority "Tên <email>"   # thay {{PROJECT_NAME}}…

@@ -4,6 +4,7 @@
 # HỢP ĐỒNG CỐ ĐỊNH — **KHÔNG sửa file này** (guard_makefile chặn Write/Edit). Root chỉ ĐIỀU PHỐI,
 # viết 1 lần. MAIN điền THÂN THẬT ở per-target `services/<nhóm>/<tên>/Makefile` (stack skill §4, lúc BUILD).
 # Hạ tầng dùng chung ở deployment/local/. Shell POSIX (git-bash / WSL / mac / linux).
+# "$(MAKE)" PHẢI có ngoặc kép: make cài trong thư mục user có dấu cách (winget/scoop) → sh tách đường dẫn.
 .PHONY: help dev check test migrate deploy doctor gate infra-up infra-down
 
 COMPOSE := deployment/local/docker-compose.yml
@@ -28,27 +29,27 @@ infra-down: ## dừng hạ tầng (giữ volume)
 
 dev: infra-up   ## hạ tầng + dev từng target — VERIFY đánh trên đây
 	$(GUARD)
-	@for t in $(TARGETS); do echo ">> dev $$t"; $(MAKE) -s -C $$t dev || exit 1; done
+	@for t in $(TARGETS); do echo ">> dev $$t"; "$(MAKE)" -s -C "$$t" dev || exit 1; done
 
 check:   ## build + lint + typecheck MỌI target (phải xanh trước khi rời BUILD)
 	$(GUARD)
-	@for t in $(TARGETS); do echo ">> check $$t"; $(MAKE) -s -C $$t check || exit 1; done
+	@for t in $(TARGETS); do echo ">> check $$t"; "$(MAKE)" -s -C "$$t" check || exit 1; done
 
 test:    ## test tự động unit/integration TRONG source (khác test-cases.md black-box)
 	$(GUARD)
-	@for t in $(TARGETS); do echo ">> test $$t"; $(MAKE) -s -C $$t test || exit 1; done
+	@for t in $(TARGETS); do echo ">> test $$t"; "$(MAKE)" -s -C "$$t" test || exit 1; done
 
 migrate: ## chạy DB migration mọi target
 	$(GUARD)
-	@for t in $(TARGETS); do echo ">> migrate $$t"; $(MAKE) -s -C $$t migrate || exit 1; done
+	@for t in $(TARGETS); do echo ">> migrate $$t"; "$(MAKE)" -s -C "$$t" migrate || exit 1; done
 
 deploy:  ## deploy production — guard_bc canh ở đây (BACKWARD-COMPAT §3)
 	$(GUARD)
-	@for t in $(TARGETS); do echo ">> deploy $$t"; $(MAKE) -s -C $$t deploy || exit 1; done
+	@for t in $(TARGETS); do echo ">> deploy $$t"; "$(MAKE)" -s -C "$$t" deploy || exit 1; done
 
 doctor:  ## health check / smoke / rollback readiness mọi target
 	$(GUARD)
-	@for t in $(TARGETS); do echo ">> doctor $$t"; $(MAKE) -s -C $$t doctor; done
+	@for t in $(TARGETS); do echo ">> doctor $$t"; "$(MAKE)" -s -C "$$t" doctor; done
 
 gate:    ## kiểm gate phase hiện tại (make gate  hoặc  make gate P=BUILD)
 	@$(PYTHON) scripts/gate.py $(P)

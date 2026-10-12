@@ -55,6 +55,7 @@ Scaffold vào **đúng nhóm theo `kind`** bằng **CLI chính chủ** (không c
 · `backend` → `services/boundaries/{name}/` · `web` → `services/web/{name}/` · `bff` → `services/bff/{name}/` · `mobile` → `services/mobile/{name}/`
 **Có KG** → áp lại NGAY §Invariants + §Gotchas (chống lặp bug cũ: env tường minh, JWT local, soft-delete...).
 Artifact chạy local → `deployment/local/` (docker-compose · `.env` từ `.env.example` · seed theo PRD). **Mỗi target container hoá (backend/bff/web) phải có `Dockerfile` trong thư mục service + 1 service trong docker-compose** (mobile không container). Điền `make` 6 lệnh.
+> **Máy thiếu `make`/`sh`** → MAIN **TỰ CÀI** bằng trình quản lý gói có sẵn (`README §Yêu cầu máy`: Windows `winget install ezwinports.make` + `winget install Git.Git` nếu chưa có Git Bash · macOS `brew install make` / `xcode-select --install` · Linux `sudo apt install make`), ghi `DECISIONS` loại `kỹ-thuật`. Windows: PATH chỉ nhận khi mở lại terminal → phiên hiện tại gọi thẳng đường dẫn `make.exe` vừa cài. **Chỉ báo Authority khi tự cài không được** (cần mật khẩu admin/sudo, không có trình quản lý gói) → cách chạy khác Authority cho phép. Cách nào thì `check` vẫn phải chạy đúng thân lệnh trong Makefile của target (proof không tính lệnh tự chế).
 Xong → `git add -A && git commit`.
 
 ## Bước 4 — Walking skeleton (thông 1 đường TRƯỚC, đắp thịt sau)
