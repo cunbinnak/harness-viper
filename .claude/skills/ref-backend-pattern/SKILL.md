@@ -181,14 +181,14 @@ public class MapperComponent {
 | Loại field | Cách khai (không hand-map cả cụm) |
 |---|---|
 | **Generated** (id · `employeeNumber` sinh runtime) | `@Mapping(target=..., ignore=true)` → **set tay ở service** sau khi gọi mapper |
-| **Hằng** (`status = PENDING_ACTIVATION`) | `@Mapping(target="status", constant="PENDING_ACTIVATION")` |
+| **Hằng số** (`status = PENDING_ACTIVATION`) | `@Mapping(target="status", constant="PENDING_ACTIVATION")` |
 | **Điều kiện / theo quyền** (`baseSalary` che theo role — DEC) | thêm **param** + `@Mapping(target="baseSalary", expression="java(canView ? e.getBaseSalary() : null)")` |
 | **Đa nguồn** (`departmentName` từ `Department`) | **tham số thứ 2** + `@Mapping(target="departmentName", source="dept.name")` |
 
 ```java
 @Mapping(target = "id", ignore = true)
 @Mapping(target = "employeeNumber", ignore = true)              // generated → set tay ở service
-@Mapping(target = "status", constant = "PENDING_ACTIVATION")    // hằng
+@Mapping(target = "status", constant = "PENDING_ACTIVATION")    // hằng số
 EmployeeEntity toEntity(CreateEmployeeRequest request);
 
 @Mapping(target = "departmentName", source = "dept.name")       // đa nguồn (tham số thứ 2)

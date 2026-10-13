@@ -14,23 +14,23 @@ BUILD target backend (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§r
 ## §2 Scaffold
 - Vào `services/boundaries/<name>/`. Dùng **Spring Initializr / Gradle** (Groovy DSL) — không chép boilerplate.
 - **Gradle KHÔNG cần cài trên máy** — Initializr zip kèm sẵn `gradlew` wrapper, wrapper tự tải Gradle về. **"Máy không có gradle" KHÔNG phải lý do đổi build tool.** Build tool nằm trong ADR/TECHSTACK đã chốt — muốn đổi = đổi thứ đã chốt → `STATE §Blocker` hoặc `ROADMAP §backlog` (wave sau top-up ADR), **KHÔNG xử bằng 1 dòng DECISIONS rồi đổi luôn**.
-- Cấu trúc **Layered** (default): `controller/` · `service/` + `service/impl/` · `repository/` · `entities/` · `dto/{request,response}/` · `mapper/` · `config/` · `exception/` · `enums/` · `constant/` (tạo khi có hằng dùng chung — xem §3 Hằng số). (Hexagonal chỉ khi có ADR.)
+- Cấu trúc **Layered** (default): `controller/` · `service/` + `service/impl/` · `repository/` · `entities/` · `dto/{request,response}/` · `mapper/` · `config/` · `exception/` · `enums/` · `constant/` (tạo khi có hằng số dùng chung — xem §3 Hằng số). (Hexagonal chỉ khi có ADR.)
 - **Dockerfile multi-stage** (Gradle `bootJar` → JRE) + `application.yml` Postgres + migration (Flyway) NGAY lúc scaffold.
 - Artifact local → `deployment/local/` (docker-compose db). `git commit`.
 
 ## §3 Convention (Java/Spring — bắt buộc)
 - **Entity**: `{Resource}Entity` ở `entities/`; `@Getter @Setter @NoArgsConstructor @AllArgsConstructor` — **KHÔNG `@Data` trên `@Entity`**. Không FK constraint (liên kết qua id column + **tự add index**); toàn vẹn ở service layer.
 - **Layering**: Controller (map + validate + gọi **service interface**) → Service impl (`@Service`, business logic + `@Transactional` + publish event) → Repository (chỉ query). **Controller KHÔNG gọi repository.** Inject **interface**, `@RequiredArgsConstructor` + `private final` (không `@Autowired` field).
-- **DTO**: Request/Response DTO ở biên; **KHÔNG phơi `@Entity`**. Convert bằng **MapStruct** (mapper interface) — **HYBRID, KHÔNG hand-map cả cụm**: field trùng tên/kiểu → mapper tự map; field KHÔNG-1-1 khai `@Mapping` (generated → `ignore` rồi set tay ở service · hằng → `constant` · điều kiện/theo quyền → `expression`/param · đa nguồn → `source="b.x"` + tham số thứ 2). Set tay CHỈ field có lý do đó; dãy `setX(src.getX())` thuần = sai (dùng mapper). Chi tiết + ví dụ: `ref-backend-pattern §Mapper`.
+- **DTO**: Request/Response DTO ở biên; **KHÔNG phơi `@Entity`**. Convert bằng **MapStruct** (mapper interface) — **HYBRID, KHÔNG hand-map cả cụm**: field trùng tên/kiểu → mapper tự map; field KHÔNG-1-1 khai `@Mapping` (generated → `ignore` rồi set tay ở service · hằng số → `constant` · điều kiện/theo quyền → `expression`/param · đa nguồn → `source="b.x"` + tham số thứ 2). Set tay CHỈ field có lý do đó; dãy `setX(src.getX())` thuần = sai (dùng mapper). Chi tiết + ví dụ: `ref-backend-pattern §Mapper`.
 - **Exception**: `BusinessException` + error code **enum** theo domain; `@RestControllerAdvice` map tập trung. `orElseThrow(...)`, không `Optional.get()` trần.
-- **Hằng số**: "hằng" = giá trị cố định viết thẳng trong code (chuỗi · số · thời lượng · giờ trong ngày, viết trần hoặc khai `static final`), không đổi khi chạy. Phân loại rồi đặt đúng chỗ:
+- **Hằng số**: "hằng số" = giá trị cố định viết thẳng trong code (chuỗi · số · thời lượng · giờ trong ngày, viết trần hoặc khai `static final`), không đổi khi chạy. Phân loại rồi đặt đúng chỗ:
 
   | Loại | Nhận biết | Đặt ở |
   |---|---|---|
   | **Tập giá trị đóng** | role · status · type · action · source — tập hữu hạn biết trước | **enum** ở `enums/`; field entity/principal/DTO khai **kiểu enum** (`@Enumerated(EnumType.STRING)`), KHÔNG `String`. So `== UserRole.HR`, KHÔNG `"HR".equals(...)` / `case "HR"` |
-  | **Hằng dùng chung** | ≥ 2 class dùng, HOẶC là khoá mà hai bên phải khớp: tên header · MDC key · prefix key cache/storage · entity type audit · link điều hướng | `constant/{Domain}Constants.java` (`final` + private ctor). Một giá trị — một nơi khai |
+  | **Hằng số dùng chung** | ≥ 2 class dùng, HOẶC là khoá mà hai bên phải khớp: tên header · MDC key · prefix key cache/storage · entity type audit · link điều hướng | `constant/{Domain}Constants.java` (`final` + private ctor). Một giá trị — một nơi khai |
   | **Tham số nghiệp vụ/vận hành** | con số Authority/DECISIONS chốt, có thể đổi mà logic không đổi: số ngày lưu · trần OT · giờ ca · ngưỡng rate limit · dung lượng file tối đa · TTL | `application.yml` + `@ConfigurationProperties` (default trong yml, KHÔNG trong class) |
-  | **Hằng nội bộ** | chỉ 1 class dùng, là chi tiết cài đặt: regex `Pattern` · magic byte · header cột file export · formatter | để `private static final` ngay trong class đó — **đúng, không chuyển** |
+  | **Hằng số nội bộ** | chỉ 1 class dùng, là chi tiết cài đặt: regex `Pattern` · magic byte · header cột file export · formatter | để `private static final` ngay trong class đó — **đúng, không chuyển** |
 
   Không thuộc diện này: error code (enum `*ErrorCode` — dòng Exception) · secret (env).
 - **Transaction**: `@Transactional` ở service; read-only khi phù hợp. **Không gọi external chậm trong transaction.** Publish event **AFTER_COMMIT** / outbox.
