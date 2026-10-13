@@ -24,7 +24,8 @@ services/web/{name}/
 │   ├── api/              # API client layer  ← xem §2
 │   ├── stores/           # Cross-component state (Zustand/Redux/Pinia)
 │   ├── router/           # index + guards (auth/role guard)
-│   ├── types/            # TS interface — khớp DTO (REST) hoặc generated (GraphQL)
+│   ├── types/            # TS interface — khớp DTO (REST) hoặc generated (GraphQL); union type cho tập giá trị đóng
+│   ├── constants/        # Hằng số dùng chung: routes · queryKeys · storageKeys (tạo khi có — xem stack §3 Hằng số)
 │   ├── utils/            # Pure helper (formatter, validator)
 │   └── styles/           # Theme token, global style
 ├── tests/{unit,integration,e2e}

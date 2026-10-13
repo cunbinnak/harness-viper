@@ -96,6 +96,7 @@ grep -rniE "price|total|discount|eligib" src/resolvers                      # ng
 | Error mapping: HTTP backend → `extensions.code` (`UNAUTHENTICATED` · `FORBIDDEN` · `BAD_USER_INPUT` · `INTERNAL`) khớp integration trong `arch/{name}.md`; lỗi nghiệp vụ biết trước không gộp `INTERNAL` | `grep -rn extensions src` | MAJOR |
 | Resolver gọi đúng endpoint theo integration backend trong `docs/arch/{name}.md`; có timeout + xử lỗi downstream | Đọc datasource/client | MAJOR |
 | Pagination kiểu Relay `Connection` cho list | Đọc SDL | MAJOR |
+| Hằng số theo `stack-bff §3 Hằng số`: role/status/type là GraphQL enum, không `String` · tên header/prefix cache key khai một nơi, không lặp literal giữa datasource/context | `grep -rnE "(role\|status\|type)\w*: ?(String\|string)" src` · `grep -rhoE "['\"]x-[a-z-]+['\"]" -i src \| sort \| uniq -c` | MAJOR |
 
 ### Trục 5 — Test và cấu trúc
 

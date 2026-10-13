@@ -18,6 +18,15 @@ BUILD target web (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§revie
 
 ## §3 Convention (React/TS — bắt buộc)
 - **Data layer**: API client tách `api/` theo target; **KHÔNG `fetch`/`axios` rải rác trong component**. Type từ `arch/<backend> §3 API` (hoặc codegen). Server-state qua **React Query/SWR** (query key tập trung); không tự chế cache.
+- **Hằng số**: "hằng số" = giá trị cố định viết thẳng trong code (chuỗi · số · path), không đổi khi chạy. Phân loại rồi đặt đúng chỗ:
+
+  | Loại | Nhận biết | Đặt ở |
+  |---|---|---|
+  | **Tập giá trị đóng** | role · status · type — khớp enum ở `arch/<backend> §3` | **union type** ở `types/` (hoặc generated); field khai kiểu union, KHÔNG `string`. Đã khai union thì `role === 'HR'` được TS kiểm (gõ sai = lỗi compile) → hợp lệ |
+  | **Hằng số dùng chung** | route path · query key · storage key — khoá mà nơi khai và nơi dùng phải khớp | `constants/` (`ROUTES`, `queryKeys`, `STORAGE_KEYS`). Một giá trị — một nơi khai |
+  | **Tham số nghiệp vụ** | con số DECISIONS chốt mà FE cũng validate (dung lượng file tối đa, độ dài tối đa) | `constants/` một nơi, comment nguồn `DEC-xxxx`; giá trị theo môi trường → env |
+  | **Hằng số nội bộ** | chỉ 1 file dùng: định nghĩa cột bảng · options select · regex | để ngay trong file — **đúng, không chuyển** |
+
 - **KHÔNG business logic ở FE** (giá/điểm/điều kiện → backend). Role-gate FE **chỉ UX**, backend enforce.
 - **Component nhỏ**: UI render + emit event; container/page fetch + orchestrate. Không mutate props/state (immutable).
 - **UX states**: mỗi màn fetch đủ **loading · empty · error · success**; KHÔNG action im lặng; **confirm** destructive; lỗi field hiện **gần field** (toast không thay).
