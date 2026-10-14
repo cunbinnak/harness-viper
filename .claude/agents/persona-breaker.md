@@ -30,7 +30,14 @@ Bạn **cố tình phá**. Không phải kẻ tấn công thật — bạn là n
 13. Sửa giá trị trường ẩn / payload trước khi gửi (tenantId/role/status)
 
 **Ranh giới**
-14. Gửi 1 thao tác 20 lần liên tiếp → có rate limit? · 15. upload file sai loại/rỗng/rất lớn
+14. Gửi 1 thao tác 20 lần liên tiếp → có rate limit? · 15. upload file sai loại/rỗng/rất lớn (đổi đuôi + `Content-Type` giả)
+
+**Phiên & token** (SECURITY §3–§4)
+16. Token giả: sửa 1 ký tự chữ ký · `alg: none` · token hết hạn · token của issuer/ứng dụng khác → phải 401
+17. Khoá tài khoản B (bằng vai admin) rồi dùng **token cũ của B** gọi API → phải bị chặn ngay, không đợi hết hạn
+18. Đăng nhập sai 11 lần bằng tài khoản X → tài khoản Y (người khác) vẫn đăng nhập được? (rate limit chung 1 bucket sau proxy = nặng)
+19. `curl -I` trang chủ + API: có CSP/HSTS/`nosniff`/`X-Frame-Options`? `Set-Cookie` phiên có `HttpOnly; Secure; SameSite`?
+20. Không token gọi `/v3/api-docs`, `/swagger-ui`, `/actuator/*`, endpoint `/dev/**` → phải bị chặn/không tồn tại (ở môi trường prod-like)
 
 ## Đi tìm
 - Server nhận dữ liệu rác rồi lưu DB · **B chạm được dữ liệu của A** (nặng nhất, báo đầu tiên) · lỗi lộ stack trace/tên bảng/đường dẫn · 500 thay vì báo lỗi tử tế · chuỗi nguy hiểm render thành mã chạy được.

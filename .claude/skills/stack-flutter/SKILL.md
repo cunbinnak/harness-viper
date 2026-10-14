@@ -16,7 +16,7 @@ BUILD target mobile (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§re
 - Cấu trúc **feature-first**: `lib/features/` · `lib/shared/` · `lib/core/` (hoặc theo design đã chốt). Data layer + provider tách khỏi widget NGAY.
 - **Data layer** theo `docs/arch/{name}.md`:
   - **Default — REST trực tiếp backend**: client (Dio/http) gọi contract `docs/arch/{backend}.md`; interceptor gắn auth + map error.
-  - **Optional — qua BFF/GraphQL**: CHỈ khi design có boundary `bff`. `flutter pub run build_runner build` refresh trước khi code; wire ops theo `docs/arch/{name}.md §3`; KHÔNG invent op name.
+  - **Optional — qua BFF/GraphQL**: CHỈ khi design có boundary `bff`. `dart run build_runner build` refresh trước khi code; wire ops theo `docs/arch/{name}.md §3`; KHÔNG invent op name.
 - Config env / flavor (dev/prod); secret KHÔNG vào code/asset. `git commit`.
 
 ## §3 Convention (Flutter/Dart — bắt buộc)

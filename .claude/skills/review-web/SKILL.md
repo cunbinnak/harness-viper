@@ -34,12 +34,43 @@ Code ở `services/web/{name}/`.
 ## 3. Chạy máy trước — đỏ là finding luôn
 
 ```bash
-npm run -s typecheck && npm run -s lint && npm run -s build
-npm run -s test -- --coverage              # Vitest + RTL — ngưỡng web 60%
+UI=$(ls -d src/pages src/app src/components src/features 2>/dev/null)   # Vite (pages) hoặc Next App Router (app) — dùng $UI ở mọi lệnh dưới
+# script phải tồn tại — `npm run -s` thiếu script thì exit 1 KHÔNG in gì, `&&` chặn luôn lệnh sau. Thiếu = BLOCKER
+for s in typecheck lint build test; do node -e "process.exit(require('./package.json').scripts?.['$s']?0:1)" || echo "MISSING script: $s"; done
+npx tsc --noEmit -p . --incremental false
+npm run lint; npm run build
+# coverage THẬT: include toàn bộ src — thiếu include thì Vitest chỉ đếm file mà test có nạp (số ảo). Thiếu provider = BLOCKER
+npx vitest run --coverage --coverage.include='src/**/*.{ts,tsx}' --coverage.reporter=text-summary
 npm run codegen && git diff --exit-code    # chỉ khi đi qua BFF: codegen phải không đổi gì
 # a11y: app đang chạy → npx @axe-core/cli <url màn chính>; không chạy được → job a11y của CI
+# bỏ qua test (luật #6) — BLOCKER
+grep -nE '\|\| *true|--passWithNoTests' Makefile package.json 2>/dev/null
+# component import thẳng api/actions — phải qua hooks/ (MAJOR)
+grep -rnE "from ['\"]((\.\./)+|@/)(api/|app/.*actions)" src/components
+# token CSS dùng mà chưa định nghĩa — var() rỗng (BLOCKER)
+comm -23 <(grep -rhoE "var\(--[a-z0-9-]*[a-z0-9]" src | sed 's/var(//' | sort -u) <(grep -rhoE -- "--[a-z0-9-]*[a-z0-9]\s*:" src | sed -E 's/\s*://' | sort -u)
+# hex hardcode ngoài chỗ định nghĩa token (MAJOR)
+grep -rnE "#[0-9a-fA-F]{3,8}\b" src --include=*.css --include=*.scss --include=*.tsx --include=*.ts | grep -vE "^[^:]+:[0-9]+:\s*--|:\s*(//|/\*|\*)|theme\.ts:|tokens?\.(css|ts):|\.test\.|__tests__"
+# mã khối mockup thiếu trong app — chạy ở GỐC repo, bỏ khối của wave sau theo ROADMAP (MAJOR)
+comm -23 <(grep -rhoE 'data-ds="[^"]+"' docs/ux/mockups/<name> | sort -u) <(grep -rhoE 'data-ds="[^"]+"' services/web/<name>/src | sort -u)
+# hằng số (stack-nextjs §3): field string cho tập đóng · route/query key literal lặp (MAJOR)
+grep -rnE "(role|Role|status|Status|type|Type)\??: string" src
+grep -rhoE "(navigate|push|replace)\(['\"\`]/[^'\"\`?]*|(href|to)=['\"]/[^'\"?]*" src | sed -E "s/^[^/]*//" | sort | uniq -c | sort -rn | awk '$1>1'
+grep -rhoE "queryKey: ?\[['\"][^'\"]+" src | sort | uniq -c | sort -rn
+
+# ── bảo mật (docs/SECURITY.md) ──
+# security header: 0 = thiếu CSP/HSTS/X-Frame/nosniff/Referrer-Policy (MAJOR)
+grep -cE "add_header +(Content-Security-Policy|X-Frame-Options|X-Content-Type-Options|Strict-Transport-Security|Referrer-Policy)" nginx.conf 2>/dev/null; grep -cE "async headers\(|headers: *async|Content-Security-Policy" next.config.* 2>/dev/null
+# cookie httpOnly mà thiếu secure (MAJOR)
+grep -rlE "httpOnly: *true" src | xargs -r grep -L "secure"
+# token/phiên vào web storage (MAJOR — chỉ tha khi có dòng ở SECURITY §7, KG/DECISIONS không thay được)
+grep -rnE "(localStorage|sessionStorage)\.setItem\(" src | grep -v "\.test\."
+# source map ở prod (MINOR)
+grep -nE "sourcemap: *true|productionBrowserSourceMaps: *true" vite.config.* next.config.* 2>/dev/null
+# SCA — high = MAJOR; không chạy được (mạng) → QUESTION, không im lặng bỏ qua
+npm audit --omit=dev --audit-level=high || echo "npm audit đỏ hoặc không chạy được"
 ```
-Đỏ → BLOCKER `type=test`. Coverage < 60% → BLOCKER. axe có critical → BLOCKER.
+Đỏ → BLOCKER `type=test`. Coverage < 60% → BLOCKER. axe có critical → BLOCKER. Mỗi lệnh grep ra dòng → mở file xác nhận, ghi **1 finding gộp/luật kèm số đếm + 2–3 `file:dòng`**; severity theo comment.
 
 ## 4. Soi theo trục
 
@@ -66,7 +97,7 @@ npm run codegen && git diff --exit-code    # chỉ khi đi qua BFF: codegen ph�
 | | Route cần đăng nhập có guard; role đọc từ `roles[]` claim, không hardcode | File router · `grep -rnE "role *===? *['\"]" src` | MAJOR |
 | | Ẩn nút theo role không phải chặn — mỗi ô `cấm` của ma trận có chặn ở BE/BFF | Ô `cấm` → endpoint tương ứng trong `arch/{backend}.md §3 API` | BE thiếu = BLOCKER (ghi cho BE) |
 | | Đăng xuất xoá phiên + cache server-state | `grep -rn -e logout -e signOut src` → có `clear()`/reset store | MAJOR |
-| Đường ra | Không hiện lỗi thô (stack, SQL, `error.message` của server) ra UI | `grep -rn -e "rr.message" -e "rror.message" -e ".stack" src/pages src/components` | MAJOR |
+| Đường ra | Không hiện lỗi thô (stack, SQL, `error.message` của server) ra UI | `grep -rn -e "rr.message" -e "rror.message" -e ".stack" $UI` | MAJOR |
 | | Open redirect: `?next=`/`?redirect=` chỉ nhận path nội bộ; link ngoài có `rel="noopener noreferrer"` | `grep -rn -e redirect -e returnUrl -e 'target="_blank"' src` | MAJOR |
 | Dữ liệu | Không giữ dữ liệu nhạy cảm trong store persist hoặc URL query | `grep -rn -e "persist(" -e createJSONStorage src` | MAJOR |
 | Phụ thuộc | Không lib có CVE nghiêm trọng; không thêm lib nặng vì một hàm | `npm audit --omit=dev --audit-level=high` | MAJOR |
@@ -83,7 +114,7 @@ Mở `stack-nextjs §review` §Forbidden patterns, đi **TỪNG dòng** bảng. 
 cho chỗ này), `suggested fix` từ cột `Thay bằng`. Lệnh tìm cho các dòng chưa có ở trục 2:
 
 ```bash
-grep -rn -e "fetch(" -e "axios." src/components src/pages   # UI gọi API trực tiếp
+grep -rn -e "fetch(" -e "axios." $UI | grep -vE "/(api|app/api)/"   # UI gọi API trực tiếp (lệnh chính xác hơn ở §3: import thẳng api/actions)
 grep -rnE ":\s*any\b|as any|@ts-ignore" src                   # any / ts-ignore
 grep -rn -e "console.log" -e debugger src                     # debug sót
 grep -rnE "#[0-9a-fA-F]{3,8}\b" src --include=*.css --include=*.scss --include=*.tsx   # hex hardcode (ngoài file token)
@@ -105,7 +136,7 @@ grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effe
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
-| Mọi màn có data: loading · empty · error · success (· disabled theo quyền) | `grep -rln -e isLoading -e isError -e isPending src/pages` → màn nào không có | MAJOR |
+| Mọi màn có data: loading · empty · error · success (· disabled theo quyền) | `grep -rln -e isLoading -e isError -e isPending $UI` (Next App Router: thêm route thiếu `loading.tsx`) → màn nào không có | MAJOR |
 | Action không im lặng; toast không thay field error; hành động xoá/huỷ có confirm; chống double submit | Đọc form + nút | MAJOR |
 | Có cơ chế styling: CSS/SCSS, tailwind hoặc CSS-in-JS. `className` khắp nơi mà 0 stylesheet = UI không định dạng (gate `web_styling` cũng chặn) | `find src -name "*.css" -o -name "*.scss"` · `ls tailwind.config.*` · `grep -rl -e "styled." -e "@emotion" src` | BLOCKER |
 | Token `ux §4` được **dùng** và được **định nghĩa** trong bundle (`design-tokens.css` import ở entry) — `var(--x)` không định nghĩa resolve rỗng | `grep -rn -e "--color-" -e "--space-" -e "--font-" src` · `grep -rl design-tokens src` | BLOCKER |
@@ -125,7 +156,7 @@ grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effe
 | a11y: contrast · label · role · focus order; semantic HTML; icon button có `aria-label`; modal focus trap + Escape; màu không là tín hiệu duy nhất | axe (mục 3) · `grep -rn "<div[^>]*onClick" src` | critical = BLOCKER · khác = MAJOR |
 | **(6.0)** Cây THẬT khớp pattern đã chốt (`ref-frontend-pattern`: `pages`·`components`·`hooks`·`api`·`stores`·`router`, hoặc feature-based) — không phẳng/tự chế | `find src -maxdepth 2 -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch = BLOCKER |
 | Không file/folder thừa: component/hook mồ côi, scaffold mẫu, import chết | `npx knip` nếu có; không có → grep tên export không ai import | MAJOR |
-| Hằng số đặt đúng chỗ theo bảng 4 loại ở `stack-nextjs §3 Hằng số`: **(a)** role/status/type khai `string` thay union type — kể cả khi union đã có mà không dùng (ghi finding ở **field gốc**, không liệt kê từng chỗ so) · **(b)** route path / query key viết literal lặp ở nhiều file thay vì `constants/`. Hằng số nội bộ 1 file dùng = **đúng, KHÔNG ghi finding**. Format ngày/tiền dùng helper chung; text qua i18n nếu project có | (a) `grep -rnE "(role\|Role\|status\|Status\|type\|Type)\??: string" src` · (b) `grep -rhoE "(navigate\|push\|replace)\(['\"\`]/[^'\"\`?]*\|(href\|to)=['\"]/[^'\"?]*" src \| sed -E "s/^[^/]*//" \| sort \| uniq -c \| sort -rn \| awk '$1>1'` · `grep -rhoE "queryKey: ?\[['\"][^'\"]+" src \| sort \| uniq -c \| sort -rn` | (a) (b) MAJOR · format/i18n MINOR |
+| Hằng số đặt đúng chỗ theo bảng 4 loại ở `stack-nextjs §3 Hằng số`: **(a)** role/status/type khai `string` thay union type — kể cả khi union đã có mà không dùng (ghi finding ở **field gốc**, không liệt kê từng chỗ so) · **(b)** route path / query key viết literal lặp ở nhiều file thay vì `constants/`. Hằng số nội bộ 1 file dùng = **đúng, KHÔNG ghi finding**. Format ngày/tiền dùng helper chung; text qua i18n nếu project có | Khối "hằng số" ở §3 Chạy máy | (a) (b) MAJOR · format/i18n MINOR |
 | Test: hành vi người dùng (query theo role/label/text, không className/testId); mock ở network (MSW/MockedProvider); mỗi màn chính có success · loading · error · submit lỗi · permission; không snapshot lớn; sửa bug có regression test | `grep -rn -e getByTestId -e toMatchSnapshot src` | MAJOR |
 
 ### Trục 7 — Lệch thứ đã chốt

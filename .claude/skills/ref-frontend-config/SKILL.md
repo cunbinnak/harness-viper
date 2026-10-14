@@ -24,7 +24,7 @@ description: Mẫu cấu hình FE — package.json scripts, env vars, build conf
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "a11y": "vitest run --testPathPattern=a11y",
-    "type-check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   }
 }
 ```

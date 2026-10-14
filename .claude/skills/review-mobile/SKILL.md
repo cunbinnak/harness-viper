@@ -36,6 +36,8 @@ Code ở `services/mobile/{name}/`.
 ```bash
 flutter analyze                    # 0 error
 flutter test --coverage            # coverage/lcov.info — ngưỡng mobile 60%
+awk -F: '/^LF:/{t+=$2}/^LH:/{h+=$2}END{printf "coverage %.1f%%\n",h*100/t}' coverage/lcov.info   # lcov không tự in %
+flutter build apk --debug          # stack-flutter yêu cầu build pass
 dart run build_runner build --delete-conflicting-outputs && git diff --exit-code   # chỉ khi đi qua BFF
 ```
 Đỏ → BLOCKER `type=test`. Coverage < 60% → BLOCKER.
@@ -102,7 +104,7 @@ grep -rniE "price|total|discount|eligib" lib           # nghiệp vụ trong app
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
-| Mỗi action có loading · error · success; bám `ux-{name}.md` + design system đã chốt (Material 3) | Đọc màn | MAJOR |
+| Mỗi action có loading · error · success; bám `docs/ux/SCREEN-MAP.md` + mockup đã chốt + design system đã chốt (Material 3) | Đọc màn | MAJOR |
 | **(5.0)** Cây THẬT khớp cấu trúc đã chốt (feature-first `features/`·`shared/`·`core/` hoặc theo design) — không phẳng/tự chế; naming `snake_case.dart`/`PascalCase` | `find lib -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch cấu trúc = MAJOR |
 | Widget test cho màn/action chính; test không phụ thuộc mạng thật | `ls test` · đọc test đại diện | MAJOR |
 

@@ -33,9 +33,14 @@ Code ở `services/bff/{name}/`.
 ## 3. Chạy máy trước — đỏ là finding luôn
 
 ```bash
-npm run -s typecheck && npm run -s lint
-npm run -s test -- --coverage     # Vitest — ngưỡng bff 70%
-npm run -s schema:check           # validate SDL + diff với bản trước: chỉ được thêm
+# script phải tồn tại — `npm run -s` thiếu script thì exit 1 KHÔNG in gì. Thiếu = BLOCKER
+for s in typecheck lint build test schema:check; do node -e "process.exit(require('./package.json').scripts?.['$s']?0:1)" || echo "MISSING script: $s"; done
+npm run typecheck; npm run lint; npm run build
+npx vitest run --coverage --coverage.include='src/**/*.ts' --coverage.reporter=text-summary   # ngưỡng bff 70% — thiếu include = số ảo
+npm run schema:check              # in SDL từ code-first + diff với bản đã giao: chỉ được thêm
+# hằng số (stack-bff §3): field tập đóng khai String · tên header lặp literal (MAJOR)
+grep -rnE "(role|status|type)\w*: ?(String|string)" src
+grep -rhoiE "['\"]x-[a-z-]+['\"]" src | sort | uniq -c
 ```
 Đỏ → BLOCKER `type=test`. Coverage < 70% → BLOCKER. `schema:check` báo breaking → BLOCKER.
 
@@ -64,7 +69,7 @@ npm run -s schema:check           # validate SDL + diff với bản trước: ch
 | Đường ra | Introspection tắt ở prod; có depth + complexity limit | `grep -rn -e introspection -e depthLimit -e createComplexityLimitRule -e costAnalysis src` | BLOCKER |
 | | Không trả nguyên lỗi backend (stack, message nội bộ); có `formatError` mask | `grep -rn formatError src` | MAJOR |
 | | Rate limit per user/tenant cho mutation ghi/đăng nhập (theo ADR) | Config server/plugin; ADR không nói → QUESTION | MAJOR |
-| Dữ liệu | Schema không expose field nhạy cảm (hash, cờ nội bộ) | `grep -rni -e password -e hash -e secret -e internal --include=*.graphql src` | BLOCKER |
+| Dữ liệu | Schema không expose field nhạy cảm (hash, cờ nội bộ) | `grep -rni -e password -e hash -e secret -e internal --include=*.ts --include=*.graphql src/schema src/resolvers` (code-first: schema là file `.ts`) | BLOCKER |
 | | Cache per-user có `userId`/`tenantId` trong key; không cache global dữ liệu theo vai | `grep -rn -e "redis." -e cacheKey -e cacheControl src` | BLOCKER |
 | Phụ thuộc | Không lib có CVE nghiêm trọng | `npm audit --omit=dev --audit-level=high` | MAJOR |
 
@@ -90,13 +95,13 @@ grep -rniE "price|total|discount|eligib" src/resolvers                      # ng
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
-| SDL additive: chỉ thêm field/type hoặc `@deprecated`; không remove/rename/đổi type | Mục 3 `schema:check` · `git diff <mốc>..HEAD -- "*.graphql"` | BLOCKER |
+| SDL additive: chỉ thêm field/type hoặc `@deprecated`; không remove/rename/đổi type | Mục 3 `schema:check` · `git diff <mốc>..HEAD -- src/schema "*.graphql"` (code-first: không có `.graphql` thì diff rỗng KHÔNG có nghĩa là sạch) | BLOCKER |
 | Wave ≥ 2: field/type trong `docs/BACKWARD-COMPAT.md` §1 còn nguyên nghĩa | So SDL với ledger | BLOCKER |
 | DataLoader cho mọi field quan hệ; không gọi backend trong vòng lặp; N+1 kiểm qua log/trace của test | Lệnh trục 3 | MAJOR |
 | Error mapping: HTTP backend → `extensions.code` (`UNAUTHENTICATED` · `FORBIDDEN` · `BAD_USER_INPUT` · `INTERNAL`) khớp integration trong `arch/{name}.md`; lỗi nghiệp vụ biết trước không gộp `INTERNAL` | `grep -rn extensions src` | MAJOR |
 | Resolver gọi đúng endpoint theo integration backend trong `docs/arch/{name}.md`; có timeout + xử lỗi downstream | Đọc datasource/client | MAJOR |
 | Pagination kiểu Relay `Connection` cho list | Đọc SDL | MAJOR |
-| Hằng số theo `stack-bff §3 Hằng số`: role/status/type là GraphQL enum, không `String` · tên header/prefix cache key khai một nơi, không lặp literal giữa datasource/context | `grep -rnE "(role\|status\|type)\w*: ?(String\|string)" src` · `grep -rhoE "['\"]x-[a-z-]+['\"]" -i src \| sort \| uniq -c` | MAJOR |
+| Hằng số theo `stack-bff §3 Hằng số`: role/status/type là GraphQL enum, không `String` · tên header/prefix cache key khai một nơi, không lặp literal giữa datasource/context | Khối "hằng số" ở §3 Chạy máy | MAJOR |
 
 ### Trục 5 — Test và cấu trúc
 
@@ -105,7 +110,7 @@ grep -rniE "price|total|discount|eligib" src/resolvers                      # ng
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
-| Unit resolver + mapper; integration mock backend; test chứng minh DataLoader batch | `find src -name "*.spec.ts"` · đọc test loader | MAJOR |
+| Unit resolver + mapper; integration mock backend; test chứng minh DataLoader batch | `find src -name "*.spec.ts" -o -name "*.test.ts"` · đọc test loader | MAJOR |
 | **(5.0)** Cây THẬT khớp cách tổ chức đã chốt (module/domain: resolver·loader·schema) — không phẳng/tự chế; naming `{type}.resolver.ts`·`{entity}.loader.ts`·`{domain}.graphql`·`*.spec.ts` | `find src -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch = MAJOR |
 | KG của boundary có operations + loaders + cache key strategy | `knowledge-base/{name}.md` | MINOR |
 

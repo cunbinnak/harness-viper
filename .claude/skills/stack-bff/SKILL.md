@@ -35,6 +35,7 @@ BFF = GraphQL gateway: aggregate nhiều backend REST (`docs/arch/{backend}.md �
 ```
 dev     : docker compose -f deployment/local/docker-compose.yml up -d && npm run dev
 check   : npm run build && npm run typecheck && npm run lint   # + schema validate
+schema  : npm run schema:check    # script BẮT BUỘC (review §3 chạy): in SDL từ code-first + diff với bản đã giao (vd graphql-inspector) — chỉ được thêm
 test    : npm test                                             # vitest
 ```
 
