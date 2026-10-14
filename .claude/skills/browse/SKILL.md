@@ -15,18 +15,18 @@ description: >
 
 ## 1. Chạy bằng gì
 
-Playwright MCP (`@playwright/mcp`) — bản chính chủ của Playwright. Khung khai sẵn ở hai nơi:
+Playwright MCP (`@playwright/mcp`) — bản chính chủ của Playwright. Khung khai **hai slot** trong `.mcp.json` (mỗi slot = 1 trình duyệt riêng; Chromium chỉ mở khi có lệnh gọi):
 
-| Nơi khai | Dùng cho | Kiểu |
+| Slot | Server · tool | Ai dùng |
 |---|---|---|
-| `.mcp.json` ở gốc repo | Phiên chính (MAIN tự tay dùng — bước "MAIN TỰ DÙNG TRƯỚC" của /dogfood) | dùng chung cả phiên |
-| `mcpServers` trong frontmatter mỗi `persona-*` | 6 vai dùng thử | **inline — mỗi agent một trình duyệt riêng, tên riêng `<vai>-browser`** (tool: `mcp__<vai>-browser__browser_*`) |
+| A | `browser` · `mcp__browser__browser_*` | phiên chính (MAIN tự dùng trước) · `edge` · `newbie` · `rushed` · `breaker` |
+| B | `browser-2` · `mcp__browser-2__browser_*` | `picky` · `mobile` |
 
-Khai inline là có chủ ý: server inline được bật khi subagent bắt đầu và tắt khi nó xong, nên **các vai chạy song song mà không giẫm chân nhau**. Nếu để tất cả trỏ chung một server thì chúng tranh nhau một tab — người này bấm, người kia mất trang.
+Mỗi vai chặn slot kia bằng `disallowedTools` trong frontmatter. **Luật chạy song song: tối đa 2 vai cùng lúc, một vai slot A + một vai slot B** (`newbie`+`picky`, `rushed`+`mobile`). Hai vai cùng slot chạy song song = chung một trình duyệt, tranh nhau một tab — người này bấm, người kia mất trang (đã đo ở dogfood thật: tab mockup `picky` mở hiện trong `browser_tabs` của `newbie`, phiên đăng nhập bị tráo). Slot dùng lại giữa các lượt → mỗi vai **mở đầu bằng `browser_close`** (xoá phiên của vai trước) và **kết thúc bằng `browser_close`**.
 
-**Tên server mỗi vai PHẢI khác nhau và khác `browser`**, kèm `mcp__browser` trong `disallowedTools`. Đặt trùng tên `browser` (như bản VIPER gốc) thì vai vẫn kế thừa tool `mcp__browser__*` của phiên chính và các vai rơi vào CÙNG một trình duyệt — đã đo ở dogfood thật: tab mockup do `picky` mở hiện trong `browser_tabs` của `newbie` chạy song song, trang tự nhảy, phiên đăng nhập bị tráo. Thêm vai mới = thêm tên mới vào frontmatter + `permissions.allow` trong `.claude/settings.json` (thiếu allow → subagent bị từ chối im lặng).
+KHÔNG khai server inline (`mcpServers`) trong frontmatter persona: Claude Code chỉ bật server inline khi thư mục dự án đã được trust, chưa trust thì bỏ qua **im lặng** và vai rơi về server chung — đó là lỗi gốc của bản VIPER. Thêm slot = thêm server vào `.mcp.json` + `permissions.allow` trong `.claude/settings.json` (thiếu allow → subagent bị từ chối im lặng).
 
-Lưu ý: trình duyệt riêng **không** làm dữ liệu riêng. Server dev và DB vẫn dùng chung, nên vai ghi dữ liệu vẫn đè lên cảnh vai khác đang nhìn — đó là lý do `/dogfood` chạy **hai đợt, mỗi đợt tối đa 3 vai** (đợt 1 DB sạch: newbie · edge · picky — đợt 2 DB có data: mobile · rushed · breaker), không phải cả 6 cùng lúc.
+Lưu ý: trình duyệt riêng **không** làm dữ liệu riêng. Server dev và DB vẫn dùng chung, nên vai ghi dữ liệu vẫn đè lên cảnh vai khác đang nhìn — đó là lý do `/dogfood` chạy **hai đợt** (đợt 1 DB sạch: edge → newbie + picky — đợt 2 DB có data: rushed + mobile → breaker), không phải cả 6 cùng lúc.
 
 Không cần cài gì trước. Lần đầu chạy, npm tải gói và Playwright tải Chromium (vài trăm MB, chỉ một lần).
 

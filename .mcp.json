@@ -1,7 +1,11 @@
 {
-  "$comment": "Playwright MCP cho PHIÊN CHÍNH (MAIN tự tay mở trình duyệt). 6 vai dogfood KHÔNG dùng server này — mỗi vai khai inline trong frontmatter của chính nó với TÊN RIÊNG `<vai>-browser` (không trùng `browser`) + chặn `mcp__browser` trong disallowedTools — trùng tên thì các vai rơi vào chung trình duyệt này. Dùng `npm exec` chứ không `npx`: npx trong PATH có thể là gói standalone đời cũ không hiểu `-y`.",
+  "$comment": "Hai slot trình duyệt Playwright MCP (mỗi server = 1 trình duyệt; Chromium chỉ mở khi có lệnh gọi). Slot A `browser`: phiên chính + vai edge/newbie/rushed/breaker. Slot B `browser-2`: vai picky/mobile. /dogfood không bao giờ chạy quá 2 vai cùng lúc và mỗi cặp song song luôn 1 vai slot A + 1 vai slot B (newbie+picky, rushed+mobile) → 2 slot là đủ, không cần 6. KHÔNG khai server inline trong frontmatter persona: Claude Code bỏ qua im lặng khi thư mục chưa trust nên vai rơi về server chung. Dùng `npm exec` chứ không `npx`: npx trong PATH có thể là gói standalone đời cũ không hiểu `-y`.",
   "mcpServers": {
     "browser": {
+      "command": "npm",
+      "args": ["exec", "--yes", "@playwright/mcp@latest", "--", "--isolated"]
+    },
+    "browser-2": {
       "command": "npm",
       "args": ["exec", "--yes", "@playwright/mcp@latest", "--", "--isolated"]
     }

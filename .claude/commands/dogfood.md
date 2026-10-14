@@ -30,7 +30,7 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend
 ## Vì sao 2 đợt (KHÔNG phải dàn tải)
 Các vai dùng chung **1 hệ + 1 DB**: `breaker` đổ dữ liệu bậy, `rushed` tạo bản ghi trùng NGAY giữa lúc `newbie` nhìn màn →
 người này thấy cảnh người kia. Nặng nhất: **trạng thái rỗng (thứ `edge` coi trọng nhất) chết ngay khi vai nào tạo bản ghi đầu**.
-Ràng buộc **CỨNG**: ≤ **3 vai/đợt** · **không mở đợt 2 khi đợt 1 chưa xong** · **seed lại giữa 2 đợt** · trong đợt: **`edge` một mình ĐẦU đợt 1** (nhạy trạng thái rỗng) · **`breaker` một mình CUỐI đợt 2** (phá — không ai phải nhìn bãi nó phá).
+Ràng buộc **CỨNG**: ≤ **3 vai/đợt** · **song song tối đa 2 vai, một slot A + một slot B** (trình duyệt — skill `browse` §1; hai vai cùng slot = chung một trình duyệt) · **không mở đợt 2 khi đợt 1 chưa xong** · **seed lại giữa 2 đợt** · trong đợt: **`edge` một mình ĐẦU đợt 1** (nhạy trạng thái rỗng) · **`breaker` một mình CUỐI đợt 2** (phá — không ai phải nhìn bãi nó phá).
 
 ## Mỗi vai phải nhận gì
 | # | Nội dung | Thiếu thì |
