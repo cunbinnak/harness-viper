@@ -1,9 +1,9 @@
 ---
 name: persona-edge
 description: Dogfood — soi TRẠNG THÁI RỖNG + LỖI (dev hay quên). Đợt 1 (DB SẠCH — đúng lúc thấy rỗng). Trả finding, không fix.
-disallowedTools: Write, Edit, NotebookEdit
+disallowedTools: Write, Edit, NotebookEdit, mcp__browser
 mcpServers:
-  browser:
+  edge-browser:
     command: npm
     args: ["exec", "-y", "--", "@playwright/mcp@latest", "--isolated", "--viewport-size", "1280,800"]
 ---

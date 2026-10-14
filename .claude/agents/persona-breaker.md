@@ -1,9 +1,9 @@
 ---
 name: persona-breaker
 description: Dogfood — PHÁ. Đi ĐỦ ma trận vai×hành động (mỗi ô cấm 1 ca), đổi id URL sang dữ liệu người khác, input bậy (XSS/SQL/số âm). Đợt 2. Mọi lỗi phân quyền = NẶNG. Trả finding, không fix.
-disallowedTools: Write, Edit, NotebookEdit
+disallowedTools: Write, Edit, NotebookEdit, mcp__browser
 mcpServers:
-  browser:
+  breaker-browser:
     command: npm
     args: ["exec", "-y", "--", "@playwright/mcp@latest", "--isolated", "--viewport-size", "1280,800"]
 ---

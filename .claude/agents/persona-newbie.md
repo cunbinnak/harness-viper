@@ -1,9 +1,9 @@
 ---
 name: persona-newbie
 description: Dogfood — người dùng MỚI, không đọc hướng dẫn, chỉ dựa vào giao diện đi luồng chính. Bắt chỗ phải ĐOÁN mới đi tiếp được. Đợt 1 (DB sạch). Trả finding, không fix.
-disallowedTools: Write, Edit, NotebookEdit
+disallowedTools: Write, Edit, NotebookEdit, mcp__browser
 mcpServers:
-  browser:
+  newbie-browser:
     command: npm
     args: ["exec", "-y", "--", "@playwright/mcp@latest", "--isolated", "--viewport-size", "1280,800"]
 ---

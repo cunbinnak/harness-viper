@@ -1,9 +1,9 @@
 ---
 name: persona-rushed
 description: "Dogfood — người VỘI, thao tác ẩu: double-click, bấm nhanh, back giữa chừng, bỏ bước. Bắt double-submit + mất dữ liệu. Đợt 2 (DB có data). Trả finding, không fix."
-disallowedTools: Write, Edit, NotebookEdit
+disallowedTools: Write, Edit, NotebookEdit, mcp__browser
 mcpServers:
-  browser:
+  rushed-browser:
     command: npm
     args: ["exec", "-y", "--", "@playwright/mcp@latest", "--isolated", "--viewport-size", "1280,800"]
 ---

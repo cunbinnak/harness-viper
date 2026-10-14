@@ -20,9 +20,11 @@ Playwright MCP (`@playwright/mcp`) — bản chính chủ của Playwright. Khun
 | Nơi khai | Dùng cho | Kiểu |
 |---|---|---|
 | `.mcp.json` ở gốc repo | Phiên chính (MAIN tự tay dùng — bước "MAIN TỰ DÙNG TRƯỚC" của /dogfood) | dùng chung cả phiên |
-| `mcpServers` trong frontmatter mỗi `persona-*` | 6 vai dùng thử | **inline — mỗi agent một trình duyệt riêng** |
+| `mcpServers` trong frontmatter mỗi `persona-*` | 6 vai dùng thử | **inline — mỗi agent một trình duyệt riêng, tên riêng `<vai>-browser`** (tool: `mcp__<vai>-browser__browser_*`) |
 
 Khai inline là có chủ ý: server inline được bật khi subagent bắt đầu và tắt khi nó xong, nên **các vai chạy song song mà không giẫm chân nhau**. Nếu để tất cả trỏ chung một server thì chúng tranh nhau một tab — người này bấm, người kia mất trang.
+
+**Tên server mỗi vai PHẢI khác nhau và khác `browser`**, kèm `mcp__browser` trong `disallowedTools`. Đặt trùng tên `browser` (như bản VIPER gốc) thì vai vẫn kế thừa tool `mcp__browser__*` của phiên chính và các vai rơi vào CÙNG một trình duyệt — đã đo ở dogfood thật: tab mockup do `picky` mở hiện trong `browser_tabs` của `newbie` chạy song song, trang tự nhảy, phiên đăng nhập bị tráo. Thêm vai mới = thêm tên mới vào frontmatter + `permissions.allow` trong `.claude/settings.json` (thiếu allow → subagent bị từ chối im lặng).
 
 Lưu ý: trình duyệt riêng **không** làm dữ liệu riêng. Server dev và DB vẫn dùng chung, nên vai ghi dữ liệu vẫn đè lên cảnh vai khác đang nhìn — đó là lý do `/dogfood` chạy **hai đợt, mỗi đợt tối đa 3 vai** (đợt 1 DB sạch: newbie · edge · picky — đợt 2 DB có data: mobile · rushed · breaker), không phải cả 6 cùng lúc.
 

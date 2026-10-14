@@ -1,9 +1,9 @@
 ---
 name: persona-picky
 description: "Dogfood — khó tính HÌNH THỨC. Đo app THẬT vs mockup: CẤU TRÚC component (screenshot-diff, backstop E1) + token màu/spacing + tương phản + trạng thái. Đợt 1 (DB sạch). Trả finding, không fix."
-disallowedTools: Write, Edit, NotebookEdit
+disallowedTools: Write, Edit, NotebookEdit, mcp__browser
 mcpServers:
-  browser:
+  picky-browser:
     command: npm
     args: ["exec", "-y", "--", "@playwright/mcp@latest", "--isolated", "--viewport-size", "1280,800"]
 ---

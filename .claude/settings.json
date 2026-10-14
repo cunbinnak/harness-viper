@@ -8,6 +8,12 @@
       "Write",
       "Bash",
       "mcp__browser",
+      "mcp__newbie-browser",
+      "mcp__edge-browser",
+      "mcp__picky-browser",
+      "mcp__rushed-browser",
+      "mcp__mobile-browser",
+      "mcp__breaker-browser",
       "WebFetch(domain:localhost)",
       "WebFetch(domain:127.0.0.1)"
     ],

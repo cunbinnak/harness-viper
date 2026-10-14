@@ -1,5 +1,5 @@
 {
-  "$comment": "Playwright MCP cho PHIÊN CHÍNH (MAIN tự tay mở trình duyệt). 6 vai dogfood KHÔNG dùng server này — mỗi vai khai inline trong frontmatter của chính nó để có trình duyệt riêng, không giẫm chân nhau. Dùng `npm exec` chứ không `npx`: npx trong PATH có thể là gói standalone đời cũ không hiểu `-y`.",
+  "$comment": "Playwright MCP cho PHIÊN CHÍNH (MAIN tự tay mở trình duyệt). 6 vai dogfood KHÔNG dùng server này — mỗi vai khai inline trong frontmatter của chính nó với TÊN RIÊNG `<vai>-browser` (không trùng `browser`) + chặn `mcp__browser` trong disallowedTools — trùng tên thì các vai rơi vào chung trình duyệt này. Dùng `npm exec` chứ không `npx`: npx trong PATH có thể là gói standalone đời cũ không hiểu `-y`.",
   "mcpServers": {
     "browser": {
       "command": "npm",
