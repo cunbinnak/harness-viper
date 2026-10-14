@@ -38,8 +38,14 @@ Code ở `services/boundaries/{name}/`.
 # mapper: pom/build.gradle có mapstruct mà 0 @Mapper trong source = dep chết + toàn map tay
 grep -c mapstruct pom.xml build.gradle 2>/dev/null; grep -rl "@Mapper" src/main/java | wc -l
 grep -rnE "\.set[A-Z]\w+\(\w+\.(get|is)[A-Z]" src/main/java --include="*.java" | wc -l   # đếm dòng setX(getX())
+# tìm kiếm/danh sách (Trục 4): lọc trong bộ nhớ · JPQL null-check · GET nhiều tham số lọc
+grep -rnE -A3 "findAll\(" --include=*ServiceImpl.java src/main | grep -E "\.filter\(|subList\("
+grep -rnE "subList\(|new PageImpl<>\(" --include=*ServiceImpl.java src/main
+grep -rnE ":\w+ IS NULL OR" src/main
+grep -rn -A12 "@GetMapping" --include=*Controller.java src/main | awk '/@GetMapping/{if(n>=3)print h" ("n" lọc)"; h=$0; n=0} /@RequestParam/ && !/ (page|size|sort)[,)]/{n++} END{if(n>=3)print h" ("n" lọc)"}'
 ```
 Build/test đỏ → BLOCKER `type=test`, dẫn tên test + dòng lỗi. Coverage < 80% → BLOCKER.
+Lệnh tìm kiếm/danh sách ra dòng → mở từng chỗ, phán theo dòng "API tìm kiếm/danh sách" ở Trục 4 (lọc trong bộ nhớ trên bảng nghiệp vụ = BLOCKER).
 Có mapstruct trong build mà **0 `@Mapper`** = finding MINOR ngay (dep chết + convention vỡ); dòng `setX(getX())` nhiều bất thường (>10) → mở từng cụm phân loại 1-1 thuần vs có-lý-do (chi tiết trục 5 dòng MapStruct) — **số đếm ở đây là bằng chứng phải ghi vào báo cáo**, không được bỏ qua vì "MINOR".
 
 ## 4. Soi theo trục
@@ -123,6 +129,7 @@ grep -rni -e h2database -e "jdbc:h2" build.gradle* src               # H2
 | Webhook · callback · consumer · job · retry · import · sync idempotent — dedup theo eventId/transactionId/idempotency key | `grep -rn -e "@KafkaListener" -e "@RabbitListener" -e "@Scheduled" -e webhook -e callback J` → mỗi chỗ tìm bảng inbox/unique key | luồng tiền/critical = BLOCKER · còn lại MAJOR |
 | Event: payload DTO (không `Map`/entity) · topic/retry từ config · có eventId + correlationId · retry + DLQ · không giả định thứ tự · envelope khớp `arch/{name}.md` §events (`ref-backend-kafka`) | Đọc producer/consumer | MAJOR |
 | Không N+1 / repository trong vòng lặp / query không giới hạn; projection khi đủ, không eager thừa | `grep -rn -A4 -e "for (" -e ".forEach(" --include=*ServiceImpl.java src/main` → có gọi repository bên trong | MAJOR · không giới hạn trên bảng lớn = BLOCKER |
+| API tìm kiếm/danh sách theo `stack-spring-boot §3 Tìm kiếm`: **(a)** lọc/phân trang trong bộ nhớ (`findAll()` → `.stream().filter`, `subList`, `new PageImpl<>(list)`) thay vì Specification + `findAll(spec, pageable)` · **(b)** lọc động bằng JPQL `(:x IS NULL OR …)` / derived query tổ hợp / if-else theo tổ hợp tiêu chí · **(c)** `@GetMapping` có ≥ 3 `@RequestParam` lọc (không tính page/size/sort) mà không phải `POST …/search`. Tha: `findAll()` bảng danh mục nhỏ (phòng ban, loại phép) để map tên. **Chạy đủ 3 lệnh** — chỉ grep (b) là sót (a) | (a) `grep -rnE -A3 "findAll\(" --include=*ServiceImpl.java src/main \| grep -E "\.filter\(\|subList\("` · `grep -rnE "subList\(\|new PageImpl<>\(" --include=*ServiceImpl.java src/main` · (b) `grep -rnE ":\w+ IS NULL OR" src/main` · (c) `grep -rn -A12 "@GetMapping" --include=*Controller.java src/main \| awk '/@GetMapping/{if(n>=3)print h" ("n" lọc)"; h=$0; n=0} /@RequestParam/ && !/ (page\|size\|sort)[,)]/{n++} END{if(n>=3)print h" ("n" lọc)"}'` | (a) trên bảng nghiệp vụ = BLOCKER · (b) MAJOR · (c) MAJOR — arch §3 đã chốt GET thì code đúng contract, finding vào `ROADMAP §backlog` sửa arch wave sau; endpoint đã giao (BC §1) → THÊM `POST …/search`, giữ GET cũ |
 | Index cho cột filter/sort/join (không FK nên không tự có index) | So `findBy*`/`WHERE` với `CREATE INDEX` trong migration | MAJOR |
 | Migration: file mới, NOT NULL mới có default/rollout an toàn, không FK | `grep -rni -e "foreign key" -e "references " src/main/resources/db` | MAJOR |
 | Entity ↔ migration khớp tên/kiểu/nullable (`varchar(n)`↔`CHAR(n)`, `TIMESTAMPTZ`↔`Instant`) | Đọc song song entity và migration | BLOCKER |

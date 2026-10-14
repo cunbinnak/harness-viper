@@ -35,6 +35,7 @@ BUILD target backend (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§r
   Không thuộc diện này: error code (enum `*ErrorCode` — dòng Exception) · secret (env).
 - **Transaction**: `@Transactional` ở service; read-only khi phù hợp. **Không gọi external chậm trong transaction.** Publish event **AFTER_COMMIT** / outbox.
 - **Persistence**: JPQL/Specification (filter động → Specification, không `(:x IS NULL OR ...)`). **`nativeQuery` CHỈ khi JPQL/Specification không diễn đạt được** (window function · CTE · full-text search) — bắt buộc comment `// native: <lý do>` + bind param + `:tenantId`; thiếu lý do = dùng sai. Migration additive (không sửa file đã apply). Tránh N+1, list phải `Pageable`.
+- **Tìm kiếm/danh sách có lọc**: method theo `arch §3` (≥ 3 tiêu chí hoặc lọc mảng/khoảng → `POST /{resources}/search` + `{Resource}SearchRequest`; ít hơn → `GET` param). Lọc động **LUÔN bằng Specification**: `{Resource}Specifications` (mỗi tiêu chí một hàm static, giá trị null → trả `null` để bỏ qua) ghép `Specification.where(..).and(..)` + repository `JpaSpecificationExecutor` → `findAll(spec, pageable)` — lọc, phân trang, sort đều ở DB. **CẤM**: `findAll()` rồi `.stream().filter(..)` · tự cắt trang `subList` / `new PageImpl<>(list)` · JPQL `(:x IS NULL OR ..)` · derived query tổ hợp `findByAAndBAndC` · if/else chọn method repository theo tổ hợp tiêu chí. Ngoại lệ: `findAll()` bảng danh mục nhỏ (phòng ban, loại phép) để map tên.
 - **Idempotency**: consumer/webhook/callback/job dedup theo id (inbox). **Multi-tenant**: mọi query filter `tenant_id` từ auth context.
 - **Timestamp**: `Instant` (entity/response/event) · `OffsetDateTime` (request) · `LocalDate` (date-only). **KHÔNG `LocalDateTime`**.
 - **Import**: không FQCN inline, không wildcard, không `var`. **Config**: `@ConfigurationProperties`, không hardcode; secret qua env.
@@ -63,6 +64,7 @@ migrate : ./gradlew flywayMigrate          # hoặc chạy lúc bootRun
 | Lấy `userId`/`tenantId`/role từ body/param/header client | Client tự khai là người khác | Security context |
 | Nối chuỗi input vào JPQL/native; sort theo cột từ request | SQL injection; dò dữ liệu | Bind param; whitelist cột sort |
 | `nativeQuery` không có comment `// native: <lý do>` | JPQL/Spec làm được mà đi cửa sau — mất type-safety, schema-drift không bắt lúc compile | JPQL/Specification; native kèm comment lý do (window/CTE/full-text) |
+| Lọc/phân trang trong bộ nhớ: `findAll()` → `.stream().filter` · `subList` · `new PageImpl<>(list)` | Nạp cả bảng mỗi request — chậm dần theo dữ liệu, có thể OOM | `{Resource}Specifications` + `findAll(spec, pageable)` |
 | `@Transactional` trên controller | Giữ connection cả lúc serialize | Đặt ở service, hẹp nhất |
 | Gọi HTTP/downstream chậm trong transaction | Cạn connection pool, service treo | Ngoài transaction; outbox |
 | Publish event/ghi cache trước commit | Consumer nhận event của dữ liệu đã rollback | `@TransactionalEventListener(AFTER_COMMIT)` |
