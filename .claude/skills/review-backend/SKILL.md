@@ -45,6 +45,12 @@ grep -rnE -A3 "findAll\(" --include=*ServiceImpl.java src/main | grep -E "\.filt
 grep -rnE "subList\(|new PageImpl<>\(" --include=*ServiceImpl.java src/main
 grep -rnE ":\w+ IS NULL OR" src/main
 grep -rn -A12 "@GetMapping" --include=*Controller.java src/main | awk '/@GetMapping/{if(n>=3)print h" ("n" lọc)"; h=$0; n=0} /@RequestParam/ && !/ (page|size|sort)[,)]/{n++} END{if(n>=3)print h" ("n" lọc)"}'
+# response/request generic (ref-backend-pattern §6 — Trục 4): khung có chưa · bọc lồng · PageResponse tay · data không kiểu · catch trong controller
+for c in ResponseUtil SuccessResponse PageRequestBase SearchSpecification; do grep -rqE "(class|record) $c\b" src/main || echo "THIẾU khung: $c"; done
+grep -rnE 'ResponseEntity<\s*(SuccessResponse|ApiResponse|BaseResponse)|ResponseEntity\.(ok|status\([^)]*\)\.body)\(\s*(ResponseUtil|ApiResponse)' --include=*Controller.java src/main
+grep -rnE 'new PageResponse<' --include=*.java src/main | grep -v '/common/'
+grep -rnE '(SuccessResponse|ApiResponse)<\s*(Map<|Object>|\?>|List<Map<)' --include=*Controller.java src/main
+grep -rn 'catch (' --include=*Controller.java src/main
 # hằng số (Trục 5): field String cho tập đóng · so literal · tên hằng trùng ≥ 2 class
 grep -rnE "private String (role|status|type|\w+Status|\w+Type|\w+Role);" --include=*.java src/main
 grep -rnE -e '"[A-Z_]{2,}"\.equals\(' -e 'case "[A-Z_]' --include=*.java src/main
@@ -73,6 +79,8 @@ grep -rnE '@RequestBody\s+(java\.util\.)?Map<' --include=*Controller.java src/ma
 grep -rnE 'throw new (RuntimeException|IllegalArgumentException|IllegalStateException|Exception)\(' --include=*.java src/main
 # FK trong migration (MAJOR)
 grep -rniE 'foreign key|references ' src/main/resources/db
+# tên header truy vết lệch / literal rải rác — phải X-Request-ID qua constant/HeaderConstants, lệch = truy vết đứt giữa service (MAJOR)
+grep -rniE '"X-(Correlation|Request|Trace)-I[Dd]"' --include=*.java src/main | grep -v '/constant/'
 # MDC: số chỗ đặt + job/listener không đặt MDC — log không truy vết được (MAJOR)
 grep -rn 'MDC\.put' --include=*.java src/main | wc -l
 for f in $(grep -rlE '@Scheduled|@Async|@KafkaListener|@TransactionalEventListener' --include=*.java src/main); do grep -q MDC $f || echo "noMDC: $f"; done
@@ -191,14 +199,15 @@ grep -rni -e h2database -e "jdbc:h2" build.gradle* src               # H2
 | Wave ≥ 2: surface trong `docs/BACKWARD-COMPAT.md` §1 chỉ được THÊM, không đổi/xoá | `git diff <mốc wave trước>..HEAD` trên controller · DTO · migration · topic | BLOCKER |
 | Request/Response là DTO, không Entity; list có phân trang; GET không đổi state | `grep -rn "Entity" --include=*Controller.java src/main` · đọc `@GetMapping` | BLOCKER · phân trang = MAJOR |
 | Webhook · callback · consumer · job · retry · import · sync idempotent — dedup theo eventId/transactionId/idempotency key | `grep -rn -e "@KafkaListener" -e "@RabbitListener" -e "@Scheduled" -e webhook -e callback J` → mỗi chỗ tìm bảng inbox/unique key | luồng tiền/critical = BLOCKER · còn lại MAJOR |
-| Event: payload DTO (không `Map`/entity) · topic/retry từ config · có eventId + correlationId · retry + DLQ · không giả định thứ tự · envelope khớp `arch/{name}.md` §events (`ref-backend-kafka`) | Đọc producer/consumer | MAJOR |
+| Event: payload DTO (không `Map`/entity) · topic/retry từ config · có eventId + header `X-Request-ID` (truy vết) · retry + DLQ · không giả định thứ tự · envelope khớp `arch/{name}.md` §events (`ref-backend-kafka`) | Đọc producer/consumer | MAJOR |
 | Không N+1 / repository trong vòng lặp / query không giới hạn; projection khi đủ, không eager thừa | `grep -rn -A4 -e "for (" -e ".forEach(" --include=*ServiceImpl.java src/main` → có gọi repository bên trong | MAJOR · không giới hạn trên bảng lớn = BLOCKER |
-| API tìm kiếm/danh sách theo `stack-spring-boot §3 Tìm kiếm`: **(a)** lọc/phân trang trong bộ nhớ (`findAll()` → `.stream().filter`, `subList`, `new PageImpl<>(list)`) thay vì Specification + `findAll(spec, pageable)` · **(b)** lọc động bằng JPQL `(:x IS NULL OR …)` / derived query tổ hợp / if-else theo tổ hợp tiêu chí · **(c)** `@GetMapping` có ≥ 3 `@RequestParam` lọc (không tính page/size/sort) mà không phải `POST …/search`. Tha: `findAll()` bảng danh mục nhỏ (phòng ban, loại phép) để map tên. **Chạy đủ 3 lệnh** — chỉ grep (b) là sót (a) | Khối "tìm kiếm/danh sách" ở §3 Chạy máy (4 lệnh) → mở từng chỗ | (a) trên bảng nghiệp vụ = BLOCKER · (b) MAJOR · (c) MAJOR — arch §3 đã chốt GET thì code đúng contract, finding vào `ROADMAP §backlog` sửa arch wave sau; endpoint đã giao (BC §1) → THÊM `POST …/search`, giữ GET cũ |
+| Response/request generic theo `ref-backend-pattern §6`: **(a)** thiếu khung ở `common/` (`ResponseUtil`, `SuccessResponse`, `PageRequestBase`, `SearchSpecification`) hoặc tự chế wrapper khác · **(b)** bọc lồng `ResponseEntity<SuccessResponse<..>>` / `ResponseEntity.ok(ResponseUtil.ok(..))` ngoài 3 ca được phép (tải file · 201 kèm `Location` · header đặc biệt) · **(c)** `new PageResponse<>(..)` dựng tay · **(d)** `data` là `Map`/`Object`/`?` · **(e)** try/catch trong controller tự dựng lỗi · **(f)** lỗi trả HTTP status cứng 400 thay vì `ErrorCode.httpStatus()` | Khối "response/request generic" ở §3 Chạy máy → mở từng chỗ; (f) đọc `GlobalExceptionHandler` | (a) MAJOR — ghi 1 finding cho cả boundary · (b)(c)(d)(e)(f) MAJOR, gộp 1 finding/ý kèm số đếm |
+| API tìm kiếm/danh sách theo `stack-spring-boot §3 Tìm kiếm`: **(a)** lọc/phân trang trong bộ nhớ (`findAll()` → `.stream().filter`, `subList`, `new PageImpl<>(list)`) thay vì `SearchSpecification.of(req)` (+ `{Resource}Specifications` cho điều kiện đặc thù) + `findAll(spec, req.toPageable(SORTABLE))` · **(b)** lọc động bằng JPQL `(:x IS NULL OR …)` / derived query tổ hợp / if-else theo tổ hợp tiêu chí · **(c)** `@GetMapping` có ≥ 3 `@RequestParam` lọc (không tính page/size/sort) mà không phải `POST …/search`. Tha: `findAll()` bảng danh mục nhỏ (phòng ban, loại phép) để map tên. **Chạy đủ 3 lệnh** — chỉ grep (b) là sót (a) | Khối "tìm kiếm/danh sách" ở §3 Chạy máy (4 lệnh) → mở từng chỗ | (a) trên bảng nghiệp vụ = BLOCKER · (b) MAJOR · (c) MAJOR — arch §3 đã chốt GET thì code đúng contract, finding vào `ROADMAP §backlog` sửa arch wave sau; endpoint đã giao (BC §1) → THÊM `POST …/search`, giữ GET cũ |
 | Index cho cột filter/sort/join (không FK nên không tự có index) | So `findBy*`/`WHERE` với `CREATE INDEX` trong migration | MAJOR |
 | Migration: file mới, NOT NULL mới có default/rollout an toàn, không FK | `grep -rni -e "foreign key" -e "references " src/main/resources/db` | MAJOR |
 | Entity ↔ migration khớp tên/kiểu/nullable (`varchar(n)`↔`CHAR(n)`, `TIMESTAMPTZ`↔`Instant`) | Đọc song song entity và migration | BLOCKER |
 | Không hardcode URL/timeout/retry/batch/topic/role/header; đúng chỗ: constant theo domain · yml · secret store · enum · i18n | `grep -rn -e "\"http://" -e "\"https://" -e "Duration.of" J` | MAJOR |
-| Downstream: `@HttpExchange` · timeout + retry/fallback · 4xx→`BusinessException`, 5xx/timeout→`EXTERNAL_SERVICE_ERROR` · không return null · truyền Authorization/X-Tenant-ID/X-Correlation-ID · base URL/credential/flag cấu hình được (`ref-backend-restclient`) | Đọc `*Client` | MAJOR |
+| Downstream: `@HttpExchange` · timeout + retry/fallback · 4xx→`BusinessException`, 5xx/timeout→`EXTERNAL_SERVICE_ERROR` · không return null · truyền Authorization/X-Tenant-ID/X-Request-ID · base URL/credential/flag cấu hình được (`ref-backend-restclient`) | Đọc `*Client` | MAJOR |
 | Cache (`ref-backend-redis`): qua service interface, key có convention + TTL, invalidate sau ghi, không cache dữ liệu nhạy cảm, lock có timeout + release | `grep -rn -e RedisTemplate -e "@Cacheable" -e "@CacheEvict" -e RLock J` | MAJOR |
 | Job: idempotent, lock khi nhiều instance, batching/phân trang, log tổng kết (start/end/duration/processed/success/failure), cấu hình ra ngoài | `grep -rn "@Scheduled" J` → có `@SchedulerLock`? | MAJOR |
 
@@ -236,7 +245,7 @@ ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ n�
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | Ca đủ: success · validation fail · not found · permission denied · tenant khác · chuyển trạng thái sai · trùng/idempotency · external fail · publish event · rollback · biên | Đối chiếu `src/test` với AC + `arch/{name}.md §6` | MAJOR |
-| Unit: given-when-then, tên `should_x_when_y`, assert hành vi + error code (không assert chi tiết cài đặt), mock đúng ranh giới (không mock class đang test), deterministic (Clock/seed), branch coverage có nghĩa | Đọc 2–3 test đại diện | MAJOR |
+| Unit: given-when-then, tên test mô tả hành vi (đọc tên biết ca gì — không `test1`/`testCreate`), assert hành vi + error code (không assert chi tiết cài đặt), mock đúng ranh giới (không mock class đang test), deterministic (Clock/seed), branch coverage có nghĩa | Đọc 2–3 test đại diện | MAJOR |
 | Integration trên Testcontainers Postgres (không H2); contract API status + envelope; tenant isolation | `grep -rl -e PostgreSQLContainer -e "@Testcontainers" src/test` | MAJOR |
 | **Schema drift**: ≥ 1 test boot Spring context + chạy migration + `ddl-auto: validate` | `grep -rn "ddl-auto" src/test/resources src/main/resources` + test `@SpringBootTest` dùng container | BLOCKER |
 | Đổi logic có test mới; không xoá test có nghĩa; không test rỗng / chỉ `assertDoesNotThrow`; không `@Disabled` thiếu lý do | `grep -rn -e assertDoesNotThrow -e "@Disabled" src/test` · `git diff --stat <mốc>..HEAD -- src/test` | MAJOR |

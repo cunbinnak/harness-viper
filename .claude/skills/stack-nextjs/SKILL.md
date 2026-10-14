@@ -30,7 +30,7 @@ BUILD target web (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§revie
 - **KHÔNG business logic ở FE** (giá/điểm/điều kiện → backend). Role-gate FE **chỉ UX**, backend enforce.
 - **Component nhỏ**: UI render + emit event; container/page fetch + orchestrate. Không mutate props/state (immutable).
 - **UX states**: mỗi màn fetch đủ **loading · empty · error · success**; KHÔNG action im lặng; **confirm** destructive; lỗi field hiện **gần field** (toast không thay).
-- **Form**: schema validation (Zod/Yup); FE validate chỉ UX; chống double-submit (disable khi pending).
+- **Form**: validate khai báo, không `if` tay rải rác — form của ui-kit (antd `Form`) dùng **`rules`** của nó; form không thuộc ui-kit dùng schema Zod/Yup. FE validate chỉ UX (server vẫn validate); chống double-submit (disable khi pending).
 - **Auth**: token theo auth design (**KHÔNG localStorage** — httpOnly/in-memory); logout `queryClient.clear()`.
 - **a11y**: semantic HTML (`button`/`a`/`label`/`input`); icon button có `aria-label`; màu không là tín hiệu duy nhất. axe 0 critical.
 - **Mã màn/khối** (hợp đồng với mockup — `picky` diff theo đây): gốc mỗi trang/modal/tab gắn `data-screen="<Mã màn SCREEN-MAP>"`; mỗi khối gắn `data-ds="<mã khối>"` đúng như mockup. Thiếu mã = picky không so được = finding.

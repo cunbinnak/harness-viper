@@ -66,19 +66,35 @@ class OrderServiceImpl implements OrderService {
 
 ## 3. MDC correlation (traceId / tenantId / userId)
 
+Một mã truy vết đi xuyên mọi service: header **`X-Request-ID`** (theo SDK `cec-core`) ↔ khoá MDC **`traceId`**. Nhận ở cửa vào, gửi kèm mọi lời gọi ra (HTTP — `ref-backend-restclient §6`; Kafka — `ref-backend-kafka §3/§4`), mang sang thread khác (`@Async`). Tên header/khoá MDC khai **một nơi** ở `constant/` — KHÔNG viết literal rải rác (lệch tên = truy vết đứt giữa hai service).
+
 ```java
-// gắn traceId mỗi request, clear sau khi xong
+// constant/HeaderConstants.java · constant/LogConstants.java — một giá trị, một nơi khai
+public final class HeaderConstants {
+    private HeaderConstants() {}
+    public static final String REQUEST_ID = "X-Request-ID";
+    public static final String TENANT_ID = "X-Tenant-ID";
+}
+public final class LogConstants {
+    private LogConstants() {}
+    public static final String TRACE_ID = "traceId";
+    public static final String TENANT_ID = "tenantId";
+    public static final String USER_ID = "userId";
+}
+
+// config/CorrelationIdFilter.java — gắn traceId mỗi request, clear sau khi xong
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 class CorrelationIdFilter extends OncePerRequestFilter {
-    static final String TRACE_ID = "traceId";
-    static final String HEADER = "X-Request-Id";
+    private static final Pattern VALID_ID = Pattern.compile("[A-Za-z0-9-]{8,64}");   // id client gửi sai dạng → sinh mới (chặn log injection)
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
-        String traceId = Optional.ofNullable(req.getHeader(HEADER)).orElse(UUID.randomUUID().toString());
-        MDC.put(TRACE_ID, traceId);
-        res.setHeader(HEADER, traceId);
+        String incoming = req.getHeader(HeaderConstants.REQUEST_ID);
+        String traceId = incoming != null && VALID_ID.matcher(incoming).matches() ? incoming : UUID.randomUUID().toString();
+        MDC.put(LogConstants.TRACE_ID, traceId);
+        res.setHeader(HeaderConstants.REQUEST_ID, traceId);
         try {
             chain.doFilter(req, res);
         } finally {
@@ -86,9 +102,26 @@ class CorrelationIdFilter extends OncePerRequestFilter {
         }
     }
 }
+
+// config/AsyncConfig.java — @Async mang MDC sang thread khác (Boot tự gắn TaskDecorator bean vào executor mặc định)
+@Configuration
+@EnableAsync
+class AsyncConfig {
+    @Bean
+    TaskDecorator mdcTaskDecorator() {
+        return task -> {
+            Map<String, String> ctx = MDC.getCopyOfContextMap();
+            return () -> {
+                if (ctx != null) MDC.setContextMap(ctx);
+                try { task.run(); } finally { MDC.clear(); }
+            };
+        };
+    }
+}
 ```
-- Sau khi resolve security context: `MDC.put("tenantId", ctx.tenantId())`, `MDC.put("userId", ctx.userId())`.
-- Async / @KafkaListener / @Scheduled: tự set MDC (vd `traceId` từ event header) + clear ở `finally`.
+- Sau khi resolve security context: `MDC.put(LogConstants.TENANT_ID, ..)`, `MDC.put(LogConstants.USER_ID, ..)`.
+- `@KafkaListener`: `traceId` lấy từ header `X-Request-ID` của record qua `RecordInterceptor` (`ref-backend-kafka §4`). `@Scheduled`: mỗi lượt chạy sinh `traceId` mới, clear ở `finally`.
+- KHÔNG đưa IP client / thông tin request khác vào context khi chưa có yêu cầu (audit…) — giữ filter gọn.
 
 ## 4. Masking dữ liệu nhạy cảm
 

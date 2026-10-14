@@ -20,7 +20,7 @@
 - Type/DTO bám spec. BE: **DTO ở biên, KHÔNG phơi entity nội bộ**. FE: type từ spec/codegen, không định nghĩa tay.
 - Pagination/filter/sort theo contract **server** (không tự filter client nếu server đã định nghĩa).
 - Đổi surface đã giao = **additive** (`BACKWARD-COMPAT.md`).
-- **Error envelope** (default): `{ "error": { "code", "message", "details" } }` · **status** 2xx/4xx/5xx · **header** `X-Tenant-ID`/`X-Correlation-ID` · **versioning** `/v1`.
+- **Envelope** (default — khung generic `ref-backend-pattern §6`): thành công `{ "code": "SUCCESS", "message", "timestamp", "data" }` (list: `data` = `PageResponse`) · lỗi `{ "code": <mã nghiệp vụ>, "message", "timestamp", "additionalData" }` — BE trả **mã**, FE hiển thị theo mã · **status** đúng trường hợp (2xx/4xx/5xx theo `ErrorCode`, không ép 400) · **header** `X-Tenant-ID` · `X-Request-ID` (mã truy vết xuyên service — tên khai một nơi `constant/HeaderConstants`, `ref-backend-logging §3`) · **versioning** `/v1`.
 
 ## §4 Xử lý lỗi
 - KHÔNG nuốt lỗi (`catch` rỗng, catch rồi trả 200). Lỗi người dùng: tiếng Việt, nói **làm gì tiếp**, KHÔNG stack trace / lỗi thô. Lỗi hệ thống: log đủ ngữ cảnh (ai · làm gì · dữ liệu nào).

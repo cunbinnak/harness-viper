@@ -1,6 +1,6 @@
 ---
 name: ref-backend-restclient
-description: Pattern gọi downstream HTTP cho backend — @HttpExchange interface + RestClient proxy factory, config per-client (base-url/timeout/retry/pool), error handler (4xx→BusinessException, 5xx/timeout→EXTERNAL_SERVICE_ERROR), header propagation (Authorization/X-Tenant-ID/X-Correlation-ID). Load khi BUILD backend target gọi external / cross-boundary qua HTTP.
+description: Pattern gọi downstream HTTP cho backend — @HttpExchange interface + RestClient proxy factory, config per-client (base-url/timeout/retry/pool), error handler (4xx→BusinessException, 5xx/timeout→EXTERNAL_SERVICE_ERROR), header propagation (Authorization/X-Tenant-ID/X-Request-ID). Load khi BUILD backend target gọi external / cross-boundary qua HTTP.
 ---
 
 > Situational ref cho stack-spring-boot — load khi boundary gọi external / cross-boundary qua HTTP.
@@ -136,8 +136,8 @@ public class ClientHeaderInterceptor implements ClientHttpRequestInterceptor {
     @Override public ClientHttpResponse intercept(HttpRequest req, byte[] body,
                                                   ClientHttpRequestExecution exec) throws IOException {
         req.getHeaders().add("Authorization", currentBearerToken());   // từ SecurityContext, KHÔNG hardcode
-        req.getHeaders().add("X-Tenant-ID", currentTenantId());
-        req.getHeaders().add("X-Correlation-ID", MDC.get("traceId"));
+        req.getHeaders().add(HeaderConstants.TENANT_ID, currentTenantId());
+        req.getHeaders().add(HeaderConstants.REQUEST_ID, MDC.get(LogConstants.TRACE_ID));   // cùng tên header với CorrelationIdFilter (ref-backend-logging §3)
         return exec.execute(req, body);
     }
 }

@@ -59,6 +59,24 @@ class KafkaConfig {
         handler.addNotRetryableExceptions(BusinessException.class);   // lỗi nghiệp vụ không retry
         return handler;
     }
+
+    // Truy vết xuyên service: lấy X-Request-ID của record vào MDC traceId (ref-backend-logging §3).
+    // Boot tự gắn bean RecordInterceptor duy nhất vào container factory mặc định.
+    @Bean
+    RecordInterceptor<String, Object> mdcRecordInterceptor() {
+        return new RecordInterceptor<>() {
+            @Override
+            public ConsumerRecord<String, Object> intercept(ConsumerRecord<String, Object> rec, Consumer<String, Object> consumer) {
+                Header h = rec.headers().lastHeader(HeaderConstants.REQUEST_ID);
+                MDC.put(LogConstants.TRACE_ID, h != null ? new String(h.value(), StandardCharsets.UTF_8) : UUID.randomUUID().toString());
+                return rec;
+            }
+            @Override
+            public void afterRecord(ConsumerRecord<String, Object> rec, Consumer<String, Object> consumer) {
+                MDC.clear();
+            }
+        };
+    }
 }
 ```
 
@@ -91,7 +109,10 @@ class KafkaEventPublisher implements EventPublisher {
     private final KafkaTopics topics;
     @Override
     public void publish(String topicKey, String partitionKey, Object event) {
-        template.send(topics.of(topicKey), partitionKey, event);   // partitionKey giữ ordering theo entity
+        ProducerRecord<String, Object> rec = new ProducerRecord<>(topics.of(topicKey), partitionKey, event);   // partitionKey giữ ordering theo entity
+        String traceId = MDC.get(LogConstants.TRACE_ID);                    // AFTER_COMMIT chạy cùng thread request → MDC còn
+        if (traceId != null) rec.headers().add(HeaderConstants.REQUEST_ID, traceId.getBytes(StandardCharsets.UTF_8));
+        template.send(rec);
     }
 }
 ```

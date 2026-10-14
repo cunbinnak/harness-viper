@@ -149,12 +149,12 @@ grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effe
 ### Trục 6 — a11y, cấu trúc, test
 
 > **BƯỚC 6.0 — SOI HÌNH DẠNG CÂY TRƯỚC (đọc nội dung code KHÔNG thay được).**
-> (1) pattern FE chốt ở `arch §4`/ADR + `ref-frontend-pattern` là gì? · (2) `find src -maxdepth 2 -type d` dump cây THẬT · (3) **phân loại**: ra `pages/components/hooks/api/stores/router` (hoặc feature-based đã chốt) hay **phẳng/tự chế** (mọi thứ 1 folder · tên tự đặt)? · (4) cây THẬT phải khớp pattern đã chốt — lệch = **BLOCKER**. Chưa làm 6.0 mà kết luận "cấu trúc ổn" = chưa soi cấu trúc.
+> (1) pattern FE chốt ở `arch §4`/ADR + `ref-frontend-pattern` là gì? · (2) `find src -maxdepth 2 -type d` dump cây THẬT · (3) **phân loại**: ra `pages/components/hooks/api/stores/router` (Vite §1) · `app/` route + `loading.tsx` + `actions.ts` (Next App Router §1b) · hoặc feature-based đã chốt hay **phẳng/tự chế** (mọi thứ 1 folder · tên tự đặt)? · (4) cây THẬT phải khớp pattern đã chốt — lệch = **BLOCKER**. Chưa làm 6.0 mà kết luận "cấu trúc ổn" = chưa soi cấu trúc.
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | a11y: contrast · label · role · focus order; semantic HTML; icon button có `aria-label`; modal focus trap + Escape; màu không là tín hiệu duy nhất | axe (mục 3) · `grep -rn "<div[^>]*onClick" src` | critical = BLOCKER · khác = MAJOR |
-| **(6.0)** Cây THẬT khớp pattern đã chốt (`ref-frontend-pattern`: `pages`·`components`·`hooks`·`api`·`stores`·`router`, hoặc feature-based) — không phẳng/tự chế | `find src -maxdepth 2 -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch = BLOCKER |
+| **(6.0)** Cây THẬT khớp pattern đã chốt (`ref-frontend-pattern` §1 Vite `pages`·`components`·`hooks`·`api`·`stores`·`router` · §1b Next App Router · hoặc feature-based) — không phẳng/tự chế | `find src -maxdepth 2 -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch = BLOCKER |
 | Không file/folder thừa: component/hook mồ côi, scaffold mẫu, import chết | `npx knip` nếu có; không có → grep tên export không ai import | MAJOR |
 | Hằng số đặt đúng chỗ theo bảng 4 loại ở `stack-nextjs §3 Hằng số`: **(a)** role/status/type khai `string` thay union type — kể cả khi union đã có mà không dùng (ghi finding ở **field gốc**, không liệt kê từng chỗ so) · **(b)** route path / query key viết literal lặp ở nhiều file thay vì `constants/`. Hằng số nội bộ 1 file dùng = **đúng, KHÔNG ghi finding**. Format ngày/tiền dùng helper chung; text qua i18n nếu project có | Khối "hằng số" ở §3 Chạy máy | (a) (b) MAJOR · format/i18n MINOR |
 | Test: hành vi người dùng (query theo role/label/text, không className/testId); mock ở network (MSW/MockedProvider); mỗi màn chính có success · loading · error · submit lỗi · permission; không snapshot lớn; sửa bug có regression test | `grep -rn -e getByTestId -e toMatchSnapshot src` | MAJOR |
