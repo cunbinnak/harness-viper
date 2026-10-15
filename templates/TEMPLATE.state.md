@@ -31,7 +31,7 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
       · (INTERVIEW) `docs/INTERVIEW.md` đủ dòng bằng chứng — từ phỏng vấn Authority
       · (INTAKE) `intake/*.md` render thật + marker `NGUỒN: INTAKE` + bảng truy vết intake→FEAT
 - [ ] `docs/PRD.md`: vấn đề + đối tượng + out-of-scope + ≥1 success metric có số + **§6 Nguồn có ≥1 link research** (đã tra domain, không hỏi mù)
-- [ ] `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`: bảng luồng + màn nháp mọi nghiệp vụ, Authority ký, không ô `CHƯA HỎI` (domain-ba A)
+- [ ] `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`: bảng luồng + màn nháp + bảng chính sách mọi nghiệp vụ, Authority ký, không ô `CHƯA HỎI`, bảng chính sách không ô trống (domain-ba A)
 - [ ] `docs/PERSONAS.md`: persona + ma trận vai×hành động (không ô trống) — sinh từ bảng luồng
 - [ ] `docs/CAPABILITIES-MAP.md`: capability→outcome→FEAT; mọi FEAT truy về 1 capability
 - [ ] `docs/feat/FEAT-*.md`: mỗi FEAT có khung PO (§1 · §Ngoài phạm vi) + AC (BDD, **gồm ca biên**) + §3 Ràng buộc nghiệp vụ điền; mỗi dòng §3 có dòng `arch §6` chặn nó
@@ -61,7 +61,7 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 - [ ] **Mọi target wave khai đã build + chạy thật** — gate đối chiếu `ROADMAP §1` cột Target ↔ `proof.json`: mỗi target container hoá (backend/bff/web) có entry `healthy`; **thiếu/không-healthy = đỏ** (chống "khai 2 làm 1"). Mobile: tick tay (emulator)
 
 ### VERIFY (wave hiện tại) — rời phase khi:
-- [ ] **auto-test**: `tracking/wave-N/test-cases.md` — mọi AC in-scope có TC **PASS**, không TC **FAIL** · black-box hệ đang chạy · `make test` xanh · contract-test cho consumer
+- [ ] **auto-test**: `tracking/wave-N/test-cases.md` — mọi AC in-scope có TC **PASS**, không TC **FAIL / BLOCKED / CHƯA CHẠY** · (wave ≥2) TC `@regression` wave trước PASS · black-box hệ đang chạy · `make test` xanh · contract-test cho consumer
 - [ ] **dogfood**: 6 persona 2 đợt (DB sạch / DB có data) + tự dùng · phát hiện đã xử hoặc đã ghi §Dogfood
 - [ ] Không còn finding BLOCKER/MAJOR open
 

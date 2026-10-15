@@ -36,7 +36,7 @@
 - KHÔNG authorship/date (git nhớ) · không để code chết dạng comment.
 
 ## §7 Git & phụ thuộc
-- Commit nhỏ, message tiếng Việt thể chủ động. **Code lệch doc → sửa doc CÙNG commit** (luật #4).
+- Commit nhỏ, message tiếng Việt thể chủ động. **Code lệch doc → theo PROTOCOL §3** (doc đóng băng sau khoá scope; ngoại lệ `amend-arch`: bổ sung `docs/arch` CÙNG commit với code khi kẹt luồng).
 - Thêm thư viện = quyết định → `DECISIONS.md` nếu động kiến trúc / khó gỡ. Ưu tiên thứ có sẵn trong framework.
 
 ## §8 Test

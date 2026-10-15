@@ -30,7 +30,9 @@ Input: mô tả project user truyền (`$ARGUMENTS`) hoặc tài liệu trong `i
 **Nguồn cho "ai làm bước nào"**: hướng dẫn sử dụng / help center của sản phẩm · văn bản luật · quy trình mẫu. Trang giới thiệu sản phẩm (marketing) chỉ dùng cho loại 3, không làm nguồn vai trò.
 Ghi PRD §6 **theo từng nghiệp vụ** (không một cụm link chung): mỗi nghiệp vụ Author kể có ≥1 nguồn loại 1 (+ loại 2 nếu nhiều vai). Nghiệp vụ không có nguồn = chưa research, `domain-ba` A.1 sẽ research bù trước khi dựng bảng.
 
-**Bắt buộc, không "nếu có":** `WebSearch`/`WebFetch` luôn sẵn — domain mới mà không research = **trí nhớ mù → bịa có cấu trúc (hallucination)**. Mọi kiến thức domain phải có **NGUỒN**: research (ghi link vào PRD §6) / Authority trả lời / intake — KHÔNG từ "cảm giác".
+**Research = nguyên liệu, không phải đáp án.** Không ai công bố cách làm sản phẩm của họ — research cho *bước* (loại 1) · *vai* (loại 2) · *mảng* (loại 3) · *luật* (loại 4) · và **dấu vết chiều chính sách** (help center / trang cấu hình sản phẩm cùng loại lộ ra họ cho chỉnh gì: hạn chót, hạn mức, ai duyệt…). **Giá trị chính sách** (hạn chót bao giờ, mấy ngày/tuần, ai được ngoại lệ) = **suy luận chuyên môn** (4 phép thử) → Author chọn, ở `domain-ba` A.6 — Author không cần biết trước.
+
+**Bắt buộc, không "nếu có":** `WebSearch`/`WebFetch` luôn sẵn — domain mới mà không research = **trí nhớ mù → bịa có cấu trúc (hallucination)**. Mọi kiến thức domain phải có **NGUỒN**: research (ghi link vào PRD §6) / Authority trả lời / intake / **suy luận có lập luận, ghi rõ là suy luận** (lựa chọn thiết kế) — KHÔNG từ "cảm giác" không lập luận, KHÔNG gọi suy luận là chuẩn ngành.
 
 ## Lời Author = luồng chính (happy path) — MAIN đề xuất phần Author chưa nói
 

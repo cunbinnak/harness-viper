@@ -9,13 +9,13 @@
 2. **Chuyển phase qua slash command**; **gate mỗi chốt** chặn "đi tiếp khi chưa đủ" — **chốt đỏ thì DỪNG**, báo thiếu gì, KHÔNG `force`.
 3. **Sau khoá scope (DOCUMENT): KHÔNG hỏi Authority** (BUILD trở đi) — chỗ chưa rõ → 3 tầng (PROTOCOL §2.3: có bằng chứng · chuẩn ngành có link · ý-Author thì backlog, không đoán) · tắc cứng → `STATE §Blocker` · ngoài scope → `ROADMAP §backlog`. (Ngoại lệ: hành động ra-ngoài / không-đảo-ngược thì hỏi thật.)
 4. **Quyết định non-trivial → artifact NGAY** (DECISIONS/ADR/FEAT), không để trong chat.
-5. **Sửa doc đã chốt = wave sau**: `ROADMAP §backlog` → `/next-wave` → `/document` top-up. Doc wave đã ship (`archive/`) **bất biến**; đổi surface đã giao = **additive** (BACKWARD-COMPAT).
+5. **Sửa doc đã chốt = wave sau**: `ROADMAP §backlog` → `/next-wave` → `/document` top-up. Ngoại lệ duy nhất: **`amend-arch`** — `docs/arch` thiếu/sai kỹ thuật làm kẹt luồng của AC đã khoá → bổ sung tại chỗ theo 6 điều kiện PROTOCOL §3. Doc wave đã ship (`archive/`) **bất biến**; đổi surface đã giao = **additive** (BACKWARD-COMPAT).
 6. **Không bypass test · không hardcode secret · code xong → git commit · artifact tạm → dọn** (luật #9).
 
 > Vi phạm → hook chặn (`guard_ask`/`guard_bc`/`guard_ds`). `gate.py` chỉ BÁO thiếu gì (không chặn). Chi tiết PROTOCOL §6/§8.
 
 ## MAIN TỰ CODE
-MAIN viết **toàn bộ code sản phẩm + unit/integration test** (ở BUILD). Agent CHỈ để **verification**: `reviewer`/`bug-hunter` trả finding · `test-writer` (QA độc lập) thiết kế+chạy black-box `test-cases.md` + viết test — **KHÔNG đụng product code** · **dogfood** (6 persona). MAIN ghi §Findings + sửa. **Không dev-agent, không build_prompt** — spawn bằng Task tool + prompt ngắn tay. **Mọi spawn: foreground — CẤM `run_in_background`** (turn MAIN đứng lại tới khi agent trả kết quả — barrier bằng cơ chế).
+MAIN viết **toàn bộ code sản phẩm + unit/integration test** (ở BUILD). **MAIN CÓ tự test** — BUILD: unit/integration + tự bấm thử luồng · dogfood: đóng persona chính, dùng TRƯỚC 6 vai — đó là kiểm *của người làm*; còn **nghiệm thu** (ra đề + chạy + chấm `test-cases.md`) là việc của `test-writer`, MAIN không tự chấm bài mình. Agent CHỈ để **verification**: `reviewer`/`bug-hunter` trả finding · `test-writer` (QA độc lập) thiết kế+chạy black-box `test-cases.md` + viết test — **KHÔNG đụng product code** · **dogfood** (6 persona). MAIN ghi §Findings + sửa. **Không dev-agent, không build_prompt** — spawn bằng Task tool + prompt ngắn tay. **Mọi spawn: foreground — CẤM `run_in_background`** (turn MAIN đứng lại tới khi agent trả kết quả — barrier bằng cơ chế).
 
 ## DOGFOOD (luật cứng)
 Trước khi báo xong (cuối VERIFY; và trên production nếu wave khai SHIP): chạy `/dogfood` — MAIN **đóng persona chính, tự tay dùng TRƯỚC** bằng trình duyệt thật (skill `browse`, tool `browser_*` Playwright), vào từ trang đầu đi hết luồng nghiệp vụ, đối chiếu từng màn với mockup đã chốt; RỒI mới 6 persona × 2 đợt (≤3 vai/đợt, seed lại giữa đợt). **curl KHÔNG PHẢI dogfood** (chỉ hợp lệ khi target `KHÔNG CÓ UI`). `picky` là lớp canh design-system + mockup **DUY NHẤT** sau DOCUMENT (`guard_ds`/`guard_shell` chỉ soi mockup HTML, không soi code render) — bỏ picky = không gì bắt UI lệch bản chốt. Duyệt web trong dự án này CHỈ bằng skill `browse` — kể cả khi cấu hình toàn cục chỉ định công cụ khác.
@@ -32,7 +32,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE        (SHIP opt-in theo
 |---|---|
 | `/document` | interview\|intake → PRD/PERSONAS/CAPABILITIES/FEAT/arch/UX → chia wave → **khoá scope** (1 lần cho dự án) |
 | `/build [<wave>]` | **MAIN code** 1 wave: đọc KG/context → challenge → scaffold → walking skeleton → luồng nghiệp vụ → chạy thật |
-| `/verify` | review 2 vai + **`test-writer` thiết kế/chạy `test-cases.md`** + **dogfood 6 persona** → MAIN sửa tới sạch |
+| `/verify` | review 2 vai → **test case: `test-writer` viết đề → `bug-hunter` rà đề → `test-writer` sửa đề + chạy** → **dogfood 6 persona** → vòng: MAIN sửa, agent tìm lại tới sạch → kết luận QC |
 | `/ship` | *(chỉ khi wave khai SHIP)* prod-ready → deploy → smoke → thử rollback |
 | `/next-wave` | đóng wave (snapshot, **KHÔNG reset**) → **RÀ LẠI** + mở wave kế (loop engineering) |
 | `/status` | *(mọi lúc)* đang ở đâu · gate thiếu gì · chốt kế |

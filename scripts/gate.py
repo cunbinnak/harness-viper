@@ -362,6 +362,74 @@ def pending_topup(wave: str) -> list[str]:
     return out
 
 
+def tc_rows(text: str) -> list[dict]:
+    """test-cases.md → [{tc, ac, tag, res}] đọc theo TÊN cột (khung TEMPLATE.test-cases.md; cột cũ `kết quả` vẫn đọc được)."""
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip().startswith("|")]
+    if not lines:
+        return []
+    head = [c.strip().lower() for c in lines[0].strip("|").split("|")]
+    col = lambda name: next((i for i, h in enumerate(head) if h.startswith(name)), None)
+    i_tc, i_ac, i_tag, i_res = col("tc"), col("ac"), col("tag"), col("kết quả")
+    out = []
+    for row in table_rows("\n".join(lines)):
+        get = lambda i: row[i].strip() if i is not None and i < len(row) else ""
+        out.append({"tc": get(i_tc), "ac": get(i_ac), "tag": get(i_tag).lower(),
+                    "res": get(i_res).upper().replace("`", "")})
+    return out
+
+
+def in_scope_acs(wave: str) -> list[tuple[str, str]]:
+    """AC in-scope wave → [(FEAT-id, số AC)]. Ô ROADMAP dạng `FEAT-x AC-1..3, FEAT-y AC-2,4` — FEAT không ghi AC
+    = mọi `### AC-n` trong docs/feat/<FEAT-id>.md."""
+    row = roadmap_wave_row(wave)
+    idx = _col_index("AC in-scope")
+    cell = row[idx] if row and idx is not None and idx < len(row) else ""
+    out = []
+    for part in re.split(r"(?=FEAT-)", cell):
+        m = re.match(r"(FEAT-[\w-]+?)(?=[\s:,;(]|AC-|$)(.*)", part.strip(), flags=re.S)
+        if not m:
+            continue
+        feat, rest = m.group(1), re.sub(r"(\.\.|–|-)\s*AC-", r"\1", m.group(2))   # AC-1..AC-3 → AC-1..3
+        nums: list[str] = []
+        for spec in re.findall(r"AC-([\d\s,.\-–]+)", rest):
+            for piece in re.split(r"\s*,\s*", spec.strip(" ,")):
+                rng = re.match(r"(\d+)\s*(?:\.\.|-|–)\s*(\d+)$", piece)
+                if rng:
+                    nums += [str(n) for n in range(int(rng.group(1)), int(rng.group(2)) + 1)]
+                elif piece.isdigit():
+                    nums.append(piece)
+        if not nums:
+            nums = re.findall(r"^#{2,4}\s*AC-(\d+)", read_live(f"docs/feat/{feat}.md"), flags=re.M)
+        out += [(feat, n) for n in dict.fromkeys(nums)]
+    return out
+
+
+def regression_ids(wave: int) -> list[str]:
+    """Mã TC gắn @regression trong test-cases.md của mọi wave đã đóng (archive/wave-k, k < wave)."""
+    ids = []
+    for k in range(1, wave):
+        for p in sorted((ROOT / "archive" / f"wave-{k}").glob("tracking/wave-*/test-cases.md")):
+            ids += [x["tc"] for x in tc_rows(p.read_text(encoding="utf-8", errors="ignore"))
+                    if "@regression" in x["tag"] and x["tc"]]
+    return list(dict.fromkeys(ids))
+
+
+def policy_rows(flows: str) -> list[list[str]]:
+    """Bảng 'Chính sách từng hành động' (domain-ba A.6) — mọi bảng ngay sau dòng nhãn đó trong §Luồng nghiệp vụ."""
+    rows, take, buf = [], False, []
+    for ln in flows.splitlines() + [""]:
+        s = ln.strip()
+        if s.startswith("Chính sách từng hành động"):
+            take, buf = True, []
+            continue
+        if take and s.startswith("|"):
+            buf.append(s)
+        elif take and buf:            # hết bảng
+            rows += table_rows("\n".join(buf))
+            take, buf = False, []
+    return rows
+
+
 def wave_declares_ship(wave: str) -> bool:
     row = roadmap_wave_row(wave)
     return any("SHIP" in c.upper() for c in row)
@@ -428,6 +496,13 @@ def gate_document(r: Report) -> None:
     r.check(n_flow >= 1 and unsigned == 0 and unasked == 0,
             f"INTERVIEW §Luồng nghiệp vụ: {n_flow} bảng, Authority ký, không ô CHƯA HỎI"
             + (f" — chưa ký: {unsigned}" if unsigned else "") + (f" — CHƯA HỎI: {unasked}" if unasked else ""))
+    # domain-ba A.6 — bảng chính sách từng hành động: có dòng, không ô trống (chống "tài liệu im lặng" về luật)
+    policy = policy_rows(flows)
+    blank = sum(1 for row in policy for c in row if not c)
+    r.check(bool(policy) and not blank,
+            f"INTERVIEW bảng chính sách từng hành động: {len(policy)} dòng, không ô trống"
+            + (f" — {blank} ô trống (không áp dụng → ghi `n/a — <lý do>`)" if blank else "")
+            + ("" if policy else " — CHƯA có bảng (domain-ba A.6)"))
     # mockup wave đầu (wave 1 dựng lúc DOCUMENT) — màn UI in-scope đều có file, không khai suông
     first_wave = waves[0][0].strip() if waves and waves[0] else "1"
     miss = missing_wave_mockups(first_wave)
@@ -496,11 +571,31 @@ def gate_build(r: Report) -> None:
 def gate_verify(r: Report) -> None:
     wave = state_wave()
     tc = f"tracking/wave-{wave}/test-cases.md"
-    rows = table_rows(read(tc))   # test-cases.md = 1 bảng: TC | loại | AC | mô tả | cách chạy | kết quả | nguyên nhân
-    results = [row[5].upper() for row in rows if len(row) >= 6]
-    has_fail = any("FAIL" in x for x in results)
-    has_pass = any("PASS" in x for x in results)
-    r.check(exists(tc) and has_pass and not has_fail, f"{tc}: có TC PASS, không TC FAIL")
+    rows = tc_rows(read(tc))   # khung templates/TEMPLATE.test-cases.md — đọc theo TÊN cột
+    r.check(exists(tc) and bool(rows), f"{tc}: có bảng TC (khung TEMPLATE.test-cases.md)")
+    # không còn TC chưa xong: FAIL · BLOCKED · CHƯA CHẠY (CHƯA CÓ QUY ĐỊNH không tính — không phải bug, đi backlog)
+    bad = [f"{x['tc']}:{x['res']}" for x in rows if x["res"].startswith(("FAIL", "BLOCKED", "CHƯA CHẠY"))]
+    r.check(not bad, "không còn TC FAIL / BLOCKED / CHƯA CHẠY"
+            + (f" — {len(bad)}: {', '.join(bad[:6])}" if bad else ""))
+    # mọi AC in-scope có ≥1 TC PASS (tính TỪNG AC — 1 TC PASS cho cả wave không đủ)
+    acs = in_scope_acs(wave)
+    passed = [x["ac"] for x in rows if x["res"].startswith("PASS")]
+    uncovered = [f"{f} AC-{n}" for f, n in acs
+                 if not any(re.search(rf"{re.escape(f)}(?![\w-])", cell) and re.search(rf"\bAC-{n}\b", cell)
+                            for cell in passed)]
+    r.check(bool(acs) and not uncovered, f"mọi AC in-scope wave {wave} có TC PASS ({len(acs)} AC)"
+            + (f" — CHƯA: {', '.join(uncovered[:8])}" if uncovered else "")
+            + ("" if acs else " — không đọc được AC in-scope (ROADMAP §1 cột AC in-scope + docs/feat/)"))
+    # regression: mọi TC @regression của wave đã đóng phải được chạy lại + PASS ở wave này
+    if wave.isdigit() and int(wave) >= 2:
+        cur = {x["tc"]: x["res"] for x in rows}
+        # ĐÃ THAY = TC hết hợp lệ vì AC đổi qua top-up, có TC thay thế (bug-hunter rà đề test kiểm TC thay có thật)
+        miss = [t for t in regression_ids(int(wave)) if not cur.get(t, "").startswith(("PASS", "ĐÃ THAY"))]
+        r.check(not miss, "TC @regression của wave trước đã chạy lại + PASS (hoặc ĐÃ THAY)"
+                + (f" — CHƯA/ĐỎ: {', '.join(miss[:8])}" if miss else ""))
+    gap = [x["tc"] for x in rows if x["res"].startswith("CHƯA CÓ QUY ĐỊNH")]
+    if gap:
+        r.note(f"CHƯA CÓ QUY ĐỊNH: {len(gap)} TC ({', '.join(gap[:6])}) — không chặn gate; báo Authority + ROADMAP §backlog")
     # §Findings không BLOCKER/MAJOR chưa xử
     open_major = [row for row in table_rows(section("STATE.md", "Findings"))
                   if len(row) >= 5 and any(s in row[2].upper() for s in ("BLOCKER", "MAJOR"))

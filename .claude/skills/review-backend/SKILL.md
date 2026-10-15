@@ -255,6 +255,7 @@ ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ n�
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | Code làm khác một dòng `docs/DECISIONS.md` mà không có dòng mới đè lên | Mỗi dòng liên quan boundary → tìm chỗ code tương ứng | MAJOR |
+| **`amend-arch`** (PROTOCOL §3): mỗi thay đổi `docs/arch/*.md` sau khoá scope có dòng `DECISIONS` loại `amend-arch` · truy về AC/Mã màn đã khoá · chỉ THÊM (không đổi nghĩa/xoá) · target consumer cập nhật cùng commit · không kèm sửa FEAT/mockup/PRD | `git log --oneline <mốc>..HEAD -- docs/` (`<mốc>` = commit đầu wave) → `git show` từng commit, đối chiếu `DECISIONS` | thiếu điều kiện = MAJOR · đổi/xoá surface đã giao = BLOCKER |
 | Thư viện/kiểu kiến trúc khác ADR | Dependencies trong `build.gradle*` so với ADR tech-stack | MAJOR |
 | **Build tool khác ADR** (chốt Gradle → phải `build.gradle`+`gradlew`, KHÔNG `pom.xml`; chốt Maven → ngược lại) | `ls build.gradle* gradlew pom.xml` so với ADR/TECHSTACK — sai công cụ = **MAJOR** (cả CI/Dockerfile/lệnh sai theo) | MAJOR |
 | Framework/version khác `TECHSTACK.md` khai (soi tới đúng mức khai — vd khai `3.4` thì code phải `3.4.x`) | `build.gradle*`/`pom.xml` version vs `docs/TECHSTACK.md §1` | MAJOR |

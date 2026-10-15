@@ -12,7 +12,7 @@ description: Vai SA — Architecture cho /document Bước 6 (sau event-storming
 Bước 6 ARCHITECTURE của `/document` — vai **solution architect**, chạy **CUỐI Bước 6** (sau `event-storming` ghi OVERVIEW §4 + `boundary-charter` ghi OVERVIEW §1 và khởi tạo `arch/{name}.md §0 Mission` + `system-design` ghi OVERVIEW §5).
 Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `docs/CAPABILITIES-MAP.md` + `docs/arch/OVERVIEW.md` (§1 boundary map + §4 event-storming + **§5 system design** — 3 bước trước để lại). Contract PHẢI phản ánh §5 theo bảng ở mục **§Đọc OVERVIEW §5** dưới đây. §5 chưa có (chưa chạy `Skill("system-design")`) → DỪNG, chạy nó trước — không tự đoán quy mô.
 
-> Đây là **DESIGN docs**, không scaffold code. Scaffold code (`services/{name}/`) xảy ra ở `/build`, KHÔNG ở đây.
+> Đây là **DESIGN docs**, không scaffold code. Scaffold code (`services/{name}/`) xảy ra ở `/build`, KHÔNG ở đây. Ngoại lệ: **khung** `deployment/local/docker-compose.yml` (Deliverable 6) — dựng sẵn service + hạ tầng; `/build` (`infra-local-dev`) làm nốt chi tiết.
 
 ## Deliverable
 1. **ADR** `docs/adr/ADR-NNN-*.md` — theo chủ đề (backend-architecture [Layered/Hexagonal], **api-error-convention [envelope + generic codes chung]**, event/messaging…). **Stack · ui-kit · auth · lưu file · cache KHÔNG tự chốt ở đây** — ghi đề xuất + phương án, chốt bằng lượt hỏi Author ở `/document` Bước 7 rồi mới viết ADR tương ứng. Theo `templates/TEMPLATE.decisions.md`/ADR: context · decision · **Alternatives considered ≥2 (lý do reject)** · consequences.

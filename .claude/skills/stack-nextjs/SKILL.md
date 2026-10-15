@@ -35,7 +35,7 @@ BUILD target web (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§revie
 - **a11y**: semantic HTML (`button`/`a`/`label`/`input`); icon button có `aria-label`; màu không là tín hiệu duy nhất. axe 0 critical.
 - **Mã màn/khối** (hợp đồng với mockup — `picky` diff theo đây): gốc mỗi trang/modal/tab gắn `data-screen="<Mã màn SCREEN-MAP>"`; mỗi khối gắn `data-ds="<mã khối>"` đúng như mockup. Thiếu mã = picky không so được = finding.
 - **Styling**: token/theme cho màu/spacing/typography — **không hardcode hex/px** (guard_ds chặn ở mockup). Component đủ `:hover`/`:focus-visible`/`disabled`.
-- **Test**: Vitest + RTL + **MSW** (mock network boundary); assert theo hành vi (role/label/text). Coverage ≥ **60%**.
+- **Test**: Vitest + RTL + **MSW** (mock network boundary); assert theo hành vi (role/label/text); dữ liệu mock có kiểu theo contract `arch §3` (mock lệch hệ thật = test xanh giả). Coverage ≥ **60%**. Mẫu: **`ref-frontend-test`**.
 
 ## §4 make (điền thân vào `services/web/<name>/Makefile` — root Makefile dispatch tới)
 ```

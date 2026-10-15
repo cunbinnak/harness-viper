@@ -56,6 +56,11 @@ Khác cách săn 2 (luồng ngành, biến thiên theo domain): 6 họ này tồ
 | **Vận hành & sửa sai** | Ai xem được ai-đã-làm-gì (audit)? Sai thì ai được sửa/undo? Config đổi giữa chừng thì dữ liệu cũ ra sao? |
 Ưu tiên hậu quả thật: **mất/sai tiền · mất/lộ dữ liệu · lỗ phân quyền/tenant · luồng kẹt · nghiệp vụ sai**. Bỏ qua vặt (đặt tên, "nên có thêm cho đẹp"). Case đã có trong DECISIONS/n/a → **không báo lại**. Không chắc case có thật → nói không chắc + vì sao nghi.
 
+## Cách săn 5 — CHÍNH SÁCH TỪNG HÀNH ĐỘNG (ý kiến chuyên gia thứ hai — `INTERVIEW` bảng chính sách, `domain-ba` A.6)
+Chạy lại **độc lập** 4 phép thử cho mỗi hành động trong bảng luồng — đừng tin bảng của MAIN là đủ:
+(1) **Lạm dụng** — tự do hoàn toàn thì ai lợi dụng? · (2) **Hạ nguồn** — dữ liệu này ai dùng, chốt lúc nào, làm sau mốc chốt thì hạ nguồn sai gì? · (3) **Xung đột** — cùng người/thời gian/tài nguyên còn nghiệp vụ nào? · (4) **Vòng đời** — sửa/huỷ sau duyệt / sau khi đã dùng?
+Báo: hành động có thao tác mà **không có dòng** · ô `n/a` mà phép thử cho thấy cần luật · lập luận yếu/không trích phép thử · ô `suy luận` gắn nhãn "chuẩn ngành" mà không có nguồn thật · ô có giá trị mà **không AC nào** chặn/kiểm. Đề xuất kèm lập luận + phương án mặc định để MAIN hỏi Authority.
+
 ## Cách săn 4 — SYSTEM DESIGN khớp thực tế (`docs/arch/OVERVIEW.md §5` ↔ `arch/*` ↔ PRD §3)
 - Mục 5.x trống hoặc `n/a` không lý do · thiếu một trong năm thứ **luôn bắt buộc**: số instance · đứng sau proxy · môi trường · phân loại dữ liệu · bảng lớn.
 - NFR có số ở PRD §3 mà 5.1 không nêu quyết định, hoặc 5.2 không có phép tính.
@@ -69,7 +74,7 @@ Khác cách săn 2 (luồng ngành, biến thiên theo domain): 6 họ này tồ
 Hai loại nghi vấn — MAIN xử khác nhau (thiếu AC = vá FEAT · thiếu mảng = hỏi Authority/backlog, có thể đổi scope):
 ```
 Đã nạp: <file/skill thực đọc>
-Đã quét: <n> FEAT × <taxonomy kỹ thuật + nghiệp vụ> + 3 câu xuyên-luồng + đối chiếu ngoài (<nguồn research/demo đã xem, kèm link>) + 6 họ phổ quát (<họ nào map · họ nào n/a · họ nào THIẾU>)
+Đã quét: <n> FEAT × <taxonomy kỹ thuật + nghiệp vụ> + 3 câu xuyên-luồng + đối chiếu ngoài (<nguồn research/demo đã xem, kèm link>) + 6 họ phổ quát (<họ nào map · họ nào n/a · họ nào THIẾU>) + bảng chính sách (<n> hành động × 4 phép thử)
 
 [cao|vừa] <case Author có thể MISS>
   FEAT/luồng: <ở đâu>

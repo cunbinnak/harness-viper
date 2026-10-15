@@ -119,6 +119,7 @@ grep -rniE "price|total|discount|eligib" src/resolvers                      # ng
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | Code làm khác một dòng `docs/DECISIONS.md` mà không có dòng mới đè lên | Mỗi dòng liên quan boundary → tìm chỗ code | MAJOR |
+| **`amend-arch`** (PROTOCOL §3): mỗi thay đổi `docs/arch/*.md` sau khoá scope có dòng `DECISIONS` loại `amend-arch` · truy về AC/Mã màn đã khoá · chỉ THÊM · `consumes` khớp provider · không kèm sửa FEAT/mockup/PRD | `git log --oneline <mốc>..HEAD -- docs/` (`<mốc>` = commit đầu wave) → `git show` từng commit, đối chiếu `DECISIONS` | thiếu điều kiện = MAJOR · đổi/xoá surface đã giao = BLOCKER |
 | Thư viện/cách dựng schema khác ADR (code-first vs SDL, server lib) | `package.json` so với ADR | MAJOR |
 | Framework/version (Node · Apollo/server lib) khác `TECHSTACK.md` khai | `package.json` (+ `.nvmrc`) vs `docs/TECHSTACK.md §1` | MAJOR |
 | Tên type/field lệch thuật ngữ FEAT/Glossary | Đọc SDL | MINOR |

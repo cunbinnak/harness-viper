@@ -5,7 +5,7 @@ description: "Vai BA — /document Bước 3 PHÂN TÍCH (A bảng luồng Ai L�
 
 # Business-Analyst Method (Luồng nghiệp vụ → Business-rule → Persona → AC)
 
-> **Vai: BA** · **Viết**: `INTERVIEW §Luồng nghiệp vụ đã xác nhận` (bảng luồng + màn nháp + câu hỏi còn mở) · business-rule · `PERSONAS.md` (persona + ma trận) · FEAT §2 AC + ca biên · FEAT §3 Ràng buộc nghiệp vụ
+> **Vai: BA** · **Viết**: `INTERVIEW §Luồng nghiệp vụ đã xác nhận` (bảng luồng + màn nháp + bảng chính sách + câu hỏi còn mở) · business-rule · `PERSONAS.md` (persona + ma trận) · FEAT §2 AC + ca biên · FEAT §3 Ràng buộc nghiệp vụ
 > **KHÔNG viết**: PRD (PO — `discovery-hypothesis`; cần thêm nguồn thì trích ở cột Bằng chứng của bảng luồng) · khung FEAT: capability / mục tiêu / phạm vi (PO — `domain-po`) · chặn Ở ĐÂU, contract, data model (SA — `technical-design`)
 
 ## Khi dùng
@@ -35,12 +35,23 @@ Lời kể là văn xuôi ("bộ phận có nhu cầu liên hệ HR → HR đăn
    - **Cột Bằng chứng = 1 trong 3**: `§1 dòng N` (Author nói) · `[C] <link>` (chuẩn ngành — research: ưu tiên hướng dẫn sử dụng sản phẩm, văn bản luật, quy trình mẫu; trang marketing không tính) · `intake/<file>`. Ô không có cả 3 → ghi `CHƯA HỎI` — **đó là câu hỏi kế tiếp, hỏi Authority ngay** (đang DOCUMENT, hỏi hợp lệ và rẻ nhất). KHÔNG đoán, KHÔNG ghi DECISIONS thay cho việc hỏi.
 4. **Use case per dòng bảng** (khi dòng có nhánh): precondition · main flow · alternate · postcondition — mỗi nhánh ngoại lệ sau này là 1 AC/ca biên ở Bước 5. Ghi gọn ngay dưới bảng — phần D lấy làm AC.
 5. **Màn nháp + câu hỏi có hệ quả** — ngay dưới bảng luồng: (a) **theo vai**: mỗi vai làm gì, làm thế nào (nguồn cho ma trận ở mục C); (b) **màn nháp** `Mã màn · Module · Vai dùng · Hành động phải có trên màn · Dữ liệu hiển thị` — mỗi dòng bảng luồng có thao tác trên hệ thống phải có màn đứng; cột **Dữ liệu hiển thị** liệt kê MỌI vùng dữ liệu người dùng thấy trên màn, kể cả chỉ xem (bảng · tab lịch sử · panel · badge đếm · danh mục nguồn của ô chọn), bằng lời nghiệp vụ — đây là đặc tả chức năng của màn, SA thiết kế API từ nó (không ghi tên API/bảng); (c) mỗi ô `CHƯA HỎI` viết thành **câu hỏi kèm hệ quả A/B lên màn** ("HR lập tờ trình → nút ở EMP-DETAIL chỉ HR thấy · Quản lý lập → thêm lối vào + bước HR tiếp nhận"). Author trả lời theo hệ quả, không trả lời mơ hồ.
-6. **Playback đọc BẢNG, không đọc văn xuôi**: "bước 1: HR đăng tin, bộ phận chỉ nhờ — đúng không?". Sai actor lộ trên một dòng bảng trong 5 giây. Authority gật → ghi `chốt bởi Authority: <ngày ISO>` trên bảng. Gate DOCUMENT đòi: ≥1 bảng · đã ký · không ô `CHƯA HỎI`.
+6. **Bảng chính sách từng hành động — research + suy luận, Author chọn.** Bảng luồng nói *ai làm gì theo thứ tự nào*; bảng này nói *mỗi việc được làm trong điều kiện nào* — chỗ Author hay thiếu chuyên môn nhất, cũng là nơi sinh bug "tài liệu im lặng" (vd đăng ký làm từ xa lúc 18h vẫn được vì không ai đặt hạn chót). **Author không cần biết trước luật — BA mang chuyên môn, Author chỉ chọn.**
+   Mỗi dòng bảng luồng có thao tác trên hệ thống → 1 dòng `Hành động · Khi nào được làm · Ai · Giới hạn · Trạng thái tiền đề · Trùng/xung đột · Vi phạm thì · Ngoại lệ · Nguồn` (khung `TEMPLATE.interview.md`). Ô không áp dụng ghi `n/a — <lý do>`, **không ô trống**. Cách lấp:
+   - **Research = nguyên liệu, không phải đáp án**: không ai công bố cách làm sản phẩm của họ. Research cho *luật/quy định* (số liệu bắt buộc) + *dấu vết chiều chính sách* — help center / hướng dẫn cấu hình của sản phẩm cùng loại lộ ra **họ cho chỉnh những gì** (có mục "hạn chót đăng ký" = chiều cần quyết), hiếm khi cho giá trị mặc định.
+   - **Suy luận = ra đề xuất** — 4 phép thử cho MỖI hành động:
+     (1) **Lạm dụng** — để tự do hoàn toàn thì ai lợi dụng được? (đăng ký làm từ xa lùi ngày để hợp thức hoá ngày vắng)
+     (2) **Hạ nguồn** — dữ liệu của hành động này ai dùng, **chốt lúc nào** (chấm công cuối ngày · lương cuối tháng · báo cáo cuối kỳ)? Làm sau mốc chốt thì dữ liệu hạ nguồn sai thế nào? → **hạn chót suy ra từ mốc chốt hạ nguồn** — phép thử mạnh nhất, không cần nguồn ngoài.
+     (3) **Xung đột** — cùng người / cùng thời gian / cùng tài nguyên còn nghiệp vụ nào? (ngày đã có phép duyệt · ngày lễ · đi công tác · trùng lịch)
+     (4) **Vòng đời** — sửa/huỷ sau khi duyệt, hoặc sau khi dữ liệu đã bị hạ nguồn dùng, thì sao?
+   - **Nguồn** — 4 giá trị, ghi trung thực: `Author` · `[luật] <link>` (sự thật bên ngoài — bắt buộc link) · `suy luận → Author chọn` · `suy luận + tham khảo <link> → Author chọn`. KHÔNG gắn link chung chung rồi gọi "chuẩn ngành".
+   - Ô `suy luận` → gom **một lượt hỏi Authority dạng quyết định** (`AskUserQuestion`): mỗi câu = **đề xuất mặc định** + lập luận 1 dòng (hệ quả nếu không có luật — trích phép thử nào) + 1-2 phương án khác. Author không rành → chọn đề xuất; có chính sách riêng → sửa. Chưa chọn = `CHƯA HỎI`.
+   - Bảng này là **nguồn của business-rule (mục B) và AC luật (phần D)**: mỗi ô có giá trị (không `n/a`) → ≥1 rule/AC; mỗi giới hạn số/thời gian → ca biên **giá trị biên** (hạn chót 17h → 16:59 · 17:00 · 17:01).
+7. **Playback đọc BẢNG, không đọc văn xuôi**: "bước 1: HR đăng tin, bộ phận chỉ nhờ — đúng không?". Sai actor lộ trên một dòng bảng trong 5 giây. Authority gật → ghi `chốt bởi Authority: <ngày ISO>` trên bảng. Gate DOCUMENT đòi: ≥1 bảng · đã ký · không ô `CHƯA HỎI` · bảng chính sách có dòng, không ô trống.
 
-Bảng + màn nháp là **nguồn duy nhất** cho: ô `có/cấm` ma trận PERSONAS §2 (mục C dưới) · actor của AC (phần D) · actor của event-storming · SCREEN-MAP (`ux-design`) · luồng nghiệp vụ mà build/verify/dogfood đi theo. Không nơi nào được tự suy actor ngoài bảng.
+Bảng + màn nháp là **nguồn duy nhất** cho: ô `có/cấm` ma trận PERSONAS §2 (mục C dưới) · actor của AC (phần D) · actor của event-storming · SCREEN-MAP (`ux-design`) · luồng nghiệp vụ mà build/verify/dogfood đi theo. Không nơi nào được tự suy actor ngoài bảng. Bảng chính sách là **nguồn duy nhất** của luật hành động (khi nào · bao nhiêu · trùng gì · ngoại lệ).
 
-## B. Business-rule (từ bảng luồng + INTERVIEW)
-§Phát biểu (1 câu rõ) + §Lý do (**reference nguồn**: luật/policy/contract/quyết định — "best practice" chung chung không tính; chuẩn ngành phải kèm link) + §Khi nào áp dụng + §Ngoại lệ + §Hệ quả + **≥2 ví dụ** (1 happy + 1 vi phạm, số liệu — QC seed test) + `severity` CORNERSTONE/NORMAL + **`related_features` ≥1** (rule chỉ 1 FEAT → đáng lẽ là AC, đưa thành AC trong FEAT đó) + §**Phải chặn gì** (điều không bao giờ được xảy ra, nói bằng lời nghiệp vụ). Chặn **Ở ĐÂU** (unique index · cột `version` · state machine…) là việc SA — ghi ở `arch/{name}.md §6`, cột AC/BR trỏ về rule này.
+## B. Business-rule (từ bảng luồng + bảng chính sách A.6 + INTERVIEW)
+§Phát biểu (1 câu rõ) + §Lý do (**reference nguồn**: luật/policy/contract/quyết định — "best practice" chung chung không tính; chuẩn ngành phải kèm link; rule từ bảng chính sách → nguồn = cột Nguồn của ô, `suy luận → Author chọn` hợp lệ kèm lập luận) + §Khi nào áp dụng + §Ngoại lệ + §Hệ quả + **≥2 ví dụ** (1 happy + 1 vi phạm, số liệu — QC seed test) + `severity` CORNERSTONE/NORMAL + **`related_features` ≥1** (rule chỉ 1 FEAT → đáng lẽ là AC, đưa thành AC trong FEAT đó) + §**Phải chặn gì** (điều không bao giờ được xảy ra, nói bằng lời nghiệp vụ). Chặn **Ở ĐÂU** (unique index · cột `version` · state machine…) là việc SA — ghi ở `arch/{name}.md §6`, cột AC/BR trỏ về rule này.
 
 ## C. Persona + ma trận vai × hành động (sinh TỪ bảng luồng)
 role/goals/pains/workflow narrative. **Anti-persona BẮT BUỘC.** Ma trận `docs/PERSONAS.md §2`: **ô `có` = có dòng bảng luồng mà vai đó ở cột Ai LÀM**; vai không có dòng nào cho hành động đó = `cấm`. KHÔNG suy từ FEAT (FEAT viết sau ma trận; suy ngược = sai đồng bộ, trace không bắt). Không ô trống. **`PERSONAS §3` Gán vai dogfood**: mỗi vai dogfood (edge · newbie · picky · rushed · breaker · mobile) đóng persona nào, đợt mấy — dogfood đọc mục này.
@@ -67,7 +78,7 @@ PO đã tạo khung FEAT (capability · has_ui · §1 Mục tiêu · §Ngoài ph
   - **lỗi/timeout**: input sai · downstream chết/chậm · validate fail → hiện thông báo gì
   - **quyền/tenant**: vai bị `cấm` (ma trận) · chạm dữ liệu tenant khác · thu hồi quyền giữa chừng
   - **đồng thời**: gửi 2 lần · 2 người sửa 1 bản ghi · race tạo trùng
-  - **thời gian/kỳ**: hết hạn giữa chừng · ranh giới kỳ (cuối tháng/năm/ca) · timezone · job chạy nền
+  - **thời gian/kỳ**: **cửa sổ được phép hành động** (hạn chót · làm lùi ngày · ngoài giờ · ngày lễ — lấy từ bảng chính sách A.6) · hết hạn giữa chừng · ranh giới kỳ (cuối tháng/năm/ca) · timezone · job chạy nền
   - **tiền/số**: làm tròn · số âm · đơn vị · cộng dồn lệch
   - **idempotency**: retry · webhook/callback lặp · job chạy 2 lần
   - **partial-failure**: ghi xong nhưng thông báo/email fail → bù/hoàn thế nào
@@ -82,5 +93,5 @@ PO đã tạo khung FEAT (capability · has_ui · §1 Mục tiêu · §Ngoài ph
 **Chỗ chưa rõ**: không hỏi lại điều Authority đã trả lời; còn thiếu → 3 tầng (PROTOCOL §2.3).
 
 ## Done
-- **Bước 3**: bảng luồng mọi nghiệp vụ đã kể: Authority ký, không ô `CHƯA HỎI` + business-rule (≥2 ví dụ + nguồn + Phải chặn gì) + persona + ma trận (ô `có` trỏ được về dòng bảng) + mọi chỗ tự quyết có dòng `DECISIONS.md` → tiếp Bước 4 `capability-mapping`.
+- **Bước 3**: bảng luồng mọi nghiệp vụ đã kể: Authority ký, không ô `CHƯA HỎI` + bảng chính sách (mọi hành động có dòng · không ô trống · ô `suy luận` có lập luận + Author đã chọn) + business-rule (≥2 ví dụ + nguồn + Phải chặn gì) + persona + ma trận (ô `có` trỏ được về dòng bảng) + mọi chỗ tự quyết có dòng `DECISIONS.md` → tiếp Bước 4 `capability-mapping`.
 - **Bước 5 (D)**: mọi FEAT có ≥4 AC BDD (happy/validation/error/a11y) + taxonomy quét đủ trục (AC hoặc `n/a`) + cạnh trạng thái/seam có chủ + §3 Ràng buộc nghiệp vụ → tự rà bằng checklist `business-analysis` → tiếp Bước 6.

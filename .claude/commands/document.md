@@ -54,7 +54,7 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 Vấn đề (pain) + đối tượng cụ thể + **out-of-scope tường minh** + ≥1 success metric **có số**.
 
 ## Bước 3 — Phân tích BA: bảng luồng + màn nháp → business-rule → PERSONAS · *BA*  → **Nạp `Skill("domain-ba")` trước**
-**Trình tự PO → BA → yêu cầu**: khám phá (Bước 1-2) là việc PO; Bước 3 là BA **phân tích quy trình TRƯỚC khi ai viết AC** — (A) dựng bảng luồng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`, ô `CHƯA HỎI` → hỏi Authority ngay (cả 2 đường vào), **Authority ký bảng** → (B) business-rule → (C) persona + ma trận sinh TỪ bảng. Từ đây actor của AC (Bước 5), ô ma trận, luồng nghiệp vụ mà build/verify/dogfood đi theo **chỉ lấy từ bảng** — chống suy diễn \"người có nhu cầu = người thao tác\".
+**Trình tự PO → BA → yêu cầu**: khám phá (Bước 1-2) là việc PO; Bước 3 là BA **phân tích quy trình TRƯỚC khi ai viết AC** — (A) dựng bảng luồng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`, ô `CHƯA HỎI` → hỏi Authority ngay (cả 2 đường vào) + **bảng chính sách từng hành động** (khi nào · ai · giới hạn · trùng gì · ngoại lệ — research lấy dấu vết + suy luận 4 phép thử → đề xuất mặc định, Author chọn; Author không cần biết trước luật), **Authority ký bảng** → (B) business-rule (sinh từ cả bảng chính sách) → (C) persona + ma trận sinh TỪ bảng. Từ đây actor của AC (Bước 5), ô ma trận, luồng nghiệp vụ mà build/verify/dogfood đi theo **chỉ lấy từ bảng** — chống suy diễn \"người có nhu cầu = người thao tác\".
 Persona + năng lực được cấp + **ma trận vai × hành động** — mỗi ô `có`/`cấm`, **KHÔNG ô trống**
 (đây là spec phân quyền khi code + nguồn TC âm khi test + danh sách phép thử của vai `breaker` ở dogfood).
 
@@ -131,7 +131,7 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 5. Báo: tài liệu xong — **đã chia thành N wave** (đọc `docs/ROADMAP.md §1`, liệt kê `w1: <target/FEAT> · w2: … · wN: …`), chạy `/build 1` để vào wave đầu.
 
 ## Ranh giới
-- **Không viết code** ở phase này. Không dựng `services/`.
+- **Không viết code sản phẩm** ở phase này. Không dựng `services/`. Ngoại lệ duy nhất: **khung** `deployment/local/docker-compose.yml` (SA — `technical-design`) — dựng sẵn service + hạ tầng; `/build` (`infra-local-dev`) làm nốt chi tiết.
 - INTAKE: **không tự đẻ target** ngoài `intake/ARCHITECTURE`, **không đổi** lựa chọn intake cho hợp default skill.
 - Không bỏ qua challenge cho nhanh — cái giá trả ở BUILD/dogfood.
 - Không khoá scope khi Authority chưa đọc + chưa tick `Scope khoá`.

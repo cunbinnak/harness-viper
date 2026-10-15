@@ -67,7 +67,7 @@ services/boundaries/{name}/src/main/java/.../{name}/
 └── util/                                   # helper thuần (formatter, validator, date) — thêm khi dự án cần
 
 resources/db/migration/                     # migration versioned, no FK
-tests/{unit,integration}                    # unit: service mock repo · integration: controller + DB thật
+src/test/java/.../{name}/                   # unit/ (service mock repo) · integration/ (controller + DB thật) · architecture/ArchitectureTest.java (§7.5)
 ```
 
 ## 3. Layout — Hexagonal (Ports & Adapters)
@@ -99,7 +99,7 @@ services/boundaries/{name}/src/main/java/.../{name}/
 └── util/                       # helper thuần — thêm khi dự án cần
 
 resources/db/migration/         # migration versioned, no FK
-tests/{unit,integration}
+src/test/java/.../{name}/       # unit/ · integration/ · architecture/ArchitectureTest.java (§7.5)
 ```
 
 ## 4. Trách nhiệm từng thành phần

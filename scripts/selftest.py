@@ -85,11 +85,11 @@ def main() -> int:
     have = {p.stem for p in (ROOT / ".claude/commands").glob("*.md")}
     check(cmds <= have, f"7 command đủ ({len(cmds & have)}/7)")
 
-    agents = {"reviewer", "bug-hunter", "test-writer",
+    agents = {"pre-mortem", "reviewer", "bug-hunter", "test-writer",
               "persona-newbie", "persona-edge", "persona-picky",
               "persona-rushed", "persona-breaker", "persona-mobile"}
     hava = {p.stem for p in (ROOT / ".claude/agents").glob("*.md")}
-    check(agents <= hava, f"9 agent đủ ({len(agents & hava)}/9)")
+    check(agents <= hava, f"{len(agents)} agent đủ ({len(agents & hava)}/{len(agents)})")
     # frontmatter YAML phải parse được — hỏng là Claude Code lặng lẽ bỏ agent ("not available", MAIN thay
     # general-purpose) / skill / command. Hay dính: `description:` có ": " giữa câu mà không bọc nháy.
     bad = []

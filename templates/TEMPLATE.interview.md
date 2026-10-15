@@ -31,6 +31,14 @@ Màn nháp:
 |---|---|---|---|---|
 | {{REC-LIST}} | {{recruitment}} | {{HR}} | {{tạo tin · lọc · mở ứng viên}} | {{danh sách tin (tiêu đề · phòng ban · trạng thái · số ứng viên) · ô lọc phòng ban (danh mục phòng ban) · badge số tin chờ duyệt}} |
 
+Chính sách từng hành động:
+<!-- domain-ba A.6 — mỗi dòng bảng luồng có thao tác trên hệ thống = 1 dòng. Research lấy dấu vết + suy luận 4 phép thử
+     (lạm dụng · hạ nguồn chốt lúc nào · xung đột · vòng đời) → đề xuất mặc định, Author chọn. Không ô trống; không áp dụng → `n/a — <lý do>`.
+     Nguồn: `Author` · `[luật] <link>` · `suy luận → Author chọn` · `suy luận + tham khảo <link> → Author chọn`. -->
+| Hành động | Khi nào được làm | Ai | Giới hạn | Trạng thái tiền đề | Trùng / xung đột | Vi phạm thì | Ngoại lệ | Nguồn |
+|---|---|---|---|---|---|---|---|---|
+| {{Đăng ký làm từ xa}} | {{trước 17h ngày làm việc liền trước · không đăng ký lùi ngày}} | {{nhân viên}} | {{≤ 2 ngày/tuần}} | {{n/a — tạo mới}} | {{ngày đã có phép duyệt · ngày lễ}} | {{chặn, báo lý do}} | {{HR đăng ký hộ, bắt buộc ghi lý do}} | {{suy luận → Author chọn (chấm công chốt cuối ngày; không chặn thì đăng ký lùi để hợp thức hoá ngày vắng)}} |
+
 Câu hỏi còn mở (hệ quả lên màn):
 - {{Ai duyệt CV? A: HR → REC-DETAIL chỉ HR có nút duyệt · B: Trưởng phòng → thêm hàng chờ duyệt cho trưởng phòng}}
 

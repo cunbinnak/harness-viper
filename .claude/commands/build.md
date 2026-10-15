@@ -54,7 +54,7 @@ trả lời lại. **KHÔNG được code** khi chưa PASS. **PASS** → ghi `ST
 Scaffold vào **đúng nhóm theo `kind`** bằng **CLI chính chủ** (không chép boilerplate):
 · `backend` → `services/boundaries/{name}/` · `web` → `services/web/{name}/` · `bff` → `services/bff/{name}/` · `mobile` → `services/mobile/{name}/`
 **Có KG** → áp lại NGAY §Invariants + §Gotchas (chống lặp bug cũ: env tường minh, JWT local, soft-delete...).
-Artifact chạy local → `deployment/local/` (docker-compose · `.env` từ `.env.example` · seed theo PRD). **Mỗi target container hoá (backend/bff/web) phải có `Dockerfile` trong thư mục service + 1 service trong docker-compose** (mobile không container). Điền `make` 6 lệnh.
+Artifact chạy local → `deployment/local/`: **làm nốt** khung docker-compose dựng sẵn từ DOCUMENT (skill `infra-local-dev`) · `.env` từ `.env.example` · seed theo PRD. **Mỗi target container hoá (backend/bff/web) phải có `Dockerfile` trong thư mục service + 1 service trong docker-compose** (mobile không container). Điền `make` 6 lệnh.
 > **Máy thiếu `make`/`sh`** → MAIN **TỰ CÀI** bằng trình quản lý gói có sẵn (`README §Yêu cầu máy`: Windows `winget install ezwinports.make` + `winget install Git.Git` nếu chưa có Git Bash · macOS `brew install make` / `xcode-select --install` · Linux `sudo apt install make`), ghi `DECISIONS` loại `kỹ-thuật`. Windows: PATH chỉ nhận khi mở lại terminal → phiên hiện tại gọi thẳng đường dẫn `make.exe` vừa cài. **Chỉ báo Authority khi tự cài không được** (cần mật khẩu admin/sudo, không có trình quản lý gói) → cách chạy khác Authority cho phép. Cách nào thì `check` vẫn phải chạy đúng thân lệnh trong Makefile của target (proof không tính lệnh tự chế).
 Xong → `git add -A && git commit`.
 
@@ -79,11 +79,11 @@ Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được
 - **Phân quyền**: mỗi ô `cấm` trong ma trận vai phải bị chặn ở **server**, không tự quyết lại
 - **Ranh giới module** theo `arch/{name}.md` — logic sai tầng là lỗi, không phải phong cách
 - **Ca biên** (trong AC): xử **ngay khi làm phần liên quan**, đừng để cuối
-- **Doc spec lệch thực tế** (vd đổi tên field) → **KHÔNG sửa doc đã khoá** (guard_doc chặn — doc đóng băng lúc BUILD); ghi `ROADMAP §backlog`, wave sau `/document` top-up đồng bộ. Mơ hồ trong AC → `DECISIONS.md` 1 dòng (sổ sống). Thêm AC/luồng MỚI cũng → `ROADMAP §backlog`.
+- **Doc lệch thực tế** → theo PROTOCOL §3: (A) `arch` lệch nhưng **không kẹt luồng** (tên field, kiểu, index) → code bám `arch` + `DECISIONS` `kỹ-thuật` + `ROADMAP §backlog` · (B) `arch` thiếu/sai kỹ thuật làm **kẹt luồng** của AC đã khoá → **`amend-arch`**: bổ sung `docs/arch/*.md` tại chỗ, cùng commit, đủ 6 điều kiện §3 · (C) thiếu hẳn hành vi/luồng → `ROADMAP §backlog` (kẹt luồng → `STATE §Blocker`, dừng gợi ý Authority gọi `/document` top-up). AC · mockup · PRD **không** sửa (guard_doc chặn). Mơ hồ trong AC → `DECISIONS.md` 1 dòng.
 - Mơ hồ → `DECISIONS.md` 1 dòng · ngoài AC → `ROADMAP §backlog` · commit nhỏ, message tiếng Việt
 - **Gặp gotcha / vá bug lúc code** (env nông · config · quirk contract · schema drift...) → **append NGAY** `knowledge-base/{name}.md` §Gotchas/§Failure-modes. Đây là **nguồn KG nhiều nhất** (lúc code mới va) — không ghi = mất, wave/rebuild sau lặp lại (retro B3).
 
-**Viết unit/integration test CÙNG LÚC code** (chạy `make test` — lưới an toàn của MAIN; code smell/checkstyle sạch).
+**Viết unit/integration test CÙNG LÚC code** (chạy `make test` — lưới an toàn của MAIN; code smell/checkstyle sạch) — nạp **`ref-<kind>-test`** (`ref-backend-test` · `ref-frontend-test` · `ref-bff-test`): tầng test · đặt tên · mẫu · đồng hồ tiêm được (để QC test hạn chót trên hệ thật) · mock khớp contract.
 **KHÔNG** làm ở phase này: tối ưu hiệu năng · UI đẹp quá mức đủ dùng · **black-box test-case + dogfood (để VERIFY — `test-writer` chủ trì)** · tính năng "tiện tay".
 
 ## Bước 6 — Chạy thật (theo `kind` — VERIFY sẽ đánh trên đây)

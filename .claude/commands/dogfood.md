@@ -25,7 +25,7 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend
 6. **Đợt 2 (DB CÓ DỮ LIỆU)** — 2 nhịp: spawn `rushed` + `mobile` song song trước → trả xong mới spawn **`breaker` MỘT MÌNH cuối** (nó đổ input bậy + deactivate account — chạy song song thì vai khác thấy rác của nó thành finding giả / bị 401 giữa chừng; để cuối thì không ai phải nhìn bãi nó phá). Mọi nhịp: cùng message khi song song, foreground.
 7. Gộp phát hiện (**MAIN Bước 3 + 6 vai**) → soi **dấu hiệu dogfood giả** → vai nào dính thì chạy lại vai đó.
 8. Agent **TRẢ VỀ** phát hiện → **MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file).
-9. Báo Authority theo **mẫu tổng kết** (dưới). Còn finding `sửa ngay` → `/verify` fix-loop. Sạch → quay `/verify` Bước cuối (gate VERIFY xanh) rồi mới `/ship`|`/next-wave`.
+9. Lập **mẫu tổng kết** (dưới). Đang trong `/verify` → **KHÔNG dừng báo Authority ở đây**: còn finding → `/verify` Bước 5 fix-loop; sạch → `/verify` Bước cuối (tổng kết đi chung báo cáo cuối). Chạy `/dogfood` lẻ ngoài VERIFY → báo tổng kết luôn.
 
 ## Vì sao 2 đợt (KHÔNG phải dàn tải)
 Các vai dùng chung **1 hệ + 1 DB**: `breaker` đổ dữ liệu bậy, `rushed` tạo bản ghi trùng NGAY giữa lúc `newbie` nhìn màn →

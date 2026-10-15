@@ -3,12 +3,13 @@
 
 Sau khoá scope (BUILD/VERIFY/SHIP/NEXT-WAVE) doc spec ĐÓNG BĂNG: vấn đề dồn sang wave sau
 (`docs/ROADMAP.md §backlog` → `/next-wave` → `/document` top-up = re-lock). Không "vừa code vừa vặn
-doc" — giữ hợp đồng ổn định cho review/dogfood đánh. (Ngoại lệ đồng bộ tên field trong AC khoá cũng
-KHÔNG sửa tại chỗ — ghi backlog, wave sau top-up.)
+doc" — giữ hợp đồng ổn định cho review/dogfood đánh.
 
 CHO SỬA lúc BUILD (sổ SỐNG, append): DECISIONS.md · ROADMAP.md (§backlog + tick tiến độ) ·
 BACKWARD-COMPAT.md · PRODUCTION-READY.md. Ngoài `docs/` (services/ · knowledge-base/ · tracking/ · STATE)
 không đụng. Phase DOCUMENT (author + top-up) → cho sửa mọi doc.
+Ngoại lệ `amend-arch` (PROTOCOL §3): `docs/arch/*.md` ở BUILD/VERIFY cho qua — hook không xét được ngữ nghĩa
+(kẹt luồng? truy về AC? chỉ thêm?) → `trace_docsync` nhắc 6 điều kiện sau khi ghi, reviewer kiểm ở VERIFY.
 
 PreToolUse(Write|Edit|MultiEdit): exit 2 nếu spec doc + phase != DOCUMENT. Fail-open.
 """
@@ -48,10 +49,14 @@ def main() -> int:
     p = phase()
     if p in ("", "DOCUMENT"):             # DOCUMENT author/top-up → cho sửa
         return 0
+    if p in ("BUILD", "VERIFY") and "docs/arch/" in fp and fp.endswith(".md"):
+        return 0                          # amend-arch (PROTOCOL §3) — trace_docsync nhắc điều kiện
     sys.stderr.write(
         f"[guard_doc] Pha {p}: doc SPEC đã KHOÁ — không sửa lúc BUILD/VERIFY.\n"
         "Thiếu/lệch → `docs/ROADMAP.md §backlog` → wave sau `/document` top-up (re-lock). "
-        "Mơ hồ trong AC → `docs/DECISIONS.md` (được sửa).\n")
+        "Mơ hồ trong AC → `docs/DECISIONS.md` (được sửa).\n"
+        "Chỉ `docs/arch/*.md` được bổ sung tại chỗ khi thiếu/sai kỹ thuật làm KẸT luồng của AC đã khoá "
+        "(`amend-arch`, 6 điều kiện PROTOCOL §3). AC · mockup · PRD · PERSONAS thì không.\n")
     return 2
 
 

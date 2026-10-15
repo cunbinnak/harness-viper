@@ -157,13 +157,14 @@ grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effe
 | **(6.0)** Cây THẬT khớp pattern đã chốt (`ref-frontend-pattern` §1 Vite `pages`·`components`·`hooks`·`api`·`stores`·`router` · §1b Next App Router · hoặc feature-based) — không phẳng/tự chế | `find src -maxdepth 2 -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch = BLOCKER |
 | Không file/folder thừa: component/hook mồ côi, scaffold mẫu, import chết | `npx knip` nếu có; không có → grep tên export không ai import | MAJOR |
 | Hằng số đặt đúng chỗ theo bảng 4 loại ở `stack-nextjs §3 Hằng số`: **(a)** role/status/type khai `string` thay union type — kể cả khi union đã có mà không dùng (ghi finding ở **field gốc**, không liệt kê từng chỗ so) · **(b)** route path / query key viết literal lặp ở nhiều file thay vì `constants/`. Hằng số nội bộ 1 file dùng = **đúng, KHÔNG ghi finding**. Format ngày/tiền dùng helper chung; text qua i18n nếu project có | Khối "hằng số" ở §3 Chạy máy | (a) (b) MAJOR · format/i18n MINOR |
-| Test: hành vi người dùng (query theo role/label/text, không className/testId); mock ở network (MSW/MockedProvider); mỗi màn chính có success · loading · error · submit lỗi · permission; không snapshot lớn; sửa bug có regression test | `grep -rn -e getByTestId -e toMatchSnapshot src` | MAJOR |
+| Test (`ref-frontend-test`): hành vi người dùng (query theo role/label/text, không className/testId); mock ở network (MSW/MockedProvider) — **dữ liệu mock có kiểu contract, path/mã lỗi đúng `arch §3`, `onUnhandledRequest: 'error'`** (mock lệch hệ thật = test xanh giả); mỗi màn chính có success · loading · error · submit lỗi · permission; không snapshot lớn; sửa bug có regression test | `grep -rn -e getByTestId -e toMatchSnapshot src` | MAJOR |
 
 ### Trục 7 — Lệch thứ đã chốt
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | Code làm khác một dòng `docs/DECISIONS.md` mà không có dòng mới đè lên | Mỗi dòng liên quan boundary → tìm chỗ code | MAJOR |
+| **`amend-arch`** (PROTOCOL §3): mỗi thay đổi `docs/arch/*.md` sau khoá scope có dòng `DECISIONS` loại `amend-arch` · truy về AC/Mã màn đã khoá · chỉ THÊM · `consumes` khớp provider · không kèm sửa FEAT/mockup/PRD | `git log --oneline <mốc>..HEAD -- docs/` (`<mốc>` = commit đầu wave) → `git show` từng commit, đối chiếu `DECISIONS` | thiếu điều kiện = MAJOR · đổi/xoá surface đã giao = BLOCKER |
 | Ui-kit / state lib / cách lưu token khác ADR | `package.json` so với ADR | MAJOR |
 | Framework/version khác `TECHSTACK.md` khai (vd khai React 19 → code `19.x`; đúng Next/Vite đã chốt) | `package.json` vs `docs/TECHSTACK.md §1` | MAJOR |
 | Wave ≥ 2: route/URL đã giao vẫn mở được (deep link cũ), không đổi nghĩa màn | Router so với `archive/wave-*/` | BLOCKER |

@@ -20,7 +20,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE          (SHIP opt-in th
 |---|---|
 | `/document` | phỏng vấn\|intake → doc set (PRD/PERSONAS/CAPABILITIES/FEAT/arch/UX) → **chia wave** → khoá scope |
 | `/build [<wave>]` | MAIN code 1 wave: đọc KG → challenge → scaffold → walking skeleton → luồng nghiệp vụ → chạy thật |
-| `/verify` | review 2 vai + `test-writer` thiết kế/chạy test-cases + dogfood 6 persona → MAIN sửa tới sạch |
+| `/verify` | review 2 vai → test case (`test-writer` viết đề → `bug-hunter` rà đề → `test-writer` sửa đề + chạy) → dogfood 6 persona → vòng sửa: MAIN sửa, agent tìm lại → kết luận QC |
 | `/ship` | *(chỉ khi wave khai SHIP)* prod-ready → deploy → smoke → thử rollback |
 | `/next-wave` | đóng wave (snapshot, KHÔNG reset) → rà lại + mở wave kế |
 | `/status` | *(mọi lúc)* đang ở phase/wave nào · gate thiếu gì · chốt kế |
@@ -62,7 +62,7 @@ Wave chia theo `feat_cap_per_wave` (~3-4 FEAT/wave) — xem `docs/ROADMAP.md §1
 | `docs/` | tài liệu THẬT (PRD/PERSONAS/FEAT/arch/ROADMAP…) + `CONVENTIONS`·`SECURITY` (framework) |
 | `knowledge-base/{name}.md` | KG per-target — bộ nhớ va vấp, MAIN đọc TRƯỚC khi code |
 | `services/{boundaries\|web\|bff\|mobile}/{name}/` | code sản phẩm (MAIN scaffold; chia nhóm theo `kind`) |
-| `.claude/commands/` · `agents/` · `skills/` | 7 lệnh · 9 agent verify+dogfood · thư viện skill (stack/ref/review/method) |
+| `.claude/commands/` · `agents/` · `skills/` | 7 lệnh · 10 agent (pre-mortem + verify + dogfood) · thư viện skill (stack/ref/review/method) |
 | `scripts/` | `gate.py` (báo) · `capture_proof.py` (proof máy-sinh) · hooks (`guard_*`/`reanchor`) · `bootstrap`/`next_wave`/`compact`/`selftest` |
 
 ## Đọc gì khi cần

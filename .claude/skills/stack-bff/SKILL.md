@@ -29,7 +29,7 @@ BFF = GraphQL gateway: aggregate nhiều backend REST (`docs/arch/{backend}.md �
 - **Cache**: Redis key cho sensitive data PHẢI include `userId`/`tenantId` (tránh leak cross-tenant).
 - **Query safety**: depth + complexity limit + list phải phân trang (Relay `Connection`); introspection tắt ở production.
 - **Config**: env placeholder, không hardcode secret/URL/timeout.
-- **Test**: **Vitest** unit (resolver + mapper) + integration mock backend; coverage ≥ **70%**. DataLoader batching verified (no N+1).
+- **Test**: **Vitest** unit (resolver + mapper) + integration mock backend; coverage ≥ **70%**. DataLoader batching verified (no N+1). Mẫu + ma trận lỗi: **`ref-bff-test`**.
 
 ## §4 make (điền thân vào `services/bff/<name>/Makefile` — root Makefile dispatch tới)
 ```

@@ -23,3 +23,4 @@
 | `TEMPLATE.backward-compat.md` | `docs/BACKWARD-COMPAT.md` | SHIP (wave ≥2) |
 | `TEMPLATE.production-ready.md` | `docs/PRODUCTION-READY.md` | SHIP |
 | `TEMPLATE.kg.md` | `knowledge-base/<name>.md` | plan skeleton → BUILD/VERIFY điền |
+| `TEMPLATE.test-cases.md` | `tracking/wave-N/test-cases.md` | VERIFY Bước 3 (`test-writer` — 1 bảng/wave) |

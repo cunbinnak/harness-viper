@@ -13,7 +13,7 @@ Chạy được **mọi lúc**. KHÔNG đổi phase, không tiêu gate.
 ## Đọc thêm khi cần trả lời *"còn thiếu gì để đi tiếp"*
 | Câu hỏi | Ở đâu |
 |---|---|
-| TC đang đỏ | `tracking/wave-N/test-cases.md` (dòng kết quả FAIL) |
+| TC đang đỏ | `tracking/wave-N/test-cases.md` (dòng kết quả FAIL · BLOCKED · CHƯA CHẠY; `CHƯA CÓ QUY ĐỊNH` chờ Authority quyết) |
 | Finding chưa xử | `STATE §Findings` (BLOCKER/MAJOR open) |
 | Amendment đang chờ | `docs/ROADMAP.md §backlog` |
 | Ai được / KHÔNG làm gì | `docs/PERSONAS.md §ma trận vai×hành động` |

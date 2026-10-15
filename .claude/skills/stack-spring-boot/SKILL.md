@@ -40,7 +40,7 @@ BUILD target backend (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§r
 - **Idempotency**: consumer/webhook/callback/job dedup theo id (inbox). **Multi-tenant**: mọi query filter `tenant_id` từ auth context.
 - **Timestamp**: `Instant` (entity/response/event) · `OffsetDateTime` (request) · `LocalDate` (date-only). **KHÔNG `LocalDateTime`**.
 - **Import**: không FQCN inline, không wildcard, không `var`. **Config**: `@ConfigurationProperties`, không hardcode; secret qua env.
-- **Test**: JUnit5 + Mockito (unit) · **Testcontainers Postgres** (integration, **KHÔNG H2**) · ≥1 test BOOT context + migration + `ddl-auto: validate` (bắt schema-drift). Coverage ≥ **80%**.
+- **Test**: JUnit5 + Mockito (unit) · **Testcontainers Postgres** (integration, **KHÔNG H2**) · ≥1 test BOOT context + migration + `ddl-auto: validate` (bắt schema-drift) · thời gian qua `Clock` tiêm được (không `now()` trần). Coverage ≥ **80%**. Mẫu + cấu trúc: **`ref-backend-test`**.
 
 ## §4 make (điền thân vào `services/boundaries/<name>/Makefile` — root Makefile dispatch tới)
 ```

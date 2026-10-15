@@ -12,7 +12,7 @@ description: NEXT-WAVE — đóng wave (snapshot, KHÔNG reset) → rà lại + 
 ## Bước 1 — Chốt kết quả wave vừa xong
 - Xác nhận đã qua VERIFY: `tracking/wave-N/test-cases.md` mọi AC **PASS** · `STATE §Findings` hết BLOCKER/MAJOR.
 - Trình Authority **go / pivot / kill** — **LUÔN, không phụ thuộc metric**: wave có metric → so **số thật vs ngưỡng ghi TRƯỚC** (ở FEAT/ROADMAP), **KHÔNG chỉnh ngưỡng sau khi nhìn số**; wave không metric → vẫn phải có lời chốt của Authority mới đóng. Ghi kết quả → `docs/DECISIONS.md`.
-- Gom vào `docs/ROADMAP.md §backlog` **TRƯỚC khi xoá trắng STATE** (không để mất): amendment trong wave (luồng thiếu, scope mới) + **finding minor còn lại** ở §Findings + blocker treo.
+- Gom vào `docs/ROADMAP.md §backlog` **TRƯỚC khi xoá trắng STATE** (không để mất): amendment trong wave (luồng thiếu, scope mới) + **finding minor còn lại** ở §Findings + blocker treo + **TC `CHƯA CÓ QUY ĐỊNH`** (Authority đã quyết ở báo cáo VERIFY: thêm quy định → top-up bảng chính sách · không cần → ghi lý do).
 
 ## Bước 2 — Snapshot + reset wave-scoped: **CHẠY `python scripts/next_wave.py --go`**
 Script làm trọn: copy HẾT vào `archive/wave-N/` · dựng lại gate BUILD/VERIFY/SHIP/NEXT-WAVE + 3 log từ `templates/TEMPLATE.state.md` · `Wave: N+1` · `Phases wave này` từ ROADMAP §1 · từ chối nếu wave đã đóng. **CẤM làm tay** (chép archive tay, sửa tay dòng `Wave`) — đóng tay từng bỏ sót reset: ô VERIFY wave cũ còn `[x]` → gate wave mới "xanh" mà chưa dogfood. Xong → **`git add archive/wave-N STATE.md && git commit`** (archive chưa commit = snapshot có thể mất). Authority nói "đóng wave" trong chat → vẫn chạy lệnh này, không tự đóng.

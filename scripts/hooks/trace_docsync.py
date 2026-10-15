@@ -12,6 +12,7 @@ scope bắt buộc re-run audit trên bản mới).
 
 CHỈ kích khi: phase == DOCUMENT (kể cả top-up wave sau, khi ô Scope khoá còn tick từ wave trước) + file thuộc
 "spec web" liên kết (PRD/PERSONAS/CAPABILITIES/INTERVIEW/feat/arch/ux/DESIGN-SYSTEM). Ngoài đó → im.
++ phase BUILD/VERIFY mà sửa `docs/arch/` (guard_doc cho qua vì `amend-arch`) → nhắc 6 điều kiện PROTOCOL §3, không bỏ tick gì.
 Gắn ở PostToolUse `Write|Edit|MultiEdit` (ghi đè cả file — hay gặp ở mockup — cũng phải nhắc). Exit 2 = đưa nhắc lại cho model (tool đã chạy
 xong, KHÔNG undo). Fail-open (lỗi / không đọc được STATE → exit 0).
 """
@@ -53,6 +54,17 @@ UNTICKED_NOTE = (
     "Tới lời chốt kế của Author → RE-RUN pre-lock audit (/document Bước 10) rồi mới tick lại. KHÔNG tick chay.\n"
 )
 
+AMEND_ARCH = (
+    "[trace_docsync] Vừa sửa arch SAU khoá scope: {path} — chỉ hợp lệ nếu là `amend-arch` (PROTOCOL §3), đủ 6 điều kiện:\n"
+    "  1. chỉ docs/arch/*.md (AC · mockup · PRD · PERSONAS không đụng)\n"
+    "  2. truy về AC/Mã màn đã khoá mà nó phục vụ — không truy được = thiếu hành vi → backlog/Blocker, HOÀN lại sửa\n"
+    "  3. chỉ THÊM (cột · field · endpoint · mã lỗi) — không đổi nghĩa/xoá thứ đã có\n"
+    "  4. target consumer (`consumes`) cập nhật cùng commit\n"
+    "  5. 1 dòng docs/DECISIONS.md loại `amend-arch` (đổi gì · AC nào · vì sao kẹt luồng), cùng commit với code\n"
+    "  6. reviewer kiểm ở VERIFY — thiếu điều nào = MAJOR\n"
+    "Lệch nhưng KHÔNG kẹt luồng → hoàn lại sửa; code bám arch + DECISIONS `kỹ-thuật` + backlog.\n"
+)
+
 PRELOCK_RE = re.compile(r"(-\s*)\[[xX]\](\s*\*\*PRE-LOCK AUDIT PASS)")   # chấp nhận chú thích trong phần in đậm
 SCOPE_RE = re.compile(r"(-\s*)\[[xX]\](\s*\*\*Scope khoá)")
 
@@ -73,7 +85,11 @@ def main() -> int:
     # Chỉ xét phase: ngoài DOCUMENT doc đóng băng (guard_doc lo). Ở DOCUMENT thì LUÔN nhắc — kể cả top-up wave sau
     # khi ô Scope khoá còn tick từ wave trước (trước đây hook im lặng đúng lúc hay sửa doc nhất).
     m = re.search(r"Phase hiện tại\s*:\s*([A-Za-z-]+)", state)
-    if not m or m.group(1).upper().replace(" ", "-") != "DOCUMENT":
+    ph = m.group(1).upper().replace(" ", "-") if m else ""
+    if ph in ("BUILD", "VERIFY") and "docs/arch/" in low:   # guard_doc đã cho qua → nhắc điều kiện amend-arch
+        sys.stderr.write(AMEND_ARCH.format(path=path))
+        return 2
+    if ph != "DOCUMENT":
         return 0
     sys.stderr.write(REMINDER.format(path=path))
     # PRE-LOCK AUDIT đã tick mà spec vừa đổi → tick ôi → tự bỏ tick (việc cơ học, không phải trace hộ)

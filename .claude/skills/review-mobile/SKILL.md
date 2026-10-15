@@ -113,6 +113,7 @@ grep -rniE "price|total|discount|eligib" lib           # nghiệp vụ trong app
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | Code làm khác một dòng `docs/DECISIONS.md` mà không có dòng mới đè lên | Mỗi dòng liên quan boundary → tìm chỗ code | MAJOR |
+| **`amend-arch`** (PROTOCOL §3): mỗi thay đổi `docs/arch/*.md` sau khoá scope có dòng `DECISIONS` loại `amend-arch` · truy về AC/Mã màn đã khoá · chỉ THÊM · `consumes` khớp provider · không kèm sửa FEAT/mockup/PRD | `git log --oneline <mốc>..HEAD -- docs/` (`<mốc>` = commit đầu wave) → `git show` từng commit, đối chiếu `DECISIONS` | thiếu điều kiện = MAJOR · đổi/xoá surface đã giao = BLOCKER |
 | State lib / storage / auth flow khác ADR | `pubspec.yaml` so với ADR | MAJOR |
 | Flutter/Dart SDK version khác `TECHSTACK.md` khai | `pubspec.yaml` (`environment.sdk`/`flutter`) · `.fvmrc` vs `docs/TECHSTACK.md §1` | MAJOR |
 | Wave ≥ 2: deep link/màn đã giao vẫn mở được; bản app cũ ngoài kia vẫn gọi được API | Router so với `archive/wave-*/` | BLOCKER |
