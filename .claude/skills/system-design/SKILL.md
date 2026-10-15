@@ -40,15 +40,8 @@ KHÔNG thiết kế thừa: không thêm Kafka/Redis/replica khi 5.2 không đò
 8. **5.8 Triển khai & vận hành**: mỗi target — số instance prod · đứng sau gì (nginx/gateway/LB) · stateless? · job chạy ở đâu, có lock không · môi trường · observability (log JSON + `X-Request-ID`, metric, cảnh báo theo SLO 5.1) · backup.
 9. **5.9 Quyết định lớn → ADR**: mỗi lựa chọn hạ tầng đáng kể có ADR, lý do **trích số** ở 5.1/5.2, phương án đã loại, khi nào phải xem lại.
 
-## Giao cho `technical-design` (nó PHẢI phản ánh, rà ở chiều trace)
-| §5 khai | `technical-design` ghi xuống |
-|---|---|
-| bảng lớn (5.4) | list/search phân trang ở DB, `size ≤ 100`, không `findAll` cả bảng — `arch §3` |
-| cache (5.4) | key · TTL · invalidation — `arch §4` |
-| nhất quán sau (5.5) | outbox/saga/bù — `arch §2` · `§5 Events` · `§6` E5 |
-| dữ liệu nhạy cảm (5.7) | cột mã hoá / che log — `arch §1` data model |
-| ≥ 2 instance (5.8) | job có lock, session stateless — `arch §4` |
-| sau proxy (5.8) | lấy IP qua proxy tin cậy (`forward-headers-strategy`) — `arch §4` |
+## Giao cho `technical-design`
+Bảng "§5 khai → contract ghi gì" nằm ở `technical-design §Đọc OVERVIEW §5` (nơi áp dụng). Viết §5 đủ rõ để bảng đó tra được: bảng nào lớn, cache gì, luồng nào nhất quán sau, dữ liệu nào nhạy cảm, mấy instance, đứng sau gì.
 
 ## Quality checklist
 - [ ] §5 đủ 5.1–5.9; mục không áp dụng ghi `n/a — <lý do>`, không bỏ trắng.
@@ -58,4 +51,4 @@ KHÔNG thiết kế thừa: không thêm Kafka/Redis/replica khi 5.2 không đò
 - [ ] Không chứa contract chi tiết (endpoint/field) — đó là `technical-design`.
 
 ## Done
-- OVERVIEW §5 đủ và qua checklist → tiếp `technical-design` (đọc §5, ghi xuống contract theo bảng "Giao cho").
+- OVERVIEW §5 đủ và qua checklist → tiếp `technical-design` (đọc §5, ghi xuống contract theo bảng ở `technical-design §Đọc OVERVIEW §5`).

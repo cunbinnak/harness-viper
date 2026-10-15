@@ -10,7 +10,7 @@ description: Vai SA — Architecture cho /document Bước 6 (sau event-storming
 
 ## Khi dùng
 Bước 6 ARCHITECTURE của `/document` — vai **solution architect**, chạy **CUỐI Bước 6** (sau `event-storming` ghi OVERVIEW §4 + `boundary-charter` ghi OVERVIEW §1 và khởi tạo `arch/{name}.md §0 Mission` + `system-design` ghi OVERVIEW §5).
-Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `docs/CAPABILITIES-MAP.md` + `docs/arch/OVERVIEW.md` (§1 boundary map + §4 event-storming + **§5 system design** — 3 bước trước để lại). Contract PHẢI phản ánh §5 theo bảng "Giao cho `technical-design`" ở skill `system-design` (bảng lớn → phân trang DB · cache · outbox · mã hoá cột · lock job · IP qua proxy).
+Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `docs/CAPABILITIES-MAP.md` + `docs/arch/OVERVIEW.md` (§1 boundary map + §4 event-storming + **§5 system design** — 3 bước trước để lại). Contract PHẢI phản ánh §5 theo bảng ở mục **§Đọc OVERVIEW §5** dưới đây. §5 chưa có (chưa chạy `Skill("system-design")`) → DỪNG, chạy nó trước — không tự đoán quy mô.
 
 > Đây là **DESIGN docs**, không scaffold code. Scaffold code (`services/{name}/`) xảy ra ở `/build`, KHÔNG ở đây.
 
@@ -43,6 +43,20 @@ Mỗi concern ghi rõ ở ADR / `arch/{name}.md` (§2/§4) / §API (không để
 - **Versioning**: API version (URL `/v1/` hoặc header).
 - **Health checks**: `/health/live`, `/health/ready`.
 
+## Đọc OVERVIEW §5 — system design → contract
+Đọc `docs/arch/OVERVIEW.md §5` (do `system-design` ghi) TRƯỚC khi viết `arch/{name}.md`. Mỗi điều §5 khai phải hiện xuống contract đúng chỗ:
+
+| §5 khai | `technical-design` ghi xuống |
+|---|---|
+| bảng lớn (5.4) | list/search phân trang ở DB, `size ≤ 100`, không `findAll` cả bảng — `arch §3` |
+| cache (5.4) | key · TTL · invalidation — `arch §4` |
+| nhất quán sau (5.5) | outbox/saga/bù — `arch §2` · `§5 Events` · `§6` E5 |
+| dữ liệu nhạy cảm (5.7) | cột mã hoá / che log — `arch §1` data model |
+| ≥ 2 instance (5.8) | job có lock, session stateless — `arch §4` |
+| sau proxy (5.8) | lấy IP qua proxy tin cậy (`forward-headers-strategy`) — `arch §4` |
+
+§5 ghi `n/a` cho mục nào → không thêm thành phần đó (không cache, không queue… khi không có số đòi). Lệch bảng này = lỗ thiết kế, cùng mức với trace 6 chiều.
+
 ## Phương pháp
 1. **Research — MẶC ĐỊNH LÀM TRƯỚC** (target/domain chưa biết đi thế nào → research trước, đừng thiết kế từ giấy trắng thứ đã có lời giải chuẩn): pattern từ production system (CQRS / Saga / Outbox / Event-Sourcing), API convention ngành, data consistency ở scale, service decomposition. Domain quá quen mới bỏ qua (ghi lý do). KHÔNG bịa nguồn.
 2. Đọc FEAT + màn nháp + OVERVIEW §1 (target · kind · depends_on đã chốt) + §5 → ghi `OVERVIEW` §2 (tích hợp + luồng E2E) · §3 (hạ tầng) + frontmatter `stack`/`consumes` mỗi `arch/{name}.md`.
@@ -74,6 +88,7 @@ Thiết kế xong PHẢI **tự trace 6 chiều** trước khi trình — Author
 
 ## Quality checklist
 - [ ] ADR có decision + **alternatives ≥2** + consequences; nhất quán với `docs/CONVENTIONS.md` (layering, contract-first, no-business-logic-in-FE); deviation phải có ADR override.
+- [ ] Mọi điều OVERVIEW §5 khai đã hiện xuống contract theo bảng §Đọc OVERVIEW §5 (bảng lớn → phân trang DB · cache · outbox · mã hoá cột · lock job · IP qua proxy).
 - [ ] Mỗi target chốt kind + stack; `docs/arch/{name}.md` đủ §0-§6 theo `TEMPLATE.arch.md`: §0 Mission (boundary-charter) · §1 data · §2 luồng (happy+error, consistency/failure khi áp dụng) · §3 API · §4 kiến trúc chốt + ranh giới + auth · §5 events · §6 ca biên TRA.
 - [ ] §API có **Domain error catalog** (→ `{Domain}ErrorEnum`, map mọi business-rule/invalid-state → code); common envelope + generic codes **giống nhau mọi target**; per-endpoint chỉ ref code; đủ error responses; pagination offset (`PageResponse`, size ≤ 100 — cursor chỉ khi §5 + ADR); versioning.
 - [ ] Backend target có §Data-model (mỗi bảng có mục đích; no FK — liên kết qua id; state machine cho entity có status). (UX cho FE target: bước `ux-design` của `/document`.)
