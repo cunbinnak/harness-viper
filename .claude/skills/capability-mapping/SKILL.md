@@ -1,9 +1,12 @@
 ---
 name: capability-mapping
-description: Phương pháp map capability cho /document — ĐỌC persona (domain-ba đã viết) rồi map capability-map (persona × capability → outcome → candidate domain → wave giao). Capability TRƯỚC feature. KHÔNG tự viết persona/ma trận.
+description: Phương pháp map capability cho /document — ĐỌC persona (domain-ba đã viết) rồi map capability-map (persona × capability → outcome · candidate domain gợi ý; cột Wave giao do PM điền ở Bước 9). Capability TRƯỚC feature. KHÔNG tự viết persona/ma trận.
 ---
 
 # Capability Mapping Skill
+
+> **Vai: PO** · **Viết**: `docs/CAPABILITIES-MAP.md` §1 capability → outcome · §2 candidate domains (gợi ý, kèm MVP/Phase)
+> **KHÔNG viết**: persona + ma trận (BA — `domain-ba`) · chốt domain (SA — `event-storming`) · cột Wave giao (PM — `implementation-plan`)
 
 ## Khi load
 Phương pháp **map capability** cho `/document`. Map **personas → capabilities → outcomes** và **gợi ý candidate domains** (SA chốt ở `event-storming`, Bước 6). Load sau khi đã có bức tranh vision/problem (`docs/PRD.md`) VÀ danh sách persona (`docs/PERSONAS.md`, do domain-ba viết).

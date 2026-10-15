@@ -1,4 +1,5 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/ux/SCREEN-MAP.md. Mục lục màn ↔ module ↔ mockup ↔ FEAT:AC. -->
+<!-- VAI: UX (ux-design) — xuất phát từ màn nháp của BA; cột Wave = PM. -->
 # SCREEN-MAP — {{PROJECT_NAME}}
 
 <!-- MỖI MODULE NGHIỆP VỤ = 1 FILE mockup `docs/ux/mockups/<target>/<module>.html`, chứa ĐỦ màn của module + mọi tương tác
@@ -6,7 +7,7 @@
      - Mã màn     : MỘT mã nối tất cả = `id` section trong mockup = `data-screen` trong mockup = `data-screen` trên trang FE.
                     Màn con: `<MÃ-CHA>--<tên>` (vd EMP-DETAIL--modal-deactivate).
      - URL mẫu    : URL MỞ ĐƯỢC NGAY, id lấy từ dữ liệu mẫu PRD §7 (= seed) — KHÔNG để `:id`.
-     - Mockup     : CHỈ 2 dạng — `<module>.html#<Mã màn>` · hoặc `(Wave N)` khi màn thuộc wave sau (chưa vẽ).
+     - Mockup     : CHỈ 2 dạng — `<module>.html#<Mã màn>` · hoặc `chưa dựng` khi màn thuộc wave sau (wave đọc ở cột Wave — PM ghi, không lặp ở đây).
      - Mở từ      : thao tác để tới màn này (từ màn nào, bấm gì) — picky làm y hệt ở mockup lẫn app.
      - Wave       : wave giao màn — gate + picky lọc màn in-scope theo cột này.
      Gate: row in-scope mà file không tồn tại HOẶC không có section `id` đúng Mã màn = đỏ (khai mà không vẽ). -->

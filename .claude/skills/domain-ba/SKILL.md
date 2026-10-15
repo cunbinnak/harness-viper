@@ -13,7 +13,7 @@ Bước 3 của `/document` — vai **Business Analyst**, chạy **sau khám ph�
 
 Viết **THẲNG** vào 1 lớp doc:
 - **Bảng luồng nghiệp vụ** → `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận` (khung `templates/TEMPLATE.interview.md`).
-- **Business-rule** → **FEAT `docs/feat/*` §3 Ràng buộc nghiệp vụ** (rule gắn ≥2 feature — rule chỉ 1 FEAT thì viết thành AC của FEAT đó; ghi nháp ở Bước 3, điền vào FEAT ở phần D) · rule nền/cross-cutting → **`docs/adr/`**.
+- **Business-rule** (đặc tả đầy đủ) → **`docs/INTERVIEW.md §Business rules`** (ngay sau bảng luồng; rule gắn ≥2 feature — rule chỉ 1 FEAT thì viết thành AC của FEAT đó; rule nền/cross-cutting cũng ghi ở đây, đánh dấu `nền`). FEAT §3 chỉ trỏ `BR-<slug>`. Rule cần quyết định kỹ thuật → SA ra ADR, BA KHÔNG ghi `docs/adr/`.
 - **Persona + ma trận vai × hành động** → **`docs/PERSONAS.md`**.
 - **AC + ca biên + ràng buộc** (phần D, Bước 5) → FEAT §2 + §3, vào khung PO đã tạo.
 
@@ -43,7 +43,7 @@ Bảng + màn nháp là **nguồn duy nhất** cho: ô `có/cấm` ma trận PER
 §Phát biểu (1 câu rõ) + §Lý do (**reference nguồn**: luật/policy/contract/quyết định — "best practice" chung chung không tính; chuẩn ngành phải kèm link) + §Khi nào áp dụng + §Ngoại lệ + §Hệ quả + **≥2 ví dụ** (1 happy + 1 vi phạm, số liệu — QC seed test) + `severity` CORNERSTONE/NORMAL + **`related_features` ≥1** (rule chỉ 1 FEAT → đáng lẽ là AC, đưa thành AC trong FEAT đó) + §**Phải chặn gì** (điều không bao giờ được xảy ra, nói bằng lời nghiệp vụ). Chặn **Ở ĐÂU** (unique index · cột `version` · state machine…) là việc SA — ghi ở `arch/{name}.md §6`, cột AC/BR trỏ về rule này.
 
 ## C. Persona + ma trận vai × hành động (sinh TỪ bảng luồng)
-role/goals/pains/workflow narrative. **Anti-persona BẮT BUỘC.** Ma trận `docs/PERSONAS.md §2`: **ô `có` = có dòng bảng luồng mà vai đó ở cột Ai LÀM**; vai không có dòng nào cho hành động đó = `cấm`. KHÔNG suy từ FEAT (FEAT viết sau ma trận; suy ngược = sai đồng bộ, trace không bắt). Không ô trống.
+role/goals/pains/workflow narrative. **Anti-persona BẮT BUỘC.** Ma trận `docs/PERSONAS.md §2`: **ô `có` = có dòng bảng luồng mà vai đó ở cột Ai LÀM**; vai không có dòng nào cho hành động đó = `cấm`. KHÔNG suy từ FEAT (FEAT viết sau ma trận; suy ngược = sai đồng bộ, trace không bắt). Không ô trống. **`PERSONAS §3` Gán vai dogfood**: mỗi vai dogfood (edge · newbie · picky · rushed · breaker · mobile) đóng persona nào, đợt mấy — dogfood đọc mục này.
 
 ## Hỏi hay không hỏi
 Ô bảng luồng chưa có bằng chứng → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → làm · chuẩn ngành → research, ghi `[C]` + link · chỉ Author biết → hỏi. Ô chuẩn ngành ghi `[C] <link>` (vẫn đọc cho Authority ở playback); ô tầng 3 ghi `CHƯA HỎI` rồi hỏi ngay.

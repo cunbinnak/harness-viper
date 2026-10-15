@@ -1,6 +1,7 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/INTERVIEW.md.
      Đường INTERVIEW: điền §1, xoá §2.  ·  Đường INTAKE: xoá §1, GIỮ §2. Mục "Luồng nghiệp vụ đã xác nhận" GIỮ ở cả 2 đường (dòng `NGUỒN: INTAKE` ngoài comment —
      marker cho MAIN/top-up vòng sau nhận diện đường vào; máy đọc đường vào ở STATE.md dòng `Đường vào`). -->
+<!-- VAI: PO (discovery-hypothesis) — lời kể/bằng chứng/cược · BA (domain-ba A) — §Luồng nghiệp vụ đã xác nhận (bảng luồng + màn nháp + câu hỏi mở). -->
 # INTERVIEW — {{PROJECT_NAME}}
 
 ## §1 Bằng chứng phỏng vấn  *(đường INTERVIEW)*
@@ -32,6 +33,13 @@ Màn nháp:
 
 Câu hỏi còn mở (hệ quả lên màn):
 - {{Ai duyệt CV? A: HR → REC-DETAIL chỉ HR có nút duyệt · B: Trưởng phòng → thêm hàng chờ duyệt cho trưởng phòng}}
+
+## Business rules  *(BA — domain-ba mục B; FEAT §3 trỏ về đây)*
+**BR-{{slug}}** — {{phát biểu 1 câu}} · severity: {{CORNERSTONE | NORMAL}} · related_features: {{FEAT-…, FEAT-…}} · {{nền nếu cross-cutting}}
+- Lý do + nguồn: {{luật / policy / quyết định Authority — kèm link nếu chuẩn ngành}}
+- Khi nào áp dụng · ngoại lệ: {{…}}
+- Phải chặn gì: {{điều không bao giờ được xảy ra}}
+- Ví dụ: {{happy — số liệu}} · {{vi phạm — số liệu}}
 
 ## §2 Nguồn intake  *(đường INTAKE)*
 NGUỒN: INTAKE

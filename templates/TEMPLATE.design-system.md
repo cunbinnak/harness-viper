@@ -1,4 +1,5 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/DESIGN-SYSTEM.md. KHOÁ TRƯỚC prototype. Token = thứ DUY NHẤT chép nguyên sang code. -->
+<!-- VAI: UX (ux-design). -->
 # DESIGN-SYSTEM — {{PROJECT_NAME}}
 
 ## §1 Nguyên tắc

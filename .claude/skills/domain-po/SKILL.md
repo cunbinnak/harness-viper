@@ -29,7 +29,8 @@ Bước 5 **nhịp 1** của `/document`, sau CAPABILITIES-MAP (Bước 4). PO c
 - **§1 Mục tiêu**: một đoạn góc nhìn người dùng — FEAT xong thì ai làm được gì mà trước đây chưa làm được.
 - **§Ngoài phạm vi**: điều FEAT này KHÔNG làm — BA không viết AC ra ngoài ranh này, QC biết không test gì.
 - **`has_ui`**: `true` khi FEAT có thao tác hoặc vùng dữ liệu trên màn (đối chiếu màn nháp của BA).
-- `status: DRAFT` (Authority ký → `APPROVED` ở bước cuối `/document`).
+- `status: DRAFT` (PO đổi `APPROVED` ở bước cuối `/document` khi Authority chốt).
+- **Điền ngược** (mục của PO): cột FEAT ở `CAPABILITIES-MAP §1` · dòng "gắn FEAT nó phục vụ" ở `INTERVIEW` · bảng truy vết `intake → FEAT` (đường intake).
 - Không ghi tên class / bảng / công nghệ ở bất cứ mục nào — đó là việc SA.
 
 ## Chỗ chưa rõ

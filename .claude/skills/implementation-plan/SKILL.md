@@ -5,6 +5,9 @@ description: Phương pháp chia wave cho /document — plan toàn dự án vào
 
 # Chia-wave Method (bước chia wave của /document)
 
+> **Vai: PM** · **Viết**: `docs/ROADMAP.md` · cột Wave giao (CAPABILITIES-MAP) · cột Wave (SCREEN-MAP)
+> **KHÔNG viết**: nội dung FEAT / AC / arch — FEAT quá to cần tách thì báo PO
+
 ## Khi dùng
 Bước chia wave của `/document` — vai **program planner**. Sau khi FEAT (`docs/feat/`) + architecture (`docs/arch/`) đủ.
 Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md` (kind/stack/consumes) + `docs/CAPABILITIES-MAP.md` (persona × capability → wave giao).
@@ -17,7 +20,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `do
 
 ## Deliverable
 1. **`docs/ROADMAP.md §1`** (copy từ `templates/TEMPLATE.roadmap.md` — frontmatter `feat_cap_per_wave` sẵn; **số wave = số dòng §1**) — roadmap toàn dự án: chia **toàn bộ** target/FEAT thành **nhiều wave** theo phụ thuộc. Mỗi wave khai:
-   - `goal` + `targets[]` (name từ `docs/arch/`) + `features[]` (FEAT-id) + `phases` (thứ tự dev trong wave: foundation trước) + **`dependencies` (cần gì từ wave trước)** + `legacy` (surface đã giao ở wave trước mà wave này build tiếp — additive) + `exit_criteria`.
+   - đúng cột `TEMPLATE.roadmap.md §1`: **Target (kind)** (name từ `docs/arch/`) · **AC in-scope** (FEAT-id/AC) · **phases** (BUILD,VERIFY[,SHIP]) · **Phụ thuộc wave trước** (cần gì từ wave trước) · **Legacy được phép phá** · **Rà lại** · **Trạng thái**.
    - Wave nào **opt-in SHIP** → cột `phases` thêm `SHIP` (mặc định không ship).
    - `features_by_wave`: nếu 1 target sống qua ≥2 wave, tách rõ FEAT nào thuộc wave nào (tránh FEAT wave sau lọt vào scope wave hiện tại).
 2. **`docs/ROADMAP.md §backlog`** — chỗ chứa scope hoãn / phát sinh sau (sửa doc đã chốt = wave sau đổ về đây).
@@ -28,7 +31,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `do
 3. **Topological → wave** (sprint):
    - **Wave 1 = foundation mỏng** (auth/shared + 1–2 capability core) đủ chạy **E2E sớm** (login + 1 luồng nghiệp vụ chính).
    - **Wave kế** = target/FEAT phụ thuộc wave trước, nhóm theo lát giá trị ship được cùng nhau; ghi rõ `dependencies` từ wave trước.
-   - **Kích thước wave: ~3-4 FEAT/wave** (`feat_cap_per_wave`, frontmatter `ROADMAP.md`, không khai → mặc định **4**; đối chiếu ≈15-20 AC — **1 FEAT quá to (nhiều AC) thì tách nhỏ**). Mỗi wave là một vòng đầy đủ build → review → dựng Docker → test → dogfood 6 vai × 2 đợt: ngưỡng quá nhỏ đẻ hàng chục wave nuốt hết thời gian, quá lớn thì vỡ context 1 phiên BUILD của MAIN.
+   - **Kích thước wave: ~3-4 FEAT/wave** (`feat_cap_per_wave`, frontmatter `ROADMAP.md`, không khai → mặc định **4**; đối chiếu ≈15-20 AC — **1 FEAT quá to (nhiều AC) thì báo PO tách**, PM không tự tách). Mỗi wave là một vòng đầy đủ build → review → dựng Docker → test → dogfood 6 vai × 2 đợt: ngưỡng quá nhỏ đẻ hàng chục wave nuốt hết thời gian, quá lớn thì vỡ context 1 phiên BUILD của MAIN.
      - **Ngưỡng là KHUYẾN KHÍCH, luồng mới là luật.** Tách ra mà **đứt luồng** (nửa luồng ở wave này, nửa kia wave sau, không demo được luồng nào trọn) → **giữ tròn luồng**, vượt ngưỡng cũng được — ghi `rationale` (≥20 ký tự) nói luồng nào sẽ đứt nếu tách.
      - "Nhét cho gọn số wave" KHÔNG phải lý do. Ít quá (1 FEAT lẻ) không cần tách.
    - Lặp tới khi **mọi** target/FEAT đã vào 1 wave.
@@ -53,10 +56,10 @@ wave 4: D, E         wave 4: C, D        ← C bị đẩy xuống
      FEAT-hrm-044: "cần FEAT-hrm-031 (bảng lương) giao ở wave 4 mới tính được"
    ```
 3. **Đẩy lùi giữ luật chia wave** — thứ tự phụ thuộc, ngưỡng AC (khuyến khích; tròn luồng thắng con số). Tràn → thêm wave mới ở cuối (ROADMAP §1 + `features_by_wave`).
-4. **Không rơi mất** — mọi FEAT đã xếp wave sau trong kế hoạch cũ phải còn chỗ, hoặc ghi `status: deferred|dropped` ở FEAT kèm lý do. Nguồn phần bù cần quét: `tracking/wave-*/dogfood-report.md` dòng `wave sau`, `STATE.md §Blocker`, chỗ thiếu người vận hành báo.
+4. **Không rơi mất** — mọi FEAT đã xếp wave sau trong kế hoạch cũ phải còn chỗ, hoặc vào `§backlog` kèm lý do đề xuất hoãn/bỏ — **PO** đổi `status: deferred|dropped` ở FEAT (PM không sửa FEAT). Nguồn phần bù cần quét: `tracking/wave-*/dogfood-report.md` dòng `wave sau`, `STATE.md §Blocker`, chỗ thiếu người vận hành báo.
 
 ## Quality checklist
-- [ ] ROADMAP §1 phủ **100% target + FEAT** (không sót, KHÔNG gom hết vào 1 wave). FEAT không nằm trong `features[]` wave nào = MỒ CÔI (chủ động hoãn/bỏ → frontmatter FEAT `status: deferred|dropped` + vào §backlog).
+- [ ] ROADMAP §1 phủ **100% target + FEAT** (không sót, KHÔNG gom hết vào 1 wave). FEAT không nằm trong `features[]` wave nào = MỒ CÔI (chủ động hoãn/bỏ → vào §backlog, PO đổi `status` FEAT).
 - [ ] `dependencies`/`legacy` mỗi wave khớp `consumes` trong `docs/arch/{name}.md` + OVERVIEW — cạnh gọi nhau phải có contract doc ghi nhận.
 - [ ] Mỗi capability (`CAPABILITIES-MAP`) có wave; không capability mồ côi.
 - [ ] Chia **≥ 2 wave** khi có phụ thuộc; thứ tự topological (không phụ thuộc ngược/vòng).
@@ -68,4 +71,4 @@ wave 4: D, E         wave 4: C, D        ← C bị đẩy xuống
 - [ ] **Không `TBD` / section trống mơ hồ** — chỗ chưa chốt ghi `Open question` (cần ai quyết + vì sao) hoặc dòng `docs/DECISIONS.md`.
 
 ## Done
-- `docs/ROADMAP.md §1` đủ mọi wave (goal/targets/features/phases/dependencies/legacy/exit_criteria) + §backlog. Tiếp: **khoá scope** (kết `/document`) → `/build`.
+- `docs/ROADMAP.md §1` đủ mọi wave (đúng cột template) + §backlog + cột Wave giao (CAPABILITIES) + cột Wave (SCREEN-MAP). Tiếp: có UI → quay Bước 8 dựng mockup wave 1 → Bước 10 challenge → khoá scope → `/build`.

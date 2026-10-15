@@ -1,4 +1,5 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/CAPABILITIES-MAP.md. -->
+<!-- VAI: PO (capability-mapping) — §1 + §2 (gợi ý); cột Wave giao = PM (implementation-plan); chốt domain = SA (event-storming). -->
 # CAPABILITIES-MAP — {{PROJECT_NAME}}
 
 <!-- capability TRƯỚC feature. Mỗi capability → outcome → FEAT. MỌI FEAT phải truy về ≥1 capability ở đây.

@@ -5,10 +5,13 @@ description: "Checklist RÀ AC/BR cho /document — Bước 5 nhịp 3 (BA tự 
 
 # Business Analysis Skill
 
+> **Vai: BA tự rà (Bước 5) · RV rà chéo (Bước 10)** · **Viết**: danh sách issue (file + concern)
+> **KHÔNG viết**: sửa doc — vai sở hữu mục đó sửa (khung FEAT → PO · AC/BR → BA · arch → SA)
+
 ## Khi load
 - **`/document` Bước 5 nhịp 3** (BA tự rà FEAT vừa viết trước khi sang arch — là checklist tự kiểm, con mắt độc lập là `pre-mortem` ở PRE-LOCK) + **Bước 10** (challenge — rà chéo toàn lớp doc). Không author.
 
-Input: `docs/{PRD.md, feat/FEAT-*.md}` (BR nằm trong FEAT §3 Ràng buộc nghiệp vụ hoặc `docs/adr/`).
+Input: `docs/{PRD.md, feat/FEAT-*.md}` (BR đặc tả ở `docs/INTERVIEW.md §Business rules`, FEAT §3 trỏ `BR-<slug>`).
 
 ## Cái cần đảm bảo (chất lượng AC/BR — khung FEAT do domain-po (PO), AC/BR do domain-ba D (BA))
 1. **AC testable** — Given/When/Then (Cho/Khi/Thì) hoặc condition đo được; mỗi FEAT ≥ 1 AC; cover cả non-happy-path.

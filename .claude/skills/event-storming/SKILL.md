@@ -1,9 +1,12 @@
 ---
 name: event-storming
-description: Phương pháp event-storming cho /document — đọc candidate domains ở CAPABILITIES §2, facilitate event storming cho 1 domain → events ≥10 + commands + aggregates + hot-spots + external systems, ghi vào docs/arch/OVERVIEW.md §4. Làm từng domain một.
+description: Phương pháp event-storming cho /document — vai SA — đọc candidate domains (gợi ý) ở CAPABILITIES §2 rồi chốt, facilitate event storming cho 1 domain → events ≥10 + commands + aggregates + hot-spots + external systems, ghi vào docs/arch/OVERVIEW.md §4. Làm từng domain một.
 ---
 
 # Event Storming Skill
+
+> **Vai: SA (actor lấy từ bảng luồng của BA)** · **Viết**: `docs/arch/OVERVIEW.md §4` + chốt danh sách domain
+> **KHÔNG viết**: bảng luồng / actor (BA — event không map được dòng bảng nào thì báo BA, không tự thêm actor)
 
 ## Khi load
 Phương pháp **event-storming** cho `/document` (Architecture + Business). Facilitate event storming cho **MỘT domain mỗi lần**. `docs/CAPABILITIES-MAP.md §2` chỉ là **gợi ý** của PO — **SA chốt danh sách domain** ở đây: gộp/tách/thêm theo event và dữ liệu thật, domain lệch gợi ý thì ghi 1 dòng lý do đầu khối `### <domain>`. Interactive — dùng AskUserQuestion nhiều.
@@ -34,14 +37,14 @@ Mỗi khối con `### <domain>`:
 - REFINE mode: khối con đã có → đọc + tìm delta, KHÔNG rewrite from scratch.
 
 ## Flow
-- 1 lượt = 1 domain. Nhiều domain → lặp phương pháp này (mỗi lần 1 domain) tới khi mọi candidate domain có khối con trong §4.
-- Interactive (AskUserQuestion ≤5). Sau confirm: đủ mọi candidate domain thì tiếp phương pháp boundary-charter.
+- 1 lượt = 1 domain. Nhiều domain → lặp phương pháp này (mỗi lần 1 domain) tới khi mọi domain SA đã chốt có khối con trong §4.
+- Interactive (AskUserQuestion ≤5). Sau confirm: đủ mọi domain đã chốt thì tiếp phương pháp boundary-charter.
 
 ## Quality checklist
-- [ ] Mỗi candidate domain (capability-map §2) có khối con `### <domain>` trong `docs/arch/OVERVIEW.md §4`.
+- [ ] Mỗi domain SA đã chốt có khối con `### <domain>` trong `docs/arch/OVERVIEW.md §4`; domain lệch gợi ý CAPABILITIES §2 có dòng lý do.
 - [ ] Events ≥10 (numbered, past-tense, chronological).
 - [ ] Mỗi event có command + actor.
 - [ ] ≥1 aggregate + ≥1 external + hot-spots flagged + open-questions cho Authority.
 
 ## Done
-- Mọi candidate domain có section event-storming; user confirm → tiếp phương pháp boundary-charter.
+- Mọi domain đã chốt có section event-storming; user confirm → tiếp phương pháp boundary-charter.

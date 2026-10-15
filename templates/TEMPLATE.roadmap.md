@@ -1,6 +1,7 @@
 ---
 feat_cap_per_wave: 4   # ~3-4 FEAT/wave (≈15-20 AC) — KHUYẾN KHÍCH (tròn luồng thắng con số); tách nếu 1 FEAT quá to
 ---
+<!-- VAI: PM (implementation-plan). -->
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/ROADMAP.md. KẾ HOẠCH WAVE (loop engineering) + backlog.
      SỐ WAVE = số dòng §1 (phái sinh: tổng FEAT ÷ feat_cap_per_wave, tôn trọng phụ thuộc + tròn luồng). -->
 # ROADMAP — {{PROJECT_NAME}}

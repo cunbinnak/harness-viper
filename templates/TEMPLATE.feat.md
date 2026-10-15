@@ -27,7 +27,7 @@ has_ui: true                     # true → cần mockup docs/ux/ · false → b
 - *Ca biên*: {{gửi 2 lần → lần 2 không tạo bản ghi trùng · rỗng → hiện trạng thái rỗng}}
 
 <!-- §3 (BA): điều KHÔNG BAO GIỜ được xảy ra — nói bằng lời nghiệp vụ, 1 dòng/AC hoặc /rule.
-     Business-rule gắn ≥2 feature (chỉ 1 FEAT → là AC) ghi ở ĐÂY (dòng `BR-<slug>`); rule nền/cross-cutting → docs/adr/.
+     Business-rule (đặc tả đầy đủ ở INTERVIEW §Business rules) chỉ TRỎ ở đây: dòng `BR-<slug>` + điều phải chặn. Rule chỉ 1 FEAT → viết thành AC.
      Chặn Ở ĐÂU (server/DB, UI disable không tính) do SA ghi ở arch/{name}.md §6, cột AC/BR trỏ về dòng này. -->
 ## §3 Ràng buộc nghiệp vụ
 | AC / BR | Phải chặn gì (không được xảy ra) | Nguồn |
@@ -40,4 +40,4 @@ has_ui: true                     # true → cần mockup docs/ux/ · false → b
 
 <!-- §References (PO): dòng bảng luồng FEAT phủ — dòng có thao tác hệ thống mà không FEAT nào phủ = thiếu FEAT. -->
 ## §References
-- Bảng luồng phủ: {{<nghiệp vụ> dòng 1-4}} · Capability: `CAP-{{id}}` · BR liên quan: {{BR-… / ADR-… nếu có}} · Màn UI: {{SCREEN-MAP mục … nếu has_ui}}
+- Bảng luồng phủ: {{<nghiệp vụ> dòng 1-4}} · Capability: `CAP-{{id}}`  (BR ở §3 · màn ở SCREEN-MAP cột FEAT:AC — không chép lại)

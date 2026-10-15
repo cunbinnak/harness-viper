@@ -9,7 +9,7 @@
 |---|---|---|---|---|
 | {{order-service}} | {{backend}} | {{nhận + quản lý vòng đời đơn}} | {{Order, OrderItem}} | {{menu-service}} |
 
-<!-- §2: tích hợp cross-boundary — cặp gọi nhau qua đâu, contract nào. -->
+<!-- §2 (technical-design): tích hợp cross-boundary — cặp gọi nhau qua đâu, contract nào + dòng "Luồng E2E chính" ở cuối. -->
 ## §2 Tích hợp cross-boundary
 | Từ → Đến | Qua (REST/event) | Contract |
 |---|---|---|

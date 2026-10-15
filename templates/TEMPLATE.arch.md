@@ -1,4 +1,5 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/arch/<name>.md (1 file/target). Điền frontmatter + các §. -->
+<!-- VAI: SA — §0 boundary-charter · §1-§6 technical-design (phản ánh OVERVIEW §5). -->
 ---
 name: {{name}}                   # vd order-service, customer-web
 kind: backend                    # backend | web | bff | mobile → quyết stack · scaffold · chạy thật · review

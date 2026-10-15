@@ -1,4 +1,5 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/PRD.md. AC nằm ở docs/feat/FEAT-*, KHÔNG ở đây. -->
+<!-- VAI: PO (discovery-hypothesis) — cả file. §3 NFR: PO ghi yêu cầu bằng số và lời nghiệp vụ, KHÔNG ghi giải pháp (SA ở OVERVIEW §5). -->
 # PRD — {{PROJECT_NAME}}
 
 <!-- §1: pain point + đối tượng cụ thể — ai đau, đau gì, hệ quả. Có bằng chứng (câu chuyện thật / con số / hiện vật). -->
@@ -25,7 +26,7 @@
 ## §3 NFR (phi chức năng — CÓ SỐ)
 - **Perf**: {{vd: p95 < 300ms cho API lõi}}
 - **Availability**: {{vd: 99.5% uptime tháng}}
-- **Security / compliance**: {{vd: auth OAuth2 · PII mã hoá at-rest · tuân GDPR}}
+- **Security / compliance**: {{vd: chỉ nhân viên công ty đăng nhập · lương/CCCD chỉ HR và chính chủ xem · giữ hồ sơ 5 năm theo luật}}  (lời nghiệp vụ — giải pháp ở OVERVIEW §5)
 - **Scale**: {{vd: 10k user đồng thời · 1M order/ngày}}
 
 <!-- §4: tường minh cái KHÔNG làm — chống scope creep. -->
@@ -63,3 +64,9 @@ Nguồn: {{thật (ảnh sổ/Excel/tin nhắn) | MAIN chuẩn bị từ researc
 |---|---|
 | {{Món}} | {{Phở bò tái 45.000đ · Cơm tấm sườn 40.000đ · Trà đá 5.000đ}} |
 | {{Bàn}} | {{B1-B12 (trệt) · L1-L6 (lầu, ghép được)}} |
+
+<!-- §8 (PO — discovery-hypothesis): lỗ hổng phát hiện khi khám phá + cách xử; ≥1 dòng, bảng trống = CHƯA rà (cả đường intake). -->
+## §8 Lỗ hổng & cách xử
+| Lỗ hổng | Cách xử | Vết (DECISIONS / câu hỏi Authority) |
+|---|---|---|
+| {{ai duyệt CV chưa rõ}} | {{hỏi Authority ở Bước 3}} | {{DEC-… / INTERVIEW §1 dòng …}} |

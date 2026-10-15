@@ -1,4 +1,5 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/TECHSTACK.md. `stack` phải khớp frontmatter arch/<target>.md. -->
+<!-- VAI: SA đề xuất (Bước 7) · Authority chốt. -->
 # TECHSTACK — {{PROJECT_NAME}}
 
 ## §1 Stack per target

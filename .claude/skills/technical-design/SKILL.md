@@ -1,9 +1,12 @@
 ---
 name: technical-design
-description: Phương pháp Architecture cho /document Bước 6 (sau event-storming + boundary-charter) — chốt kind, ĐỀ XUẤT stack (chốt ở Bước 7 bằng hỏi Author), ADR kiến trúc (docs/adr), điền chi tiết arch/{name}.md theo TEMPLATE.arch (§1 data · §2 luồng · §3 API · §4 kiến trúc/ranh giới · §5 events · §6 ca biên TRA), integrations, docker-compose skeleton. UX/UI là bước riêng (kind web/mobile).
+description: Vai SA — Architecture cho /document Bước 6 (sau event-storming + boundary-charter + system-design, phản ánh OVERVIEW §5) — chốt kind, ĐỀ XUẤT stack (chốt ở Bước 7 bằng hỏi Author), ADR kiến trúc (docs/adr), điền chi tiết arch/{name}.md theo TEMPLATE.arch (§1 data · §2 luồng · §3 API · §4 kiến trúc/ranh giới · §5 events · §6 ca biên TRA), integrations, docker-compose skeleton. UX/UI là bước riêng (kind web/mobile).
 ---
 
 # Architecture Method (bước ARCHITECTURE của /document)
+
+> **Vai: SA** · **Viết**: ADR · `OVERVIEW §2-§3` · `docs/arch/{name}.md` §1 data model · §2 luồng xử lý · §3 API · §4 ranh giới · §5 events · §6 ca biên + chặn ở đâu · `consumes` · docker-compose khung
+> **KHÔNG viết**: FEAT / AC (BA) · NFR (PO) · `OVERVIEW §5` (`system-design`) · chốt stack (Bước 7, Authority chốt)
 
 ## Khi dùng
 Bước 6 ARCHITECTURE của `/document` — vai **solution architect**, chạy **CUỐI Bước 6** (sau `event-storming` ghi OVERVIEW §4 + `boundary-charter` ghi OVERVIEW §1 và khởi tạo `arch/{name}.md §0 Mission` + `system-design` ghi OVERVIEW §5).
@@ -14,7 +17,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `do
 ## Deliverable
 1. **ADR** `docs/adr/ADR-NNN-*.md` — theo chủ đề (backend-architecture [Layered/Hexagonal], **api-error-convention [envelope + generic codes chung]**, event/messaging…). **Stack · ui-kit · auth · lưu file · cache KHÔNG tự chốt ở đây** — ghi đề xuất + phương án, chốt bằng lượt hỏi Author ở `/document` Bước 7 rồi mới viết ADR tương ứng. Theo `templates/TEMPLATE.decisions.md`/ADR: context · decision · **Alternatives considered ≥2 (lý do reject)** · consequences.
 2. **Boundary decomposition** — chốt các **target**: mỗi target + **kind** (`backend`/`bff`/`web`/`mobile`) + **stack đề xuất** (chốt ở Bước 7; version lấy từ description skill `stack-<tên>`, không từ trí nhớ). Ghi nhận **tech situational per-target** (phát/nhận event, dùng cache/lock, external đặc thù) — input cho bước chia wave gắn `ref_skills`.
-3. **`docs/arch/OVERVIEW.md`** — bức tranh tổng: danh sách target + kind/stack + quan hệ (ai gọi ai, depends_on), luồng E2E chính, cross-cutting chung.
+3. **`docs/arch/OVERVIEW.md`** — §2 tích hợp cross-boundary + **luồng E2E chính** · §3 hạ tầng dùng chung (danh sách — căn cứ ở §5). §1 (target · kind · depends_on) do `boundary-charter` chốt — đọc, không viết lại.
 4. **Per target** — `docs/arch/{name}.md` (frontmatter `kind`/`stack`/`consumes` — theo `templates/TEMPLATE.arch.md`), điền chi tiết vào file `boundary-charter` đã khởi tạo (§0 Mission có rồi — KHÔNG viết lại):
    - **§2 Luồng xử lý (kỹ thuật)** — mỗi bước thao tác trên hệ thống của luồng nghiệp vụ (`INTERVIEW §Luồng nghiệp vụ đã xác nhận`) mở ra ≥1 luồng xử lý: request → ghi/đọc → response (happy + critical error), ghi `Phục vụ: <luồng> bước N`; bước nghiệp vụ không có luồng xử lý = thiếu thiết kế, luồng xử lý không phục vụ bước nào = thừa · consistency & transaction *(nếu multi-write/event)* · failure & resilience *(nếu outbound)*.
    - **§4 Kiến trúc + ranh giới** — **CHỐT kiến trúc target (Layered/Hexagonal) + layer/package** (layout → `ref-{kind}-pattern`) · auth & permission enforce ở tầng nào.
@@ -23,7 +26,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `do
    - **§5 Events** (nếu phát/nhận) — event (topic, payload schema, consumers, idempotency key).
    - **§4 Ranh giới liên target** (cùng §4) — được gọi qua đường nào, **KHÔNG được** làm gì, vì sao (quyết định riêng của hệ này — không khai thì lúc code đi đường tiện nhất).
    - **§6 Ca biên (bảng TRA)** — xem mục dưới. **Mọi dòng FEAT §3 Ràng buộc nghiệp vụ in-scope** (BA viết *chặn gì*) → ≥1 dòng §6 có cột AC/BR trỏ về nó + `Enforce ở đâu` (SA quyết *chặn ở đâu*). Dòng FEAT §3 không có dòng §6 = ràng buộc chưa ai chặn.
-5. **Integrations** — cross-target (sync HTTP / async event) + external, ghi trong `docs/arch/OVERVIEW.md §Integrations` hoặc `docs/arch/{name}.md §consumes` — **≥ 1**.
+5. **Integrations** — cross-target (sync HTTP / async event) + external, ghi trong `docs/arch/OVERVIEW.md §2` + frontmatter `consumes` của target gọi — **≥ 1**.
 6. **`deployment/local/docker-compose.yml`** skeleton local dev (service + DB/cache/broker cho target trong scope).
 
 > UX/UI cho FE target (kind web/mobile): **bước riêng của `/document`** (skill `ux-design`) chạy sau khi §API sẵn — sinh `docs/ux/` + mockups + `docs/DESIGN-SYSTEM.md`. Architect chỉ đảm bảo FE target có `arch/{name}.md` (§2 luồng + §4 ranh giới) + BE contract đủ cho UX consume.
@@ -42,8 +45,8 @@ Mỗi concern ghi rõ ở ADR / `arch/{name}.md` (§2/§4) / §API (không để
 
 ## Phương pháp
 1. **Research — MẶC ĐỊNH LÀM TRƯỚC** (target/domain chưa biết đi thế nào → research trước, đừng thiết kế từ giấy trắng thứ đã có lời giải chuẩn): pattern từ production system (CQRS / Saga / Outbox / Event-Sourcing), API convention ngành, data consistency ở scale, service decomposition. Domain quá quen mới bỏ qua (ghi lý do). KHÔNG bịa nguồn.
-2. Đọc FEAT + OVERVIEW §1/§5 → chốt danh sách target + kind + quan hệ (depends_on, ai gọi ai) → `docs/arch/OVERVIEW.md` §2-§3.
-3. ADR nền trước (stack, kiến trúc backend, auth, event) → design sau tuân ADR.
+2. Đọc FEAT + màn nháp + OVERVIEW §1 (target · kind · depends_on đã chốt) + §5 → ghi `OVERVIEW` §2 (tích hợp + luồng E2E) · §3 (hạ tầng) + frontmatter `stack`/`consumes` mỗi `arch/{name}.md`.
+3. ADR nền trước (kiến trúc backend Layered/Hexagonal · event/messaging · api-error-convention) → design sau tuân ADR. Stack · auth · ui-kit · lưu file · cache: chỉ đề xuất ở đây, ADR ghi sau khi Authority chốt ở Bước 7.
 4. Per target (theo thứ tự § của `TEMPLATE.arch.md`): §1 Data-model (backend) → §2 Luồng xử lý → §3 API (contract + error) → §4 Kiến trúc/ranh giới → §5 Events → §6 Ca biên (TRA), tất cả trong `docs/arch/{name}.md` (§0 Mission: boundary-charter đã khởi tạo). (FE target: §2/§4 ở đây; UX = bước riêng sau khi §API sẵn.)
 5. Integrations: cross-target + external.
 6. docker-compose skeleton.
@@ -72,7 +75,7 @@ Thiết kế xong PHẢI **tự trace 6 chiều** trước khi trình — Author
 ## Quality checklist
 - [ ] ADR có decision + **alternatives ≥2** + consequences; nhất quán với `docs/CONVENTIONS.md` (layering, contract-first, no-business-logic-in-FE); deviation phải có ADR override.
 - [ ] Mỗi target chốt kind + stack; `docs/arch/{name}.md` đủ §0-§6 theo `TEMPLATE.arch.md`: §0 Mission (boundary-charter) · §1 data · §2 luồng (happy+error, consistency/failure khi áp dụng) · §3 API · §4 kiến trúc chốt + ranh giới + auth · §5 events · §6 ca biên TRA.
-- [ ] §API có **Domain error catalog** (→ `{Domain}ErrorEnum`, map mọi business-rule/invalid-state → code); common envelope + generic codes **giống nhau mọi target**; per-endpoint chỉ ref code; đủ error responses; pagination cursor; versioning.
+- [ ] §API có **Domain error catalog** (→ `{Domain}ErrorEnum`, map mọi business-rule/invalid-state → code); common envelope + generic codes **giống nhau mọi target**; per-endpoint chỉ ref code; đủ error responses; pagination offset (`PageResponse`, size ≤ 100 — cursor chỉ khi §5 + ADR); versioning.
 - [ ] Backend target có §Data-model (mỗi bảng có mục đích; no FK — liên kết qua id; state machine cho entity có status). (UX cho FE target: bước `ux-design` của `/document`.)
 - [ ] Target phát/nhận event có §Events.
 - [ ] Ref FEAT/persona/business-rule bằng id canonical ĐẦY ĐỦ (`FEAT-<slug>` · `PERSONA-…`…), KHÔNG rút gọn — tránh ID drift.

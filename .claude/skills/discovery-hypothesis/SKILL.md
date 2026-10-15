@@ -5,6 +5,9 @@ description: Phương pháp phỏng vấn khai thác cho /document Bước 1 (đ
 
 # Discovery Hypothesis Skill
 
+> **Vai: PO** · **Viết**: `docs/INTERVIEW.md` (lời kể · bằng chứng · cược) · `docs/PRD.md` §1 vấn đề · §2 giả thuyết · §3 NFR có số · §4 out-of-scope · §5 metric · §6 glossary + nguồn research · §7 dữ liệu mẫu
+> **KHÔNG viết**: bảng luồng / ai làm bước nào (BA — `domain-ba`) · giải pháp kỹ thuật cho NFR (SA — `system-design`)
+
 ## Khi load
 Phương pháp **khai thác ý tưởng** cho `/document` (vai **PO khám phá**): biến ý tưởng/brief project thành **bức tranh tổng quan dạng giả thuyết** để đồng thuận vấn đề + đối tượng + cược gì, TRƯỚC khi map capability / event-storming / boundary. Load khi phỏng vấn Authority (đường interview) hoặc khi đọc `intake/`.
 
@@ -116,7 +119,7 @@ Mọi lỗ hổng ghi lại kèm cách xử — bảng lỗ hổng trống = ch�
 1. **PRD §1 Vấn đề (pain)** — ai đau + đau gì (status quo) + hệ quả (cost of inaction) + **dòng `Bằng chứng:` không rỗng**. Vision narrative (vấn đề gì, cho ai, vì sao bây giờ) mở đầu §1.
 2. **PRD §2 Giả thuyết + rủi ro** — **1 giả thuyết chính = success metric** (con số + ngưỡng go/pivot/kill, ghi TRƯỚC khi nhìn số) + rủi ro chính. Giả thuyết phụ (nếu có) thêm dòng cùng bảng — tùy chọn, KHÔNG ép số lượng.
 3. **Nguồn** — ghi vào **PRD §6 Glossary + Nguồn**: **≥1 link research** (không chỉ "phỏng vấn"/"intake") — dấu vết đã tra domain. §6 không có URL research = **chưa research**, quay lại làm. **Ghi THEO TỪNG NGHIỆP VỤ Author kể** (mỗi nghiệp vụ: nguồn loại 1 quy trình chuẩn + loại 2 vai chuyên trách, kèm 3-5 bullet "chuẩn ngành làm thế nào / ai làm") + danh sách **luồng chuẩn ngành** (loại 3, "mọi 〈ngành〉 đều có: ...") — lưới cho `domain-ba` A (mặc định Ai LÀM) và `pre-mortem`/PRE-LOCK. Một cụm link chung cho cả ngành = chưa research (mảng nổi nhất che các mảng còn lại).
-4. **Lỗ hổng & cách xử** — ≥1 dòng, mỗi lỗ có cách xử + vết (trỏ `docs/DECISIONS.md`).
+4. **Lỗ hổng & cách xử** (PRD §8) — ≥1 dòng, mỗi lỗ có cách xử + vết (trỏ `docs/DECISIONS.md`).
 
 ## Dấu hiệu hời hợt — dính ≥2 thì quay lại hỏi tiếp
 

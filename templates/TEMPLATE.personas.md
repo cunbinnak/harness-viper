@@ -1,4 +1,5 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/PERSONAS.md. Điền hết {{...}}. -->
+<!-- VAI: BA (domain-ba C) — persona + ma trận sinh TỪ bảng luồng. -->
 # PERSONAS — {{PROJECT_NAME}}
 
 <!-- §1: mỗi persona = chân dung + năng lực được cấp + luồng chính. Đánh mã P-01, P-02… -->
