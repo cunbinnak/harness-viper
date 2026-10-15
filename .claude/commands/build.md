@@ -11,8 +11,8 @@ description: "BUILD — MAIN tự code 1 wave: đọc KG/context → challenge �
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: BUILD` + `Wave: <N>` (arg `<wave>`, hoặc dòng `Wave` sẵn có).
 `guard_ask` + `gate.py` đọc dòng này — không sửa thì máy tưởng còn phase cũ, luật "không hỏi" mất hiệu lực.
 
-> **Wave ≥2**: trước khi code, gate `wave_reviewed` đòi `docs/ROADMAP.md` có dòng `Rà lại wave N: <ngày>` (do `/next-wave`
-> stamp lúc mở wave) — thiếu = chưa rà lại kế hoạch, KHÔNG cho vào BUILD (quay lại `/next-wave`). **Wave 1 MIỄN** — kế
+> **Wave ≥2**: trước khi code, gate `wave_reviewed` đòi ô `Rà lại` của wave N ở `docs/ROADMAP.md §1` đã điền ngày (do `/next-wave`
+> stamp lúc mở wave) — còn trống = chưa rà lại kế hoạch, KHÔNG cho vào BUILD (quay lại `/next-wave`). **Wave 1 MIỄN** — kế
 > hoạch vừa lập + Authority duyệt ở DOCUMENT.
 
 ## Bước 1 — Nạp context (CHỈ slice của wave — targeted, chống lost-in-middle)
@@ -81,7 +81,7 @@ Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được
 - **Ca biên** (trong AC): xử **ngay khi làm phần liên quan**, đừng để cuối
 - **Doc lệch thực tế** → theo PROTOCOL §3: (A) `arch` lệch nhưng **không kẹt luồng** (tên field, kiểu, index) → code bám `arch` + `DECISIONS` `kỹ-thuật` + `ROADMAP §backlog` · (B) `arch` thiếu/sai kỹ thuật làm **kẹt luồng** của AC đã khoá → **`amend-arch`**: bổ sung `docs/arch/*.md` tại chỗ, cùng commit, đủ 6 điều kiện §3 · (C) thiếu hẳn hành vi/luồng → `ROADMAP §backlog` (kẹt luồng → `STATE §Blocker`, dừng gợi ý Authority gọi `/document` top-up). AC · mockup · PRD **không** sửa (guard_doc chặn). Mơ hồ trong AC → `DECISIONS.md` 1 dòng.
 - Mơ hồ → `DECISIONS.md` 1 dòng · ngoài AC → `ROADMAP §backlog` · commit nhỏ, message tiếng Việt
-- **Gặp gotcha / vá bug lúc code** (env nông · config · quirk contract · schema drift...) → **append NGAY** `knowledge-base/{name}.md` §Gotchas/§Failure-modes. Đây là **nguồn KG nhiều nhất** (lúc code mới va) — không ghi = mất, wave/rebuild sau lặp lại (retro B3).
+- **Gặp gotcha / vá bug lúc code** (env nông · config · quirk contract · schema drift...) → **append NGAY** `knowledge-base/{name}.md` §Gotchas/§Failure-modes. Đây là **nguồn KG nhiều nhất** (lúc code mới va) — không ghi = mất, wave/rebuild sau lặp lại.
 
 **Viết unit/integration test CÙNG LÚC code** (chạy `make test` — lưới an toàn của MAIN; code smell/checkstyle sạch) — nạp **`ref-<kind>-test`** (`ref-backend-test` · `ref-frontend-test` · `ref-bff-test`): tầng test · đặt tên · mẫu · đồng hồ tiêm được (để QC test hạn chót trên hệ thật) · mock khớp contract.
 **KHÔNG** làm ở phase này: tối ưu hiệu năng · UI đẹp quá mức đủ dùng · **black-box test-case + dogfood (để VERIFY — `test-writer` chủ trì)** · tính năng "tiện tay".

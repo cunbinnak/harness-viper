@@ -1,6 +1,6 @@
 ---
 name: infra-local-dev
-description: Setup + verify infra local cho test handoff — docker-compose service per boundary + DB/redis/kafka, network internal, healthcheck, chạy migrations, verify. dev-handoff.
+description: Setup + verify infra local cho BUILD/VERIFY — docker-compose service per boundary + DB/redis/kafka, network internal, healthcheck, chạy migrations, verify.
 ---
 
 # Infra Local Dev Skill
@@ -12,7 +12,7 @@ Input: `deployment/local/docker-compose.yml` (skeleton từ DOCUMENT) + targets 
 ## Output: `deployment/local/docker-compose.yml` (1 vị trí chuẩn)
 Yêu cầu:
 1. **Service per target** — 1 app container cho mỗi target trong **wave hiện tại** (build từ `services/{web|boundaries}/{name}/`), + infra (DB/cache/broker) chúng dùng. KHÔNG thêm target ngoài wave, không service thừa.
-2. **Network internal + cross-target** — container gọi nhau qua **service name**: app → `postgres:5432`/`redis:6379`/`kafka:9092`; **app→app cross-target** → `http://{callee-service}:{port}` (KHÔNG `localhost`). Nếu wave có target gọi nhau (theo `depends_on` ROADMAP / `INTEG-INT-*`) → app caller `depends_on` app callee `{condition: service_healthy}`. Tất cả service cùng **1 network** (default compose network) để resolve tên.
+2. **Network internal + cross-target** — container gọi nhau qua **service name**: app → `postgres:5432`/`redis:6379`/`kafka:9092`; **app→app cross-target** → `http://{callee-service}:{port}` (KHÔNG `localhost`). Nếu wave có target gọi nhau (theo `consumes` ở `docs/arch/{name}.md` / cột `Phụ thuộc wave trước` ROADMAP) → app caller `depends_on` app callee `{condition: service_healthy}`. Tất cả service cùng **1 network** (default compose network) để resolve tên.
 3. **Healthcheck** mỗi service (interval/retries); app `depends_on` infra với `condition: service_healthy`.
 4. Volume cho DB persist; dev creds **inline** (dev-only, không phải secret — không cần .env riêng).
 
@@ -82,7 +82,7 @@ docker compose ps
 docker compose exec postgres pg_isready -U postgres   # "accepting connections"
 docker compose exec redis redis-cli ping              # "PONG" (nếu có)
 curl -f http://localhost:8080/health/ready            # app boundary ready
-# Cross-target connectivity (kết nối liên service): mỗi cặp caller→callee (theo INTEG-INT-* / depends_on ROADMAP)
+# Cross-target connectivity (kết nối liên service): mỗi cặp caller→callee (theo `consumes` arch / cột Phụ thuộc wave trước ROADMAP)
 #   caller container gọi được callee qua service name (KHÔNG localhost):
 docker compose exec {caller} curl -f http://{callee}:{port}/health/ready   # phải 200
 # (event) nếu cross-boundary qua Kafka → topic tồn tại:
@@ -107,7 +107,7 @@ psql "postgresql://postgres:postgres@localhost:5432/app_dev" -c "\dt" \
 
 ## Done (MAIN chạy lệnh verify + đọc output thật, không chỉ viết file)
 - `docker-compose.yml` valid, **mọi service (app boundary + infra) healthy**; migrations applied (schema có tables).
-- **Kết nối liên service (cross-target connectivity)**: mỗi dependency `INTEG-INT-*` / `depends_on` ROADMAP đã verify caller gọi được callee qua service name (HTTP 200 / topic tồn tại) — không chỉ healthy riêng lẻ.
+- **Kết nối liên service (cross-target connectivity)**: mỗi cạnh `consumes` (arch) / `Phụ thuộc wave trước` (ROADMAP) đã verify caller gọi được callee qua service name (HTTP 200 / topic tồn tại) — không chỉ healthy riêng lẻ.
 - Test agent chạy được: `docker compose exec {service} <test-cmd>` / `curl localhost:{port}/health`.
 
-> Production deploy (Dockerfile/Helm/CI-CD) KHÔNG thuộc skill này — state machine hiện kết thúc ở DONE (UAT), chưa có stage deploy.
+> Production deploy (Dockerfile/Helm/CI-CD) KHÔNG thuộc skill này — deploy thuộc `/ship` (wave khai SHIP).

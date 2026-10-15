@@ -2,7 +2,6 @@
 
 > Khung quy trình **ý tưởng → tài liệu → code → verify** cho phát triển bằng AI agent:
 > **MAIN tự code · 1 lớp tài liệu · command inline-prompt · ít script + gate nhìn thấy được**.
-> Bản refactor tinh gọn (thay harness cũ: nhiều state · ~58 gate · build_prompt · 2 lớp doc).
 
 ---
 

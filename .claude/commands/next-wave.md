@@ -30,10 +30,10 @@ Nội dung snapshot `archive/wave-N/` — **snapshot TRỌN lát cắt wave, kh�
 
 **Còn wave trong `docs/ROADMAP.md`:**
 1. **RÀ LẠI kế hoạch wave kế** (loop engineering — bắt buộc): đọc **đủ nguồn** — kết quả wave (test-cases + metric) + `§backlog` + finding/blocker treo →
-   **định đoạt RÕ TỪNG item**: `xếp wave N+1` / `hoãn (ghi lý do)` / `bỏ (ghi lý do)` — **không item nào lửng lơ** (chống backlog trôi, vá retro D1) →
+   **định đoạt RÕ TỪNG item**: `xếp wave N+1` / `hoãn (ghi lý do)` / `bỏ (ghi lý do)` — **không item nào lửng lơ** (chống backlog trôi) →
    chỉnh ROADMAP wave kế nếu lệch (**phần bù chen vào wave kế, tính năng đã xếp lùi ra sau — không dồn ra cuối**) →
-   ghi dòng `điều chỉnh khi mở` nếu có đổi → **stamp `Rà lại wave N+1: <ngày ISO>`** vào ROADMAP.
-   *(Gate `wave_reviewed` ở `/build` đòi đúng dòng này, ngày ≥ lúc mở — thiếu = chạy mù, không cho code.)*
+   ghi dòng `điều chỉnh khi mở` nếu có đổi → **stamp `<ngày ISO>` vào ô `Rà lại` của wave N+1** (ROADMAP §1).
+   *(Gate `wave_reviewed` ở `/build` đòi ô này đã điền — còn trống = chạy mù, không cho code.)*
 2. **Re-arm `BACKWARD-COMPAT.md §3`** (checklist rà mỗi wave): bỏ tick §3 để wave mới rà lại. **§1 (sổ hợp đồng) KHÔNG đụng** — surface wave 1 giao vẫn là hợp đồng ở wave 9.
 3. Phần **wave-scoped** của `STATE.md` (gate BUILD/VERIFY/SHIP · `§Findings` · log · `Wave`) đã được `next_wave.py` reset ở Bước 2 — **không làm tay**.
 4. **Amendment thành hiện thực** (đây là điểm định tuyến của "sửa doc = wave sau" — PROTOCOL §3):
@@ -43,7 +43,7 @@ Nội dung snapshot `archive/wave-N/` — **snapshot TRỌN lát cắt wave, kh�
      `/document` top-up: dựng mockup các màn in-scope wave kế **từ token đã chốt** → **Authority chốt mockup wave đó** → `/build`.
      > **BẮT BUỘC — gate BUILD chặn bằng máy** (`missing_wave_mockups`): mọi màn UI in-scope wave kế phải có file mockup TỒN TẠI + SCREEN-MAP row trỏ đúng `.html`. Thiếu = gate đỏ, KHÔNG được `/build` — không tự ý đẩy thẳng sang BUILD/đóng wave khi mockup còn trống (đây là lỗ đã gặp: skip rà mockup, code chay theo màn không có bản chốt).
    - **Cần FEAT / arch / capability MỚI hoặc SỬA** → `/document` (top-up): re-enter DOCUMENT → sửa **docs SỐNG** (`docs/`)
-     theo `§backlog` → re-challenge → **Authority duyệt lại = re-lock scope** (đóng back-edge — chống retro F1 kẹt DRAFT).
+     theo `§backlog` → re-challenge → **Authority duyệt lại = re-lock scope** (đóng vòng quay lại — không để scope kẹt ở trạng thái chưa khoá).
      · Docs đã ship ở `archive/` **BẤT BIẾN** — chỉ sửa `docs/` sống. · Đổi surface đã giao phải **additive** (BACKWARD-COMPAT §1).
      Xong `/document` → `/build`.
 

@@ -10,7 +10,7 @@
 - **Năng lực được cấp**: {{tạo order · sửa order của mình · …}}
 - **Luồng chính**: {{luồng ở INTERVIEW §Luồng nghiệp vụ mà vai này có dòng Ai LÀM}}
 
-<!-- §2: MA TRẬN vai × hành động. Mỗi ô `có`/`cấm` — KHÔNG ô trống (gate table_cells chặn).
+<!-- §2: MA TRẬN vai × hành động. Mỗi ô `có`/`cấm` — KHÔNG ô trống (gate DOCUMENT chặn: "PERSONAS §2 ma trận không ô trống").
      Đây là spec phân quyền khi code + nguồn TC âm + danh sách phép thử vai `breaker`. -->
 ## §2 Ma trận vai × hành động
 | Hành động \ Vai | {{P-01}} | {{P-02}} | {{P-03}} |

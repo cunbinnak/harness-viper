@@ -480,7 +480,7 @@ public ResponseEntity<byte[]> export(@PathVariable UUID id) { /* Content-Disposi
 
 ## 7.5. ArchUnit — enforce §7 bằng TEST (bắt buộc)
 
-> Luật §7 phải được ép bằng **test chạy được** (deterministic), KHÔNG chỉ để review đọc — reviewer đọc N file có thể sót, ArchUnit thì không. Là JUnit test → gradle/Stop hook tự chạy; vi phạm = build ĐỎ ngay ở BUILD. **Scaffold BẮT BUỘC gồm `src/test/java/**/architecture/ArchitectureTest.java`** (≥1 file import `com.tngtech.archunit`). Dependency: xem `ref-backend-config` (`archunit-junit5`). Chọn biến thể theo mô hình chốt ở `docs/arch/{name}.md`.
+> Luật §7 phải được ép bằng **test chạy được** (deterministic), KHÔNG chỉ để review đọc — reviewer đọc N file có thể sót, ArchUnit thì không. Là JUnit test → `./gradlew test` (qua `make check`) chạy; vi phạm = build ĐỎ ngay ở BUILD. **Scaffold BẮT BUỘC gồm `src/test/java/**/architecture/ArchitectureTest.java`** (≥1 file import `com.tngtech.archunit`). Dependency: xem `ref-backend-config` (`archunit-junit5`). Chọn biến thể theo mô hình chốt ở `docs/arch/{name}.md`.
 
 **Layered:**
 ```java

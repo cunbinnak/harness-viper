@@ -15,7 +15,7 @@ description: Cấu trúc thư mục + tổ chức component frontend boundary. D
 ```
 services/web/{name}/
 ├── src/
-│   ├── pages/            # Route page ~ map 1-1 SCR-XXX trong docs/ux/SCREEN-MAP.md
+│   ├── pages/            # Route page ~ map 1-1 Mã màn trong docs/ux/SCREEN-MAP.md
 │   ├── components/
 │   │   ├── ui/           # Atomic (Button, Input, Modal) — no business logic
 │   │   ├── layout/       # Header, Sidebar, PageWrapper
@@ -36,7 +36,7 @@ services/web/{name}/
 
 ```
 services/web/{name}/src/
-├── app/                          # ROUTE = thư mục; mỗi màn ~ 1 SCR-XXX trong docs/ux/SCREEN-MAP.md
+├── app/                          # ROUTE = thư mục; mỗi màn ~ 1 Mã màn trong docs/ux/SCREEN-MAP.md
 │   ├── layout.tsx · providers.tsx · error.tsx · not-found.tsx
 │   ├── (auth)/login/page.tsx     # route group theo vùng — không ăn vào URL
 │   ├── (app)/                    # vùng đã đăng nhập: layout.tsx chứa app shell (khớp _shell.html)

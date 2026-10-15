@@ -5,7 +5,7 @@
 ## §1 Nguyên tắc
 - **Neutral-first**: nền trung tính, màu = nhấn ~10%, `danger` CHỈ cho lỗi. Ô trống im lặng, hover mới hiện affordance.
 
-<!-- §2: token — tương phản AA · không token ngoài bảng · không hardcode màu. gate ds_token_rows đọc bảng này. -->
+<!-- §2: token — tương phản AA · không token ngoài bảng · không hardcode màu. gate DOCUMENT tra token ở bảng này để tính tương phản · guard_ds chặn hex thô ngoài :root. -->
 ## §2 Token
 | Token | Giá trị | Dùng cho |
 |---|---|---|

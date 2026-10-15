@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""guard_ask — hook PreToolUse chặn AskUserQuestion ngoài pha DOCUMENT (port VIPER: pha V).
+"""guard_ask — hook PreToolUse chặn AskUserQuestion ngoài pha DOCUMENT.
 
 Luật #2 (sau khoá scope KHÔNG hỏi Authority) chỉ dặn bằng văn xuôi thì sau compact trôi mất — agent
 lại hỏi. Hook biến thành cơ chế: **CHỈ pha DOCUMENT** (trước khoá scope, chỗ phỏng vấn/quyết định) được
@@ -53,7 +53,7 @@ def main() -> int:
         return 0  # STATE không theo khung — fail-open
     phase = m.group(1).upper().replace(" ", "-")
     if phase == "DOCUMENT":
-        return 0  # pha V — chỗ DUY NHẤT được hỏi Authority (phỏng vấn + quyết định)
+        return 0  # DOCUMENT — chỗ DUY NHẤT được hỏi Authority (phỏng vấn + quyết định)
     sys.stderr.write(
         f"[guard_ask] Pha {phase}: không hỏi Authority qua AskUserQuestion (chỉ DOCUMENT được hỏi).\n" + REMINDER)
     return 2

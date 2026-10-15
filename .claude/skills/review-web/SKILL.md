@@ -17,7 +17,7 @@ Chỉ đọc. Không hỏi user.
 | `docs/feat/FEAT-*.md` boundary đảm nhận | trục 1 |
 | `docs/ux/SCREEN-MAP.md` (states · API · validation) · `docs/ux/mockups/{name}/*.html` · `docs/DESIGN-SYSTEM.md §2` (token) | trục 1, 5 |
 | `docs/arch/{backend}.md §3 API` hoặc integration BFF trong `docs/arch/{name}.md` | trục 4 |
-| `docs/arch/{name}.md §6.1` ca biên | trục 1 |
+| `docs/arch/{name}.md §6` ca biên | trục 1 |
 | `docs/PERSONAS.md §2` (ma trận vai × hành động) | trục 2 |
 | skill `stack-nextjs §review` — **ĐÃ nạp ở Bước 0 (định nghĩa agent), KHÔNG Read lại** | trục 3, 6 |
 | `docs/DECISIONS.md` · `docs/adr/ADR-*.md` (ui-kit, state, auth) | trục 7 |
@@ -82,7 +82,7 @@ npm audit --omit=dev --audit-level=high || echo "npm audit đỏ hoặc không c
 |---|---|---|
 | Mọi AC có màn/luồng làm đúng (không chỉ giống mockup) | AC → màn trong `SCREEN-MAP.md` → mở page + hook, lần tới lời gọi API | không thấy = BLOCKER · làm nửa = MAJOR |
 | Validation + thông báo lỗi theo `ux` (field · form · global tách rõ, lỗi nằm gần field) | Đọc form | MAJOR |
-| Ca biên `arch/{name}.md §6.1` phía FE: gửi hai lần (disable khi pending) · bản cũ (xử 409) · rỗng. FE chỉ là lớp tiện — BE thiếu chặn thì ghi finding cho **boundary BE** | Đọc mutation + form | FE thiếu = MINOR · BE thiếu = BLOCKER |
+| Ca biên `arch/{name}.md §6` phía FE: gửi hai lần (disable khi pending) · bản cũ (xử 409) · rỗng. FE chỉ là lớp tiện — BE thiếu chặn thì ghi finding cho **boundary BE** | Đọc mutation + form | FE thiếu = MINOR · BE thiếu = BLOCKER |
 
 ### Trục 2 — Bảo mật (phần FE chạm được)
 
@@ -138,12 +138,12 @@ grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effe
 |---|---|---|
 | Mọi màn có data: loading · empty · error · success (· disabled theo quyền) | `grep -rln -e isLoading -e isError -e isPending $UI` (Next App Router: thêm route thiếu `loading.tsx`) → màn nào không có | MAJOR |
 | Action không im lặng; toast không thay field error; hành động xoá/huỷ có confirm; chống double submit | Đọc form + nút | MAJOR |
-| Có cơ chế styling: CSS/SCSS, tailwind hoặc CSS-in-JS. `className` khắp nơi mà 0 stylesheet = UI không định dạng (gate `web_styling` cũng chặn) | `find src -name "*.css" -o -name "*.scss"` · `ls tailwind.config.*` · `grep -rl -e "styled." -e "@emotion" src` | BLOCKER |
-| Token `ux §4` được **dùng** và được **định nghĩa** trong bundle (`design-tokens.css` import ở entry) — `var(--x)` không định nghĩa resolve rỗng | `grep -rn -e "--color-" -e "--space-" -e "--font-" src` · `grep -rl design-tokens src` | BLOCKER |
+| Có cơ chế styling: CSS/SCSS, tailwind hoặc CSS-in-JS. `className` khắp nơi mà 0 stylesheet = UI không định dạng | `find src -name "*.css" -o -name "*.scss"` · `ls tailwind.config.*` · `grep -rl -e "styled." -e "@emotion" src` | BLOCKER |
+| Token `DESIGN-SYSTEM §2` được **dùng** và được **định nghĩa** trong bundle (`design-tokens.css` import ở entry) — `var(--x)` không định nghĩa resolve rỗng | `grep -rn -e "--color-" -e "--space-" -e "--font-" src` · `grep -rl design-tokens src` | BLOCKER |
 | Đúng ui-kit ADR: dùng component của library + map token qua theme; tự dựng lại Button/Table/Modal song song | `grep -rn -e "from 'antd'" -e ConfigProvider src` | MAJOR |
 | Mỗi `className` có rule CSS (class mồ côi) | Lấy class trong JSX → grep trong CSS | MAJOR |
 | Trạng thái visual: `:hover` · `:focus-visible` · disabled; loading/empty/error có style riêng | `grep -rn -e ":hover" -e ":focus-visible" src` | MAJOR |
-| Khớp mockup (khung, spacing, màu, state) + breakpoint `ux §3` + theming §4.6 nếu yêu cầu. Build + serve, mở mockup cạnh app, chụp màn chính — trang trắng/không style là thấy ngay | `docs/ux/mockups/{name}/*.html` | MAJOR |
+| Khớp mockup (khung, spacing, màu, state) + breakpoint/theming theo mockup + `DESIGN-SYSTEM` nếu có. Build + serve, mở mockup cạnh app, chụp màn chính — trang trắng/không style là thấy ngay | `docs/ux/mockups/{name}/*.html` | MAJOR |
 | Text dài không vỡ layout; không inline style phức tạp | Đọc component list/card | MINOR |
 
 ### Trục 6 — a11y, cấu trúc, test
@@ -178,7 +178,7 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
 [severity] file:dòng — [nguồn] hỏng thế nào → đề xuất
 ```
 
-- `[nguồn]`: `[FEAT-X AC-2]` · `[Bảo mật: <nhóm>]` · `[stack-nextjs Forbidden: <cột Cấm>]` · `[ux §4 token]` · `[mockup <màn>]` · `[DECISIONS <ngày>]`.
+- `[nguồn]`: `[FEAT-X AC-2]` · `[Bảo mật: <nhóm>]` · `[stack-nextjs Forbidden: <cột Cấm>]` · `[DESIGN-SYSTEM §2 token]` · `[mockup <màn>]` · `[DECISIONS <ngày>]`.
 - **BLOCKER (nặng)** — AC không chạy · lủng bảo mật · UI không định dạng · lệch cấu trúc · phá surface đã giao.
   **MAJOR (vừa)** — nên sửa trước bàn giao. **MINOR/NIT (nhẹ)** — không chặn. **QUESTION** — chưa chắc.
   Ý thích cá nhân không bao giờ là BLOCKER.

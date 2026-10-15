@@ -17,7 +17,7 @@ Chỉ đọc. Không hỏi user.
 | `docs/feat/FEAT-*.md` boundary đảm nhận | trục 1 |
 | `docs/ux/SCREEN-MAP.md` · `docs/ux/mockups/{name}/*.html` | trục 1, 5 |
 | `docs/arch/{backend}.md §3 API` hoặc integration BFF trong `docs/arch/{name}.md` | trục 4 |
-| `docs/arch/{name}.md §6.1` ca biên | trục 1 |
+| `docs/arch/{name}.md §6` ca biên | trục 1 |
 | `docs/PERSONAS.md §2` (ma trận vai × hành động) | trục 2 |
 | skill `stack-flutter` §review + §Done — **ĐÃ nạp ở Bước 0 (định nghĩa agent), KHÔNG Read lại** | trục 3, 5 |
 | `docs/DECISIONS.md` · `docs/adr/ADR-*.md` (state, storage, auth) | trục 6 |
@@ -51,7 +51,7 @@ dart run build_runner build --delete-conflicting-outputs && git diff --exit-code
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | Mọi AC có màn/luồng làm đúng | AC → màn trong `SCREEN-MAP.md` → widget + provider + repository | không thấy = BLOCKER · làm nửa = MAJOR |
-| Ca biên `arch/{name}.md §6.1` phía app: gửi hai lần · mất mạng giữa chừng · bản cũ. **Disable nút không tính** — ràng buộc thật ở BE, thiếu thì ghi finding cho boundary BE | Đọc mutation + màn | app thiếu = MINOR · BE thiếu = BLOCKER |
+| Ca biên `arch/{name}.md §6` phía app: gửi hai lần · mất mạng giữa chừng · bản cũ. **Disable nút không tính** — ràng buộc thật ở BE, thiếu thì ghi finding cho boundary BE | Đọc mutation + màn | app thiếu = MINOR · BE thiếu = BLOCKER |
 
 ### Trục 2 — Bảo mật mobile (6 nhóm)
 

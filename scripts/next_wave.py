@@ -4,7 +4,7 @@
 - Snapshot `archive/wave-N/` (copy HẾT, không chọn lọc) → sự tồn tại = cờ "đã đóng" (từ chối đóng 2 lần).
 - Dựng lại phần **WAVE-SCOPED** của `STATE.md` từ `templates/TEMPLATE.state.md` (gate BUILD/VERIFY/SHIP/NEXT-WAVE ·
   3 log) — xoá luôn đuôi heading/chữ ô bị sửa tay · set `Wave: N+1` + `Phases wave này` từ ROADMAP §1.
-- **KHÔNG reset `docs/`** (trí nhớ qua wave). RÀ LẠI kế hoạch + stamp `Rà lại wave N+1` do MAIN làm ở `/next-wave`.
+- **KHÔNG reset `docs/`** (trí nhớ qua wave). RÀ LẠI kế hoạch + stamp ngày vào ô `Rà lại` của wave N+1 do MAIN làm ở `/next-wave`.
 
 Usage: python scripts/next_wave.py [--go]   (không --go = xem trước, không sửa gì)
 """

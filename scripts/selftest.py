@@ -39,7 +39,7 @@ def run(rel: str, args: list[str], stdin: str = "") -> int:
 
 
 def main() -> int:
-    print("[selftest] smoke bộ khung viper-adlc\n")
+    print("[selftest] smoke bộ khung\n")
 
     # 1. gate.py — DOCUMENT trên state trống phải THIẾU (exit 1)
     check(run("scripts/gate.py", ["DOCUMENT"]) == 1, "gate.py DOCUMENT → exit 1 (báo thiếu, đúng)")

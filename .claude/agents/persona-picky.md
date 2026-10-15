@@ -30,7 +30,7 @@ e. **Khuôn**: mockup có `data-state` rỗng/lỗi/tải → ép ở app (DB r�
 Screenshot hai bên chỉ **đính làm bằng chứng**, không dùng để phán.
 
 **3. Token màu/spacing (§2 DESIGN-SYSTEM)**
-Gom `getComputedStyle`: `color`/`background`/`border` mọi phần tử hiển thị → giá trị KHÔNG có trong token §2 = **màu lạ** (ghi mã + selector + màn). Đặc biệt đo **`gap`/`margin` giữa các nút trong 1 cụm** (table-row actions) — không chỉ màu (retro A3).
+Gom `getComputedStyle`: `color`/`background`/`border` mọi phần tử hiển thị → giá trị KHÔNG có trong token §2 = **màu lạ** (ghi mã + selector + màn). Đặc biệt đo **`gap`/`margin` giữa các nút trong 1 cụm** (table-row actions) — không chỉ màu.
 
 **4. Tương phản (WCAG)** — mỗi cặp chữ/nền THẬT đang render: tính tỉ số. thường ≥4.5 · lớn ≥3.0. Đo trên pixel thật (bắt được chữ trên ảnh/gradient/nền phủ).
 

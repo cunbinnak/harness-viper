@@ -24,7 +24,7 @@ Playwright MCP (`@playwright/mcp`) — bản chính chủ của Playwright. Khun
 
 Mỗi vai chặn slot kia bằng `disallowedTools` trong frontmatter. **Luật chạy song song: tối đa 2 vai cùng lúc, một vai slot A + một vai slot B** (`newbie`+`picky`, `rushed`+`mobile`). Hai vai cùng slot chạy song song = chung một trình duyệt, tranh nhau một tab — người này bấm, người kia mất trang (đã đo ở dogfood thật: tab mockup `picky` mở hiện trong `browser_tabs` của `newbie`, phiên đăng nhập bị tráo). Slot dùng lại giữa các lượt → mỗi vai **mở đầu bằng `browser_close`** (xoá phiên của vai trước) và **kết thúc bằng `browser_close`**.
 
-KHÔNG khai server inline (`mcpServers`) trong frontmatter persona: Claude Code chỉ bật server inline khi thư mục dự án đã được trust, chưa trust thì bỏ qua **im lặng** và vai rơi về server chung — đó là lỗi gốc của bản VIPER. Thêm slot = thêm server vào `.mcp.json` + `permissions.allow` trong `.claude/settings.json` (thiếu allow → subagent bị từ chối im lặng).
+KHÔNG khai server inline (`mcpServers`) trong frontmatter persona: Claude Code chỉ bật server inline khi thư mục dự án đã được trust, chưa trust thì bỏ qua **im lặng** và vai rơi về server chung. Thêm slot = thêm server vào `.mcp.json` + `permissions.allow` trong `.claude/settings.json` (thiếu allow → subagent bị từ chối im lặng).
 
 Lưu ý: trình duyệt riêng **không** làm dữ liệu riêng. Server dev và DB vẫn dùng chung, nên vai ghi dữ liệu vẫn đè lên cảnh vai khác đang nhìn — đó là lý do `/dogfood` chạy **hai đợt** (đợt 1 DB sạch: edge → newbie + picky — đợt 2 DB có data: rushed + mobile → breaker), không phải cả 6 cùng lúc.
 

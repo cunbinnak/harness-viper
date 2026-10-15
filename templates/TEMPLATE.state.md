@@ -62,7 +62,7 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 
 ### VERIFY (wave hiện tại) — rời phase khi:
 - [ ] **auto-test**: `tracking/wave-N/test-cases.md` — mọi AC in-scope có TC **PASS**, không TC **FAIL / BLOCKED / CHƯA CHẠY** · (wave ≥2) TC `@regression` wave trước PASS · black-box hệ đang chạy · `make test` xanh · contract-test cho consumer
-- [ ] **dogfood**: 6 persona 2 đợt (DB sạch / DB có data) + tự dùng · phát hiện đã xử hoặc đã ghi §Dogfood
+- [ ] **dogfood**: 6 persona 2 đợt (DB sạch / DB có data) + tự dùng · phát hiện đã xử hoặc đã ghi §Findings
 - [ ] Không còn finding BLOCKER/MAJOR open
 
 ### SHIP (chỉ khi `Phases wave này` có SHIP) — rời phase khi:

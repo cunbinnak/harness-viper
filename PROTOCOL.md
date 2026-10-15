@@ -4,8 +4,7 @@
 > Router ngắn mỗi phiên: `CLAUDE.md`.
 >
 > **Trạng thái: HOÀN THIỆN — khung đã dựng, selftest xanh** (7 command · gate.py · 10 agent · hooks · skill library).
-> Bộ khung này là bản refactor tinh gọn (1 lớp doc · MAIN tự code · inline prompt
-> · ít script + gate nhìn thấy được), thay cho harness cũ (17 state · ~58 gate · build_prompt · 2 lớp doc).
+> Bộ khung tinh gọn: 1 lớp doc · MAIN tự code · inline prompt · ít script + gate nhìn thấy được.
 
 ---
 
@@ -48,10 +47,10 @@ Mỗi wave **khai báo phases nó chạy** trong `docs/ROADMAP.md` — wave nộ
 
 **Loop engineering** (mở wave = RÀ LẠI): kế hoạch mọi wave lập 1 lần ở DOCUMENT (Authority ký 1 lần),
 NHƯNG mở wave nào `/next-wave` phải **rà lại kế hoạch wave đó đối chiếu KẾT QUẢ wave trước + §backlog**, chỉnh nếu
-lệch, rồi stamp `Rà lại wave N: <ngày>`. Gate `wave_reviewed` đòi dòng đó (ngày ≥ lúc mở wave) — thiếu = đang chạy
+lệch, rồi stamp ngày vào ô `Rà lại` của wave N (ROADMAP §1). Gate `wave_reviewed` đòi ô đó đã điền — còn trống = đang chạy
 mù theo kế hoạch cũ đã lệch. ROADMAP mỗi wave khai thêm: `phụ thuộc wave trước` · `legacy được phép phá`
 (nối BACKWARD-COMPAT/guard_bc) · `điều chỉnh khi mở`. **RÀ LẠI định đoạt RÕ từng backlog/finding treo** (xử/hoãn-lý-do/bỏ-lý-do —
-không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (không sửa sau khi nhìn số).
+không để trôi); go/pivot/kill so **ngưỡng ghi trước** (không sửa sau khi nhìn số).
 
 ---
 
@@ -65,7 +64,7 @@ không để trôi, vá retro D1); go/pivot/kill so **ngưỡng ghi trước** (
 6. **Không secret trong code, không bypass test/lint. Đã code xong → git commit** (không commit = coi như chưa làm).
 7. **Tiếng Việt có dấu** cho văn bản người đọc (giữ tiếng Anh cho identifier/API/schema/tên lệnh/tên file).
 8. **Sau khoá scope im lặng với Authority, đối kháng nội bộ.** Challenge trước khi code + dogfood trước khi báo xong. Dogfood = **trình duyệt thật** (skill `browse`) — **curl không tính** (trừ target `KHÔNG CÓ UI`); MAIN tự dùng trước rồi mới spawn persona.
-9. **Dọn rác tạm.** Artifact tạm (screenshot/trace/log/temp phân tích) dùng xong **dọn ngay** — không commit, không tích tụ, để scratch dir. Build artifact (node_modules/target/dist…) trong `.gitignore`. Docker/seed → teardown ở `/next-wave`.
+9. **Dọn rác tạm.** Artifact tạm — **script chạy thử** (Playwright `.mjs` · k6 · shell) · screenshot · trace · video · log · temp phân tích · `.playwright-mcp/` — để ở **thư mục tạm NGOÀI repo**, dùng xong **dọn ngay** — không commit, không tích tụ, **không đẻ thư mục mới trong repo để cất**. `tracking/wave-N/` chỉ có đúng 3 file: `test-cases.md` · `fidelity.md` · `proof.json`. Build artifact (node_modules/target/dist…) trong `.gitignore`. Docker/seed → teardown ở `/next-wave`.
 
 ---
 
@@ -141,7 +140,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 ## §6 — Gate evidence (gate.py đọc gì mỗi phase)
 > Danh sách gate cần dựng (thu từ thiết kế command):
 > - **DOCUMENT**: doc set đủ mục · **bảng luồng nghiệp vụ Authority ký, không ô CHƯA HỎI** · **OVERVIEW §5 system design đủ 5.1–5.9, 5.7/5.8 có dòng** · challenge ≥3 câu PASS · ≥2 decisions · mọi ô STATE §Gate DOCUMENT đã tick (gồm PRE-LOCK AUDIT) · **mockup màn UI in-scope wave đầu đều có file** (`missing_wave_mockups` — chống khai màn trong SCREEN-MAP nhưng lười không vẽ .html) · **mọi thao tác/vùng dữ liệu trên mockup khai `data-api` có trong arch §3** (`mockup_api_gaps` — chống màn có nút Tải xuống mà không có API) · scope khoá (Authority duyệt)
-> - **BUILD**: không còn ô VERIFY/SHIP đã tick (= sót wave trước) · wave ≥2: `archive/wave-(N-1)` tồn tại + đã commit · `wave_reviewed` (**wave ≥2**: ROADMAP có `Rà lại wave N` ngày ≥ lúc mở; **wave 1 miễn**) · **mockup màn UI in-scope wave đều có file** (`missing_wave_mockups` — chặn code chay theo màn không bản chốt; màn thuộc wave xác định bởi tag `(Wave N)` ô Mockup › FEAT › tên màn trong hàng ROADMAP — phủ cả wave làm mịn UI-only) · `mockup_api_gaps` như DOCUMENT · **backlog xếp wave này cần top-up đều `đã top-up`** (`pending_topup` — item `thiếu AC`/cần mockup không được code thẳng) · **`make check` qua `proof.json`** (`capture_proof.py` MÁY-sinh — gate KHÔNG tin tick tay, chống "test xanh nhờ H2"/"dev-done ≠ runnable") · **target phủ đủ wave**: mỗi target ROADMAP §1 cột Target khai (kind container hoá: backend/bff/web) có entry `healthy` trong `proof.json` (capture_proof đọc `docker compose ps` per-target) — **thiếu/không-healthy target nào = đỏ** (chống "khai 2 làm 1, nhảy VERIFY"); mobile tick tay (emulator) · **đã commit**
+> - **BUILD**: không còn ô VERIFY/SHIP đã tick (= sót wave trước) · wave ≥2: `archive/wave-(N-1)` tồn tại + đã commit · `wave_reviewed` (**wave ≥2**: ô `Rà lại` của wave N ở ROADMAP §1 đã điền ngày; **wave 1 miễn**) · **mockup màn UI in-scope wave đều có file** (`missing_wave_mockups` — chặn code chay theo màn không bản chốt; màn thuộc wave xác định bởi tag `(Wave N)` ô Mockup › FEAT › tên màn trong hàng ROADMAP — phủ cả wave làm mịn UI-only) · `mockup_api_gaps` như DOCUMENT · **backlog xếp wave này cần top-up đều `đã top-up`** (`pending_topup` — item `thiếu AC`/cần mockup không được code thẳng) · **`make check` qua `proof.json`** (`capture_proof.py` MÁY-sinh — gate KHÔNG tin tick tay, chống "test xanh nhờ H2"/"dev-done ≠ runnable") · **target phủ đủ wave**: mỗi target ROADMAP §1 cột Target khai (kind container hoá: backend/bff/web) có entry `healthy` trong `proof.json` (capture_proof đọc `docker compose ps` per-target) — **thiếu/không-healthy target nào = đỏ** (chống "khai 2 làm 1, nhảy VERIFY"); mobile tick tay (emulator) · **đã commit**
 > - **VERIFY**: `test-cases.md` — **mỗi AC in-scope có TC PASS** (tính từng AC) · không TC **FAIL / BLOCKED / CHƯA CHẠY** · wave ≥2: mọi TC `@regression` của wave trước PASS (hoặc `ĐÃ THAY`) · `CHƯA CÓ QUY ĐỊNH` chỉ báo, không chặn · §Findings hết BLOCKER/MAJOR · `fidelity.md` đủ mọi Mã màn in-scope + không LỆCH · dogfood xong ·
 >   **(web/mobile) BACKSTOP fidelity**: đòi bằng chứng dogfood `picky` đã screenshot-diff **cấu trúc** vs mockup (không skip — chống E1 "demo đẹp chạy xấu"). Format bằng chứng: `persona-picky` §E1 (BACKSTOP screenshot-diff cấu trúc component).
 > - **SHIP** (gate đọc ROADMAP `phases` — wave **không khai SHIP** thì **skip** cả nhóm — G3): prod-ready 4 nhóm · BC §3 xanh · rollback thử
@@ -162,21 +161,21 @@ nằm ở `.claude/agents/<name>.md`.
 | `pre-mortem` | DOCUMENT (trước khoá scope): đối kháng SPEC — săn case Author miss · mảng ngành thiếu · bảng chính sách (4 phép thử) | read-only (không Bash) | — (trả nghi vấn) |
 | `reviewer` | code AN TOÀN + BẢO TRÌ (trục A an toàn: bảo mật/dữ liệu/forbidden · trục B bảo trì: structure/pattern/convention/naming) | read-only | — (trả finding) |
 | `bug-hunter` | 2 chế độ: (1) code ĐÚNG SPEC (AC có impl? ca biên chặn server? phân quyền owner-condition?) · (2) RÀ ĐỀ TEST của `test-writer` trước khi chạy (VERIFY 3b) | read-only | — (trả finding) |
-| `test-writer` | QA độc lập: viết đề black-box `test-cases.md` (AC + bảng chính sách + thăm dò ngoài tài liệu + regression) → **người duy nhất sửa đề** theo danh sách rà của `bug-hunter` → chạy · + test adversarial | +Write/Edit **thư mục test của target + tracking/wave-N/test-cases.md** | file test · test-cases.md |
+| `test-writer` | QA độc lập: viết đề black-box `test-cases.md` (AC + bảng chính sách + thăm dò ngoài tài liệu + regression) → **người duy nhất sửa đề** theo danh sách rà của `bug-hunter` → chạy. **KHÔNG viết code, kể cả test code** — script chạy TC là file tạm ngoài repo, dọn ngay | +Write/Edit **CHỈ `tracking/wave-N/test-cases.md`** | test-cases.md |
 | `persona-{newbie,edge,picky,rushed,breaker,mobile}` | dogfood 2 đợt (đóng persona thật) | browse/Playwright | — (trả finding) |
 
-**Luật chung mọi agent:** KHÔNG hỏi Authority · KHÔNG sửa product code (trừ test-writer chỉ thư mục test của target) · **TRẢ VỀ finding,
-MAIN ghi `STATE §Findings`** (chống retro B1 hai agent đè file) · report `[nặng/vừa/nhẹ] + file:dòng + "hỏng thế nào" + đề xuất 1 câu` ·
+**Luật chung mọi agent:** KHÔNG hỏi Authority · KHÔNG viết/sửa code (test-writer chỉ ghi `test-cases.md`) · **TRẢ VỀ finding,
+MAIN ghi `STATE §Findings`** (chống hai agent đè file) · report `[nặng/vừa/nhẹ] + file:dòng + "hỏng thế nào" + đề xuất 1 câu` ·
 nêu **hậu quả THẬT** (trục A: mất/lộ data · sai kết quả · chặn AC) **HOẶC chi phí bảo trì cụ thể** (trục B), "trục ổn" thì nói ổn, **đừng bịa finding**.
 
-**Kind-specific:** review agent đọc `stack-<tên>/SKILL.md §review` theo kind — 2 agent generic, không tách per-kind.
-Mỗi `stack-<tên>` skill = **PORT** rules-<kind> + ref-<kind>-* cũ (idiom code · config · situational kafka/redis/logging/restclient)
-+ **§review** = checklist + **bảng Forbidden patterns** (cho reviewer/bug-hunter soi từng dòng). **Giữ nguyên content, chỉ dời nhà** —
-Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) sang đúng stack skill.
+**Kind-specific:** 2 agent review generic, không tách per-kind — nạp `review-<kind>` (checklist + lệnh grep theo kind) + `stack-<tên>/SKILL.md §review` theo stack.
+Mỗi `stack-<tên>` skill = idiom code · config · situational kafka/redis/logging/restclient (+ `ref-<kind>-*`)
++ **§review** = checklist + **bảng Forbidden patterns** (cho reviewer/bug-hunter soi từng dòng).
+Luật riêng stack (Java/Spring…) ở stack skill, KHÔNG ở CONVENTIONS (cross-stack).
 
 **Chất lượng bắt buộc (VERIFY = cổng chất lượng):** mỗi agent phải có **lệnh `grep` cụ thể** + thứ tự soi ưu tiên +
 "**UI disable KHÔNG tính — phải server/DB**". KHÔNG checklist mơ hồ.
-## §8 — Hooks (guard_ask / guard_bc / guard_ds + **reanchor**: nhồi lại luật sau compact)
+## §8 — Hooks (10 hook: 8 guard chặn · `trace_docsync` nhắc · `reanchor` nhồi lại luật sau compact)
 > - **guard_ask**: `AskUserQuestion` **chỉ dùng được ở DOCUMENT** (phỏng vấn + quyết định, trước khoá scope). Chặn ở BUILD/VERIFY/SHIP/NEXT-WAVE; **ô Scope khoá tick = chặn luôn** dù dòng phase còn ghi DOCUMENT. go/pivot/kill (NEXT-WAVE) hỏi bằng LỜI.
 > - **guard_bc**: chặn deploy khi BACKWARD-COMPAT §3 chưa xanh (wave ≥2). · **guard_ds**: chặn ghi mockup/token lệch design-system.
 > - **guard_shell**: chặn ghi mockup có **app shell lệch `_shell.html` canonical** (nav items/thứ tự/nhóm/logo/user-menu/icon) — so khối `<!-- SHELL:START/END -->`, chuẩn hoá `aria-current`. Chặn chắc ở Write; Edit chạm khối = báo mềm. Chống shell trôi mỗi màn một kiểu.
@@ -184,9 +183,9 @@ Java/Spring-specific KHÔNG mất, chỉ rời khỏi CONVENTIONS (cross-stack) 
 > - **guard_proof**: chặn Write/Edit vào `*proof.json` (bằng chứng runtime CHỈ `capture_proof.py` sinh — agent không giả tick).
 > - **guard_makefile**: chặn Write/Edit vào **ROOT `Makefile`** (hợp đồng 6 lệnh, bất biến) — MAIN điền THÂN ở per-target `services/<nhóm>/<tên>/Makefile`, không sửa root lúc BUILD.
 > - **guard_doc**: chặn Write/Edit vào **doc SPEC** (`docs/**` trừ DECISIONS/ROADMAP/BACKWARD-COMPAT/PRODUCTION-READY) khi phase ≠ DOCUMENT — doc đóng băng sau khoá scope, lệch/thiếu dồn `ROADMAP §backlog` → wave sau top-up. Sổ sống + DOCUMENT/top-up vẫn sửa được. **Ngoại lệ `amend-arch`**: `docs/arch/*.md` ở BUILD/VERIFY cho qua (điều kiện §3 — `trace_docsync` nhắc, reviewer kiểm).
-> - **trace_docsync** (PostToolUse Edit|MultiEdit): sửa spec doc ở DOCUMENT → nhắc CASCADE (đầu `/document`) + tự bỏ tick PRE-LOCK nếu đang tick. Trigger, không trace hộ; Write không bắt → lời chốt LUÔN re-run audit. Sửa `docs/arch/*.md` ở BUILD/VERIFY → nhắc 6 điều kiện `amend-arch` (§3).
+> - **trace_docsync** (PostToolUse Write|Edit|MultiEdit): sửa spec doc ở DOCUMENT → nhắc CASCADE (đầu `/document`) + tự bỏ tick PRE-LOCK nếu đang tick. Trigger, không trace hộ → lời chốt LUÔN re-run audit. Sửa `docs/arch/*.md` ở BUILD/VERIFY → nhắc 6 điều kiện `amend-arch` (§3).
 > - **reanchor**: SessionStart(compact) → nhồi lại §2 + STATE.
-> Agent read-only (review/persona `disallowedTools: Write/Edit`) + `test-writer` chỉ thư mục test của target → không cần hook owned_paths/kernel-protect như harness cũ.
+> Agent read-only (review/persona `disallowedTools: Write/Edit`) + `test-writer` chỉ ghi `tracking/wave-N/test-cases.md` → không cần hook giữ vùng ghi riêng.
 ## §9 — Failure modes (đã có cơ chế chặn)
 > Kiểu hỏng gặp thật (retro) và chốt chặn tương ứng — mã trong ngoặc = ref rải rác trong doc.
 

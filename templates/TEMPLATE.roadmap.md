@@ -24,7 +24,7 @@ feat_cap_per_wave: 4   # ~3-4 FEAT/wave (≈15-20 AC) — KHUYẾN KHÍCH (tròn
 
 <!-- §3: BACKLOG — amendment (miss luồng / scope mới phát hiện khi BUILD/VERIFY, hoặc finding minor/blocker treo).
      /next-wave RÀ LẠI ĐỊNH ĐOẠT từng dòng ở cột `Xử`: `wave N` | `hoãn: lý do` | `bỏ: lý do`.
-     KHÔNG để trống cột Xử (chống backlog trôi — retro D1). -->
+     KHÔNG để trống cột Xử (chống backlog trôi). -->
 ## §3 Backlog (amendment → wave sau)
 | Ngày | Phát hiện (miss gì · đụng FEAT nào) | Wave phát hiện | Xử |
 |---|---|---|---|

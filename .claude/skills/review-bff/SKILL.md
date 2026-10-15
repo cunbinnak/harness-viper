@@ -16,7 +16,7 @@ Chỉ đọc. Không hỏi user.
 |---|---|
 | `docs/feat/FEAT-*.md` boundary đảm nhận | trục 1 |
 | `docs/arch/{name}.md §3 API` (schema GraphQL) · integration backend trong `docs/arch/{name}.md` (hợp đồng backend) | trục 4 |
-| `docs/arch/{name}.md §6.1` ca biên | trục 1 |
+| `docs/arch/{name}.md §6` ca biên | trục 1 |
 | `docs/PERSONAS.md §2` (ma trận vai × hành động) | trục 2 |
 | skill `stack-bff` §review + §Done — **ĐÃ nạp ở Bước 0 (định nghĩa agent), KHÔNG Read lại** | trục 3, 5 |
 | `docs/DECISIONS.md` · `docs/adr/ADR-*.md` | trục 6 |
@@ -53,7 +53,7 @@ grep -rhoiE "['\"]x-[a-z-]+['\"]" src | sort | uniq -c
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | Mọi AC cần dữ liệu có query/mutation/field phục vụ đúng | AC → operation trong `arch/{name}.md §3 API` → resolver | không thấy = BLOCKER · làm nửa = MAJOR |
-| Ca biên `arch/{name}.md §6.1` kiểm ở resolver/backend, không trông vào client | Mỗi dòng không `n/a` → tìm chỗ chặn | BLOCKER |
+| Ca biên `arch/{name}.md §6` kiểm ở resolver/backend, không trông vào client | Mỗi dòng không `n/a` → tìm chỗ chặn | BLOCKER |
 
 ### Trục 2 — Bảo mật gateway (6 nhóm)
 
