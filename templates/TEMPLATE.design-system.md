@@ -12,7 +12,7 @@
 | `--color-primary` | {{#…}} | {{nút chính}} |
 | `--space-md` | {{16px}} | {{khoảng cách khối}} |
 
-<!-- cặp tương phản: gate (_check_contrast) TỰ TÍNH tỉ số WCAG AA từ mã màu — không tin số tự khai.
+<!-- cặp tương phản: gate (_check_contrast) TỰ TÍNH tỉ số WCAG AA từ mã màu và CẢNH BÁO cặp dưới ngưỡng (không chặn — chuẩn cuối là file thiết kế/Figma).
      Mỗi cặp một dòng dạng `<chữ>` trên `<nền>` (hex hoặc token có trong §2 / :root). Chữ lớn (≥18px hoặc ≥14px đậm) → ghi `lớn` trong cùng vế → ngưỡng 3:1, còn lại 4.5:1.
      Khối chỉ chứa dòng cặp — ghi chú có chữ "trên" đặt ngoài khối (máy coi là cặp viết sai dạng). -->
 - **cặp tương phản** (hex chữ / hex nền — WCAG AA): {{`#111827` trên `#ffffff` · body ≥ 4.5:1 · text lớn ≥ 3:1}}

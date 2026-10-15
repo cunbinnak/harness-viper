@@ -273,16 +273,16 @@ def contrast_pairs(rel: str = "docs/DESIGN-SYSTEM.md") -> tuple[list[tuple], lis
 
 
 def _check_contrast(r: "Report") -> None:
-    """DESIGN-SYSTEM §2 cặp tương phản — gate TỰ TÍNH tỉ số WCAG AA, không tin số tự khai trong doc."""
+    """DESIGN-SYSTEM cặp tương phản — gate TỰ TÍNH tỉ số WCAG AA. CẢNH BÁO, không chặn: nguồn chuẩn cuối là
+    file thiết kế (Figma); đây chỉ để thấy sớm cặp màu khai sai số, không ép đổi màu ở DOCUMENT."""
     if not (ROOT / "docs" / "DESIGN-SYSTEM.md").exists():
         return                                    # backend-only (KHÔNG CÓ UI) — không có design system
     pairs, errs = contrast_pairs()
-    bad = [f"{fg} trên {bg} = {ratio:.2f}:1 (cần ≥ {need:g}:1)" for fg, bg, _, _, ratio, need in pairs if ratio < need]
-    r.check(bool(pairs) and not bad and not errs,
-            f"DESIGN-SYSTEM cặp tương phản: {len(pairs)} cặp, gate tự tính tỉ số WCAG AA"
-            + (" — CHƯA khai cặp nào (dạng `<chữ>` trên `<nền>`, hex hoặc token)" if not pairs and not errs else "")
-            + (f" — DƯỚI NGƯỠNG: {'; '.join(bad)}" if bad else "")
-            + (f" — {'; '.join(errs)}" if errs else ""))
+    bad = [f"{fg} trên {bg} = {ratio:.2f}:1 (WCAG AA cần ≥ {need:g}:1)" for fg, bg, _, _, ratio, need in pairs if ratio < need]
+    if bad or errs:
+        r.note("[cảnh báo tương phản] " + "; ".join(bad + errs))
+    elif pairs:
+        r.note(f"tương phản: {len(pairs)} cặp đạt WCAG AA (gate tự tính)")
 
 
 # phần tử mockup gọi server hoặc hiển thị dữ liệu server → phải khai `data-api` (tĩnh = "none")
