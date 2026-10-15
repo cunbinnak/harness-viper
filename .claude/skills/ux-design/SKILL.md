@@ -153,6 +153,13 @@ Khi user phản hồi ở khoá scope `/document`: **hình thức** ("chữ nh�
 **TOKEN** ở `docs/DESIGN-SYSTEM.md §2` rồi để nó lan ra mọi màn. **KHÔNG sửa tay từng file mockup** —
 sửa tay là mất đúng tác dụng của design token, và pha code thừa hưởng nguyên mớ lệch đó.
 
+Phản hồi **chức năng** ("thêm cột", "thêm bộ lọc", "bỏ tab", "nút này phải ở màn kia", "thiếu bước duyệt") → **KHÔNG sửa mockup trước**. Đi đúng thứ tự vai, vì API được thiết kế từ màn nháp — sửa mockup mà nguồn không đổi thì nguồn và mockup lệch nhau:
+1. **BA** sửa màn nháp (`INTERVIEW §Luồng nghiệp vụ` — hành động / dữ liệu hiển thị). Đổi luồng (thêm bước, đổi người làm) → sửa bảng luồng + Authority **ký lại**.
+2. **BA** sửa AC / §3 Ràng buộc nghiệp vụ của FEAT liên quan.
+3. **SA** sửa `arch §3` API (+ `§1` data model nếu có field mới).
+4. **UX** sửa mockup + `data-api` → gate `mockup_api_gaps` xanh.
+5. Ghi dòng vào bảng `## Chốt` (cột Xử: màn nháp/AC/API/màn nào đổi). Sau khoá scope thì không sửa tại chỗ — vào `ROADMAP §backlog`, làm ở `/document` top-up wave sau.
+
 Khoá scope `/document` đòi dòng `Chốt bởi user: <ISO>` khi có target
 web/mobile. Chưa chốt = chưa mở cổng wave.
 

@@ -9,7 +9,8 @@ description: DOCUMENT — interview|intake → doc set (PRD/PERSONAS/FEAT/ARCHIT
 > Top-up xử xong item backlog nào (thêm AC · dựng mockup · sửa mockup) → cột **Xử** ghi `đã top-up → <FEAT-x AC-y | màn.html>` — gate BUILD (`pending_topup`) đọc dấu này, thiếu = coi như chưa top-up.
 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: DOCUMENT` (nếu đang ở phase khác = back-edge top-up).
-`gate.py` + `guard_ask` đọc dòng này — không sửa thì máy tưởng còn phase cũ.
+**Top-up wave sau**: bỏ tick luôn `Scope khoá` + `PRE-LOCK AUDIT PASS` ở §Gate DOCUMENT — scope mở lại cho phần bù; còn tick thì `guard_ask` chặn hỏi Authority. Lời chốt cuối top-up tick lại (Bước cuối).
+`gate.py` + `guard_ask` + `trace_docsync` đọc các dòng này — không sửa thì máy tưởng còn phase cũ.
 
 > **Lấy template**: mọi doc dựng từ mẫu ở **`templates/`** (bảng template ↔ path đích: `templates/README.md`).
 > Mỗi Bước dưới: copy template tương ứng → path đích → **xoá comment `<!-- -->` guidance** → điền hết `{{...}}`.
@@ -17,7 +18,8 @@ description: DOCUMENT — interview|intake → doc set (PRD/PERSONAS/FEAT/ARCHIT
 
 > **SỬA/BỔ SUNG doc = CASCADE qua đồ thị phụ thuộc, KHÔNG point-edit.** Khi Authority đọc lại phát hiện thiếu (vd "quản lý thêm thông tin X") → **không chỉ sửa doc được nhắc tên**, phải lần hết doc liên đới:
 > - Thêm **field/thông tin** → `feat/FEAT-*` (AC + ràng buộc nghiệp vụ) · `arch/{name}.md` (**data model** + **§3 API** request/response) · `ux/mockup` (ô nhập/hiển thị) (+ `CAPABILITIES-MAP` nếu năng lực mới).
-> - Thêm **luồng/AC** → FEAT · `arch` (API + events + luồng) · `ux` (màn) (+ `ROADMAP` nếu đổi scope).
+> - Thêm **luồng/AC** → bảng luồng (Authority **ký lại**) + màn nháp · FEAT · `arch` (API + events + luồng) · `ux` (màn) (+ `ROADMAP` nếu đổi scope).
+> - Sửa **từ màn hình** (Authority xem mockup): **chức năng** (thêm cột/lọc/nút/màn con, đổi bước) → đi **đúng thứ tự vai**: màn nháp (BA; đổi luồng thì sửa bảng luồng + ký lại) → AC/ràng buộc (BA) → `arch §3` API + data model (SA) → mockup + `data-api` (UX) — KHÔNG sửa mockup trước rồi thôi. **Hình thức** (chữ/màu/khoảng cách) → chỉ sửa token `DESIGN-SYSTEM §2`. Ghi vào `SCREEN-MAP §Chốt`.
 > Sau MỖI amendment: **re-run trace 6 chiều** (`technical-design §Trọn vẹn`) + chiều **UI↔AC**. Còn **tham chiếu treo** — phần tử ở doc này mà doc liên đới KHÔNG có phần tương ứng cấp cho nó (vd: field trong AC nhưng **data model thiếu cột** · AC cần API nhưng **arch §3 thiếu endpoint** · màn mockup nhưng **không FEAT/AC nào đứng sau**) — = **chưa xong**. Authority chỉ nói cái họ THẤY thiếu — **agent tự truy các doc liên đới**, không để họ dò lỗ hộ. *(Hook `trace_docsync` nhắc mỗi lần Edit spec doc ở DOCUMENT.)*
 
 ## Phân vai — mỗi mục tài liệu ĐÚNG MỘT vai viết

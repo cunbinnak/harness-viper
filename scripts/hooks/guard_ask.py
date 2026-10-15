@@ -38,10 +38,14 @@ def main() -> int:
         return 0  # fail-open: lỗi hạ tầng / không có STATE thì không chặn cứng
 
     # Ô "Scope khoá" tick = kết thúc DOCUMENT → chặn dù dòng phase còn ghi gì (bắt lỗi quên đổi phase).
-    if re.search(r"- \[[xX]\]\s*\*\*Scope khoá\*\*", text):
+    if re.search(r"- \[[xX]\]\s*\*\*Scope khoá", text):
+        on_doc = re.search(r"Phase hiện tại\s*:\s*DOCUMENT", text, re.I)
         sys.stderr.write(
             "[guard_ask] Scope ĐÃ KHOÁ (STATE §Gate) — không hỏi Authority qua AskUserQuestion nữa.\n"
-            "Vừa rời DOCUMENT? Cập nhật `Phase hiện tại` cho đúng.\n" + REMINDER)
+            + ("Phase đang DOCUMENT mà ô Scope khoá còn tick → nếu đây là `/document` TOP-UP wave sau: làm 'Việc ĐẦU TIÊN'\n"
+               "của document.md — bỏ tick `Scope khoá` + `PRE-LOCK AUDIT PASS` (scope mở lại cho top-up) rồi mới hỏi.\n"
+               if on_doc else "Vừa rời DOCUMENT? Cập nhật `Phase hiện tại` cho đúng.\n")
+            + REMINDER)
         return 2
 
     m = re.search(r"Phase hiện tại\s*:\s*([A-Za-z-]+)", text)
