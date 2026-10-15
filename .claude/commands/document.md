@@ -16,7 +16,7 @@ description: DOCUMENT — interview|intake → doc set (PRD/PERSONAS/FEAT/ARCHIT
 > `docs/` + `knowledge-base/` chỉ chứa file THẬT (gate không quét `templates/`).
 
 > **SỬA/BỔ SUNG doc = CASCADE qua đồ thị phụ thuộc, KHÔNG point-edit.** Khi Authority đọc lại phát hiện thiếu (vd "quản lý thêm thông tin X") → **không chỉ sửa doc được nhắc tên**, phải lần hết doc liên đới:
-> - Thêm **field/thông tin** → `feat/FEAT-*` (AC + field kỹ thuật) · `arch/{name}.md` (**data model** + **§3 API** request/response) · `ux/mockup` (ô nhập/hiển thị) (+ `CAPABILITIES-MAP` nếu năng lực mới).
+> - Thêm **field/thông tin** → `feat/FEAT-*` (AC + ràng buộc nghiệp vụ) · `arch/{name}.md` (**data model** + **§3 API** request/response) · `ux/mockup` (ô nhập/hiển thị) (+ `CAPABILITIES-MAP` nếu năng lực mới).
 > - Thêm **luồng/AC** → FEAT · `arch` (API + events + luồng) · `ux` (màn) (+ `ROADMAP` nếu đổi scope).
 > Sau MỖI amendment: **re-run trace 6 chiều** (`technical-design §Trọn vẹn`) + chiều **UI↔AC**. Còn **tham chiếu treo** — phần tử ở doc này mà doc liên đới KHÔNG có phần tương ứng cấp cho nó (vd: field trong AC nhưng **data model thiếu cột** · AC cần API nhưng **arch §3 thiếu endpoint** · màn mockup nhưng **không FEAT/AC nào đứng sau**) — = **chưa xong**. Authority chỉ nói cái họ THẤY thiếu — **agent tự truy các doc liên đới**, không để họ dò lỗ hộ. *(Hook `trace_docsync` nhắc mỗi lần Edit spec doc ở DOCUMENT.)*
 
@@ -47,14 +47,18 @@ Persona + năng lực được cấp + **ma trận vai × hành động** — m�
 ## Bước 4 — CAPABILITIES-MAP (`docs/CAPABILITIES-MAP.md`)  → **Nạp `Skill("capability-mapping")` trước**
 `capability → outcome → FEAT`. **Mọi FEAT truy về ≥1 capability**; capability TRƯỚC feature. Cột `Wave giao` để trống (điền ở Bước 9).
 
-## Bước 5 — FEAT (`docs/feat/FEAT-*.md`)  → **Nạp `Skill("domain-po")` trước · viết xong → nạp `Skill("business-analysis")` rà — trong đó actor mỗi AC đối chiếu cột Ai LÀM của bảng luồng (domain-ba A), lệch = sai không phải nitpick**
-Mỗi capability → ≥1 FEAT. Mỗi FEAT: **AC dạng BDD** (Given/When/Then) **gồm ca biên** (rỗng/đầy/lỗi/quyền) + **field kỹ thuật** (`enforcement` rule · `consumes_contracts` = target nào cấp API/event). Mỗi FEAT truy về ≥1 capability + ≥1 persona.
+## Bước 5 — FEAT (`docs/feat/FEAT-*.md`) — 3 nhịp, mỗi nhịp một vai
+1. **PO** → **Nạp `Skill("domain-po")`**: cắt mỗi capability thành ≥1 FEAT, tạo **khung** (capability · has_ui · §1 Mục tiêu · §Ngoài phạm vi · §References dòng bảng luồng phủ).
+2. **BA** → **Nạp `Skill("domain-ba")` phần D**: điền **§2 AC dạng BDD** (Given/When/Then) **gồm ca biên** (taxonomy đủ trục, `n/a` tường minh) + **§3 Ràng buộc nghiệp vụ** (điều không được xảy ra). Actor AC = cột Ai LÀM của bảng luồng.
+3. **BA tự rà** → checklist **`Skill("business-analysis")`**: actor mỗi AC ↔ cột Ai LÀM, lệch = sai không phải nitpick. Con mắt độc lập là `pre-mortem` ở PRE-LOCK.
+
+FEAT **không** chứa chặn ở đâu / contract / tên class-bảng-công nghệ — SA ghi ở Bước 6 (`arch §6` cột AC/BR · `consumes` ở frontmatter `arch`). Mỗi FEAT truy về ≥1 capability + ≥1 persona.
 
 ## Bước 6 — Architecture (`docs/arch/`)  → **Nạp 3 skill THEO THỨ TỰ: `Skill("event-storming")` → `Skill("boundary-charter")` → `Skill("technical-design")`** (nạp từng cái đúng lúc dùng)
 - Thứ tự + phân đất: `event-storming` ghi **OVERVIEW §4** (events/aggregates/hot-spots per domain) → `boundary-charter` đọc §4, ghi **OVERVIEW §1** (bản đồ target) + **khởi tạo** `arch/{name}.md` §Mission (target = boundary, cùng tên file) → `technical-design` điền **chi tiết** `arch/{name}.md`.
 - **Rời bước 6 CHỈ KHI trace 6 chiều PASS** (`technical-design §Trọn vẹn`, trừ vế màn↔API — rà ở Bước 8) — **tự rà, KHÔNG để Authority phát hiện lỗ hộ**.
 - `docs/arch/OVERVIEW.md`: topology — có target nào, ai gọi ai, ranh giới hệ.
-- `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ nằm ở đây; FEAT chỉ khai `consumes_contracts`.
+- `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ + chặn ở đâu (§6, cột AC/BR trỏ FEAT §3) + `consumes` (target gọi API của ai) nằm ở đây — FEAT không chứa.
 
 ## Bước 7 — TECHSTACK (`docs/TECHSTACK.md`)
 **Chỗ DUY NHẤT chốt tech** (Bước 6 chỉ đề xuất, không tự chốt). Lựa chọn Author sẽ thấy / phải vận hành / tốn tiền (stack · UI kit · đăng nhập & phiên · lưu file · cache · email/SMS · build tool · deploy) mà Author CHƯA nói → **hỏi bằng `AskUserQuestion`**, mỗi câu 2-3 option + đánh đổi 1 dòng + mặc định đề xuất. Author đã nói / intake đã khai → giữ nguyên, không hỏi lại. Chi tiết thuần nội bộ → tự quyết, `DECISIONS` loại `kỹ-thuật`. Kết quả → `docs/TECHSTACK.md` + ADR.
@@ -64,7 +68,7 @@ Mỗi capability → ≥1 FEAT. Mỗi FEAT: **AC dạng BDD** (Given/When/Then) 
 ## Bước 7b — Quy ước chung  *(đã có sẵn — framework default, KHÔNG author lại)*
 `docs/CONVENTIONS.md` + `docs/SECURITY.md` là **doc framework cố định**. Chỉ **rà + chỉnh §API error-envelope/header/versioning**
 nếu project khác default → sửa thẳng file + ghi `DECISIONS.md`.
-- Contract **CỤ THỂ** từng target (endpoints) → `arch/<name>.md §3 API`; FE khai `consumes_contracts` trong FEAT;
+- Contract **CỤ THỂ** từng target (endpoints) → `arch/<name>.md §3 API`; target consumer khai `consumes` ở frontmatter `arch/<name>.md`;
   đồng bộ bằng **contract-test** (VERIFY) + **BACKWARD-COMPAT** (SHIP). (Skill `stack-*` lo idiom CODE.)
 
 ## Bước 8 — Design system + UX  → **Nạp `Skill("ux-design")` trước** (nếu có UI; backend-only → ghi marker `KHÔNG CÓ UI`, bỏ qua bước này)

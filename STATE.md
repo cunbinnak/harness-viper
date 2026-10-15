@@ -34,7 +34,7 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 - [ ] `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`: bảng luồng + màn nháp mọi nghiệp vụ, Authority ký, không ô `CHƯA HỎI` (domain-ba A)
 - [ ] `docs/PERSONAS.md`: persona + ma trận vai×hành động (không ô trống) — sinh từ bảng luồng
 - [ ] `docs/CAPABILITIES-MAP.md`: capability→outcome→FEAT; mọi FEAT truy về 1 capability
-- [ ] `docs/feat/FEAT-*.md`: mỗi FEAT có AC (BDD, **gồm ca biên**) + field kỹ thuật (enforcement/consumes) điền
+- [ ] `docs/feat/FEAT-*.md`: mỗi FEAT có khung PO (§1 · §Ngoài phạm vi) + AC (BDD, **gồm ca biên**) + §3 Ràng buộc nghiệp vụ điền; mỗi dòng §3 có dòng `arch §6` chặn nó
 - [ ] `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md`: frontmatter **`kind`/`stack`/`consumes`** + data model + luồng + API + §ranh-giới (**per target**)
 - [ ] `docs/TECHSTACK.md` chốt qua lượt hỏi Author (Bước 7) — không lựa chọn nào Author quan tâm bị tự quyết
 - [ ] `docs/CONVENTIONS.md` + `docs/SECURITY.md` (**framework có sẵn**) — rà; chỉnh §API error-envelope/header nếu project khác default

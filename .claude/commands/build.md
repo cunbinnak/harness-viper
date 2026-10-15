@@ -18,7 +18,7 @@ description: "BUILD — MAIN tự code 1 wave: đọc KG/context → challenge �
 ## Bước 1 — Nạp context (CHỈ slice của wave — targeted, chống lost-in-middle)
 Đọc **đúng phần của wave**, KHÔNG đọc cả `docs/`. File vừa Read còn **tươi trong context** (chưa qua compact) → **KHÔNG Read lại** — chỉ nạp phần thiếu/đã cũ:
 - `docs/ROADMAP.md` wave-N: **target** (kind: backend/web/bff/mobile) + **AC in-scope** + phases khai
-- `docs/feat/FEAT-*` của các AC in-scope (AC + ca biên + field kỹ thuật)
+- `docs/feat/FEAT-*` của các AC in-scope (AC + ca biên + §3 Ràng buộc nghiệp vụ) — chặn ở đâu đọc ở `arch §6`
 - `docs/arch/{name}.md` của **mỗi target wave khai** — **đọc frontmatter lấy `kind`** (backend/web/bff/mobile) + `stack` + data/API/ranh giới (KHÔNG đọc target **ngoài wave**). `kind` quyết định scaffold ở đâu · skeleton kiểu gì · chạy thật ra sao. **Wave nhiều target → phủ HẾT, đọc/làm TỪNG target một** theo chiều phụ thuộc (Bước 4), không chỉ 1 cái.
 - **`docs/adr/*` liên quan target** — quyết định kiến trúc đã chốt (ui-kit nào · Layered vs Hexagonal · auth · caching...). Scaffold Bước 3 **phải theo ADR** — ADR thắng default của skill.
 - **`knowledge-base/{name}.md`** nếu có → đọc hết §Invariants/§Gotchas/§Failure-modes/§Key-decisions
@@ -66,7 +66,7 @@ Bản mỏng nhất **CHẠY được**, theo `kind`:
 
 → `git commit`. Chưa thông đường mỏng này thì **KHÔNG** làm gì khác — đừng đắp UI đẹp lên đường chưa thông.
 **Wave nhiều target — THỨ TỰ theo chiều phụ thuộc, KHÔNG song song:** **provider TRƯỚC, consumer SAU.**
-Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được** (health 200 + gọi được) TRƯỚC → rồi web/bff/mobile mới build **gọi API thật đó** (FE consume `consumes_contracts`). Skeleton = **1 đường xuyên suốt qua cụm ĐÚNG chiều phụ thuộc** (backend luồng nghiệp vụ → frontend luồng nghiệp vụ), nhánh còn lại nối sau.
+Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được** (health 200 + gọi được) TRƯỚC → rồi web/bff/mobile mới build **gọi API thật đó** (FE gọi theo `consumes` ở frontmatter `arch` của nó). Skeleton = **1 đường xuyên suốt qua cụm ĐÚNG chiều phụ thuộc** (backend luồng nghiệp vụ → frontend luồng nghiệp vụ), nhánh còn lại nối sau.
 **CẤM code BE và FE "song song mỗi cái một nửa"** · **CẤM mock API để FE chạy trước** khi backend chưa có endpoint thật — FE dựng trên contract chưa chạy = đường CHƯA THÔNG, đắp thịt lên đó là retro. Provider chưa thông thì consumer chưa được bắt đầu.
 
 ## Bước 5 — Luồng nghiệp vụ (mỗi AC in-scope)

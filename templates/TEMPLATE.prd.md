@@ -36,7 +36,7 @@
 ## §5 Success metric
 - {{vd: 80% order hoàn tất < 3 phút}}
 
-<!-- §6: từ điển thuật ngữ nghiệp vụ + nguồn tham chiếu (intake / phỏng vấn / tài liệu). -->
+<!-- §6 (PO — discovery-hypothesis; BA cần thêm nguồn thì trích ở cột Bằng chứng của bảng luồng, KHÔNG ghi vào đây): từ điển thuật ngữ nghiệp vụ + nguồn tham chiếu (intake / phỏng vấn / tài liệu). -->
 ## §6 Glossary + Nguồn
 
 **Glossary:**
@@ -52,7 +52,7 @@
 Luồng chuẩn ngành (bản đồ sản phẩm cùng loại): {{mọi HRM đều có: …}}
 Khác: {{intake/brief.md · phỏng vấn Authority 2026-…}}
 
-<!-- §7: bộ dữ liệu mẫu — MỘT nguồn nuôi 4 chỗ: mockup (Bước 8) · seed deployment/local/ · dogfood · test-cases.
+<!-- §7 (PO — thu ở discovery): bộ dữ liệu mẫu — MỘT nguồn nuôi 4 chỗ: mockup (Bước 8) · seed deployment/local/ · dogfood · test-cases.
      Ưu tiên dữ liệu THẬT Authority đang có; không có → MAIN research domain + tự chuẩn bị bộ realistic
      (đúng thuật ngữ + giá trị thật ngoài đời — như QA chuẩn bị test-data), Authority gật ở playback.
      Vài bản ghi per entity chính là đủ — đủ dựng mockup không bịa + seed chạy dogfood. -->

@@ -16,7 +16,7 @@ Bạn là **luật sư của quỷ cho SPEC** — đọc tài liệu Author vừ
 > KHÔNG có Skill tool — `Read` trực tiếp. Cuối báo cáo liệt kê `Đã nạp:`.
 `docs/PRD.md` · `docs/PERSONAS.md §2` (ma trận vai) · `docs/CAPABILITIES-MAP.md` · `docs/feat/FEAT-*` (AC + ca biên) · `docs/arch/*` (data model + §3 API + luồng + events) · `docs/ux/SCREEN-MAP.md` + mockup · `docs/DECISIONS.md` (giả định đã ghi — đừng báo lại cái đã quyết) · `docs/INTERVIEW.md` (ý Author) · `.claude/skills/domain-po/SKILL.md` (**TAXONOMY ca biên** — danh sách săn).
 
-## Cách săn 1 — quét TỪNG FEAT/luồng qua TAXONOMY (domain-po)
+## Cách săn 1 — quét TỪNG FEAT/luồng qua TAXONOMY (domain-ba D)
 Với mỗi FEAT + mỗi luồng, hỏi từng trục — **trục nào FEAT CHẠM mà KHÔNG có AC (và không ghi `n/a`/DECISIONS) = nghi vấn**:
 - **Kỹ thuật**: **rỗng/đầy/biên** · **lỗi/timeout** · **quyền/tenant** · **đồng thời** (2 người/gửi 2 lần/race) · **thời gian/kỳ** (hết hạn/ranh giới kỳ/timezone) · **tiền/số** (làm tròn/âm) · **idempotency** (retry/lặp) · **partial-failure** (ghi DB xong nhưng event/email fail) · **thứ tự** sự kiện.
 - **Nghiệp vụ**: **vòng đời TRỌN VẸN của đối tượng** (khai sinh → sửa → hủy → lưu trữ — doc thường chỉ tả đoạn giữa; ai tạo cái đầu tiên? cái cuối đi đâu?) · **chu kỳ/định kỳ** (chốt ca/chốt tháng/kiểm kê/gia hạn — thứ chỉ xảy ra theo kỳ nên Author quên) · **luồng NGƯỢC** (hoàn tiền/hủy đơn đã xử lý/sửa bản ghi đã duyệt — mọi hành động tiến có đường lùi chưa, và lùi thì dữ liệu liên đới ra sao?) · **việc giấy-tờ-tay phần mềm phải thay** (INTERVIEW tả họ đang làm gì bằng sổ/Excel/Zalo — phần mềm có thay HẾT chưa hay còn khúc phải chạy ngoài?).

@@ -1,56 +1,43 @@
 ---
 name: domain-po
-description: "Viết yêu cầu cho /document Bước 5 — FEAT (AC BDD + ca biên + field kỹ thuật) THẲNG vào docs/feat/, TỪ phân tích BA đã ký (bảng luồng + ma trận). Actor AC = cột Ai LÀM. Chỗ chưa rõ theo 3 tầng PROTOCOL §2.3."
+description: "Vai PO — /document Bước 5 nhịp 1: cắt sản phẩm thành FEAT theo capability, tạo KHUNG FEAT (capability · has_ui · §1 Mục tiêu · §Ngoài phạm vi). KHÔNG viết AC/ca biên/ràng buộc (BA — domain-ba D), KHÔNG ghi chặn ở đâu hay contract (SA — technical-design)."
 ---
 
-# Product-Owner Method (viết FEAT)
+# Product-Owner Method (cắt FEAT)
+
+> **Vai: PO** · **Viết**: danh sách FEAT · frontmatter `capability` / `has_ui` / `status` · FEAT §1 Mục tiêu · §Ngoài phạm vi · §References (dòng bảng luồng FEAT phủ)
+> **KHÔNG viết**: §2 AC + §3 Ràng buộc nghiệp vụ (BA — `domain-ba` D) · chặn ở đâu, contract, `consumes` (SA — `technical-design`, `arch/{name}.md`)
 
 ## Khi dùng
-Bước 5 (viết FEAT) của `/document` — **viết yêu cầu TỪ phân tích BA đã ký** (bảng luồng + use case ở `domain-ba` A, ma trận PERSONAS §2). Không phải chỗ quyết *ai làm gì* — cái đó BA đã chốt với Authority ở Bước 3; đây là chỗ biến nó thành AC kiểm được. Chia sản phẩm nhỏ theo capability, viết **THẲNG** vào **`docs/feat/`** theo `templates/TEMPLATE.feat.md` — AC BDD + field kỹ thuật chung một file. Fork 1 lớp doc: **KHÔNG** viết business VN rồi dịch, **KHÔNG** stage business riêng.
+Bước 5 **nhịp 1** của `/document`, sau CAPABILITIES-MAP (Bước 4). PO cắt từng capability thành FEAT đủ nhỏ để giao và nghiệm thu, rồi để **khung** cho BA viết AC ở nhịp 2 (`domain-ba` D). PO trả lời *cái gì và vì sao*; *ai làm bước nào* BA đã chốt ở Bước 3, *làm thế nào* là việc SA ở Bước 6.
 
 ## Output
 | Đối tượng | Output |
 |---|---|
-| Feature (duy nhất) | `docs/feat/FEAT-<slug>.md` — AC BDD + ca biên + §3 field kỹ thuật (enforcement, consumes_contracts) — theo `templates/TEMPLATE.feat.md` |
-
-Neo về nền dự án: `docs/PRD.md`, `docs/PERSONAS.md`, `docs/CAPABILITIES-MAP.md`.
+| Khung FEAT | `docs/feat/FEAT-<slug>.md` theo `templates/TEMPLATE.feat.md` — điền frontmatter + §1 + §Ngoài phạm vi + §References; §2/§3 để BA điền |
 
 ## Boot sequence (targeted — đừng đọc sweeping)
 1. `STATE.md` + `PROTOCOL.md`.
-2. Nền dự án: `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận` (bảng luồng + màn nháp — nguồn actor) · `docs/PRD.md` · `docs/PERSONAS.md` · `docs/CAPABILITIES-MAP.md`.
+2. `docs/CAPABILITIES-MAP.md` (capability → outcome) · `docs/PRD.md` §1 vấn đề · §4 out-of-scope · §5 metric · `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận` (bảng luồng + màn nháp — để biết FEAT phủ dòng nào) · `docs/PERSONAS.md`.
 3. Nếu có intake: `intake/*` (marker `NGUỒN: INTAKE` trong `docs/INTERVIEW.md`).
-4. FEAT liên quan đã có trong `docs/feat/` (tránh trùng ID).
+4. FEAT đã có trong `docs/feat/` (tránh trùng ID).
 
-## Cách viết
-- **FEATURE**: frontmatter `capability: CAP-<id>` (truy về CAPABILITIES-MAP — mọi FEAT phải có) + `has_ui`. **≥4 AC BDD (Cho/Khi/Thì)** phủ happy + validation + error + a11y. **§3 field kỹ thuật**: `enforcement_location` (server/DB — UI disable KHÔNG tính) + `consumes_contracts` trỏ `docs/arch/{name}.md` contract thật. Business-rule gắn feature → ghi ở §3 (enforcement) hoặc ref `docs/adr/` (rule nền — domain-ba viết). §Ngoài phạm vi.
-
-## Cách viết AC BDD tốt (giá trị — giữ nguyên)
-- **Cho/Khi/Thì (Given/When/Then)** — mỗi AC 1 hành vi kiểm được, có kết quả quan sát được (không "hệ thống hoạt động đúng").
-- **Actor của AC = cột Ai LÀM trong bảng luồng đã ký** (`INTERVIEW §Luồng nghiệp vụ đã xác nhận`) — CẤM lấy từ cột Ai NHỜ/duyệt, CẤM suy từ "ai có nhu cầu". AC cần actor mà bảng không có dòng → quay `domain-ba` A hỏi Authority (còn DOCUMENT), không tự gán rồi ghi DECISIONS.
-- Phủ **4 loại nền tối thiểu**: happy path · validation (input sai) · error/failure · a11y (bàn phím/screen-reader/tương phản khi là UI).
-- **TAXONOMY CA BIÊN — quét MỖI FEAT qua TỪNG trục.** Trục nào FEAT chạm → **phải có AC**; không chạm → ghi `n/a`, **KHÔNG bỏ trắng** (bỏ trắng = điểm mù Author lọt thẳng tới code — đây là chỗ Author hay miss nhất):
-  - **rỗng/đầy/biên**: 0 bản ghi · đúng 1 · rất nhiều (phân trang) · min/max/tràn độ dài
-  - **lỗi/timeout**: input sai · downstream chết/chậm · validate fail → hiện thông báo gì
-  - **quyền/tenant**: vai bị `cấm` (ma trận) · chạm dữ liệu tenant khác · thu hồi quyền giữa chừng
-  - **đồng thời**: gửi 2 lần · 2 người sửa 1 bản ghi · race tạo trùng
-  - **thời gian/kỳ**: hết hạn giữa chừng · ranh giới kỳ (cuối tháng/năm/ca) · timezone · job chạy nền
-  - **tiền/số**: làm tròn · số âm · đơn vị · cộng dồn lệch
-  - **idempotency**: retry · webhook/callback lặp · job chạy 2 lần
-  - **partial-failure**: ghi DB xong nhưng event/cache/email fail → bù/hoàn thế nào
-  - **thứ tự**: sự kiện tới lệch thứ tự · phụ thuộc bước trước chưa xong
-  > Danh sách này còn là **danh sách săn** cho `pre-mortem` audit (cuối DOCUMENT). FEAT chạm trạng thái mà AC không nói tới trục nào = để hở cho lúc code đoán.
-- **LƯỚI LUỒNG — cạnh-có-chủ + seam** (chống miss luồng; cùng idiom n/a-tường-minh với taxonomy):
-  - **Cạnh-có-chủ**: FEAT đụng entity có trạng thái → mọi **cạnh chuyển trạng thái** (vòng đời trong bảng luồng; `arch §1` state machine chốt sau ở Bước 6, kể cả cạnh ngoài-hạnh-phúc: chưa-kích-hoạt · bị-khoá · thu hồi · rời đi) phải có AC phủ **hoặc** 1 dòng `n/a`/out-of-scope. Cạnh không chủ = luồng miss.
-  - **Seam**: FEAT nối FEAT khác (consumes / dữ liệu chảy qua) → trả lời được *"output của FEAT này đến tay ACTOR của FEAT kia bằng CƠ CHẾ gì?"* (email · SMS · notification · in giấy · admin đưa tay). Cơ chế chưa được viết ở đâu = luồng thiếu — viết luôn thành AC, không để "hiển nhiên".
-- Field kỹ thuật ĐI CÙNG AC trong cùng file (fork 1 lớp): AC business + `consumes_contracts`/ranh giới ngồi chung — không tách business rồi dịch.
+## Cách cắt
+- **Mỗi capability → ≥1 FEAT.** 1 FEAT = một kết quả người dùng nhận được trọn vẹn (lát dọc qua mọi tầng), KHÔNG cắt theo module hay tầng kỹ thuật.
+- **Phủ bảng luồng**: mỗi FEAT ghi ở §References các dòng bảng luồng nó phủ. Dòng bảng có thao tác trên hệ thống mà không FEAT nào phủ = thiếu FEAT.
+- **Cỡ**: FEAT gồm nhiều luồng con độc lập → tách; đủ nhỏ để `implementation-plan` xếp ~3-4 FEAT/wave.
+- **§1 Mục tiêu**: một đoạn góc nhìn người dùng — FEAT xong thì ai làm được gì mà trước đây chưa làm được.
+- **§Ngoài phạm vi**: điều FEAT này KHÔNG làm — BA không viết AC ra ngoài ranh này, QC biết không test gì.
+- **`has_ui`**: `true` khi FEAT có thao tác hoặc vùng dữ liệu trên màn (đối chiếu màn nháp của BA).
+- `status: DRAFT` (Authority ký → `APPROVED` ở bước cuối `/document`).
+- Không ghi tên class / bảng / công nghệ ở bất cứ mục nào — đó là việc SA.
 
 ## Chỗ chưa rõ
 Không hỏi lại điều Authority đã trả lời (INTERVIEW · bảng luồng đã ký). Chỗ còn thiếu → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → làm · chuẩn ngành → research, ghi `[C]` + link · chỉ Author biết → hỏi.
 
 ## Quy tắc
 - ID `FEAT-<slug>`. Cross-ref bằng ID canonical đầy đủ (không rút gọn).
-- Field kỹ thuật viết chung file FEAT (fork 1 lớp — KHÔNG có `docs/domain/`, KHÔNG có bước translate).
 - Sửa FEAT đã chốt (đã khoá scope) = **wave sau**: `ROADMAP §backlog` → `/next-wave` → `/document` top-up.
 
 ## Done
-- FEAT đúng cấu trúc + ≥4 AC BDD (happy/validation/error/a11y) + **taxonomy ca biên quét đủ trục (mỗi trục có AC hoặc `n/a`, không bỏ trắng)** + §3 field kỹ thuật + mọi chỗ tự quyết có dòng `DECISIONS.md` → rà bằng lens `business-analysis` (AC testable? BR logical? scope rõ?) → tiếp Bước 6 (`event-storming` → `boundary-charter` → `technical-design`).
+- Mọi capability có ≥1 FEAT · mọi dòng bảng luồng có thao tác hệ thống được ≥1 FEAT phủ · mỗi FEAT đủ frontmatter + §1 + §Ngoài phạm vi + §References → **nhịp 2**: `domain-ba` D viết §2 AC + §3 Ràng buộc nghiệp vụ vào khung.

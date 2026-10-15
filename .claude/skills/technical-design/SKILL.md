@@ -7,7 +7,7 @@ description: Phương pháp Architecture cho /document Bước 6 (sau event-stor
 
 ## Khi dùng
 Bước 6 ARCHITECTURE của `/document` — vai **solution architect**, chạy **CUỐI Bước 6** (sau `event-storming` ghi OVERVIEW §4 + `boundary-charter` ghi OVERVIEW §1 và khởi tạo `arch/{name}.md §0 Mission`).
-Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) + `docs/CAPABILITIES-MAP.md` + `docs/arch/OVERVIEW.md` (§1 boundary map + §4 event-storming — 2 bước trước để lại).
+Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `docs/CAPABILITIES-MAP.md` + `docs/arch/OVERVIEW.md` (§1 boundary map + §4 event-storming — 2 bước trước để lại).
 
 > Đây là **DESIGN docs**, không scaffold code. Scaffold code (`services/{name}/`) xảy ra ở `/build`, KHÔNG ở đây.
 
@@ -22,7 +22,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) +
    - **§1 Data-model** (backend) — ownership · entities + **mục đích từng bảng** · schema (**no FK** — liên kết qua id, app-layer) · state machine (entity có status) · migration approach.
    - **§5 Events** (nếu phát/nhận) — event (topic, payload schema, consumers, idempotency key).
    - **§4 Ranh giới liên target** (cùng §4) — được gọi qua đường nào, **KHÔNG được** làm gì, vì sao (quyết định riêng của hệ này — không khai thì lúc code đi đường tiện nhất).
-   - **§6 Ca biên (bảng TRA)** — xem mục dưới.
+   - **§6 Ca biên (bảng TRA)** — xem mục dưới. **Mọi dòng FEAT §3 Ràng buộc nghiệp vụ in-scope** (BA viết *chặn gì*) → ≥1 dòng §6 có cột AC/BR trỏ về nó + `Enforce ở đâu` (SA quyết *chặn ở đâu*). Dòng FEAT §3 không có dòng §6 = ràng buộc chưa ai chặn.
 5. **Integrations** — cross-target (sync HTTP / async event) + external, ghi trong `docs/arch/OVERVIEW.md §Integrations` hoặc `docs/arch/{name}.md §consumes` — **≥ 1**.
 6. **`deployment/local/docker-compose.yml`** skeleton local dev (service + DB/cache/broker cho target trong scope).
 
@@ -54,7 +54,7 @@ Thiết kế xong PHẢI **tự trace 6 chiều** trước khi trình — Author
 2. **API → AC**: chiều ngược — endpoint không phục vụ AC nào = thừa (YAGNI, cắt) hoặc AC bị sót chưa viết.
 3. **Endpoint đủ ruột**: mỗi dòng §3 đủ method/path + request/response + error codes (ref catalog) + status + authz (vai nào gọi được — đối chiếu ma trận PERSONAS §2) + pagination nếu list. Ô nào trống = contract chưa xong, consumer sẽ đoán.
    - **API tìm kiếm/danh sách**: **≥ 3 tiêu chí lọc**, hoặc có lọc mảng/khoảng (`statuses[]`, `fromDate–toDate`) → `POST /{resources}/search`, body `{Resource}SearchRequest` (tiêu chí + `page`/`size`/`sort`), trả trang — chỉ đọc, không đổi state. Ít hơn (≤ 2 lọc bằng-giá-trị) → `GET /{resources}?…&page&size&sort`. Ghi rõ method ở §3 — BUILD làm theo contract, chọn sai ở đây là sửa wave sau.
-4. **Consumer ↔ provider**: mọi `consumes_contracts` trong FEAT/frontmatter FE → có endpoint THẬT ở arch BE §3 (tên khớp). Trỏ hụt = FE lúc code sẽ bịa endpoint. (Vế màn ↔ API rà ở `ux-design` khi dựng SCREEN-MAP — Bước 8, và ở PRE-LOCK.)
+4. **Consumer ↔ provider**: SA khai `consumes` ở frontmatter `arch` của MỌI target consumer (web/bff/mobile — FEAT không khai) → mỗi mục có endpoint THẬT ở arch BE §3 (tên khớp). Trỏ hụt = FE lúc code sẽ bịa endpoint. (Vế màn ↔ API rà ở `ux-design` khi dựng SCREEN-MAP — Bước 8, và ở PRE-LOCK.)
 5. **Luồng E2E không đứt**: luồng chính (OVERVIEW) đi xuyên target — mỗi bước chuyển target có contract (REST/event) nêu tên; kèm nhánh lỗi ở điểm gãy (downstream chết thì bước đó trả gì).
 6. **Lifecycle & seam (soi cái VẮNG MẶT — 5 chiều trên chỉ soi cái đã viết)**: mọi **cạnh chuyển trạng thái** của entity chính (state machine §1, kể cả cạnh ngoài-hạnh-phúc) có AC/luồng chủ hoặc `n/a` tường minh · mọi **seam FEAT→FEAT** có CƠ CHẾ truyền được viết (output đến tay actor bên kia bằng gì) · đối chiếu **6 họ luồng phổ quát** (`pre-mortem` Cách săn 3) + **danh sách luồng chuẩn ngành** (PRD §6) — mỗi dòng map hoặc out-of-scope, không bỏ trắng.
 

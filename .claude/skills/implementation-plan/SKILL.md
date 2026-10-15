@@ -7,7 +7,7 @@ description: Phương pháp chia wave cho /document — plan toàn dự án vào
 
 ## Khi dùng
 Bước chia wave của `/document` — vai **program planner**. Sau khi FEAT (`docs/feat/`) + architecture (`docs/arch/`) đủ.
-Input: `docs/PRD.md` + `docs/feat/*` (AC + business-rule + field kỹ thuật) + `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md` (kind/stack/consumes) + `docs/CAPABILITIES-MAP.md` (persona × capability → wave giao).
+Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md` (kind/stack/consumes) + `docs/CAPABILITIES-MAP.md` (persona × capability → wave giao).
 
 ## Wave = sprint — dự án chia thành NHIỀU wave
 - **1 wave = 1 sprint** giao được 1 lát sản phẩm chạy end-to-end.

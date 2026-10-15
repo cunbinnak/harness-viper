@@ -39,15 +39,16 @@ provides_api: true               # có phơi API cho consumer? → §3 là HỢP
 {{phát: OrderCreated · nhận: PaymentConfirmed}}
 
 <!-- §6: bảng TRA ca biên — 8 dòng E1-E8 bắt buộc RÀ HẾT (`n/a — <lý do>` hợp lệ, Ô TRỐNG thì không).
+     Cột AC/BR trỏ dòng FEAT §3 Ràng buộc nghiệp vụ nó chặn — MỌI dòng FEAT §3 in-scope phải có ≥1 dòng ở đây (SA quyết chặn ở đâu, BA chỉ nói chặn gì).
      Cột Enforce trỏ thứ CHẶN ĐƯỢC: unique index · cột version + WHERE version=? · idempotency key · DB constraint · state machine. "Validate ở service" = chưa quyết gì. Ca biên riêng target → thêm E9+. -->
 ## §6 Ca biên (bảng TRA: Tình huống → Xử lý)
-| # | Tình huống | Xử lý | Enforce ở đâu |
-|---|---|---|---|
-| E1 | Gửi hai lần | {{…}} | {{unique index / idempotency key}} |
-| E2 | Sửa đồng thời | {{…}} | {{cột version + WHERE version=?}} |
-| E3 | Xoá (đang được dùng) | {{…}} | {{…}} |
-| E4 | Gọi sai thứ tự | {{…}} | {{state machine}} |
-| E5 | Hỏng nửa chừng | {{…}} | {{transaction / outbox}} |
-| E6 | Đọc bản cũ | {{…}} | {{…}} |
-| E7 | Rỗng | {{…}} | {{…}} |
-| E8 | Quyền thu hồi giữa chừng | {{…}} | {{…}} |
+| # | Tình huống | AC / BR | Xử lý | Enforce ở đâu |
+|---|---|---|---|---|
+| E1 | Gửi hai lần | {{FEAT-x AC-2}} | {{…}} | {{unique index / idempotency key}} |
+| E2 | Sửa đồng thời | {{FEAT-x AC-n · hoặc n/a}} | {{…}} | {{cột version + WHERE version=?}} |
+| E3 | Xoá (đang được dùng) | {{FEAT-x AC-n · hoặc n/a}} | {{…}} | {{…}} |
+| E4 | Gọi sai thứ tự | {{FEAT-x AC-n · hoặc n/a}} | {{…}} | {{state machine}} |
+| E5 | Hỏng nửa chừng | {{FEAT-x AC-n · hoặc n/a}} | {{…}} | {{transaction / outbox}} |
+| E6 | Đọc bản cũ | {{FEAT-x AC-n · hoặc n/a}} | {{…}} | {{…}} |
+| E7 | Rỗng | {{FEAT-x AC-n · hoặc n/a}} | {{…}} | {{…}} |
+| E8 | Quyền thu hồi giữa chừng | {{FEAT-x AC-n · hoặc n/a}} | {{…}} | {{…}} |

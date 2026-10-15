@@ -42,7 +42,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE        (SHIP opt-in theo
 | File | Vai |
 |---|---|
 | `PRD` · `PERSONAS`(+ma trận vai×hành động) · `CAPABILITIES-MAP` · `TECHSTACK` | nền dự án |
-| `feat/FEAT-*` | AC (BDD) + ca biên + field kỹ thuật · `arch/OVERVIEW` + `arch/{target}` (frontmatter `kind/stack/consumes` + data/API/ranh giới) |
+| `feat/FEAT-*` | khung PO (mục tiêu · phạm vi) + AC (BDD) + ca biên + ràng buộc nghiệp vụ của BA · `arch/OVERVIEW` + `arch/{target}` (frontmatter `kind/stack/consumes` + data/API/ranh giới) |
 | `DESIGN-SYSTEM` + `ux/` (SCREEN-MAP + mockups) · `ROADMAP` (wave plan + §backlog) | UX · kế hoạch |
 | `DECISIONS` · `BACKWARD-COMPAT` · `PRODUCTION-READY` · `adr/` | quyết định · hợp đồng · prod · ADR |
 | `CONVENTIONS` · `SECURITY` **(framework, cố định)** | quy ước code cross-stack + bảo mật baseline |

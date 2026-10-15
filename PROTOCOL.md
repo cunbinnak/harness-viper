@@ -102,7 +102,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 | `docs/PERSONAS.md` | persona + ma trận vai×hành động (nguồn phân quyền + TC âm) |
 | `docs/CAPABILITIES-MAP.md` | capability→outcome→FEAT (truy vết) |
 | `docs/TECHSTACK.md` | stack chốt + biến môi trường |
-| `docs/feat/FEAT-*.md` | AC (BDD, gồm ca biên hành vi + hệ thống) + field kỹ thuật CHUNG file (bỏ translate) |
+| `docs/feat/FEAT-*.md` | Khung PO (mục tiêu · phạm vi) + AC (BDD, gồm ca biên) + ràng buộc nghiệp vụ của BA — KHÔNG chứa chặn ở đâu/contract (SA ở `arch`) |
 | `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md` | **per target**: frontmatter `kind`(backend/web/bff/mobile)·`stack`·`consumes` + data model · luồng xử lý (kỹ thuật) · API · §ranh-giới (fold hld/api/data/events/integ). BUILD nạp đúng slice |
 | `docs/CONVENTIONS.md` **(framework)** | quy ước chung + §API error-envelope/header **default** (project chỉnh nếu khác) — KHÔNG author lại |
 | `docs/SECURITY.md` **(framework)** | baseline bảo mật — tick ở PRODUCTION-READY khi SHIP |
