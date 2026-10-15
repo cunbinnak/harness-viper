@@ -6,8 +6,8 @@ description: Phương pháp Architecture cho /document Bước 6 (sau event-stor
 # Architecture Method (bước ARCHITECTURE của /document)
 
 ## Khi dùng
-Bước 6 ARCHITECTURE của `/document` — vai **solution architect**, chạy **CUỐI Bước 6** (sau `event-storming` ghi OVERVIEW §4 + `boundary-charter` ghi OVERVIEW §1 và khởi tạo `arch/{name}.md §0 Mission`).
-Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `docs/CAPABILITIES-MAP.md` + `docs/arch/OVERVIEW.md` (§1 boundary map + §4 event-storming — 2 bước trước để lại).
+Bước 6 ARCHITECTURE của `/document` — vai **solution architect**, chạy **CUỐI Bước 6** (sau `event-storming` ghi OVERVIEW §4 + `boundary-charter` ghi OVERVIEW §1 và khởi tạo `arch/{name}.md §0 Mission` + `system-design` ghi OVERVIEW §5).
+Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `docs/CAPABILITIES-MAP.md` + `docs/arch/OVERVIEW.md` (§1 boundary map + §4 event-storming + **§5 system design** — 3 bước trước để lại). Contract PHẢI phản ánh §5 theo bảng "Giao cho `technical-design`" ở skill `system-design` (bảng lớn → phân trang DB · cache · outbox · mã hoá cột · lock job · IP qua proxy).
 
 > Đây là **DESIGN docs**, không scaffold code. Scaffold code (`services/{name}/`) xảy ra ở `/build`, KHÔNG ở đây.
 
@@ -30,19 +30,19 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `do
 
 ## Enterprise cross-cutting concerns (PHẢI address)
 Mỗi concern ghi rõ ở ADR / `arch/{name}.md` (§2/§4) / §API (không để hở):
-- **Auth**: JWT/OAuth2 flow + điểm tích hợp RBAC/PBAC.
-- **Observability**: structured log schema + metrics endpoint + trace propagation header.
-- **Resilience**: circuit breaker / retry / timeout hierarchy cho external call.
-- **Caching**: chiến lược L1/L2 + TTL + invalidation.
-- **Rate limiting**: per-tenant / per-user.
+- **Auth**: JWT/OAuth2 flow + điểm tích hợp RBAC/PBAC — theo mô hình xác thực ở OVERVIEW §5.7 (kiểm `iss`/`aud`, thu hồi token).
+- **Observability**: log JSON + header truy vết **`X-Request-ID`** (`ref-backend-logging §3`) + metrics endpoint + cảnh báo theo SLO §5.1.
+- **Resilience**: circuit breaker / retry / timeout cho external call — theo §5.6.
+- **Caching**: chỉ chỗ §5.4 khai — key + TTL + invalidation.
+- **Rate limiting**: per-user / per-tenant; IP client qua proxy tin cậy khi §5.8 khai đứng sau proxy.
 - **Idempotency**: idempotency key cho mutation/callback endpoint.
-- **Pagination**: cursor-based cho list lớn (không offset).
+- **Pagination**: **offset** (`PageResponse` — `ref-backend-pattern §6`) mặc định, `size ≤ 100`; cursor chỉ cho luồng đặc thù §5.4 khai (feed, log rất lớn) + ADR.
 - **Versioning**: API version (URL `/v1/` hoặc header).
 - **Health checks**: `/health/live`, `/health/ready`.
 
 ## Phương pháp
 1. **Research — MẶC ĐỊNH LÀM TRƯỚC** (target/domain chưa biết đi thế nào → research trước, đừng thiết kế từ giấy trắng thứ đã có lời giải chuẩn): pattern từ production system (CQRS / Saga / Outbox / Event-Sourcing), API convention ngành, data consistency ở scale, service decomposition. Domain quá quen mới bỏ qua (ghi lý do). KHÔNG bịa nguồn.
-2. Đọc FEAT → chốt danh sách target + kind + quan hệ (depends_on, ai gọi ai) → `docs/arch/OVERVIEW.md`.
+2. Đọc FEAT + OVERVIEW §1/§5 → chốt danh sách target + kind + quan hệ (depends_on, ai gọi ai) → `docs/arch/OVERVIEW.md` §2-§3.
 3. ADR nền trước (stack, kiến trúc backend, auth, event) → design sau tuân ADR.
 4. Per target (theo thứ tự § của `TEMPLATE.arch.md`): §1 Data-model (backend) → §2 Luồng xử lý → §3 API (contract + error) → §4 Kiến trúc/ranh giới → §5 Events → §6 Ca biên (TRA), tất cả trong `docs/arch/{name}.md` (§0 Mission: boundary-charter đã khởi tạo). (FE target: §2/§4 ở đây; UX = bước riêng sau khi §API sẵn.)
 5. Integrations: cross-target + external.

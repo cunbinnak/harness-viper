@@ -258,6 +258,7 @@ ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ n�
 | Thư viện/kiểu kiến trúc khác ADR | Dependencies trong `build.gradle*` so với ADR tech-stack | MAJOR |
 | **Build tool khác ADR** (chốt Gradle → phải `build.gradle`+`gradlew`, KHÔNG `pom.xml`; chốt Maven → ngược lại) | `ls build.gradle* gradlew pom.xml` so với ADR/TECHSTACK — sai công cụ = **MAJOR** (cả CI/Dockerfile/lệnh sai theo) | MAJOR |
 | Framework/version khác `TECHSTACK.md` khai (soi tới đúng mức khai — vd khai `3.4` thì code phải `3.4.x`) | `build.gradle*`/`pom.xml` version vs `docs/TECHSTACK.md §1` | MAJOR |
+| **Lệch System design đã khai** (`docs/arch/OVERVIEW.md §5`): 5.8 ≥ 2 instance mà `@Scheduled` không lock · 5.8 sau proxy mà rate limit/audit dùng `getRemoteAddr()` không `forward-headers-strategy` · 5.4 bảng lớn mà list nạp cả bảng / không trần size · 5.7 dữ liệu nhạy cảm mà cột không mã hoá / log không che · 5.4 cache khai TTL mà code không có | Đọc §5 → đối chiếu kết quả các khối Chạy máy (job lock · IP · tìm kiếm · bảo mật) — có §5 làm căn cứ thì không ghi QUESTION | bảo mật/dữ liệu = BLOCKER · còn lại MAJOR |
 | Thuật ngữ lệch: FEAT/Glossary gọi "lịch hẹn" mà code chỗ `booking` chỗ `schedule` | `grep` tên class/bảng | MINOR |
 | TODO/FIXME chặn một AC; code chết để dạng comment | `grep -rn -e TODO -e FIXME -e HACK J` | chặn AC = MAJOR |
 

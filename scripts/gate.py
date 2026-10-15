@@ -322,6 +322,13 @@ def gate_document(r: Report) -> None:
     arch_targets = [p for p in (ROOT / "docs/arch").glob("*.md")
                     if p.name != "OVERVIEW.md" and not p.name.startswith("TEMPLATE")]
     r.check(len(arch_targets) >= 1, "≥1 docs/arch/{name}.md (per-target)")
+    # system-design (SA) — OVERVIEW §5 đủ 5.1–5.9; 5.7 phân loại dữ liệu + 5.8 triển khai luôn có dòng (kể cả dự án nhỏ)
+    ov = read_live("docs/arch/OVERVIEW.md")
+    miss_sd = [f"5.{i}" for i in range(1, 10) if not re.search(rf"^#{{2,4}}\s*5\.{i}\b", ov, flags=re.M)]
+    r.check(not miss_sd, "OVERVIEW §5 System design đủ 5.1–5.9"
+            + (f" — THIẾU: {', '.join(miss_sd)}" if miss_sd else ""))
+    for key, label in (("5.7", "phân loại dữ liệu"), ("5.8", "triển khai — số instance · đứng sau proxy")):
+        r.check(bool(table_rows(section("docs/arch/OVERVIEW.md", key))), f"OVERVIEW §{key} {label}: có ≥1 dòng")
     # ma trận vai×hành động — không ô trống
     matrix = table_rows(section("docs/PERSONAS.md", "§2"))
     empty = [c for row in matrix for c in row[1:] if not c]

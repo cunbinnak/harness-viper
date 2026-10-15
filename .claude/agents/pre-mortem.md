@@ -54,6 +54,15 @@ Khác cách săn 2 (luồng ngành, biến thiên theo domain): 6 họ này tồ
 | **Vận hành & sửa sai** | Ai xem được ai-đã-làm-gì (audit)? Sai thì ai được sửa/undo? Config đổi giữa chừng thì dữ liệu cũ ra sao? |
 Ưu tiên hậu quả thật: **mất/sai tiền · mất/lộ dữ liệu · lỗ phân quyền/tenant · luồng kẹt · nghiệp vụ sai**. Bỏ qua vặt (đặt tên, "nên có thêm cho đẹp"). Case đã có trong DECISIONS/n/a → **không báo lại**. Không chắc case có thật → nói không chắc + vì sao nghi.
 
+## Cách săn 4 — SYSTEM DESIGN khớp thực tế (`docs/arch/OVERVIEW.md §5` ↔ `arch/*` ↔ PRD §3)
+- Mục 5.x trống hoặc `n/a` không lý do · thiếu một trong năm thứ **luôn bắt buộc**: số instance · đứng sau proxy · môi trường · phân loại dữ liệu · bảng lớn.
+- NFR có số ở PRD §3 mà 5.1 không nêu quyết định, hoặc 5.2 không có phép tính.
+- Thành phần hạ tầng (5.3, TECHSTACK) không trỏ về con số nào = **thiết kế thừa**; 5.2 mức Vừa/Lớn mà thiếu cache/instance/lock tương ứng = **thiết kế thiếu**.
+- Bảng **lớn** (5.4) mà API list ở `arch §3` không phân trang ở DB / không trần size.
+- Dữ liệu nhạy cảm (5.7) mà `arch §1` không có cột mã hoá / không nói che log; PRD đòi mã hoá mà 5.7 không có dòng.
+- 5.8 khai ≥ 2 instance mà job không có lock; khai sau proxy mà không nói lấy IP qua proxy tin cậy.
+- Hệ ngoài (IdP · cổng thanh toán · email/SMS · lưu file) không có dòng ở 5.6.
+
 ## TRẢ VỀ (final message — MAIN ghi vào đâu MAIN quyết)
 Hai loại nghi vấn — MAIN xử khác nhau (thiếu AC = vá FEAT · thiếu mảng = hỏi Authority/backlog, có thể đổi scope):
 ```
