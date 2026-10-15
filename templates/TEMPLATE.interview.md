@@ -26,9 +26,9 @@
 | 2 | {{?}} | {{Duyệt CV đạt sàng lọc}} | {{?}} | {{hồ sơ → trạng thái}} | {{CHƯA HỎI}} |
 
 Màn nháp:
-| Mã màn | Module | Vai dùng | Hành động phải có trên màn |
-|---|---|---|---|
-| {{REC-LIST}} | {{recruitment}} | {{HR}} | {{tạo tin · lọc · mở ứng viên}} |
+| Mã màn | Module | Vai dùng | Hành động phải có trên màn | Dữ liệu hiển thị (mọi vùng, kể cả chỉ xem) |
+|---|---|---|---|---|
+| {{REC-LIST}} | {{recruitment}} | {{HR}} | {{tạo tin · lọc · mở ứng viên}} | {{danh sách tin (tiêu đề · phòng ban · trạng thái · số ứng viên) · ô lọc phòng ban (danh mục phòng ban) · badge số tin chờ duyệt}} |
 
 Câu hỏi còn mở (hệ quả lên màn):
 - {{Ai duyệt CV? A: HR → REC-DETAIL chỉ HR có nút duyệt · B: Trưởng phòng → thêm hàng chờ duyệt cho trưởng phòng}}

@@ -6,7 +6,7 @@ description: Phương pháp map capability cho /document — ĐỌC persona (dom
 # Capability Mapping Skill
 
 ## Khi load
-Phương pháp **map capability** cho `/document`. Map **personas → capabilities → outcomes** và xác định **candidate domains** (input cho phương pháp event-storming). Load sau khi đã có bức tranh vision/problem (`docs/PRD.md`) VÀ danh sách persona (`docs/PERSONAS.md`, do domain-ba viết).
+Phương pháp **map capability** cho `/document`. Map **personas → capabilities → outcomes** và **gợi ý candidate domains** (SA chốt ở `event-storming`, Bước 6). Load sau khi đã có bức tranh vision/problem (`docs/PRD.md`) VÀ danh sách persona (`docs/PERSONAS.md`, do domain-ba viết).
 
 Input: `docs/PRD.md` (vision/problem/hypotheses) + `docs/PERSONAS.md` (persona + ma trận vai × hành động — **read-only**, để map capability về persona).
 
@@ -18,7 +18,7 @@ Lỗ hổng → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → 
 
 **`docs/CAPABILITIES-MAP.md`** — giữ heading `## §1` / `## §2`:
 - **§1 Capability → FEAT**: **≥5 capability row** (capability + persona cột + business outcome + FEAT + **Wave giao** + **Trạng thái**). Mỗi capability truy về ≥1 persona **đã có trong `docs/PERSONAS.md`**.
-- **§2 Candidate domains**: **≥1 domain** (gom capability §1 theo core entity). **Tên domain quyết định tên section event-storming** trong `docs/arch/OVERVIEW.md §4`.
+- **§2 Candidate domains** (gợi ý — SA chốt ở `event-storming`): **≥1 domain** (gom capability §1 theo core entity). **Tên domain quyết định tên section event-storming** trong `docs/arch/OVERVIEW.md §4`.
 
 > **Ma trận vai × hành động KHÔNG thuộc skill này.** Nó do domain-ba viết ở `docs/PERSONAS.md §2`. Skill này **ĐỌC** ma trận đó (danh sách persona + ai được/cấm) để map capability về đúng persona — KHÔNG tự tạo persona/ma trận.
 
@@ -26,7 +26,7 @@ Lỗ hổng → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → 
 1. **ĐỌC persona**: lấy danh sách persona + ma trận vai × hành động từ `docs/PERSONAS.md` (đã có, read-only). Không phát minh persona mới; capability không dẫn được về persona nào → hỏi Authority (persona thiếu hay capability thừa).
 2. **Capability**: mỗi persona "làm được gì?" (verb-noun: 'pay invoice', 'view order'). Tách capability rộng ("manage orders") thành atomic ("place order", "track order", "cancel order").
 3. **Outcome + priority**: mỗi capability → outcome + vì sao persona muốn + gắn **MVP / Phase 2 / Phase N** (feed wave-sequencing khi chia wave).
-4. **Candidate domain** (§2): capability chia sẻ core entity → 1 domain (group theo data/event similarity, KHÔNG theo tech). Đây là input cho event-storming.
+4. **Candidate domain** (§2, gợi ý): capability chia sẻ core entity → 1 domain (group theo data/event similarity, KHÔNG theo tech). Chỉ là điểm xuất phát — SA gộp/tách/thêm ở `event-storming`.
 5. **Anti-capability**: nêu rõ cái NOT supported.
 
 ## Capability-map là bảng SỐNG, không chết sau khi map

@@ -9,7 +9,7 @@
 | {{CAP-01}} — {{mô tả ngắn}} | {{P-01}} | {{kết quả đo được}} | {{FEAT-order-create}} | {{—}} | {{chưa giao}} |
 | {{CAP-02}} — {{…}} | {{P-02}} | {{…}} | {{FEAT-…}} | {{—}} | {{chưa giao}} |
 
-<!-- §2: gom capability (§1) theo core-entity/data chung thành domain candidate. Tên kebab (payment/auth/order).
+<!-- §2 (PO gợi ý — SA chốt ở event-storming, gộp/tách/thêm ghi lý do ở OVERVIEW §4): gom capability (§1) theo core-entity/data chung thành domain candidate. Tên kebab (payment/auth/order).
      event-storming ĐỌC mục này (mỗi domain 1 section). Tên domain ở đây = tên section event-storming trong arch/OVERVIEW §4. -->
 ## §2 Candidate domains
 | Domain candidate | Capability gom vào (§1) | Core entity / lý do gom | MVP/Phase |

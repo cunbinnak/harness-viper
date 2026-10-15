@@ -6,12 +6,12 @@ description: Phương pháp event-storming cho /document — đọc candidate do
 # Event Storming Skill
 
 ## Khi load
-Phương pháp **event-storming** cho `/document` (Architecture + Business). Facilitate event storming cho **MỘT domain mỗi lần**, theo candidate domains ở `docs/CAPABILITIES-MAP.md §2`. Interactive — dùng AskUserQuestion nhiều.
+Phương pháp **event-storming** cho `/document` (Architecture + Business). Facilitate event storming cho **MỘT domain mỗi lần**. `docs/CAPABILITIES-MAP.md §2` chỉ là **gợi ý** của PO — **SA chốt danh sách domain** ở đây: gộp/tách/thêm theo event và dữ liệu thật, domain lệch gợi ý thì ghi 1 dòng lý do đầu khối `### <domain>`. Interactive — dùng AskUserQuestion nhiều.
 
-Input: `docs/CAPABILITIES-MAP.md §2` (candidate domains) + **bảng luồng `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`** (actor + bước đã ký — không hỏi lại "ai issue").
+Input: `docs/CAPABILITIES-MAP.md §2` (candidate domains — gợi ý) + **bảng luồng `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`** (actor + bước đã ký — không hỏi lại "ai issue").
 
 ## Deliverable
-Ghi vào `docs/arch/OVERVIEW.md §4 Event Storming` — **mỗi candidate domain (capability-map §2) một khối con** `### <domain>`. (Nếu domain phức tạp và tách file riêng thuận tiện hơn thì đặt tại `docs/arch/{domain}.md`; mặc định gom vào OVERVIEW §4.)
+Ghi vào `docs/arch/OVERVIEW.md §4 Event Storming` — **mỗi domain SA đã chốt một khối con** `### <domain>`. (Nếu domain phức tạp và tách file riêng thuận tiện hơn thì đặt tại `docs/arch/{domain}.md`; mặc định gom vào OVERVIEW §4.)
 
 Mỗi khối con `### <domain>`:
 - **Events**: **≥10 event** (numbered/list, past-tense, chronological).

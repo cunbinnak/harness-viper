@@ -56,7 +56,7 @@ FEAT **không** chứa chặn ở đâu / contract / tên class-bảng-công ngh
 
 ## Bước 6 — Architecture (`docs/arch/`)  → **Nạp 3 skill THEO THỨ TỰ: `Skill("event-storming")` → `Skill("boundary-charter")` → `Skill("technical-design")`** (nạp từng cái đúng lúc dùng)
 - Thứ tự + phân đất: `event-storming` ghi **OVERVIEW §4** (events/aggregates/hot-spots per domain) → `boundary-charter` đọc §4, ghi **OVERVIEW §1** (bản đồ target) + **khởi tạo** `arch/{name}.md` §Mission (target = boundary, cùng tên file) → `technical-design` điền **chi tiết** `arch/{name}.md`.
-- **Rời bước 6 CHỈ KHI trace 6 chiều PASS** (`technical-design §Trọn vẹn`, trừ vế màn↔API — rà ở Bước 8) — **tự rà, KHÔNG để Authority phát hiện lỗ hộ**.
+- **Rời bước 6 CHỈ KHI trace 6 chiều PASS** (`technical-design §Trọn vẹn` — chiều 1 gồm vế màn nháp BA ↔ API; vế mockup ↔ API (`data-api`) rà ở Bước 8) — **tự rà, KHÔNG để Authority phát hiện lỗ hộ**.
 - `docs/arch/OVERVIEW.md`: topology — có target nào, ai gọi ai, ranh giới hệ.
 - `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ + chặn ở đâu (§6, cột AC/BR trỏ FEAT §3) + `consumes` (target gọi API của ai) nằm ở đây — FEAT không chứa.
 
