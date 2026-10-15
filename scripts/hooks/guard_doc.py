@@ -19,12 +19,20 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+ROOT_S = str(ROOT).replace("\\", "/")
 LIVING = {"DECISIONS.md", "ROADMAP.md", "BACKWARD-COMPAT.md", "PRODUCTION-READY.md"}
 
 try:
     sys.stderr.reconfigure(encoding="utf-8")
 except Exception:
     pass
+
+
+def rel(path: str) -> str:
+    """Đường dẫn tính từ gốc repo (so không phân biệt hoa thường — Windows `d:` vs `D:`). Ngoài repo → ""."""
+    if path.lower().startswith(ROOT_S.lower() + "/"):
+        return path[len(ROOT_S) + 1:]
+    return "" if re.match(r"^([a-zA-Z]:)?/", path) else path.removeprefix("./")
 
 
 def phase() -> str:
@@ -42,14 +50,15 @@ def main() -> int:
         fp = str((data.get("tool_input") or {}).get("file_path", "")).replace("\\", "/")
     except Exception:
         return 0  # fail-open
-    if "docs/" not in fp:                 # chỉ canh docs/
+    fp = rel(fp)
+    if not fp.startswith("docs/"):        # chỉ canh docs/ ở gốc repo — không chặn nhầm services/**/docs/
         return 0
     if fp.rsplit("/", 1)[-1] in LIVING:   # sổ sống — luôn cho append
         return 0
     p = phase()
     if p in ("", "DOCUMENT"):             # DOCUMENT author/top-up → cho sửa
         return 0
-    if p in ("BUILD", "VERIFY") and "docs/arch/" in fp and fp.endswith(".md"):
+    if p in ("BUILD", "VERIFY") and fp.startswith("docs/arch/") and fp.endswith(".md"):
         return 0                          # amend-arch (PROTOCOL §3) — trace_docsync nhắc điều kiện
     sys.stderr.write(
         f"[guard_doc] Pha {p}: doc SPEC đã KHOÁ — không sửa lúc BUILD/VERIFY.\n"

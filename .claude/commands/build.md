@@ -94,7 +94,7 @@ Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được
 ## Bước cuối — Chốt
 1. `make check` xanh
 2. **Đã commit** mọi thứ (build/test pass mà không commit = coi như CHƯA làm — đây là nguyên nhân từng mất code)
-3. **`python scripts/capture_proof.py`** → sinh `tracking/wave-N/proof.json` (make check + **health per-target tự đọc `docker compose ps`** — không cần gõ URL; máy verify, không tin tick tay). Mọi target container hoá của wave phải **đang chạy** (Bước 6 `up -d --build` cho HẾT) để capture bắt được `healthy`.
+3. **`python scripts/capture_proof.py`** → sinh `tracking/wave-N/proof.json` (ghi commit code — sửa code sau đó phải commit + chụp lại · make check + **health per-target tự đọc `docker compose ps`** — không cần gõ URL; máy verify, không tin tick tay). Mọi target container hoá của wave phải **đang chạy** (Bước 6 `up -d --build` cho HẾT) để capture bắt được `healthy`.
 4. `python scripts/gate.py` (phase BUILD) xanh (đọc `proof.json`, **đối chiếu ROADMAP §1 cột Target — thiếu/không-healthy target nào = đỏ**) → tick gate BUILD (gồm ô "mọi target đã build") trong `STATE.md` → gợi ý `/verify`
 
 ## Ranh giới

@@ -26,17 +26,17 @@ Double-submit tạo bản ghi trùng (đối chiếu ca biên FEAT) · mất d�
 ## Regression (CHỈ wave ≥2)
 Đọc `archive/wave-*/` (test-cases + FEAT các wave TRƯỚC = danh sách luồng cũ) → đi lại **luồng nghiệp vụ wave cũ** trên app hiện tại:
 - Còn chạy đúng không? Wave mới có **vô tình làm hỏng** (đổi hàm chung / schema / API mà FE cũ còn gọi)?
-- Luồng cũ vỡ = **regression NẶNG** (đối chiếu `BACKWARD-COMPAT` — surface đã giao không được vỡ).
+- Luồng cũ vỡ = **regression BLOCKER** (đối chiếu `BACKWARD-COMPAT` — surface đã giao không được vỡ).
 > Người vội đi nhanh qua nhiều luồng → hợp để "quét lại" một lượt luồng cũ. Wave 1 bỏ qua mục này.
 
 ## Báo cáo (final message — MAIN ghi §Findings)
 ```
 Persona <tên>
-[nặng|vừa|nhẹ] <vấn đề>
+[BLOCKER|MAJOR|MINOR] <vấn đề>
   Tôi đã làm   : <thao tác — bấm mấy lần, back lúc nào, bỏ bước nào>
   Tôi thấy     : <kết quả — mấy bản ghi, dữ liệu còn/mất>
   Tôi mong đợi : <1 bản ghi / giữ dữ liệu + dẫn về AC/ca biên FEAT>
 ```
-Mất dữ liệu và bản ghi trùng luôn là **nặng** — báo lên đầu.
+Mất dữ liệu và bản ghi trùng luôn là **BLOCKER** — báo lên đầu.
 Báo "ổn" mà không thử double-click/back thật nào = chưa chạy → chạy lại.
 KHÔNG tự fix · KHÔNG sửa doc/test · KHÔNG hỏi Authority.

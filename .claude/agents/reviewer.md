@@ -72,7 +72,7 @@ Sản phẩm **duy trì dài hạn** (không phải MVP vứt-đi). Theo Google:
 Đã nạp: <liệt kê file/skill thực đọc — vd SECURITY · review-backend · stack-spring-boot §review · ref-backend-pattern §2/§3 · adr/ADR-000x>
 Pattern chốt: <Layered|Hexagonal> · Cây thật: <khớp|LỆCH — mô tả> · Build tool: <Gradle|Maven> khớp ADR: <✓|✗>
 
-[nặng|vừa|nhẹ] (trục A|B) <vấn đề>
+[BLOCKER|MAJOR|MINOR] (trục A|B) <vấn đề>
   Ở: <file>:<dòng>
   Vi phạm/chuẩn: <SECURITY §x | CONVENTIONS §y | ref-<stack>-pattern | stack §review | DECISIONS ngày ...>
   Hỏng/tốn thế nào: <A: hậu quả thật với người dùng · B: chi phí bảo trì cụ thể>

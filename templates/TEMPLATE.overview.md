@@ -75,7 +75,7 @@ Xác thực: {{Azure AD OIDC · map người dùng theo oid}}
 |---|---|---|---|---|
 | {{hrms-backend}} | {{2}} | {{nginx}} | {{có}} | {{@Scheduled + ShedLock}} |
 
-Môi trường: {{dev · sit · prod}} · Observability: {{log JSON + X-Request-ID · metric · cảnh báo theo 5.1}} · Backup: {{…}}
+Môi trường: {{dev · sit · prod}} · Observability: {{log JSON + X-Request-ID · metric · cảnh báo theo 5.1}} · Backup: {{…}} · Rollback: {{cách quay về bản trước — /ship thử 1 lần}}
 
 ### 5.9 Quyết định lớn → ADR
 - {{ADR-003 không dùng Kafka — 5.2 chỉ ~1 req/s ghi, Spring event + outbox đủ; xem lại khi > 50 req/s}}

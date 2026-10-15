@@ -2,7 +2,7 @@
 # BACKWARD-COMPAT — {{PROJECT_NAME}}
 
 <!-- §1: SỔ HỢP ĐỒNG — surface đã ship (API/bảng/event/webhook/format export). TÍCH LUỸ VĨNH VIỄN, không wave nào xoá.
-     Mỗi surface TRỎ VỀ `arch/<target>.md §3 API` (nguồn contract — G4). Thêm dòng khi ship, KHÔNG xoá dòng cũ. -->
+     Mỗi surface TRỎ VỀ `arch/<target>.md §3 API` (nguồn contract). Thêm dòng khi ship, KHÔNG xoá dòng cũ. -->
 ## §1 Sổ hợp đồng (tích luỹ)
 | Surface | Loại | Nguồn (arch §3 API) | Wave giao | Ghi chú |
 |---|---|---|---|---|

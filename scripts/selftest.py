@@ -58,6 +58,9 @@ def main() -> int:
     check(run("scripts/hooks/guard_archive.py", [],
               '{"tool_input":{"file_path":"archive/wave-1/x.md","content":"x"}}') == 2,
           "guard_archive sửa archive/ → deny (exit 2)")
+    check(run("scripts/hooks/guard_archive.py", [],
+              '{"tool_input":{"file_path":"services/web/app/archive/page.tsx","content":"x"}}') == 0,
+          "guard_archive code sản phẩm có thư mục archive/ → allow")
     check(run("scripts/hooks/guard_proof.py", [],
               '{"tool_input":{"file_path":"tracking/wave-1/proof.json","content":"x"}}') == 2,
           "guard_proof sửa proof.json → deny (exit 2)")

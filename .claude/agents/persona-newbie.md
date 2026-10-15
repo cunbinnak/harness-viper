@@ -31,7 +31,7 @@ Bước không biết làm gì tiếp · nhãn/nút mơ hồ · bấm không có
 ## Báo cáo (final message — MAIN ghi §Findings)
 ```
 Persona <tên> · Luồng đã đi <...> · Số chỗ phải đoán <n>
-[nặng|vừa|nhẹ] <vấn đề>
+[BLOCKER|MAJOR|MINOR] <vấn đề>
   Tôi đã làm   : <màn, thao tác, nút bấm>
   Tôi thấy     : <thứ hiện ra / không có gì>
   Tôi mong đợi : <phản hồi/hướng dẫn rõ + dẫn về AC/FEAT>

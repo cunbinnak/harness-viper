@@ -9,7 +9,7 @@ feat_cap_per_wave: 4   # ~3-4 FEAT/wave (≈15-20 AC) — KHUYẾN KHÍCH (tròn
 <!-- §1: bảng wave, 1 dòng/wave.
      `phases`     — gate đọc để biết wave chạy pha nào. BUILD,VERIFY bắt buộc; thêm SHIP nếu deploy (opt-in).
      `Rà lại`     — để trống tới khi /next-wave MỞ wave đó → stamp ngày (gate wave_reviewed, wave ≥2; wave 1 miễn).
-     `Legacy phá` — mặc định `—` (không phá); khai rõ nếu wave này được phá surface cũ (guard_bc so với đây).
+     `Legacy phá` — mặc định `—` (không phá); khai rõ nếu wave này được phá surface cũ (BACKWARD-COMPAT §3 đối chiếu cột này).
      `Wave giao` ở CAPABILITIES-MAP phải khớp cột Wave dưới đây. -->
 ## §1 Wave plan
 | Wave | Target (kind) | AC in-scope | phases | Phụ thuộc wave trước | Legacy được phép phá | Rà lại | Trạng thái |

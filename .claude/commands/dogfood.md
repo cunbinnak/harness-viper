@@ -61,7 +61,7 @@ Thiếu vế đầu = suy từ code chứ chưa chạy. Vế cuối không dẫn
 
 ## Mẫu báo cáo tổng kết (cuối dogfood → Authority)
 ```
-Đã dùng thử ở <local|prod>, MAIN đóng <persona chính> + 6 vai × 2 đợt
+Đã dùng thử ở local, MAIN đóng <persona chính> + 6 vai × 2 đợt
 
 Luồng nghiệp vụ:     đi hết được / gãy ở bước <n>
 AC:            <x>/<y> làm được thật

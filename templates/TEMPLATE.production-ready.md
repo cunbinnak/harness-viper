@@ -1,4 +1,4 @@
-<!-- gate bỏ qua TEMPLATE.* — copy thành docs/PRODUCTION-READY.md. Tick ở SHIP. Mục (sau deploy) tick ở P2. -->
+<!-- gate bỏ qua TEMPLATE.* — copy thành docs/PRODUCTION-READY.md. Tick ở SHIP. Mục *(sau deploy)* tick sau khi deploy — guard_bc miễn chúng trước deploy, gate SHIP (chạy sau deploy) đòi đủ. -->
 # PRODUCTION-READY — {{PROJECT_NAME}}
 
 ## Nhóm 1 — Secret & env
@@ -16,4 +16,4 @@
 - [ ] Log structured + correlation id · health check trả 200 · metrics *(sau deploy)*
 
 ## Nhóm 4 — Vận hành
-- [ ] `make deploy` / `make doctor` có thân · đường rollback ở deploy doc · backup DB *(sau deploy)*
+- [ ] `make deploy` / `make doctor` có thân · đường rollback ở `arch/OVERVIEW.md §5.8` · backup DB *(sau deploy)*

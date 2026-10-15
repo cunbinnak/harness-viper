@@ -69,10 +69,9 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 - [ ] `docs/PRODUCTION-READY.md` 4 nhóm xanh
 - [ ] `docs/BACKWARD-COMPAT.md` xanh (wave ≥2) — `guard_bc` chặn deploy tới khi xanh
 - [ ] `make deploy` · `make doctor` có thân · production sống · smoke pass · đã **thử** rollback
-- [ ] dogfood lần 2 trên production
 
 ### NEXT-WAVE — rời phase khi:
-- [ ] go/pivot/kill ghi `docs/DECISIONS.md` (nếu wave có metric)
+- [ ] go/pivot/kill ghi `docs/DECISIONS.md` (luôn — wave có metric thì so ngưỡng ghi trước)
 - [ ] `docs/ROADMAP.md §backlog` đã gộp phát sinh của wave này (amendment → wave sau)
 - [ ] Snapshot STATE.md + docs của wave → `archive/wave-<N>/` (KHÔNG reset)
 - [ ] Mở wave kế (xoá trắng gate BUILD/VERIFY + 3 log dưới) · hết wave → teardown

@@ -32,7 +32,7 @@ Spawn 2 agent **cùng 1 message (song song), foreground**, **chỉ đọc code, 
 3. Phân quyền: **mọi truy vấn lấy bản ghi theo id có kèm điều kiện chủ sở hữu không?** (lỗ hay gặp + nặng nhất)
 4. Việc dở (TODO/FIXME) chặn AC · lỗi bị nuốt (`catch{}` rỗng) · secret hardcode
 
-**Cả hai** → `STATE.md §Findings`, format `[nặng/vừa/nhẹ] (+trục A|B nếu reviewer) + file:dòng + "hỏng/tốn thế nào" + đề xuất 1 câu`. **1 dòng = 1 vấn đề** — agent trả finding gộp nhiều vế → MAIN **TÁCH** thành nhiều dòng khi ghi (dòng gộp = fix 1 vế rồi tick cả dòng, vế còn lại chết chìm).
+**Cả hai** → `STATE.md §Findings`, format `[BLOCKER/MAJOR/MINOR] (+trục A|B nếu reviewer) + file:dòng + "hỏng/tốn thế nào" + đề xuất 1 câu`. **1 dòng = 1 vấn đề** — agent trả finding gộp nhiều vế → MAIN **TÁCH** thành nhiều dòng khi ghi (dòng gộp = fix 1 vế rồi tick cả dòng, vế còn lại chết chìm).
 - **Trục A · bug-hunter**: chỉ nêu **hậu quả THẬT** (mất/lộ dữ liệu · sai kết quả · chặn AC).
 - **Trục B**: nêu **chi phí bảo trì CỤ THỂ** — **vẫn cấm** khẩu vị thuần (tên đẹp không lý do · abstraction "để sau" · perf chưa đo · coverage%) + style tùy-ca **tha**.
 - **"Trục nào ổn → nói ổn, đừng bịa finding."** Lệnh `grep` cụ thể ở `.claude/agents/reviewer.md` · `bug-hunter.md`.
@@ -84,12 +84,12 @@ Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên v
 > - **`CHƯA CÓ QUY ĐỊNH`** (TC thăm dò — tài liệu im lặng, hệ cho phép điều có hại; **khác `nghi thiếu AC`**: hành động ĐÃ có AC, chỉ thiếu quy định điều kiện — khi nào · bao nhiêu · trùng gì · ngoại lệ) → **KHÔNG phải bug, KHÔNG sửa code** (code đúng tài liệu; thêm quy định hay không là quyết định của Author) → `ROADMAP §backlog` + liệt kê ở báo cáo Bước cuối để Authority quyết ở `/next-wave` (top-up thêm quy định vào bảng chính sách).
 
 **1 lượt = tìm bug → sửa → tìm bug lại.** MAIN chỉ SỬA; **tìm lại + xác nhận đã hết là việc của agent** (người sửa không tự đóng bài mình):
-(1) MAIN sửa batch finding open (TC FAIL + BLOCKER/MAJOR) → (2) target container hoá: **rebuild image + up lại** (sửa code mà re-test trên bundle cũ = CHƯA sửa) → (3) MAIN tự bấm lại đúng màn/luồng vừa sửa — kiểm *của người sửa* (như ở BUILD), **KHÔNG dùng để đóng finding hay đổi kết quả TC** → (4) **verify lại bằng agent** (foreground; `reviewer`/`bug-hunter` chỉ đọc code → chạy song song được; agent chạm hệ/DB chạy lần lượt):
+(1) MAIN sửa batch finding open (TC FAIL + BLOCKER/MAJOR) → **`git commit`** → (2) target container hoá: **rebuild image + up lại** (sửa code mà re-test trên bundle cũ = CHƯA sửa) + **`python scripts/capture_proof.py`** (gate VERIFY đòi proof chụp đúng commit code mới nhất) → (3) MAIN tự bấm lại đúng màn/luồng vừa sửa — kiểm *của người sửa* (như ở BUILD), **KHÔNG dùng để đóng finding hay đổi kết quả TC** → (4) **verify lại bằng agent** (foreground; `reviewer`/`bug-hunter` chỉ đọc code → chạy song song được; agent chạm hệ/DB chạy lần lượt):
    - `test-writer` **chế độ CHẠY LẠI**: các TC FAIL + BLOCKED + `@smoke` (TC **ĐÃ CÓ**, không thiết kế mới) → **chính nó** cập nhật `test-cases.md`; bug đã sửa → TC gắn `@regression`.
    - Finding BLOCKER/MAJOR của `reviewer`/`bug-hunter` đã sửa → re-spawn **đúng agent đã báo**, re-review đúng `file:dòng` (cơ chế `review-<kind> §2`).
    - Finding BLOCKER/MAJOR của persona đã sửa → re-spawn **đúng vai đó**, chỉ với các finding đó (`picky`: chỉ các mã LỆCH, MAIN chép kết quả vào `fidelity.md`).
    - Agent xác nhận hết → MAIN đánh dấu §Findings `fixed — <agent> xác nhận`; còn lỗi hoặc lộ lỗi mới → lượt kế.
-`git commit` mỗi lượt · học được gì → `knowledge-base/{name}.md`.
+Học được gì → `knowledge-base/{name}.md`.
 - **Sửa theo CHUẨN, không theo phỏng đoán**: trước khi sửa finding nào, **nạp đúng nguồn chuẩn finding đó trỏ tới** (ADR/`arch §4`/`stack-<x> §review`/`ref-<kind>-pattern §cây chuẩn`) — agent nạp trong cửa sổ RIÊNG của nó, MAIN không thừa hưởng; finding cấu trúc mà MAIN chưa Read cây chuẩn = sửa mù, dễ ra cấu trúc sai kiểu khác.
 - **Finding không đo được bằng TC/browser** (cấu trúc/convention — trục B): cột Xử lý phải kèm **bằng chứng CÙNG LOẠI với cách phát hiện** — finding từ dump cây → fix xong dump cây lại đính vào; từ grep → chạy lại đúng lệnh grep đó. **Tick chay = CHƯA fix.**
 - **Thoát vòng** (soi FILE, không theo trí nhớ): mở `tracking/wave-N/test-cases.md` — không còn dòng **FAIL / BLOCKED**; mở `STATE §Findings` — không còn BLOCKER/MAJOR **open**; mở `fidelity.md` — không còn **LỆCH**. Mọi dòng `fixed` phải có agent xác nhận ở nhịp (4) — MAIN tự đánh `fixed` không kèm xác nhận = CHƯA thoát → Bước cuối.
@@ -99,7 +99,7 @@ Phát hiện (MAIN + 6 vai) → MAIN ghi `STATE.md §Findings` (Nguồn = tên v
 ## Bước cuối — Chốt
 1. `tracking/wave-N/test-cases.md`: mọi AC in-scope có TC **PASS**, không TC **FAIL / BLOCKED / CHƯA CHẠY** · wave ≥ 2: mọi TC `@regression` của wave trước PASS.
 2. `STATE.md §Findings`: hết finding **BLOCKER/MAJOR** open.
-   **Kết luận QC** (dòng đầu báo cáo gửi Authority) — đúng 1 trong 3:
+   **Kết luận QC** (dòng đầu báo cáo gửi Authority; ghi luôn 1 dòng con cuối mục gate VERIFY trong `STATE.md`: `Kết luận QC: <mức> — <ngày>` → snapshot vào archive, `/next-wave` đọc lại) — đúng 1 trong 3:
    - **ĐẠT** — gate VERIFY xanh, không còn `CHƯA CÓ QUY ĐỊNH` nào chạm tiền · công · quyền.
    - **ĐẠT CÓ ĐIỀU KIỆN** — gate xanh nhưng còn thứ Authority phải biết trước khi dùng thật: `CHƯA CÓ QUY ĐỊNH` chạm tiền/công/quyền · finding MINOR đáng kể · NFR hoãn sang wave sau theo ROADMAP. **Liệt kê từng điều kiện** (1 dòng/điều kiện + hệ quả nếu bỏ qua).
    - **KHÔNG ĐẠT** — gate đỏ (vd đã cắt vòng sau 3 lượt): nêu thứ còn đỏ + đề xuất (sửa tiếp · đẩy wave sau · kill).

@@ -96,7 +96,7 @@ Mỗi mockup vẽ ĐỘC LẬP (đọc đúng tài liệu màn đó) → **app s
 - HTML tĩnh không `include` được → Read + copy tay mỗi màn; `guard_shell` **cảnh báo** (không chặn) nếu lệch — lệch sẽ bị bắt ở bước rà cuối wave.
 
 **Bước rà nhất quán (BẮT BUỘC — SAU khi vẽ hết màn của wave, TRƯỚC khi trình chốt):**
-Mở tất cả mockup của target cạnh nhau, đối chiếu vùng shell — mọi màn phải KHỚP `_shell.html` (`guard_shell` cảnh báo khi Write nhưng không chặn — đây là lượt rà chính thức bắt drift):
+Mở tất cả mockup của target cạnh nhau, đối chiếu vùng shell — mọi màn phải KHỚP `_shell.html` (`guard_shell` cảnh báo sau mỗi lần ghi nhưng không chặn — đây là lượt rà chính thức bắt drift):
 - [ ] Danh sách mục nav + **thứ tự** + **nhóm heading** + **ICON mỗi mục** giống hệt mọi màn
 - [ ] Logo (+ subtitle) + **vị trí user-menu** giống hệt mọi màn
 - [ ] Cùng cấu trúc header + cùng token (guard_ds lo màu). Breadcrumb/content được phép khác (ngoài khối SHELL)

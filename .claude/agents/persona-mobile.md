@@ -27,12 +27,12 @@ Nút chính tràn/che · bảng cắt cột không cuộn · text đè nhau · t
 ## Báo cáo (final message — MAIN ghi §Findings)
 ```
 Persona <tên> · Màn soi (375px) <...>
-[nặng|vừa|nhẹ] <vấn đề>
+[BLOCKER|MAJOR|MINOR] <vấn đề>
   Tôi đã làm   : <màn, viewport 375, thao tác>
   Tôi thấy     : <vỡ chỗ nào — chụp browser_take_screenshot làm bằng chứng>
   Tôi mong đợi : <responsive đúng + dẫn về AC/UX>
 ```
 > Dọn screenshot sau khi phân tích (luật #9).
-Không đi hết được luồng chính trên điện thoại là **nặng** — phần lớn người dùng đầu tiên sẽ không dùng được.
+Không đi hết được luồng chính trên điện thoại là **BLOCKER** — phần lớn người dùng đầu tiên sẽ không dùng được.
 Báo "responsive ổn" mà không chụp màn 375 nào = chưa chạy → chạy lại.
 KHÔNG tự fix · KHÔNG sửa doc/test · KHÔNG hỏi Authority.

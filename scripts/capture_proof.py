@@ -5,7 +5,9 @@ Chạy `make check` + curl health endpoint. gate.py đọc proof (MÁY-sinh) tha
 → chống fake tiến độ (State=running / tick tay chưa đủ; app phải thật xanh + trả 2xx).
 
 proof.json CHỈ file này ghi (Python I/O, không qua Write tool); `guard_proof` chặn Write/Edit tool đụng
-→ agent không giả được (retro: "test xanh nhờ H2" / "dev-done ≠ runnable").
+→ agent không giả được (chống "test xanh nhờ H2" / "dev-done ≠ runnable").
+Ghi kèm commit code mới nhất của `services/` + còn sửa dở không → gate đòi proof đúng commit hiện tại
+(sửa code sau lần chụp = proof cũ, phải chụp lại).
 
 Health PER-TARGET tự suy: đọc ROADMAP §1 cột Target (name+kind) + `docker compose ps` (health Docker tự chấm
 per service; service-name = target-name theo convention infra-local-dev/ref-*-config) → không cần gõ URL/port.
@@ -141,6 +143,18 @@ def build_targets(wave: str, compose: str) -> tuple[list[dict], str | None]:
     return out, err
 
 
+def code_state() -> dict:
+    """Code đang chụp: commit mới nhất chạm services/ + còn sửa chưa commit không."""
+    def git(*a: str) -> str:
+        try:
+            return subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True,
+                                  encoding="utf-8", errors="replace", timeout=30).stdout.strip()
+        except Exception:
+            return ""
+    return {"commit": git("log", "-1", "--format=%H", "--", "services"),
+            "dirty": bool(git("status", "--porcelain", "--", "services"))}
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--wave", default=None)
@@ -154,9 +168,11 @@ def main(argv: list[str]) -> int:
 
     check = run_check()
     targets, derr = build_targets(wave, args.compose)
+    code = code_state()
     proof = {
         "wave": int(wave),
         "check": check,
+        "code": code,         # commit mới nhất chạm services/ + còn sửa dở không — gate đòi đúng commit hiện tại
         "targets": targets,   # per-target tagged: {target, kind, health, healthy} — gate đối chiếu ROADMAP
         "note": "HARNESS capture_proof.py — agent KHÔNG được ghi (guard_proof chặn Write/Edit).",
     }
@@ -165,9 +181,11 @@ def main(argv: list[str]) -> int:
     out.write_text(json.dumps(proof, ensure_ascii=False, indent=2), encoding="utf-8")
 
     cont = [t for t in targets if t["kind"] in ("backend", "bff", "web")]
-    ok = check["ok"] and bool(targets) and all(t["healthy"] for t in cont)
+    ok = check["ok"] and not code["dirty"] and bool(targets) and all(t["healthy"] for t in cont)
     tsum = ", ".join(f"{t['target']}:{'✓' if t.get('healthy') else ('n/a' if t.get('healthy') is None else '✗')}" for t in targets) or "(không đọc được target từ ROADMAP)"
     print(f"[proof wave {wave}] make check: {'✓' if check['ok'] else '✗ (' + str(check['code']) + ')'} · targets: {tsum}")
+    if code["dirty"]:
+        print("  ! services/ còn sửa chưa commit — commit rồi chụp lại (gate đòi proof trên code đã commit)")
     if derr:
         print(f"  ! docker: {derr}")
     print(f"→ {out.relative_to(ROOT)}  ({'SẴN SÀNG cho VERIFY' if ok else 'CHƯA xanh — gate BUILD sẽ đỏ'})")

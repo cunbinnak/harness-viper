@@ -1,5 +1,5 @@
 ---
-description: SHIP — (opt-in theo wave) prod-ready → deploy production → smoke → thử rollback → dogfood lần 2
+description: SHIP — (opt-in theo wave) prod-ready → deploy production → smoke → thử rollback
 ---
 # /ship [<wave>] — Phase SHIP  *(chỉ chạy khi ROADMAP wave khai `SHIP`)*
 
@@ -9,7 +9,7 @@ description: SHIP — (opt-in theo wave) prod-ready → deploy production → sm
 **Việc ĐẦU TIÊN**: kiểm ROADMAP wave có `SHIP` không? Không → **dừng**, gợi ý `/next-wave`. Có → sửa `STATE.md` → `Phase hiện tại: SHIP`.
 
 ## Bước 1 — Production-ready
-`docs/PRODUCTION-READY.md` 4 nhóm xanh (secret/env · bảo mật theo `SECURITY.md` · observability · vận hành).
+`docs/PRODUCTION-READY.md` 4 nhóm xanh (secret/env · bảo mật theo `SECURITY.md` · observability · vận hành) — mục *(sau deploy)* tick sau Bước 4 (gate SHIP đòi đủ).
 *(tuỳ)* spawn `reviewer`/`bug-hunter` lượt cuối — trả finding, MAIN sửa.
 
 ## Bước 2 — Backward-compat (wave ≥2)
@@ -20,10 +20,7 @@ description: SHIP — (opt-in theo wave) prod-ready → deploy production → sm
 
 ## Bước 4 — Smoke + rollback
 - Smoke test luồng nghiệp vụ trên **production THẬT** (không phải staging/local).
-- **Thử rollback MỘT lần** (`make doctor` + đường rollback ở deploy doc) — chưa thử = chưa chắc rollback được.
-
-## Bước 5 — Dogfood lần 2 (trên production)
-Chạy lại luồng nghiệp vụ trên production (MAIN tự dùng + persona nếu cần). Phát hiện → `STATE §Findings` → sửa hoặc backlog.
+- **Thử rollback MỘT lần** theo đường rollback ghi ở `docs/arch/OVERVIEW.md §5.8` → `make doctor` kiểm hệ sau rollback — chưa thử = chưa chắc rollback được.
 
 ## Bước cuối — Chốt
 `python scripts/gate.py` (SHIP) xanh → tick gate SHIP trong `STATE.md` → gợi ý `/next-wave`.

@@ -31,7 +31,7 @@ dev: infra-up   ## hạ tầng + dev từng target — VERIFY đánh trên đây
 	$(GUARD)
 	@for t in $(TARGETS); do echo ">> dev $$t"; "$(MAKE)" -s -C "$$t" dev || exit 1; done
 
-check:   ## build + lint + typecheck MỌI target (phải xanh trước khi rời BUILD)
+check:   ## build + lint + typecheck + test MỌI target (phải xanh trước khi rời BUILD)
 	$(GUARD)
 	@for t in $(TARGETS); do echo ">> check $$t"; "$(MAKE)" -s -C "$$t" check || exit 1; done
 

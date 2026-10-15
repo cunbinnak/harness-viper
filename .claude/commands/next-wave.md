@@ -10,14 +10,15 @@ description: NEXT-WAVE — đóng wave (snapshot, KHÔNG reset) → rà lại + 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: NEXT-WAVE`.
 
 ## Bước 1 — Chốt kết quả wave vừa xong
-- Xác nhận đã qua VERIFY: `tracking/wave-N/test-cases.md` mọi AC **PASS** · `STATE §Findings` hết BLOCKER/MAJOR.
+- Xác nhận gate VERIFY xanh (wave khai SHIP: cả gate SHIP) — `next_wave.py` tự chạy lại và **TỪ CHỐI đóng** nếu đỏ.
+  **Wave KHÔNG ĐẠT** mà Authority quyết vẫn đóng → 1 dòng `docs/DECISIONS.md` (Authority quyết đóng dù KHÔNG ĐẠT + lý do) · chuyển MỌI TC FAIL/BLOCKED + finding BLOCKER/MAJOR còn mở vào `ROADMAP §3` (cột Xử = `wave N+1`) · chạy script với `--accept-red=<DEC-id>`.
 - Trình Authority **go / pivot / kill** — **LUÔN, không phụ thuộc metric**: wave có metric → so **số thật vs ngưỡng ghi TRƯỚC** (ở FEAT/ROADMAP), **KHÔNG chỉnh ngưỡng sau khi nhìn số**; wave không metric → vẫn phải có lời chốt của Authority mới đóng. Ghi kết quả → `docs/DECISIONS.md`.
 - Gom vào `docs/ROADMAP.md §backlog` **TRƯỚC khi xoá trắng STATE** (không để mất): amendment trong wave (luồng thiếu, scope mới) + **finding minor còn lại** ở §Findings + blocker treo + **TC `CHƯA CÓ QUY ĐỊNH`** (Authority đã quyết ở báo cáo VERIFY: thêm quy định → top-up bảng chính sách · không cần → ghi lý do).
 
 ## Bước 2 — Snapshot + reset wave-scoped: **CHẠY `python scripts/next_wave.py --go`**
-Script làm trọn: copy HẾT vào `archive/wave-N/` · dựng lại gate BUILD/VERIFY/SHIP/NEXT-WAVE + 3 log từ `templates/TEMPLATE.state.md` · `Wave: N+1` · `Phases wave này` từ ROADMAP §1 · từ chối nếu wave đã đóng. **CẤM làm tay** (chép archive tay, sửa tay dòng `Wave`) — đóng tay từng bỏ sót reset: ô VERIFY wave cũ còn `[x]` → gate wave mới "xanh" mà chưa dogfood. Xong → **`git add archive/wave-N STATE.md && git commit`** (archive chưa commit = snapshot có thể mất). Authority nói "đóng wave" trong chat → vẫn chạy lệnh này, không tự đóng.
-Nội dung snapshot `archive/wave-N/` — **snapshot TRỌN lát cắt wave, không chọn lọc** ("chép doc nào" là phán đoán sẽ mục): `STATE.md` (gate+logs) ·
-`tracking/wave-N/test-cases.md` + `fidelity.md` · **phần `docs/` in-scope wave**. **Lát cắt lấy từ `ROADMAP.md §1` wave-N**: cột `Target (kind)` → `arch/{target}.md` của đúng target đó · cột `AC in-scope` → các `FEAT` chứa AC đó. (Wave BE-only → chỉ `arch/backend.md` + FEAT-BE, KHÔNG kéo target khác vào.) Từ đây **BẤT BIẾN — là hợp đồng**.
+Script làm trọn: copy HẾT vào `archive/wave-N/` · dựng lại gate BUILD/VERIFY/SHIP/NEXT-WAVE + 3 log từ `templates/TEMPLATE.state.md` · `Wave: N+1` · `Phases wave này` từ ROADMAP §1 · từ chối nếu wave đã đóng hoặc gate VERIFY (+ SHIP nếu khai) còn đỏ (trừ `--accept-red=<DEC-id>`, Bước 1). **CẤM làm tay** (chép archive tay, sửa tay dòng `Wave`) — đóng tay từng bỏ sót reset: ô VERIFY wave cũ còn `[x]` → gate wave mới "xanh" mà chưa dogfood. Xong → **`git add archive/wave-N STATE.md && git commit`** (archive chưa commit = snapshot có thể mất). Authority nói "đóng wave" trong chat → vẫn chạy lệnh này, không tự đóng.
+Nội dung snapshot `archive/wave-N/` — **chép HẾT, không chọn lọc** ("chép doc nào" là phán đoán sẽ mục): `STATE.md` (gate + logs + kết luận QC) ·
+`tracking/wave-N/` · **toàn bộ `docs/`** (FEAT · arch · mockup · bảng chính sách · DECISIONS · BACKWARD-COMPAT…) — bản đã giao nằm nguyên ở đây. Từ đây **BẤT BIẾN — là hợp đồng**.
 - **`archive/wave-N/` tồn tại = cờ "wave đã đóng"** → có rồi thì TỪ CHỐI đóng lại (đóng 2 lần = ghi đè, mất vết).
 - **Shipped surface** (test-cases PASS + `arch §API`) = hợp đồng wave sau phải giữ → wave sau **chỉ THÊM** (additive), ghi vào `docs/BACKWARD-COMPAT.md §1` (sổ tích luỹ, **không wave nào xoá**).
 
@@ -51,9 +52,12 @@ Nội dung snapshot `archive/wave-N/` — **snapshot TRỌN lát cắt wave, kh�
 - Teardown toàn bộ: `docker compose down --volumes` + dọn build artifact. Báo: **dự án xong**.
 - Muốn tăng trưởng tiếp (feature mới) → `/document` top-up (đọc `§backlog`) mở kế hoạch wave mới.
 
+## Bước cuối — Chốt
+`python scripts/gate.py` (NEXT-WAVE) xanh — `archive/wave-N` đã commit · backlog định đoạt hết · wave kế đã stamp `Rà lại` → gợi ý `/build` (hoặc `/document` top-up theo 4.4). Hết wave → báo dự án xong.
+
 ## Ranh giới
 - **KHÔNG reset `docs/`** — chỉ snapshot + xoá phần wave-scoped của STATE. Docs sống giữ nguyên (trí nhớ qua wave).
 - **KHÔNG sửa tay / xoá `archive/`** — wave đã đóng bất biến; xoá = mất cờ "đã đóng".
 - **KHÔNG bỏ qua RÀ LẠI** để mở wave cho nhanh — chạy mù kế hoạch cũ là đúng cái loop engineering chống.
 - Chỉ được phá legacy wave trước nếu ROADMAP wave kế khai `legacy được phép phá` (nếu không → `guard_bc` chặn ở SHIP).
-- KHÔNG đóng wave khi gate VERIFY còn đỏ.
+- KHÔNG đóng wave khi gate VERIFY còn đỏ — trừ Authority quyết (dòng DECISIONS + phần đỏ sang backlog wave kế, `--accept-red`).

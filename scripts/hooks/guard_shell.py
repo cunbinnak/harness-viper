@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""guard_shell — chặn ghi mockup có app shell LỆCH canonical `_shell.html` (PROTOCOL §8, vá shell-drift).
+"""guard_shell — CẢNH BÁO mockup có app shell LỆCH canonical `_shell.html` (PROTOCOL §8, chống shell trôi).
 
-PreToolUse(Write|Edit): file `docs/ux/mockups/{target}/{screen}.html` (KHÔNG phải `_shell.html`).
-So khối shell (giữa `<!-- SHELL:START -->` … `<!-- SHELL:END -->`) với `_shell.html` CÙNG thư mục,
-chuẩn hoá `aria-current` (active-state mỗi màn khác nhau — hợp lệ) trước khi so. Lệch (nav items/thứ tự/
-nhóm/logo/user-menu/ICON khác) → exit 2 = deny.
+PostToolUse(Write|Edit|MultiEdit) — chạy SAU khi ghi: đọc TRỌN file mockup trên đĩa (nên bắt được cả Write lẫn
+Edit/MultiEdit), so khối shell (giữa `<!-- SHELL:START -->` … `<!-- SHELL:END -->`) với `_shell.html` CÙNG thư mục,
+chuẩn hoá `aria-current` (active-state mỗi màn khác nhau — hợp lệ) trước khi so. Lệch (nav items/thứ tự/nhóm/logo/
+user-menu/ICON khác) → exit 2 = đưa cảnh báo cho model (file ĐÃ ghi, KHÔNG undo) để tự sửa. Cảnh báo, không chặn.
 
-Fail-open — BỎ QUA (return 0) khi: không phải mockup .html · chính `_shell.html` · chưa có `_shell.html`
-(canonical chưa dựng) · `_shell.html` chưa đánh dấu SHELL · mockup không có khối SHELL (màn full-screen:
-login/print — hợp lệ). `Edit` chỉ thấy fragment `new_string`: nếu chạm marker SHELL mà không trọn khối →
-BÁO MỀM (return 0, không chặn — guard chỉ so chắc khi Write thấy trọn file). MultiEdit: bỏ qua như guard_ds.
+Bỏ qua (exit 0) khi: không phải mockup .html · chính `_shell.html` · chưa có `_shell.html` (canonical chưa dựng) ·
+`_shell.html` chưa đánh dấu SHELL · mockup không có khối SHELL (màn full-screen: login/print — hợp lệ). Fail-open.
 """
+from __future__ import annotations
+
 import json
 import os
 import re
@@ -31,52 +31,33 @@ def normalize(block: str) -> str:
     return b.strip()
 
 
+def shell_of(path: str) -> str | None:
+    try:
+        with open(path, encoding="utf-8", errors="ignore") as f:
+            m = SHELL_RE.search(f.read())
+    except OSError:
+        return None
+    return normalize(m.group(1)) if m else None
+
+
 def main() -> int:
     try:
         data = json.load(sys.stdin)
-        ti = data.get("tool_input", {}) or {}
-        path = (ti.get("file_path") or "").replace("\\", "/")
-        content = ti.get("content")            # Write: trọn file
-        new_string = ti.get("new_string")      # Edit: fragment
+        path = ((data.get("tool_input", {}) or {}).get("file_path") or "").replace("\\", "/")
     except Exception:
         return 0
-
-    if "docs/ux/mockups/" not in path or not path.endswith(".html"):
+    if "docs/ux/mockups/" not in path or not path.endswith(".html") or os.path.basename(path) == "_shell.html":
         return 0
-    if os.path.basename(path) == "_shell.html":
+    canon = shell_of(os.path.join(os.path.dirname(path), "_shell.html"))
+    mine = shell_of(path)
+    if canon is None or mine is None or mine == canon:
         return 0
-
-    shell_path = os.path.join(os.path.dirname(path), "_shell.html")
-    if not os.path.exists(shell_path):
-        return 0                               # canonical chưa dựng — không có gì để so
-    try:
-        canon_m = SHELL_RE.search(open(shell_path, encoding="utf-8", errors="ignore").read())
-    except Exception:
-        return 0
-    if not canon_m:
-        return 0                               # _shell.html chưa đánh dấu SHELL
-    canon_norm = normalize(canon_m.group(1))
-
-    is_write = content is not None
-    text = content if is_write else (new_string or "")
-    m = SHELL_RE.search(text)
-    if not m:
-        # Write không có khối shell = màn full-screen hợp lệ (login/print) → bỏ qua.
-        # Edit chạm marker nhưng không trọn khối → không đủ để so → BÁO MỀM.
-        if not is_write and ("SHELL:START" in text or "SHELL:END" in text):
-            sys.stderr.write(
-                f"[guard_shell] Edit chạm khối SHELL trong {path} nhưng fragment không trọn khối — "
-                f"rà tay app shell vs _shell.html (guard chỉ so chắc khi Write thấy trọn file).\n")
-        return 0
-
-    if normalize(m.group(1)) != canon_norm:
-        sys.stderr.write(
-            f"[guard_shell] CẢNH BÁO: App shell trong {path} LỆCH _shell.html canonical "
-            f"(nav items/thứ tự/nhóm heading/logo/user-menu/icon khác nhau). "
-            f"Read _shell.html → copy đúng khối SHELL:START…SHELL:END → chỉ đổi `aria-current` mục đang đứng. "
-            f"Rà lại trước khi trình chốt (ux-design §Nhất quán cross-màn).\n")
-        return 0
-    return 0
+    sys.stderr.write(
+        f"[guard_shell] CẢNH BÁO: App shell trong {path} LỆCH _shell.html canonical "
+        f"(nav items/thứ tự/nhóm heading/logo/user-menu/icon khác nhau). File ĐÃ ghi — sửa ngay: "
+        f"Read _shell.html → copy đúng khối SHELL:START…SHELL:END → chỉ đổi `aria-current` mục đang đứng "
+        f"(ux-design §Nhất quán cross-màn).\n")
+    return 2
 
 
 if __name__ == "__main__":

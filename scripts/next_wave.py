@@ -6,12 +6,14 @@
   3 log) — xoá luôn đuôi heading/chữ ô bị sửa tay · set `Wave: N+1` + `Phases wave này` từ ROADMAP §1.
 - **KHÔNG reset `docs/`** (trí nhớ qua wave). RÀ LẠI kế hoạch + stamp ngày vào ô `Rà lại` của wave N+1 do MAIN làm ở `/next-wave`.
 
-Usage: python scripts/next_wave.py [--go]   (không --go = xem trước, không sửa gì)
+Usage: python scripts/next_wave.py [--go] [--accept-red=DEC-x]
+  (không --go = xem trước, không sửa gì · gate VERIFY/SHIP đỏ → từ chối, trừ --accept-red do Authority quyết)
 """
 from __future__ import annotations
 
 import re
 import shutil
+import subprocess
 import sys
 from pathlib import Path
 
@@ -44,6 +46,13 @@ def roadmap_phases(wave: int) -> str:
         if ln.strip().startswith("|") and cells[0] == str(wave):
             return next((c for c in cells[1:] if re.fullmatch(r"[A-Z, \-\[\]]*BUILD[A-Z, \-\[\]]*", c)), "")
     return ""
+
+
+def gate_ok(phase: str) -> bool:
+    """Chạy `gate.py <phase>` — exit 0 = xanh."""
+    p = subprocess.run([sys.executable, str(ROOT / "scripts" / "gate.py"), phase], cwd=ROOT,
+                       capture_output=True, text=True, encoding="utf-8", errors="replace")
+    return p.returncode == 0
 
 
 def reset_state(text: str, next_wave: int) -> str:
@@ -105,7 +114,19 @@ def main(argv: list[str]) -> int:
         print(f"✗ archive/wave-{n}/ ĐÃ tồn tại = cờ 'wave {n} đã đóng'. Từ chối đóng lại (tránh mất vết).")
         return 1
 
-    srcs = ["STATE.md", f"tracking/wave-{n}", "docs/feat", "docs/arch", "docs/ROADMAP.md", "docs/CAPABILITIES-MAP.md"]
+    # wave chỉ đóng khi gate VERIFY (+ SHIP nếu khai) xanh — trừ Authority quyết đóng dù KHÔNG ĐẠT (dòng DECISIONS)
+    red = [ph for ph in ["VERIFY"] + (["SHIP"] if "SHIP" in roadmap_phases(n) else []) if not gate_ok(ph)]
+    accept = next((a.split("=", 1)[1] for a in argv if a.startswith("--accept-red=")), "")
+    if red:
+        dec = ROOT / "docs" / "DECISIONS.md"
+        if not accept or accept not in (dec.read_text(encoding="utf-8") if dec.exists() else ""):
+            print(f"✗ gate {' + '.join(red)} wave {n} còn ĐỎ — từ chối đóng wave.\n"
+                  f"  Authority quyết đóng dù KHÔNG ĐẠT → 1 dòng docs/DECISIONS.md (DEC-x) + chuyển mọi TC FAIL/BLOCKED"
+                  f" + finding BLOCKER/MAJOR còn mở vào ROADMAP §3 (Xử = wave {n+1}) → chạy lại với --accept-red=DEC-x")
+            return 1
+        print(f"! gate {' + '.join(red)} còn đỏ — đóng theo {accept} (Authority quyết; phần đỏ đã sang backlog wave {n+1})")
+
+    srcs = ["STATE.md", f"tracking/wave-{n}", "docs"]   # chép HẾT docs/ — bản đã giao (mockup · bảng chính sách…) nằm nguyên
     srcs = [s for s in srcs if (ROOT / s).exists()]
     print(f"[next-wave] đóng wave {n} → mở wave {n+1}   ({'THỰC THI' if go else 'xem trước — thêm --go để chạy'})")
     print(f"  Snapshot → archive/wave-{n}/ :")
@@ -122,7 +143,7 @@ def main(argv: list[str]) -> int:
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(src, dst) if src.is_dir() else shutil.copy2(src, dst)
     STATE.write_text(reset_state(text, n + 1), encoding="utf-8")
-    print(f"\n✓ Đã snapshot + mở wave {n+1}. Bước kế (MAIN): RÀ LẠI kế hoạch wave {n+1} + stamp `Rà lại wave {n+1}` vào ROADMAP → /build hoặc /document top-up.")
+    print(f"\n✓ Đã snapshot + mở wave {n+1}. Bước kế (MAIN): RÀ LẠI kế hoạch wave {n+1} + stamp ngày vào ô `Rà lại` của wave {n+1} (ROADMAP §1) + `git commit` archive → /build hoặc /document top-up.")
     return 0
 
 

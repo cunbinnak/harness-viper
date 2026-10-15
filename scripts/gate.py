@@ -111,13 +111,17 @@ def challenge_pass(phase: str) -> bool:
     return challenge_count(phase) >= 1
 
 
-def git_commit_count() -> int:
+def _git(*args: str) -> str:
     try:
-        out = subprocess.run(["git", "rev-list", "--count", "HEAD"],
-                             cwd=ROOT, capture_output=True, text=True, timeout=10)
-        return int(out.stdout.strip() or 0)
+        return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", timeout=20).stdout.strip()
     except Exception:
-        return 0
+        return ""
+
+
+def last_code_commit() -> str:
+    """Commit mới nhất chạm `services/` — proof.json phải chụp đúng commit này."""
+    return _git("log", "-1", "--format=%H", "--", "services")
 
 
 def roadmap_wave_row(wave: str) -> list[str]:
@@ -379,11 +383,15 @@ def tc_rows(text: str) -> list[dict]:
 
 
 def in_scope_acs(wave: str) -> list[tuple[str, str]]:
-    """AC in-scope wave → [(FEAT-id, số AC)]. Ô ROADMAP dạng `FEAT-x AC-1..3, FEAT-y AC-2,4` — FEAT không ghi AC
-    = mọi `### AC-n` trong docs/feat/<FEAT-id>.md."""
+    """AC in-scope wave (ROADMAP §1 cột AC in-scope) → [(FEAT-id, số AC)]."""
     row = roadmap_wave_row(wave)
     idx = _col_index("AC in-scope")
-    cell = row[idx] if row and idx is not None and idx < len(row) else ""
+    return parse_ac_cell(row[idx] if row and idx is not None and idx < len(row) else "")
+
+
+def parse_ac_cell(cell: str, expand: bool = True) -> list[tuple[str, str]]:
+    """Ô dạng `FEAT-x AC-1..3, FEAT-y AC-2,4` → [(FEAT-id, số AC)] — AC gắn đúng FEAT đứng trước nó.
+    FEAT không ghi AC: expand → mọi `### AC-n` trong docs/feat/<FEAT-id>.md · không expand (ô AC của TC) → không AC nào."""
     out = []
     for part in re.split(r"(?=FEAT-)", cell):
         m = re.match(r"(FEAT-[\w-]+?)(?=[\s:,;(]|AC-|$)(.*)", part.strip(), flags=re.S)
@@ -398,7 +406,7 @@ def in_scope_acs(wave: str) -> list[tuple[str, str]]:
                     nums += [str(n) for n in range(int(rng.group(1)), int(rng.group(2)) + 1)]
                 elif piece.isdigit():
                     nums.append(piece)
-        if not nums:
+        if not nums and expand:
             nums = re.findall(r"^#{2,4}\s*AC-(\d+)", read_live(f"docs/feat/{feat}.md"), flags=re.M)
         out += [(feat, n) for n in dict.fromkeys(nums)]
     return out
@@ -412,6 +420,34 @@ def regression_ids(wave: int) -> list[str]:
             ids += [x["tc"] for x in tc_rows(p.read_text(encoding="utf-8", errors="ignore"))
                     if "@regression" in x["tag"] and x["tc"]]
     return list(dict.fromkeys(ids))
+
+
+def _wave_ac_cell(wave: str, roadmap: str) -> str:
+    """Ô AC in-scope của `wave` trong một bản ROADMAP (text) — để đọc bản ở commit cũ."""
+    m = re.search(r"^#{1,4}\s*§1.*?$(.*?)(?=^#{1,4}\s|\Z)", read_live(roadmap, is_text=True), flags=re.M | re.S)
+    rows = [[c.strip() for c in ln.strip().strip("|").split("|")]
+            for ln in (m.group(1) if m else "").splitlines() if ln.strip().startswith("|")]
+    idx = next((i for i, h in enumerate(rows[0]) if "AC in-scope" in h), None) if rows else None
+    row = next((c for c in rows[1:] if c and c[0] == str(wave)), [])
+    return row[idx] if row and idx is not None and idx < len(row) else ""
+
+
+def _check_ac_baseline(r: "Report", wave: str) -> None:
+    """AC bị RÚT khỏi wave so với bản chốt (commit đóng wave trước · wave 1: commit tick Scope khoá) mà ROADMAP §2
+    không có dòng điều chỉnh của wave này = hoãn ngầm để gate VERIFY đếm ít AC hơn."""
+    if not wave.isdigit():
+        return
+    n = int(wave)
+    base = (_git("log", "-1", "--format=%H", "--", f"archive/wave-{n - 1}") if n >= 2
+            else _git("log", "-1", "--format=%H", "-S", "[x] **Scope khoá", "--", "STATE.md"))
+    if not base:
+        return
+    now = set(in_scope_acs(wave))
+    gone = [f"{f} AC-{a}" for f, a in parse_ac_cell(_wave_ac_cell(wave, _git("show", f"{base}:docs/ROADMAP.md")))
+            if (f, a) not in now]
+    logged = any(len(c) >= 2 and re.sub(r"\D", "", c[1]) == wave for c in table_rows(section("docs/ROADMAP.md", "§2")))
+    r.check(not gone or logged, f"AC in-scope wave {wave} không bị rút so với bản chốt"
+            + (f" — RÚT: {', '.join(gone[:6])} mà ROADMAP §2 không có dòng wave {wave}" if gone and not logged else ""))
 
 
 def policy_rows(flows: str) -> list[list[str]]:
@@ -431,8 +467,9 @@ def policy_rows(flows: str) -> list[list[str]]:
 
 
 def wave_declares_ship(wave: str) -> bool:
-    row = roadmap_wave_row(wave)
-    return any("SHIP" in c.upper() for c in row)
+    """Chỉ đọc cột `phases` (không bắt nhầm chữ SHIP trong tên FEAT/target)."""
+    row, idx = roadmap_wave_row(wave), _col_index("phases")
+    return bool(row) and idx is not None and idx < len(row) and "SHIP" in row[idx].upper()
 
 
 # ------------------------------------------------------------------ report ---
@@ -526,13 +563,9 @@ def gate_document(r: Report) -> None:
 def gate_build(r: Report) -> None:
     wave = state_wave()
     if wave.isdigit() and int(wave) >= 2:
-        row = roadmap_wave_row(wave)
-        idx = _col_index("Rà lại")
-        val = row[idx] if row and idx is not None and idx < len(row) else ""
-        r.check(bool(val) and val not in ("—", "-"), f"ROADMAP wave {wave} có `Rà lại` (wave_reviewed)")
+        _check_reviewed(r, wave)
     else:
         r.note("wave 1 — miễn wave_reviewed (fresh từ DOCUMENT)")
-    r.check(git_commit_count() >= 1, "đã có commit")
     # bất biến chuyển wave: đang BUILD thì VERIFY/SHIP chưa thể xong; wave trước phải đóng bằng next_wave.py + commit
     leftover = [ph for ph in ("VERIFY", "SHIP") if re.search(r"- \[[xX]\]", section("STATE.md", ph))]
     r.check(not leftover, "không còn ô VERIFY/SHIP đã tick khi đang BUILD"
@@ -548,12 +581,29 @@ def gate_build(r: Report) -> None:
     todo = pending_topup(wave)
     r.check(not todo, f"backlog xếp wave {wave} cần top-up đều đã top-up"
             + (f" — CHƯA: {' | '.join(todo)} (→ /document top-up, xong ghi `đã top-up → …` ở cột Xử)" if todo else ""))
-    proof = read_proof(wave)   # bằng chứng MÁY-sinh (capture_proof.py) — không tin tick tay
+    _check_proof(r, wave)
+    _state_checkboxes(r, "BUILD")
+
+
+def _check_reviewed(r: Report, wave: str) -> None:
+    row = roadmap_wave_row(wave)
+    idx = _col_index("Rà lại")
+    val = row[idx] if row and idx is not None and idx < len(row) else ""
+    r.check(bool(val) and val not in ("—", "-"), f"ROADMAP wave {wave} có `Rà lại` (wave_reviewed)")
+
+
+def _check_proof(r: Report, wave: str) -> None:
+    """proof.json MÁY-sinh (capture_proof.py) — không tin tick tay: make check xanh · chụp trên code ĐÃ commit, đúng
+    commit mới nhất của services/ (sửa code sau lần chụp = proof cũ) · mọi target container hoá wave khai healthy."""
+    proof = read_proof(wave)
     if not proof:
         r.check(False, "thiếu tracking/wave-N/proof.json — chạy `python scripts/capture_proof.py`")
-        _state_checkboxes(r, "BUILD")
         return
     r.check(bool(proof.get("check", {}).get("ok")), "make check xanh (proof.json — máy sinh)")
+    code = proof.get("code") or {}
+    fresh = not code.get("dirty", True) and code.get("commit") == last_code_commit()
+    r.check(fresh, "proof chụp trên code đã commit, đúng commit mới nhất của services/"
+            + ("" if fresh else " — còn sửa dở hoặc code đổi sau lần chụp → commit rồi chạy lại capture_proof"))
     # target phủ đủ wave — đối chiếu ROADMAP §1 cột Target ↔ proof.targets (chống "khai 2 làm 1")
     declared = parse_wave_targets(wave)
     if not declared:
@@ -565,7 +615,6 @@ def gate_build(r: Report) -> None:
             r.check(bool(t) and bool(t.get("healthy")), f"target `{name}` ({kind}) chạy thật — proof healthy")
         else:  # mobile — không proof qua docker, dựa tick STATE (emulator)
             r.note(f"target `{name}` ({kind}) — emulator, không proof docker; dựa ô tick STATE")
-    _state_checkboxes(r, "BUILD")
 
 
 def gate_verify(r: Report) -> None:
@@ -573,19 +622,19 @@ def gate_verify(r: Report) -> None:
     tc = f"tracking/wave-{wave}/test-cases.md"
     rows = tc_rows(read(tc))   # khung templates/TEMPLATE.test-cases.md — đọc theo TÊN cột
     r.check(exists(tc) and bool(rows), f"{tc}: có bảng TC (khung TEMPLATE.test-cases.md)")
-    # không còn TC chưa xong: FAIL · BLOCKED · CHƯA CHẠY (CHƯA CÓ QUY ĐỊNH không tính — không phải bug, đi backlog)
-    bad = [f"{x['tc']}:{x['res']}" for x in rows if x["res"].startswith(("FAIL", "BLOCKED", "CHƯA CHẠY"))]
-    r.check(not bad, "không còn TC FAIL / BLOCKED / CHƯA CHẠY"
+    # không còn TC chưa xong: FAIL · BLOCKED · CHƯA CHẠY · trống (CHƯA CÓ QUY ĐỊNH không tính — không phải bug, đi backlog)
+    bad = [f"{x['tc']}:{x['res'] or 'trống'}" for x in rows
+           if not x["res"] or x["res"].startswith(("FAIL", "BLOCKED", "CHƯA CHẠY"))]
+    r.check(not bad, "không còn TC FAIL / BLOCKED / CHƯA CHẠY (kết quả trống = CHƯA CHẠY)"
             + (f" — {len(bad)}: {', '.join(bad[:6])}" if bad else ""))
     # mọi AC in-scope có ≥1 TC PASS (tính TỪNG AC — 1 TC PASS cho cả wave không đủ)
     acs = in_scope_acs(wave)
-    passed = [x["ac"] for x in rows if x["res"].startswith("PASS")]
-    uncovered = [f"{f} AC-{n}" for f, n in acs
-                 if not any(re.search(rf"{re.escape(f)}(?![\w-])", cell) and re.search(rf"\bAC-{n}\b", cell)
-                            for cell in passed)]
+    passed = {p for x in rows if x["res"].startswith("PASS") for p in parse_ac_cell(x["ac"], expand=False)}
+    uncovered = [f"{f} AC-{n}" for f, n in acs if (f, n) not in passed]
     r.check(bool(acs) and not uncovered, f"mọi AC in-scope wave {wave} có TC PASS ({len(acs)} AC)"
             + (f" — CHƯA: {', '.join(uncovered[:8])}" if uncovered else "")
             + ("" if acs else " — không đọc được AC in-scope (ROADMAP §1 cột AC in-scope + docs/feat/)"))
+    _check_ac_baseline(r, wave)
     # regression: mọi TC @regression của wave đã đóng phải được chạy lại + PASS ở wave này
     if wave.isdigit() and int(wave) >= 2:
         cur = {x["tc"]: x["res"] for x in rows}
@@ -596,17 +645,19 @@ def gate_verify(r: Report) -> None:
     gap = [x["tc"] for x in rows if x["res"].startswith("CHƯA CÓ QUY ĐỊNH")]
     if gap:
         r.note(f"CHƯA CÓ QUY ĐỊNH: {len(gap)} TC ({', '.join(gap[:6])}) — không chặn gate; báo Authority + ROADMAP §backlog")
-    # §Findings không BLOCKER/MAJOR chưa xử
+    # §Findings: BLOCKER/MAJOR chỉ coi là đã xử khi agent xác nhận đã sửa, hoặc đã đẩy backlog
     open_major = [row for row in table_rows(section("STATE.md", "Findings"))
-                  if len(row) >= 5 and any(s in row[2].upper() for s in ("BLOCKER", "MAJOR"))
-                  and not row[4].strip()]
-    r.check(not open_major, "§Findings: hết BLOCKER/MAJOR chưa xử")
+                  if len(row) >= 5 and re.search(r"BLOCKER|MAJOR", row[2].upper())
+                  and not re.search(r"fixed.*xác nhận|backlog", row[4], re.I)]
+    r.check(not open_major, "§Findings: hết BLOCKER/MAJOR chưa xử (Xử lý = `fixed — <agent> xác nhận` hoặc `backlog`)"
+            + (f" — CÒN {len(open_major)}" if open_major else ""))
     if wave_screens(wave):   # có màn UI in-scope → picky phải phủ đủ + khớp (bằng chứng ở fidelity.md)
         absent, off = fidelity_gaps(wave)
         r.check(not absent, f"tracking/wave-{wave}/fidelity.md phủ đủ màn in-scope"
                 + (f" — THIẾU dòng: {', '.join(absent)} (picky chưa soi)" if absent else ""))
         r.check(not off, "fidelity.md không còn màn LỆCH mockup"
                 + (f" — LỆCH: {', '.join(off)}" if off else ""))
+    _check_proof(r, wave)   # vòng sửa đổi code → proof phải chụp lại đúng commit mới nhất
     _state_checkboxes(r, "VERIFY")
 
 
@@ -615,23 +666,29 @@ def gate_ship(r: Report) -> None:
     if not wave_declares_ship(wave):
         r.note(f"wave {wave} không khai SHIP → bỏ qua, đi /next-wave")
         return
+    # gate SHIP chạy SAU deploy (Bước cuối) → đòi đủ cả mục (sau deploy); trước deploy guard_bc mới miễn các mục đó
     unchecked = count_rows("docs/PRODUCTION-READY.md", r"^- \[ \]")
-    # bỏ qua mục (sau deploy) khi tính P1
-    after_deploy = count_rows("docs/PRODUCTION-READY.md", r"^- \[ \].*\(sau deploy\)")
-    r.check(unchecked - after_deploy <= 0, "PRODUCTION-READY 4 nhóm xanh (trừ (sau deploy))")
-    bc3 = len(re.findall(r"^- \[ \]", section("docs/BACKWARD-COMPAT.md", "§3"), flags=re.MULTILINE))
-    r.check(bc3 == 0, "BACKWARD-COMPAT §3 xanh (guard_bc)")
-    _state_checkboxes(r, "SHIP")   # deploy/smoke/rollback/dogfood-2 tick tay — gate soi như BUILD/VERIFY
+    r.check(exists("docs/PRODUCTION-READY.md") and unchecked == 0,
+            "PRODUCTION-READY 4 nhóm xanh — kể cả mục (sau deploy)" + (f" — CÒN {unchecked} mục" if unchecked else ""))
+    if wave.isdigit() and int(wave) >= 2:
+        bc3 = len(re.findall(r"^- \[ \]", section("docs/BACKWARD-COMPAT.md", "§3"), flags=re.MULTILINE))
+        r.check(bc3 == 0, "BACKWARD-COMPAT §3 xanh (guard_bc)")
+    _state_checkboxes(r, "SHIP")   # deploy/smoke/rollback tick tay — gate soi như BUILD/VERIFY
 
 
 def gate_next_wave(r: Report) -> None:
+    """Chấm SAU `next_wave.py --go` (STATE đã sang wave N+1). Chốt TRƯỚC khi đóng (VERIFY/SHIP xanh) nằm trong script."""
     wave = state_wave()
-    tc = f"tracking/wave-{wave}/test-cases.md"
-    r.check(exists(tc), "wave đã qua VERIFY (test-cases.md tồn tại)")
-    # backlog: mọi dòng có cột Xử
+    prev = str(int(wave) - 1) if wave.isdigit() else ""
+    r.check(bool(prev) and bool(_git("ls-files", f"archive/wave-{prev}")),
+            f"archive/wave-{prev or 'N'} đã snapshot + commit (`next_wave.py --go` → git commit)")
     backlog = table_rows(section("docs/ROADMAP.md", "§3"))
     undisposed = [row for row in backlog if len(row) >= 4 and not row[3].strip()]
     r.check(not undisposed, "ROADMAP §3 backlog: mọi item đã định đoạt (cột Xử không trống)")
+    if roadmap_wave_row(wave):
+        _check_reviewed(r, wave)
+    else:
+        r.note(f"ROADMAP không còn wave {wave} → hết wave: teardown `docker compose down --volumes`, báo dự án xong")
 
 
 # --------------------------------------------------------------- helpers -----

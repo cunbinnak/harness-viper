@@ -37,7 +37,7 @@ KHÔNG thiết kế thừa: không thêm Kafka/Redis/replica khi 5.2 không đò
 5. **5.5 Nhất quán theo luồng**: luồng nào cần nhất quán ngay (1 transaction), luồng nào chấp nhận nhất quán sau (outbox · saga · bù). Ghi qua nhiều service → không dùng giao dịch phân tán.
 6. **5.6 Chế độ lỗi & điểm chết đơn lẻ**: mỗi thành phần (DB · cache · broker · hệ ngoài · lưu file · IdP) chết hoặc chậm thì người dùng thấy gì · xử bằng gì (timeout/retry/circuit breaker/hàng đợi/suy giảm) · phục hồi (RTO/RPO, backup).
 7. **5.7 Bảo mật riêng dự án**: (a) **phân loại dữ liệu** — dữ liệu · mức (công khai/nội bộ/nhạy cảm/PII/tài chính) · ai được xem · bảo vệ (mã hoá cột · che log · chỉ TLS); (b) **mối đe dọa chính** 3–7 dòng (STRIDE rút gọn): mối đe dọa · tài sản · chặn bằng gì; (c) **mô hình xác thực**: IdP, token, kiểm `iss`/`aud`, thu hồi khi khoá tài khoản. Baseline chung đã ở `SECURITY.md` — không chép lại.
-8. **5.8 Triển khai & vận hành**: mỗi target — số instance prod · đứng sau gì (nginx/gateway/LB) · stateless? · job chạy ở đâu, có lock không · môi trường · observability (log JSON + `X-Request-ID`, metric, cảnh báo theo SLO 5.1) · backup.
+8. **5.8 Triển khai & vận hành**: mỗi target — số instance prod · đứng sau gì (nginx/gateway/LB) · stateless? · job chạy ở đâu, có lock không · môi trường · observability (log JSON + `X-Request-ID`, metric, cảnh báo theo SLO 5.1) · backup · đường rollback (`/ship` thử 1 lần).
 9. **5.9 Quyết định lớn → ADR**: mỗi lựa chọn hạ tầng đáng kể có ADR, lý do **trích số** ở 5.1/5.2, phương án đã loại, khi nào phải xem lại.
 
 ## Giao cho `technical-design`

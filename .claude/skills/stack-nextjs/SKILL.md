@@ -40,7 +40,7 @@ BUILD target web (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§revie
 ## §4 make (điền thân vào `services/web/<name>/Makefile` — root Makefile dispatch tới)
 ```
 dev     : npm run dev                 # trỏ backend thật
-check   : npm run typecheck && npm run lint && npm run build
+check   : npm run typecheck && npm run lint && npm run build && npm run test
 test    : npm run test
 ```
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""guard_ds — chặn ghi mockup/design-system lệch token (PROTOCOL §8, vá E1/A3).
+"""guard_ds — chặn ghi mockup/design-system lệch token (PROTOCOL §8).
 
 PreToolUse(Write|Edit): file trong docs/ux/mockups/**.html hoặc docs/DESIGN-SYSTEM.md —
 cấm mã màu hex THÔ ngoài khối `:root {}` (phải dùng `var(--color-*)`; token là SoT). exit 2 = deny. Fail-open.
@@ -19,18 +19,20 @@ def main() -> int:
         data = json.load(sys.stdin)
         ti = data.get("tool_input", {}) or {}
         path = (ti.get("file_path") or "").replace("\\", "/")
-        content = ti.get("content") or ti.get("new_string") or ""
+        content = ti.get("content") or ti.get("new_string") or "\n".join(
+            e.get("new_string", "") for e in ti.get("edits") or [])   # MultiEdit
     except Exception:
         return 0
     if "docs/ux/mockups/" not in path and not path.endswith("DESIGN-SYSTEM.md"):
         return 0
     body = re.sub(r":root\s*\{.*?\}", "", content, flags=re.DOTALL)      # bỏ khối định nghĩa token
     body = re.sub(r"/\*.*?\*/", "", body, flags=re.DOTALL)              # bỏ comment CSS
+    body = re.sub(r"^\s*\|\s*`?--[\w-]+`?\s*\|.*$", "", body, flags=re.MULTILINE)  # dòng bảng token §2 (| --x | #hex |) = chỗ định nghĩa
     hexes = re.findall(r"[:\s]#[0-9a-fA-F]{3,8}\b", body)
     if hexes:
         sys.stderr.write(
             f"[guard_ds] Hex thô ngoài :root trong {path} ({[h.strip() for h in hexes[:3]]}…) — "
-            f"phải dùng `var(--color-*)` (PROTOCOL §8; token DESIGN-SYSTEM là nguồn sự thật, chống demo-đẹp-chạy-xấu E1).\n")
+            f"phải dùng `var(--color-*)` (PROTOCOL §8; token DESIGN-SYSTEM là nguồn sự thật, chống demo-đẹp-chạy-xấu).\n")
         return 2
     return 0
 

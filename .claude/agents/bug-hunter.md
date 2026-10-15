@@ -50,11 +50,11 @@ Trả về danh sách thiếu (**không sửa file** — người sửa đề l�
 ```
 Đã nạp: <liệt kê file/skill thực đọc — vd FEAT-leave · arch/hrms-api · review-backend · stack-spring-boot §review>
 
-[nặng|vừa|nhẹ] <vấn đề>
+[BLOCKER|MAJOR|MINOR] <vấn đề>
   Ở: <file>:<dòng>
   Vi phạm: <AC-n | ca biên FEAT-x | ma trận vai ô ... | DECISIONS ...>
   Hỏng thế nào: <tình huống → kết quả sai>
   Đề xuất: <một câu>
 ```
-Mức: **nặng** = mất dữ liệu / lỗ phân quyền / AC không chạy · **vừa** = ca biên chưa xử / lỗi nuốt · **nhẹ** = việc dở / lệch quy ước.
+Mức: **BLOCKER** = mất dữ liệu / lỗ phân quyền / AC không chạy · **MAJOR** = ca biên chưa xử / lỗi nuốt · **MINOR** = việc dở / lệch quy ước.
 Không chắc → nói không chắc + cách kiểm chứng. Học được về target (cho KG): `<...>`.

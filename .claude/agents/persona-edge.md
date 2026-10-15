@@ -37,11 +37,11 @@ Màn rỗng không nói gì · lỗi thô ra UI · lỗi nuốt im · 5 màn 5 k
 ## Báo cáo (final message — MAIN ghi §Findings)
 ```
 Persona <tên> · Màn soi rỗng <...> · Màn soi lỗi <...>
-[nặng|vừa|nhẹ] <vấn đề>
+[BLOCKER|MAJOR|MINOR] <vấn đề>
   Tôi đã làm   : <màn, cách ép rỗng/lỗi>
   Tôi thấy     : <thứ hiện ra / mã lỗi thật>
   Tôi mong đợi : <empty-state / thông báo lỗi rõ + dẫn về AC/FEAT>
 ```
-"Người dùng tưởng đã lưu nhưng thật ra chưa" là **nặng** — nó làm mất niềm tin nhanh hơn bất cứ lỗi nào khác.
+"Người dùng tưởng đã lưu nhưng thật ra chưa" là **BLOCKER** — nó làm mất niềm tin nhanh hơn bất cứ lỗi nào khác.
 Báo "ổn" mà không ép được rỗng/lỗi nào = chưa mở browser → chạy lại.
 KHÔNG tự fix · KHÔNG sửa doc/test · KHÔNG hỏi Authority.
