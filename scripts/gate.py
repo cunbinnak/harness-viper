@@ -206,6 +206,85 @@ def missing_wave_mockups(wave: str) -> list[str]:
     return missing
 
 
+_COLOR_REF = r"`?(#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b|--[\w-]+)`?"
+_PAIR = re.compile(_COLOR_REF + r"[^`|\n#]{0,40}?\btrên\s+" + _COLOR_REF)
+
+
+def _luminance(hex_color: str) -> float:
+    h = hex_color.lstrip("#")
+    if len(h) == 3:
+        h = "".join(c * 2 for c in h)
+    chans = []
+    for i in (0, 2, 4):
+        c = int(h[i:i + 2], 16) / 255
+        chans.append(c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4)
+    return 0.2126 * chans[0] + 0.7152 * chans[1] + 0.0722 * chans[2]
+
+
+def contrast_ratio(fg: str, bg: str) -> float:
+    """Tỉ số tương phản WCAG 2.x giữa hai mã hex (#rgb / #rrggbb)."""
+    a, b = sorted((_luminance(fg), _luminance(bg)), reverse=True)
+    return (a + 0.05) / (b + 0.05)
+
+
+def contrast_pairs(rel: str = "docs/DESIGN-SYSTEM.md") -> tuple[list[tuple], list[str]]:
+    """Đọc khối "cặp tương phản" của DESIGN-SYSTEM → [(chữ, nền, hex chữ, hex nền, tỉ số, ngưỡng)] + lỗi tra token.
+    Token tra từ `:root` (`--x: #hex;` hoặc `var(--y)`) và bảng §2 (| `--x` | `#hex` |). Ghi `lớn` trong cùng vế → ngưỡng 3:1."""
+    text = read_live(rel)
+    tokens: dict[str, str] = {}
+    for name, val in re.findall(r"(--[\w-]+)\s*:\s*([^;\n]+);", text):
+        tokens.setdefault(name, val.strip())
+    for name, val in re.findall(r"\|\s*`(--[\w-]+)`\s*\|\s*`?([^`|]+?)`?\s*\|", text):
+        tokens.setdefault(name, val.strip())
+
+    def resolve(ref: str, depth: int = 0) -> str | None:
+        if ref.startswith("#"):
+            return ref
+        val = tokens.get(ref, "")
+        m = re.match(r"#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?\b", val)
+        if m:
+            return m.group(0)
+        v = re.match(r"var\(\s*(--[\w-]+)", val)
+        return resolve(v.group(1), depth + 1) if v and depth < 5 else None
+
+    lines = text.splitlines()
+    start = next((i for i, ln in enumerate(lines) if re.search(r"cặp tương phản", ln, re.I)), None)
+    if start is None:
+        return [], []
+    block = [lines[start]]
+    for ln in lines[start + 1:]:
+        if ln.lstrip().startswith("#"):
+            break
+        block.append(ln)
+    pairs, errs = [], []
+    for ln in block:
+        if not _PAIR.search(ln) and re.search(r"\btrên\b", ln) and re.search(r"#[0-9a-fA-F]{3}|--[\w-]+", ln):
+            errs.append(f"dòng chưa đúng dạng `<chữ>` trên `<nền>` (máy không đọc được): {ln.strip()[:70]}")
+        for m in _PAIR.finditer(ln):
+            fg, bg = m.group(1), m.group(2)
+            clause = re.split(r"[·;]", ln[m.end():], maxsplit=1)[0]
+            need = 3.0 if re.search(r"\blớn\b|large", clause, re.I) else 4.5
+            hf, hb = resolve(fg), resolve(bg)
+            if not hf or not hb:
+                errs.append(f"{fg} trên {bg}: không tra được mã hex")
+                continue
+            pairs.append((fg, bg, hf, hb, contrast_ratio(hf, hb), need))
+    return pairs, errs
+
+
+def _check_contrast(r: "Report") -> None:
+    """DESIGN-SYSTEM §2 cặp tương phản — gate TỰ TÍNH tỉ số WCAG AA, không tin số tự khai trong doc."""
+    if not (ROOT / "docs" / "DESIGN-SYSTEM.md").exists():
+        return                                    # backend-only (KHÔNG CÓ UI) — không có design system
+    pairs, errs = contrast_pairs()
+    bad = [f"{fg} trên {bg} = {ratio:.2f}:1 (cần ≥ {need:g}:1)" for fg, bg, _, _, ratio, need in pairs if ratio < need]
+    r.check(bool(pairs) and not bad and not errs,
+            f"DESIGN-SYSTEM cặp tương phản: {len(pairs)} cặp, gate tự tính tỉ số WCAG AA"
+            + (" — CHƯA khai cặp nào (dạng `<chữ>` trên `<nền>`, hex hoặc token)" if not pairs and not errs else "")
+            + (f" — DƯỚI NGƯỠNG: {'; '.join(bad)}" if bad else "")
+            + (f" — {'; '.join(errs)}" if errs else ""))
+
+
 # phần tử mockup gọi server hoặc hiển thị dữ liệu server → phải khai `data-api` (tĩnh = "none")
 API_TAGS = re.compile(r"<(?:button|form|table|select)\b[^>]*>|<a\b[^>]*\bdownload\b[^>]*>"
                       r"|<input\b[^>]*type=[\"']file[\"'][^>]*>", re.I)
@@ -355,6 +434,7 @@ def gate_document(r: Report) -> None:
     r.check(not miss, f"mockup màn UI in-scope wave {first_wave} đều có file"
             + (f" — THIẾU: {', '.join(miss)} (khai trong SCREEN-MAP nhưng chưa dựng .html)" if miss else ""))
     _check_mockup_api(r, first_wave)
+    _check_contrast(r)
     n_ch = challenge_count("DOCUMENT")
     r.check(n_ch >= 3, f"Challenge DOCUMENT: {n_ch} câu PASS (cần ≥3, trong đó ≥1 journey-walk) — §Challenge log")
     dec_rows = [ln for ln in read_live("docs/DECISIONS.md").splitlines()

@@ -124,7 +124,7 @@ Lệch → **sửa màn lệch cho khớp canonical** (KHÔNG sửa canonical th
 | § | Khai gì | Ai dùng về sau |
 |---|---|---|
 | §1 | **Ba tính từ + neo tham chiếu THẬT** — ưu tiên user chỉ ra ("nhìn như app X"); KHÔNG có thì agent tự tìm (bước Research) và ghi tên + URL + đặc điểm vay mượn, không để trống | chỗ đối chiếu khi cãi nhau đẹp/xấu — không có neo thì tranh luận không có đáy |
-| §2 | Token + **cặp tương phản** (hex chữ / hex nền — WCAG AA) | gate **tự tính tỉ số WCAG**, không tin lời khai |
+| §2 | Token + **cặp tương phản**: mỗi cặp một dòng `<chữ>` trên `<nền>` (hex hoặc token; chữ lớn ghi `lớn`) | gate `_check_contrast` **tự tính tỉ số WCAG AA** (4.5:1 · lớn 3:1), không tin số tự khai; dòng sai dạng cũng đỏ |
 | §3 | **Kho component ĐÓNG** — mỗi khối: dùng ở màn nào + **trạng thái bắt buộc** | vai `picky` ở `/verify` đi kiểm đúng cột này trên app đã render |
 | §4 | **Ba khuôn** rỗng / lỗi / đang tải | năm màn không được đẻ ra năm kiểu báo lỗi |
 
