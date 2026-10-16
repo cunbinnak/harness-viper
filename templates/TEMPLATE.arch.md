@@ -19,7 +19,7 @@ provides_api: true               # có phơi API cho consumer? → §3 là HỢP
 {{entity + quan hệ}}
 
 <!-- §2: luồng xử lý KỸ THUẬT — request → ghi/đọc → response (happy + lỗi chính). Mỗi luồng ghi 1 dòng
-     `Phục vụ: <luồng nghiệp vụ> bước N` (INTERVIEW §Luồng nghiệp vụ). KHÁC luồng nghiệp vụ: cái đó do BA viết, Author ký. -->
+     `Phục vụ: <luồng nghiệp vụ> bước N` (INTERVIEW §Luồng nghiệp vụ). KHÁC luồng nghiệp vụ: cái đó do BA viết, Authority ký. -->
 ## §2 Luồng xử lý (kỹ thuật)
 {{luồng}}
 

@@ -1,6 +1,6 @@
 ---
 name: technical-design
-description: Vai SA — Architecture cho /document Bước 6 (sau event-storming + boundary-charter + system-design, phản ánh OVERVIEW §5) — chốt kind, ĐỀ XUẤT stack (chốt ở Bước 7 bằng hỏi Author), ADR kiến trúc (docs/adr), điền chi tiết arch/{name}.md theo TEMPLATE.arch (§1 data · §2 luồng · §3 API · §4 kiến trúc/ranh giới · §5 events · §6 ca biên TRA), integrations, docker-compose skeleton. UX/UI là bước riêng (kind web/mobile/desktop).
+description: Vai SA — Architecture cho /document Bước 6 (sau event-storming + boundary-charter + system-design, phản ánh OVERVIEW §5) — chốt kind, ĐỀ XUẤT stack (chốt ở Bước 7 bằng hỏi Authority), ADR kiến trúc (docs/adr), điền chi tiết arch/{name}.md theo TEMPLATE.arch (§1 data · §2 luồng · §3 API · §4 kiến trúc/ranh giới · §5 events · §6 ca biên TRA), integrations, docker-compose skeleton. UX/UI là bước riêng (kind web/mobile/desktop).
 ---
 
 # Architecture Method (bước ARCHITECTURE của /document)
@@ -15,7 +15,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `do
 > Đây là **DESIGN docs**, không scaffold code. Scaffold code (`services/{name}/`) xảy ra ở `/build`, KHÔNG ở đây. Ngoại lệ: **khung** `deployment/local/docker-compose.yml` (Deliverable 6) — dựng sẵn service + hạ tầng; `/build` (`infra-local-dev`) làm nốt chi tiết.
 
 ## Deliverable
-1. **ADR** `docs/adr/ADR-NNN-*.md` — theo chủ đề (backend-architecture [Layered/Hexagonal], **api-error-convention [envelope + generic codes chung]**, event/messaging…). **Stack · ui-kit · auth · lưu file · cache KHÔNG tự chốt ở đây** — ghi đề xuất + phương án, chốt bằng lượt hỏi Author ở `/document` Bước 7 rồi mới viết ADR tương ứng. Theo `templates/TEMPLATE.decisions.md`/ADR: context · decision · **Alternatives considered ≥2 (lý do reject)** · consequences.
+1. **ADR** `docs/adr/ADR-NNN-*.md` — theo chủ đề (backend-architecture [Layered/Hexagonal], **api-error-convention [envelope + generic codes chung]**, event/messaging…). **Stack · ui-kit · auth · lưu file · cache KHÔNG tự chốt ở đây** — ghi đề xuất + phương án, chốt bằng lượt hỏi Authority ở `/document` Bước 7 rồi mới viết ADR tương ứng. Theo `templates/TEMPLATE.decisions.md`/ADR: context · decision · **Alternatives considered ≥2 (lý do reject)** · consequences.
 2. **Boundary decomposition** — chốt các **target**: mỗi target + **kind** (`backend`/`bff`/`web`/`mobile`/`desktop` — desktop: app cài trên Windows · §3 ghi **hợp đồng IPC** (kênh · tham số · kết quả · mã lỗi) thay REST nội bộ · §1 dữ liệu cục bộ · §4 quyền hệ điều hành: thư mục được đọc/ghi · tiến trình con · dịch vụ ngoài gọi kèm key) + **stack đề xuất** (chốt ở Bước 7; version lấy từ description skill `stack-<tên>`, không từ trí nhớ). Ghi nhận **tech situational per-target** (phát/nhận event, dùng cache/lock, external đặc thù) — input cho bước chia wave gắn `ref_skills`.
 3. **`docs/arch/OVERVIEW.md`** — §2 tích hợp cross-boundary + **luồng E2E chính** · §3 hạ tầng dùng chung (danh sách — căn cứ ở §5). §1 (target · kind · depends_on) do `boundary-charter` chốt — đọc, không viết lại.
 4. **Per target** — `docs/arch/{name}.md` (frontmatter `kind`/`stack`/`consumes` — theo `templates/TEMPLATE.arch.md`), điền chi tiết vào file `boundary-charter` đã khởi tạo (§0 Mission có rồi — KHÔNG viết lại):

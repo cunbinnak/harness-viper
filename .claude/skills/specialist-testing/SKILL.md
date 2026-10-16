@@ -50,7 +50,7 @@ Tiếng Việt có dấu · tên rất dài · emoji · khoảng trắng đầu/
 3. **Xung đột** — tạo trùng với nghiệp vụ khác cùng người / thời gian / tài nguyên.
 4. **Vòng đời** — sửa / huỷ sau khi đã duyệt hoặc đã bị dùng.
 
-Kết quả: hệ chặn hợp lý → `PASS` (ghi hành vi làm mốc) · hệ **cho phép điều phép thử chỉ ra là có hại** → `CHƯA CÓ QUY ĐỊNH` — nghĩa là *tài liệu (AC + bảng chính sách) không quy định ca này, hệ đang cho phép một việc có thể gây hại* — **KHÔNG phải FAIL** (code đúng tài liệu; thêm quy định hay không là quyết định của Author): `thực tế / bằng chứng` ghi hành vi + phép thử + hệ quả (vd `201 lúc 18:05 · hạ nguồn: chấm công đã chốt → công ngày đó sai`). MAIN đưa vào báo cáo cuối VERIFY + `ROADMAP §backlog`.
+Kết quả: hệ chặn hợp lý → `PASS` (ghi hành vi làm mốc) · hệ **cho phép điều phép thử chỉ ra là có hại** → `CHƯA CÓ QUY ĐỊNH` — nghĩa là *tài liệu (AC + bảng chính sách) không quy định ca này, hệ đang cho phép một việc có thể gây hại* — **KHÔNG phải FAIL** (code đúng tài liệu; thêm quy định hay không là quyết định của Authority): `thực tế / bằng chứng` ghi hành vi + phép thử + hệ quả (vd `201 lúc 18:05 · hạ nguồn: chấm công đã chốt → công ngày đó sai`). MAIN đưa vào báo cáo cuối VERIFY + `ROADMAP §backlog`.
 Giới hạn **~5 thăm dò / hành động**, ưu tiên hành động chạm tiền · công · quyền.
 
 ## Regression cộng dồn

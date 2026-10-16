@@ -11,7 +11,7 @@
      kết quả     : PASS · FAIL · BLOCKED · CHƯA CHẠY · CHƯA CÓ QUY ĐỊNH · ĐÃ THAY
                    (ĐÃ THAY = TC regression wave trước hết hợp lệ vì AC đổi qua top-up — ghi TC thay thế ở cột cuối)
                    (CHƯA CÓ QUY ĐỊNH = tài liệu — AC + bảng chính sách — không quy định ca này, hệ đang cho phép một việc
-                    có thể gây hại → Author quyết có thêm quy định không. KHÔNG phải bug. vd đăng ký làm từ xa lúc 18h vẫn được)
+                    có thể gây hại → Authority quyết có thêm quy định không. KHÔNG phải bug. vd đăng ký làm từ xa lúc 18h vẫn được)
      thực tế / bằng chứng : 1 dòng điều quan sát THẬT (status · body rút gọn · màn hình). FAIL → chính là báo cáo bug.
                    BLOCKED → `hạ tầng: …` hoặc `spec: …`. CHƯA CÓ QUY ĐỊNH → hành vi + phép thử nào + hệ quả. -->
 | TC | loại | nguồn | AC | tag | mô tả | cách chạy | kết quả | thực tế / bằng chứng |

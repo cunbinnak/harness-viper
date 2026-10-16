@@ -41,11 +41,11 @@ description: DOCUMENT — interview|intake → doc set (PRD/PERSONAS/FEAT/ARCHIT
 Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 
 ## Bước 1 — Nạp nguyên liệu (rẽ nhánh theo đường vào) · *PO*
-- **INTERVIEW**: → **Nạp `Skill("discovery-hypothesis")` trước, đọc xong mới hỏi** (4 luật đào sâu + probe nghiệp vụ hóc búa + cược đo được). Phỏng vấn Authority tới khi đủ dựng PRD/persona/capability (không trần số câu; đây là chỗ được hỏi). Kết tinh vào `docs/INTERVIEW.md` **theo đợt**: DOCUMENT đầu ghi khối `### Wave 1`; top-up sau
+- **INTERVIEW**: → **Nạp `Skill("discovery-hypothesis")` trước, đọc xong mới hỏi** (4 luật đào sâu + probe nghiệp vụ hóc búa + cược đo được). Authority không kể được nghiệp vụ / trả lời "không biết" → đi đường **§Authority chưa có kinh nghiệm** của skill (MAIN dẫn từ bản đồ nghiệp vụ xuống, hỏi bằng câu hỏi bối cảnh). Phỏng vấn Authority tới khi đủ dựng PRD/persona/capability (không trần số câu; đây là chỗ được hỏi). Kết tinh vào `docs/INTERVIEW.md` **theo đợt**: DOCUMENT đầu ghi khối `### Wave 1`; top-up sau
   `/next-wave` **thêm khối `### Wave N`** (không sửa khối cũ), mỗi mục có dòng `Bằng chứng:` + gắn FEAT nó phục vụ.
   > **Cách hỏi** (DOCUMENT = chỗ DUY NHẤT `AskUserQuestion` được phép — guard_ask cho qua):
   > · **Khám phá** (pain/persona/ca biên/rỗng-lỗi) → **hội thoại MỞ bằng lời**, KHÔNG dùng `AskUserQuestion` (option mớm lời → Authority bấm cái nghe hợp lý thay vì kể thật).
-  > · **Quyết định** (stack/auth/thu tiền/deploy) → `AskUserQuestion` với **option cụ thể + đánh đổi** ("Clerk 20' có phí vs Auth.js 1-2h free").
+  > · **Quyết định** (phạm vi bản đầu/lựa chọn thiết kế/stack/auth/thu tiền/deploy) → `AskUserQuestion` với **option cụ thể + đánh đổi** ("Clerk 20' có phí vs Auth.js 1-2h free").
 - **INTAKE**: đọc `intake/*.md` — **KHÔNG phỏng vấn lại**. Dịch/render sang doc set bên dưới, lập **bảng truy
   vết** `intake → FEAT` trong `docs/INTERVIEW.md`. `intake/TECHSTACK` **thắng** default của stack skill.
   > **Intake là LỜI KHAI, không phải SỰ THẬT ĐỦ — bỏ phỏng vấn ≠ bỏ RÀ.** Render xong vẫn chạy đủ: research domain **bắt buộc** (bảng 4 loại ở `Skill("discovery-hypothesis")` §Research) (tài liệu người ta đưa không thay được tra ngành — đổ ra danh sách luồng chuẩn ngành vào PRD §6 như đường interview) + lưới cạnh-có-chủ/seam (`domain-ba` D) + 6 họ phổ quát (`pre-mortem`). Lỗ tìm thấy → đang ở DOCUMENT, **được hỏi Authority** hoặc DECISIONS — xử tại chỗ. **Bảng "Lỗ hổng & cách xử" áp cho cả intake — bảng trống = CHƯA rà, không phải intake hoàn hảo.**
@@ -54,7 +54,7 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 Vấn đề (pain) + đối tượng cụ thể + **out-of-scope tường minh** + ≥1 success metric **có số**.
 
 ## Bước 3 — Phân tích BA: bảng luồng + màn nháp → business-rule → PERSONAS · *BA*  → **Nạp `Skill("domain-ba")` trước**
-**Trình tự PO → BA → yêu cầu**: khám phá (Bước 1-2) là việc PO; Bước 3 là BA **phân tích quy trình TRƯỚC khi ai viết AC** — (A) dựng bảng luồng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`, ô `CHƯA HỎI` → hỏi Authority ngay (cả 2 đường vào) + **bảng chính sách từng hành động** (khi nào · ai · giới hạn · trùng gì · ngoại lệ — research lấy dấu vết + suy luận 4 phép thử → đề xuất mặc định, Author chọn; Author không cần biết trước luật), **Authority ký bảng** → (B) business-rule (sinh từ cả bảng chính sách) → (C) persona + ma trận sinh TỪ bảng. Từ đây actor của AC (Bước 5), ô ma trận, luồng nghiệp vụ mà build/verify/dogfood đi theo **chỉ lấy từ bảng** — chống suy diễn \"người có nhu cầu = người thao tác\".
+**Trình tự PO → BA → yêu cầu**: khám phá (Bước 1-2) là việc PO; Bước 3 là BA **phân tích quy trình TRƯỚC khi ai viết AC** — (A) dựng bảng luồng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`, ô `CHƯA HỎI` → hỏi Authority ngay (cả 2 đường vào) + **bảng chính sách từng hành động** (khi nào · ai · giới hạn · trùng gì · ngoại lệ — research lấy dấu vết + suy luận 4 phép thử → đề xuất mặc định, Authority chọn; Authority không cần biết trước luật), **Authority ký bảng** → (B) business-rule (sinh từ cả bảng chính sách) → (C) persona + ma trận sinh TỪ bảng. Từ đây actor của AC (Bước 5), ô ma trận, luồng nghiệp vụ mà build/verify/dogfood đi theo **chỉ lấy từ bảng** — chống suy diễn \"người có nhu cầu = người thao tác\".
 Persona + năng lực được cấp + **ma trận vai × hành động** — mỗi ô `có`/`cấm`, **KHÔNG ô trống**
 (đây là spec phân quyền khi code + nguồn TC âm khi test + danh sách phép thử của vai `breaker` ở dogfood).
 
@@ -75,7 +75,7 @@ FEAT **không** chứa chặn ở đâu / contract / tên class-bảng-công ngh
 - `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile/desktop) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ + chặn ở đâu (§6, cột AC/BR trỏ FEAT §3) + `consumes` (target gọi API của ai) nằm ở đây — FEAT không chứa.
 
 ## Bước 7 — TECHSTACK (`docs/TECHSTACK.md`) · *SA đề xuất · Authority chốt*
-**Chỗ DUY NHẤT chốt tech** (Bước 6 chỉ đề xuất, không tự chốt). Lựa chọn Author sẽ thấy / phải vận hành / tốn tiền (stack · UI kit · đăng nhập & phiên · lưu file · cache · email/SMS · build tool · deploy) mà Author CHƯA nói → **hỏi bằng `AskUserQuestion`**, mỗi câu 2-3 option + đánh đổi 1 dòng + mặc định đề xuất. Author đã nói / intake đã khai → giữ nguyên, không hỏi lại. Chi tiết thuần nội bộ → tự quyết, `DECISIONS` loại `kỹ-thuật`. Kết quả → `docs/TECHSTACK.md` + ADR.
+**Chỗ DUY NHẤT chốt tech** (Bước 6 chỉ đề xuất, không tự chốt). Lựa chọn Authority sẽ thấy / phải vận hành / tốn tiền (stack · UI kit · đăng nhập & phiên · lưu file · cache · email/SMS · build tool · deploy) mà Authority CHƯA nói → **hỏi bằng `AskUserQuestion`**, mỗi câu 2-3 option + đánh đổi 1 dòng + mặc định đề xuất. Authority đã nói / intake đã khai → giữ nguyên, không hỏi lại. Chi tiết thuần nội bộ → tự quyết, `DECISIONS` loại `kỹ-thuật`. Kết quả → `docs/TECHSTACK.md` + ADR.
 > **VERSION mỗi stack: Read dòng `description` của skill `stack-<tên>` tương ứng lấy default + note EOL — CẤM điền version từ trí nhớ.** Knowledge cutoff của model CŨ hơn thực tại: "version mình nhớ là mới nhất" thường đã lỗi thời/EOL. Authority không chỉ định version → dùng default của skill + 1 dòng `DECISIONS.md`; Authority chỉ định khác default → theo Authority, ghi ADR.
 > **Quét FEAT tìm feature NGẦM đòi tech/infra chưa chốt** (danh sách: `pre-mortem` mục "Feature NGẦM ĐÒI tech/infra") → đưa vào lượt hỏi ở trên.
 
@@ -101,17 +101,17 @@ Có UI → **quay lại Bước 8 dựng mockup màn wave 1** (ux-design) rồi 
 ## Bước 10 — Challenge DOCUMENT (luật #8 — tới khi hiểu ĐÚNG Ý AUTHOR) · *RV*  → **Nạp `Skill("business-analysis")` để rà chéo**
 Tự ra **≥3 câu hỏi khó nhất**, trả lời **CHỈ bằng tài liệu vừa viết** — trong đó **≥1 câu dạng JOURNEY-WALK**: lấy persona + dữ liệu mẫu PRD §7, đi bộ xuyên doc *"dẫn 〈persona X〉 từ zero đến làm được 〈việc Y〉 — từng bước trích doc"* (câu hỏi ĐIỂM bắt lỗ cục bộ; walk bắt luồng đứt/vắng — kẹt ở bước không trích được = lỗ ngay tại đó). Câu nào phải đoán = **một lỗ tài liệu** →
 vá (INTERVIEW: **hỏi Authority thêm** · INTAKE: dịch lại + vá lỗ) — vá theo **luật CASCADE** (đầu file): mỗi vá lan hết doc liên đới, không point-edit. **Lặp tới khi tài liệu trả lời được HẾT và
-phản ánh ĐÚNG ý Author** (không còn chỗ đoán, không còn lệch ý) — **không giới hạn số vòng**. **PASS** mới đi tiếp.
+phản ánh ĐÚNG ý Authority** (không còn chỗ đoán, không còn lệch ý) — **không giới hạn số vòng**. **PASS** mới đi tiếp.
 Ghi mỗi vòng vào `STATE.md §Challenge log`.
 
-**PRE-LOCK AUDIT (bắt buộc — ĐIỂM KÍCH HOẠT: Author nói "chốt scope"/"chốt tài liệu" ở Bước cuối. LUÔN chạy tại lời chốt, KỂ CẢ ô `PRE-LOCK AUDIT PASS` đang tick — tick là dấu ghi nhận, KHÔNG phải vé skip: bịt tick chay + sửa doc ngoài tool mà hook không thấy. Chạy sớm hơn lời chốt chỉ phí: doc còn đổi theo nhận xét thì audit trên bản trung gian là audit vứt đi) — 2 phần:**
+**PRE-LOCK AUDIT (bắt buộc — ĐIỂM KÍCH HOẠT: Authority nói "chốt scope"/"chốt tài liệu" ở Bước cuối. LUÔN chạy tại lời chốt, KỂ CẢ ô `PRE-LOCK AUDIT PASS` đang tick — tick là dấu ghi nhận, KHÔNG phải vé skip: bịt tick chay + sửa doc ngoài tool mà hook không thấy. Chạy sớm hơn lời chốt chỉ phí: doc còn đổi theo nhận xét thì audit trên bản trung gian là audit vứt đi) — 2 phần:**
 
 **(1) Khớp nhau — consistency** (đọc TRỌN doc set, báo mọi **tham chiếu treo**):
 - **Trace 6 chiều** (`technical-design §Trọn vẹn` — gồm chiều 6 lifecycle & seam) + **mỗi vùng dữ liệu/thao tác trên màn có API** (`data-api` trên mockup ↔ `arch §3` — gate `mockup_api_gaps` soi máy).
 - **UI↔AC 2 chiều — chấm TỪNG AC, không chấm gộp per-FEAT**: lập danh sách 2 cột **mọi AC `has_ui` in-scope** ↔ **màn + phần tử/khuôn xử nó** (từ SCREEN-MAP) — AC không có dòng = **màn con thiếu** (form/detail/modal bị lười), bổ sung mockup + API cho nó TRƯỚC khi khoá ("FEAT có 1 màn list" KHÔNG phải bằng chứng phủ). Chiều ngược: mỗi phần tử tương tác trong mockup (search/filter/sort/nút/phân trang) có 1 AC — phần tử **không AC = quyết NGAY** (thêm AC · hoặc bỏ khỏi mockup), **KHÔNG silent-defer wave sau**. Kèm: mỗi **vùng dữ liệu** trên mockup (kể cả read-only) có API fetch trong `arch §3` (khai ở SCREEN-MAP behavior).
 
-**(2) Không thiếu — completeness** (con mắt ĐỘC LẬP, bù điểm mù Author + MAIN-tự-vấn):
-- **Spawn `pre-mortem`** (sub-agent độc lập MAIN) → quét mỗi FEAT/luồng qua **taxonomy ca biên** (`domain-ba` D) + 3 câu xuyên-luồng + 6 họ luồng phổ quát + đối chiếu ngành → trả **nghi vấn case Author MISS**.
+**(2) Không thiếu — completeness** (con mắt ĐỘC LẬP, bù điểm mù Authority + MAIN-tự-vấn):
+- **Spawn `pre-mortem`** (sub-agent độc lập MAIN) → quét mỗi FEAT/luồng qua **taxonomy ca biên** (`domain-ba` D) + 3 câu xuyên-luồng + 6 họ luồng phổ quát + đối chiếu ngành → trả **nghi vấn case Authority MISS**.
 - MAIN nhận nghi vấn → mỗi cái **quyết**: thêm AC (CASCADE) · hỏi Authority (còn DOCUMENT nên được hỏi) · chuẩn ngành có link → `DECISIONS` (PROTOCOL §2.3). **KHÔNG bỏ lửng, không đoán.**
 - Nghi vấn **đổi luồng** (thiếu bước · sai Ai LÀM · thiếu nhánh) → **sửa bảng luồng `INTERVIEW` TRƯỚC** (thêm dòng, Bằng chứng = câu Authority vừa trả lời), Authority **ký lại** bảng đó (cập nhật ngày `chốt bởi Authority`) → rồi mới CASCADE xuống AC · ma trận · SCREEN-MAP. Chỉ thêm AC mà bảng không đổi = vai/màn/luồng dogfood thiếu theo.
 

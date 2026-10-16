@@ -1,6 +1,6 @@
 <!-- gate bỏ qua TEMPLATE.* — copy thành docs/DECISIONS.md. 1 dòng/quyết định. Mã DEC-NNNN. Luật: PROTOCOL §2.3.
      Trước khoá scope: SỬA TẠI CHỖ (1 chủ đề = 1 dòng). Sau khoá: supersede — dòng cũ Trạng thái `thay bởi DEC-x`, dòng mới ghi `thay DEC-y`.
-     Loại: `kỹ-thuật` (lý do) · `chuẩn-ngành` (BẮT BUỘC link nguồn) · `ý-Author` (chỉ ghi SAU khi Author trả lời — ghi ngày/nguồn trả lời) ·
+     Loại: `kỹ-thuật` (lý do) · `chuẩn-ngành` (BẮT BUỘC link nguồn) · `ý-Authority` (chỉ ghi SAU khi Authority trả lời — ghi ngày/nguồn trả lời) ·
      `amend-arch` (sau khoá scope, PROTOCOL §3: đổi gì ở arch §nào · phục vụ AC/Mã màn nào · vì sao kẹt luồng — chỉ THÊM, cùng commit với code). -->
 # DECISIONS — {{PROJECT_NAME}}
 

@@ -14,7 +14,7 @@ description: "Checklist RÀ AC/BR cho /document — Bước 5 nhịp 3 (BA tự 
 Input: `docs/{PRD.md, feat/FEAT-*.md}` (BR đặc tả ở `docs/INTERVIEW.md §Business rules`, FEAT §3 trỏ `BR-<slug>`).
 
 ## Cái cần đảm bảo (chất lượng AC/BR — khung FEAT do domain-po (PO), AC/BR do domain-ba D (BA))
-1. **AC testable** — Given/When/Then (Cho/Khi/Thì) hoặc condition đo được; mỗi FEAT ≥ 1 AC; cover cả non-happy-path.
+1. **AC testable** — Given/When/Then (Cho/Khi/Thì) hoặc condition đo được; mỗi FEAT ≥ 4 AC (happy · validation · error · a11y — `domain-ba` D); cover cả non-happy-path.
 2. **Business rules `BR-*`** — phát biểu rõ + nguồn (policy/regulation/stakeholder) + ≥2 ví dụ; `related_features` ≥1.
 3. **Scope rõ** — §Ngoài phạm vi đủ để QC biết KHÔNG test gì; bounded context rõ (boundary thật chốt ở bước boundary-charter/technical-design trong DOCUMENT).
 
@@ -29,7 +29,7 @@ Phương pháp phân tích (research ngành · actor · bảng luồng · use ca
 
 ## Quality checklist (khi review / phân tích)
 - [ ] **Actor mỗi AC = cột Ai LÀM của bảng luồng đã ký** (`INTERVIEW §Luồng nghiệp vụ đã xác nhận`); ô `có` ma trận PERSONAS §2 trỏ được về dòng bảng. Lệch = SAI (báo, sửa AC/ma trận), không phải nitpick — đây là kiểm "đúng với Authority", các trace khác chỉ kiểm "đúng với nhau".
-- [ ] Mỗi FEAT có ≥ 1 AC testable (Cho/Khi/Thì), gồm non-happy-path.
+- [ ] Mỗi FEAT có ≥ 4 AC testable (Cho/Khi/Thì) — happy · validation · error · a11y — + taxonomy ca biên quét đủ trục (AC hoặc `n/a`, `domain-ba` D).
 - [ ] BR-* có nguồn tham chiếu + ≥2 ví dụ + `related_features` ≥1.
 - [ ] Scope rõ (§Ngoài phạm vi đủ cho QC); bounded context rõ.
 - [ ] Ca biên/nhánh use case ở bảng luồng (domain-ba A.4) đều có AC tương ứng — không sót nhánh.

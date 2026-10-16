@@ -2,7 +2,7 @@
 
 > Định nghĩa CHUẨN của quy trình. [STATE.md](STATE.md) là bản thao tác; lệch nhau thì **PROTOCOL.md thắng**.
 > Router ngắn mỗi phiên: `CLAUDE.md`.
-> **Authority** (trong skill/agent và nhãn nguồn hay viết **Author**) = MỘT người: chủ dự án — gọi lệnh, quyết nghiệp vụ · phạm vi · go/pivot/kill. MAIN = phiên Claude chính (viết tài liệu + code); agent = phiên phụ chỉ để kiểm.
+> **Authority** = chủ dự án (MỘT người) — gọi lệnh, quyết nghiệp vụ · phạm vi · go/pivot/kill. MAIN = phiên Claude chính (viết tài liệu + code); agent = phiên phụ chỉ để kiểm.
 >
 > **Trạng thái: HOÀN THIỆN — khung đã dựng, selftest xanh** (7 command · gate.py · 10 agent · hooks · skill library).
 > Bộ khung tinh gọn: 1 lớp doc · MAIN tự code · inline prompt · ít script + gate nhìn thấy được.
@@ -17,7 +17,7 @@ Nhận diện bằng đúng một dấu hiệu: `docs/INTERVIEW.md` có marker `
 |---|---|---|
 | Khi nào | Ý tưởng mới, chưa có tài liệu phân tích (greenfield, project nhỏ) | Đã có tài liệu MESH-render/phân tích sẵn ở `intake/` |
 | MAIN làm | **Phỏng vấn Authority** → `docs/INTERVIEW.md` đủ dòng bằng chứng → suy ra PRD/personas/… | **Dịch/render** `intake/*.md` vào doc set + bảng truy vết + marker `NGUỒN: INTAKE` — không hỏi lại điều intake đã trả lời; chỗ intake không có → hỏi như đường interview |
-| Cỡ | nhỏ: 1 app, 3–7 AC, 2–3 persona | không trần: multi-boundary, AC truy về `CAPABILITIES-MAP.md` |
+| Cỡ | nhỏ: 1 app, 2–3 persona — số AC theo mức tối thiểu chung (≥5 capability · ≥4 AC/FEAT), không có trần | không trần: multi-boundary, AC truy về `CAPABILITIES-MAP.md` |
 
 Cả hai **hội tụ về cùng doc set** (`docs/`) rồi chảy xuống BUILD/VERIFY như nhau — chỉ khác cách nạp nguyên liệu đầu vào. Đường vào quyết định ràng buộc cỡ, không phải quy trình.
 
@@ -65,9 +65,9 @@ không để trôi); go/pivot/kill so **ngưỡng ghi trước** (không sửa s
 |---|---|---|---|
 | **Đã có bằng chứng** | INTERVIEW · bảng luồng đã ký · mockup · AC đã khoá | Làm theo | Làm theo |
 | **Quy định bên ngoài** — ràng buộc có sẵn, không phụ thuộc Authority | luật · nghị định · chuẩn kỹ thuật bắt buộc | Research **phải ra văn bản nguồn** → suy luận áp vào sản phẩm ("luật nói X → hệ thống phải chặn Y"). Không tìm được văn bản → ghi `chưa xác minh — <điều nhớ được>`, Authority xác nhận | Có văn bản → làm theo + `DECISIONS` loại `chuẩn-ngành` kèm link · không có → `ROADMAP §backlog` |
-| **Lựa chọn thiết kế** — Authority không đủ chuyên môn để tự quyết | hạn chót · hạn mức · ngoại lệ · thứ tự làm các mảng · ngưỡng go/pivot/kill · NFR có số | Research → **suy luận ra đề xuất** → Authority chọn | Không đổi luật nghiệp vụ (ai được làm gì · khi nào · bao nhiêu) và có thông lệ rõ kèm link → làm theo + `DECISIONS` loại `chuẩn-ngành` · còn lại → `ROADMAP §backlog`, KHÔNG chọn thay Authority |
+| **Lựa chọn thiết kế** — đụng luật nghiệp vụ hoặc phạm vi; Authority không đủ chuyên môn để tự quyết | hạn chót · hạn mức · ngoại lệ · thứ tự làm các mảng · ngưỡng go/pivot/kill · NFR có số | Research → **suy luận ra đề xuất** (vai sở hữu mục đó: PO — phạm vi · thứ tự mảng · ngưỡng · NFR · BA — luật từng hành động) → Authority chọn | `ROADMAP §backlog` — KHÔNG chọn thay Authority |
 | **Chỉ Authority biết** | chính sách riêng của đơn vị · cách đơn vị đang làm · sở thích · ngân sách | Hỏi Authority bằng **câu hỏi bối cảnh** (`discovery-hypothesis`) | `STATE §Blocker` / `ROADMAP §backlog` |
-| **Kỹ thuật nội bộ** | tên field · cấu trúc code · thư viện có trong TECHSTACK | MAIN tự quyết (lựa chọn Authority sẽ thấy / phải vận hành / tốn tiền → hỏi ở `/document` Bước 7) | MAIN tự quyết + `DECISIONS` loại `kỹ-thuật` kèm lý do |
+| **Kỹ thuật nội bộ** — chi tiết KHÔNG đụng luật nghiệp vụ (ai được làm gì · khi nào · bao nhiêu) | tên field · cấu trúc code · thư viện có trong TECHSTACK · chi tiết hiển thị (cỡ trang mặc định · thứ tự sắp xếp mặc định) | MAIN tự quyết (lựa chọn Authority sẽ thấy / phải vận hành / tốn tiền → hỏi ở `/document` Bước 7) | MAIN tự quyết + `DECISIONS` loại `kỹ-thuật` kèm lý do |
 
 **Research luôn đi kèm suy luận.** Research chỉ là nguyên liệu: không ai công bố cách làm sản phẩm của họ, kết quả tìm kiếm thường chung chung. Suy luận là bước **bắt buộc ngay sau research**, không phải bước dự phòng khi research thiếu. Có hai loại:
 - **Suy luận ra đề xuất** (trước khi hỏi Authority): nguyên liệu research + **kiến thức chuyên môn đã có** → áp vào bối cảnh của Authority qua bộ phép thử của chỗ đó (chính sách: `domain-ba` A.6 · thứ tự mảng: `discovery-hypothesis`) → đề xuất.
@@ -75,7 +75,7 @@ không để trôi); go/pivot/kill so **ngưỡng ghi trước** (không sửa s
 
 **Mỗi đề xuất trình đủ 3 phần**: (1) research cho thấy gì — link, hoặc ghi "không tìm thấy" · (2) áp vào bối cảnh này ra sao — trích phép thử nào · (3) đề xuất mặc định + phương án khác + hệ quả nếu chọn sai. Thiếu phần (2) = chép lại research hoặc đoán, chưa phải suy luận.
 
-**Nhãn nguồn chung** (mọi cột Bằng chứng / Nguồn): `Author` (kèm vị trí, vd `§1 dòng N`) · `[quy định] <link>` · `research <link> + suy luận` · `suy luận` (research không ra gì) · `intake/<file>` · `chưa xác minh — <điều nhớ được>`. Lựa chọn thiết kế đã được chọn → thêm `→ Author chọn`. KHÔNG gọi suy luận là chuẩn ngành; KHÔNG gắn link chung chung để thành `[quy định]`.
+**Nhãn nguồn chung** (mọi cột Bằng chứng / Nguồn): `Authority` (kèm vị trí, vd `§1 dòng N`) · `[quy định] <link>` · `research <link> + suy luận` · `suy luận` (research không ra gì) · `intake/<file>` · `chưa xác minh — <điều nhớ được>`. Lựa chọn thiết kế đã được chọn → thêm `→ Authority chọn`. KHÔNG gọi suy luận là chuẩn ngành; KHÔNG gắn link chung chung để thành `[quy định]`.
 
 **Authority không cần biết trước — MAIN mang chuyên môn, Authority chỉ quyết.** **Vòng đời `DECISIONS`**: trước khoá scope **sửa tại chỗ** (1 chủ đề = 1 dòng, không thêm dòng lật dòng cũ); sau khoá **supersede** — dòng cũ `Trạng thái: thay bởi DEC-x`, dòng mới ghi `thay DEC-y`.
 4. **Doc là nguồn sự thật — ĐÓNG BĂNG sau khoá scope.** Code lệch doc → **KHÔNG sửa doc spec lúc BUILD/VERIFY** (guard_doc chặn); ghi `ROADMAP §backlog` → wave sau `/document` top-up đồng bộ. **Ngoại lệ DUY NHẤT — `amend-arch`** (§3): `docs/arch/*.md` thiếu/sai KỸ THUẬT làm **kẹt luồng** của AC đã khoá → bổ sung `arch` tại chỗ theo 6 điều kiện ở §3. Mơ hồ → `DECISIONS.md` (sổ sống, được ghi). Giữ hợp đồng ổn định để review/dogfood đánh, tránh "vừa code vừa vặn doc".
@@ -93,7 +93,7 @@ Sau khoá scope doc spec **đóng băng** (§2.4 — guard_doc chặn); doc wave
 
 ```
 ├─ Code sai so với spec đã chốt                → sửa CODE. Xong. (không đụng doc)
-├─ Spec mơ hồ (không nói rõ ca này)            → bảng §2.3 cột "Sau khoá scope": có nguồn → DECISIONS, đi tiếp · cần Authority quyết → backlog, KHÔNG tự bịa. KHÔNG hỏi
+├─ Spec mơ hồ (không nói rõ ca này)            → bảng §2.3 cột "Sau khoá scope": quy định có văn bản / kỹ thuật nội bộ → DECISIONS, đi tiếp · đụng luật nghiệp vụ → backlog, KHÔNG tự bịa. KHÔNG hỏi
 ├─ (A) arch lệch thực tế, KHÔNG kẹt luồng      → code bám arch đã khoá · DECISIONS `kỹ-thuật` + backlog đồng bộ doc wave sau
 │      (tên field, kiểu dữ liệu, index…)
 ├─ (B) arch thiếu/sai KỸ THUẬT làm KẸT luồng   → `amend-arch`: bổ sung docs/arch/*.md tại chỗ, cùng commit với code
@@ -123,7 +123,7 @@ Nguồn sự thật gom về `docs/` — KHÔNG còn 2 lớp business↔eng, KH�
 | File | Vai trò |
 |---|---|
 | `docs/PRD.md` | vấn đề · đối tượng · out-of-scope · success metric |
-| `docs/INTERVIEW.md` | bằng chứng phỏng vấn (+ marker `NGUỒN: INTAKE` nếu đường intake) + **§Luồng nghiệp vụ đã xác nhận = "luồng nghiệp vụ"**: từng bước ai làm gì, bằng lời nghiệp vụ, Author ký. Mọi chỗ nói "luồng nghiệp vụ" (build · verify · dogfood · test-writer) trỏ về đây, lọc theo wave qua màn/AC |
+| `docs/INTERVIEW.md` | bằng chứng phỏng vấn (+ marker `NGUỒN: INTAKE` nếu đường intake) + **§Luồng nghiệp vụ đã xác nhận = "luồng nghiệp vụ"**: từng bước ai làm gì, bằng lời nghiệp vụ, Authority ký. Mọi chỗ nói "luồng nghiệp vụ" (build · verify · dogfood · test-writer) trỏ về đây, lọc theo wave qua màn/AC |
 | `docs/PERSONAS.md` | persona + ma trận vai×hành động (nguồn phân quyền + TC âm) |
 | `docs/CAPABILITIES-MAP.md` | capability→outcome→FEAT (truy vết) |
 | `docs/TECHSTACK.md` | stack chốt + biến môi trường |
@@ -178,7 +178,7 @@ nằm ở `.claude/agents/<name>.md`.
 **Bộ agent (10):**
 | Agent | Vai | Tools | Ghi được |
 |---|---|---|---|
-| `pre-mortem` | DOCUMENT (trước khoá scope): đối kháng SPEC — săn case Author miss · mảng ngành thiếu · bảng chính sách (4 phép thử) | read-only (không Bash) | — (trả nghi vấn) |
+| `pre-mortem` | DOCUMENT (trước khoá scope): đối kháng SPEC — săn case Authority miss · mảng ngành thiếu · bảng chính sách (4 phép thử) | read-only (không Bash) | — (trả nghi vấn) |
 | `reviewer` | code AN TOÀN + BẢO TRÌ (trục A an toàn: bảo mật/dữ liệu/forbidden · trục B bảo trì: structure/pattern/convention/naming) | read-only | — (trả finding) |
 | `bug-hunter` | 2 chế độ: (1) code ĐÚNG SPEC (AC có impl? ca biên chặn server? phân quyền owner-condition?) · (2) RÀ ĐỀ TEST của `test-writer` trước khi chạy (VERIFY 3b) | read-only | — (trả finding) |
 | `test-writer` | QA độc lập: viết đề black-box `test-cases.md` (AC + bảng chính sách + thăm dò ngoài tài liệu + regression) → **người duy nhất sửa đề** theo danh sách rà của `bug-hunter` → chạy. **KHÔNG viết code, kể cả test code** — script chạy TC là file tạm ngoài repo, dọn ngay | +Write/Edit **CHỈ `tracking/wave-N/test-cases.md`** | test-cases.md |

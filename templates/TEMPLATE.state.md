@@ -36,7 +36,7 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 - [ ] `docs/CAPABILITIES-MAP.md`: capability→outcome→FEAT; mọi FEAT truy về 1 capability
 - [ ] `docs/feat/FEAT-*.md`: mỗi FEAT có khung PO (§1 · §Ngoài phạm vi) + AC (BDD, **gồm ca biên**) + §3 Ràng buộc nghiệp vụ điền; mỗi dòng §3 có dòng `arch §6` chặn nó
 - [ ] `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md`: frontmatter **`kind`/`stack`/`consumes`** + data model + luồng + API + §ranh-giới (**per target**) · `OVERVIEW §5` system design đủ 5.1–5.9 (5.7/5.8 có dòng)
-- [ ] `docs/TECHSTACK.md` chốt qua lượt hỏi Author (Bước 7) — không lựa chọn nào Author quan tâm bị tự quyết
+- [ ] `docs/TECHSTACK.md` chốt qua lượt hỏi Authority (Bước 7) — không lựa chọn nào Authority quan tâm bị tự quyết
 - [ ] `docs/CONVENTIONS.md` + `docs/SECURITY.md` (**framework có sẵn**) — rà; chỉnh §API error-envelope/header nếu project khác default
 - [ ] Design system: có UI → `docs/DESIGN-SYSTEM.md` (token) + `docs/ux/SCREEN-MAP.md` (MỌI màn, cả dự án)
       khoá TRƯỚC · mockup **chỉ màn wave đang mở** (wave 1 lúc DOCUMENT; wave sau `/document` top-up), Authority

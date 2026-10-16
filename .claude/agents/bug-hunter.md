@@ -34,7 +34,7 @@ grep -rnE 'catch\s*\{\s*\}|except[^:]*:\s*pass' services/<target>
 ```
 Cái nào chặn AC → finding. Cái nào nợ tương lai → ghi chú riêng.
 
-> **Hành vi hỏng/thiếu mà KHÔNG map AC nào** = dấu hiệu **lỗ spec** (Author miss), không phải bug thường → tag **`nghi thiếu AC`** trong finding (ghi FEAT liên đới). MAIN route thành **AC mới** (top-up), không chỉ fix code lặng lẽ (verify.md Bước 5).
+> **Hành vi hỏng/thiếu mà KHÔNG map AC nào** = dấu hiệu **lỗ spec** (Authority miss), không phải bug thường → tag **`nghi thiếu AC`** trong finding (ghi FEAT liên đới). MAIN route thành **AC mới** (top-up), không chỉ fix code lặng lẽ (verify.md Bước 5).
 
 ## Chế độ RÀ ĐỀ TEST (`/verify` Bước 3b — spawn LẦN 2, SAU khi `test-writer` viết đề xong, TRƯỚC khi chạy)
 > Lần 1 (Bước 2, phần trên) soi CODE khi chưa có TC. Lần này soi ĐỀ TEST — không đọc code; prompt spawn ghi rõ "chế độ RÀ ĐỀ TEST". Đề lúc này mọi dòng `CHƯA CHẠY`.

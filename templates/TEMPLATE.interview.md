@@ -33,11 +33,11 @@ Màn nháp:
 
 Chính sách từng hành động:
 <!-- domain-ba A.6 — mỗi dòng bảng luồng có thao tác trên hệ thống = 1 dòng. Research lấy dấu vết + suy luận 4 phép thử
-     (lạm dụng · hạ nguồn chốt lúc nào · xung đột · vòng đời) → đề xuất mặc định, Author chọn. Không ô trống; không áp dụng → `n/a — <lý do>`.
-     Nguồn (nhãn chung PROTOCOL §2.3): `Author` · `[quy định] <link>` · `research <link> + suy luận → Author chọn` · `suy luận → Author chọn`. -->
+     (lạm dụng · hạ nguồn chốt lúc nào · xung đột · vòng đời) → đề xuất mặc định, Authority chọn. Không ô trống; không áp dụng → `n/a — <lý do>`.
+     Nguồn (nhãn chung PROTOCOL §2.3): `Authority` · `[quy định] <link>` · `research <link> + suy luận → Authority chọn` · `suy luận → Authority chọn`. -->
 | Hành động | Khi nào được làm | Ai | Giới hạn | Trạng thái tiền đề | Trùng / xung đột | Vi phạm thì | Ngoại lệ | Nguồn |
 |---|---|---|---|---|---|---|---|---|
-| {{Đăng ký làm từ xa}} | {{trước 17h ngày làm việc liền trước · không đăng ký lùi ngày}} | {{nhân viên}} | {{≤ 2 ngày/tuần}} | {{n/a — tạo mới}} | {{ngày đã có phép duyệt · ngày lễ}} | {{chặn, báo lý do}} | {{HR đăng ký hộ, bắt buộc ghi lý do}} | {{suy luận → Author chọn (hạ nguồn: chấm công chốt cuối ngày · lạm dụng: không chặn thì đăng ký lùi để hợp thức hoá ngày vắng)}} |
+| {{Đăng ký làm từ xa}} | {{trước 17h ngày làm việc liền trước · không đăng ký lùi ngày}} | {{nhân viên}} | {{≤ 2 ngày/tuần}} | {{n/a — tạo mới}} | {{ngày đã có phép duyệt · ngày lễ}} | {{chặn, báo lý do}} | {{HR đăng ký hộ, bắt buộc ghi lý do}} | {{suy luận → Authority chọn (hạ nguồn: chấm công chốt cuối ngày · lạm dụng: không chặn thì đăng ký lùi để hợp thức hoá ngày vắng)}} |
 
 Câu hỏi còn mở (hệ quả lên màn):
 - {{Ai duyệt CV? A: HR → REC-DETAIL chỉ HR có nút duyệt · B: Trưởng phòng → thêm hàng chờ duyệt cho trưởng phòng}}

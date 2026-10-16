@@ -51,7 +51,7 @@ REMINDER = (
 UNTICKED_NOTE = (
     "[trace_docsync] Ô 'PRE-LOCK AUDIT PASS' (và 'Scope khoá' nếu còn tick) trong STATE.md ĐÃ BỊ BỎ TICK tự động — audit trước đó\n"
     "chấm trên bản doc CŨ, spec vừa đổi thì kết quả đó hết giá trị. Xử xong CASCADE + re-trace thì\n"
-    "Tới lời chốt kế của Author → RE-RUN pre-lock audit (/document Bước 10) rồi mới tick lại. KHÔNG tick chay.\n"
+    "Tới lời chốt kế của Authority → RE-RUN pre-lock audit (/document Bước 10) rồi mới tick lại. KHÔNG tick chay.\n"
 )
 
 AMEND_ARCH = (
