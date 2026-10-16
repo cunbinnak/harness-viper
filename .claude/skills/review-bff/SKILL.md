@@ -5,7 +5,7 @@ description: Checklist review kind=bff cho reviewer/bug-hunter ở /verify — s
 
 # Review BFF
 
-> Checklist review kind=bff — reviewer/bug-hunter load ở /verify khi boundary là kind này. Report: [nặng/vừa/nhẹ]+file:dòng+hỏng-thế-nào+đề-xuất.
+> Checklist review kind=bff — reviewer/bug-hunter load ở /verify khi boundary là kind này. Report: [BLOCKER/MAJOR/MINOR]+file:dòng+hỏng-thế-nào+đề-xuất.
 
 Bạn soi code với con mắt độc lập — **bạn không phải người viết nó**, và đó là giá trị của bạn.
 Chỉ đọc. Không hỏi user.

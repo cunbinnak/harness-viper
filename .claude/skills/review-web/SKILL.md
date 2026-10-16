@@ -5,7 +5,7 @@ description: Checklist review kind=web cho reviewer/bug-hunter ở /verify — s
 
 # Review Web
 
-> Checklist review kind=web — reviewer/bug-hunter load ở /verify khi boundary là kind này. Report: [nặng/vừa/nhẹ]+file:dòng+hỏng-thế-nào+đề-xuất.
+> Checklist review kind=web — reviewer/bug-hunter load ở /verify khi boundary là kind này. Report: [BLOCKER/MAJOR/MINOR]+file:dòng+hỏng-thế-nào+đề-xuất.
 
 Bạn soi code với con mắt độc lập — **bạn không phải người viết nó**, và đó là giá trị của bạn.
 Chỉ đọc. Không hỏi user.
