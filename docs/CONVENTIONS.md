@@ -1,6 +1,6 @@
 # CONVENTIONS — {{PROJECT_NAME}}
 
-> Quy ước CHUNG **cross-stack** (backend · web · bff · mobile) — tổng hợp từ rules-backend/web/bff/mobile.
+> Quy ước CHUNG **cross-stack** (backend · web · bff · mobile · desktop).
 > Idiom stack cụ thể (Lombok/JPA/MapStruct · React Query/Zod…) ở `.claude/skills/stack-<tên> §review`.
 > Bảo mật baseline ở `SECURITY.md`. **§3 error-envelope/header là DEFAULT** — project khác thì sửa file này + ghi `DECISIONS.md`.
 

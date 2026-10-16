@@ -72,7 +72,7 @@ FEAT **không** chứa chặn ở đâu / contract / tên class-bảng-công ngh
 - Thứ tự + phân đất: `event-storming` ghi **OVERVIEW §4** (events/aggregates/hot-spots per domain) → `boundary-charter` đọc §4, ghi **OVERVIEW §1** (bản đồ target) + **khởi tạo** `arch/{name}.md` §Mission (target = boundary, cùng tên file) → `system-design` ghi **OVERVIEW §5** (NFR → ước lượng tải → thành phần → lưu trữ → nhất quán → chế độ lỗi → bảo mật → triển khai → ADR có số; tỉ lệ thuận quy mô) → `technical-design` điền **chi tiết** `arch/{name}.md`, phản ánh §5.
 - **Rời bước 6 CHỈ KHI trace 6 chiều PASS** (`technical-design §Trọn vẹn` — chiều 1 gồm vế màn nháp BA ↔ API; vế mockup ↔ API (`data-api`) rà ở Bước 8) — **tự rà, KHÔNG để Authority phát hiện lỗ hộ**.
 - `docs/arch/OVERVIEW.md`: topology — có target nào, ai gọi ai, ranh giới hệ.
-- `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ + chặn ở đâu (§6, cột AC/BR trỏ FEAT §3) + `consumes` (target gọi API của ai) nằm ở đây — FEAT không chứa.
+- `docs/arch/<name>.md` **per target**: frontmatter **`kind`** (backend/web/bff/mobile/desktop) + **`stack`** + **`consumes`** → **data model** + **§3 API** (endpoint/method/field/error) + **§Events** (nếu phát/nhận) + **§Ranh giới** (logic ở tầng nào). Contract CỤ THỂ + chặn ở đâu (§6, cột AC/BR trỏ FEAT §3) + `consumes` (target gọi API của ai) nằm ở đây — FEAT không chứa.
 
 ## Bước 7 — TECHSTACK (`docs/TECHSTACK.md`) · *SA đề xuất · Authority chốt*
 **Chỗ DUY NHẤT chốt tech** (Bước 6 chỉ đề xuất, không tự chốt). Lựa chọn Author sẽ thấy / phải vận hành / tốn tiền (stack · UI kit · đăng nhập & phiên · lưu file · cache · email/SMS · build tool · deploy) mà Author CHƯA nói → **hỏi bằng `AskUserQuestion`**, mỗi câu 2-3 option + đánh đổi 1 dòng + mặc định đề xuất. Author đã nói / intake đã khai → giữ nguyên, không hỏi lại. Chi tiết thuần nội bộ → tự quyết, `DECISIONS` loại `kỹ-thuật`. Kết quả → `docs/TECHSTACK.md` + ADR.
@@ -93,7 +93,7 @@ vẽ tới đâu duyệt tới đó, không phí công mockup wave xa dễ đổ
 Token là thứ **DUY NHẤT chép nguyên** sang code ở BUILD.
 
 ## Bước 9 — Chia wave (`docs/ROADMAP.md`) · *PM*
-Bảng wave: mỗi wave khai **target** (kind: backend/web/bff/mobile) + **phases chạy** (`BUILD,VERIFY[,SHIP]`) + **AC in-scope**.
+Bảng wave: mỗi wave khai **target** (kind: backend/web/bff/mobile/desktop) + **phases chạy** (`BUILD,VERIFY[,SHIP]`) + **AC in-scope**.
 **FEAT-cap** = `feat_cap_per_wave` (frontmatter `docs/ROADMAP.md`, **mặc định ~3-4 FEAT/wave ≈ 15-20 AC**) — ngưỡng để **một phiên BUILD của MAIN làm nổi** (MAIN-code-hết, không dev-agent). KHUYẾN KHÍCH, **tròn luồng thắng con số**: tách mà đứt luồng → giữ tròn + 1 dòng `DECISIONS.md` nêu lý do; 1 FEAT quá to (nhiều AC) → **báo PO tách** (`domain-po`), PM không tự tách. **SỐ WAVE = số dòng §1** (phái sinh từ scope ÷ cap + phụ thuộc — không đặt tay). → **Nạp `Skill("implementation-plan")` để chia**. Điền cột
 `Wave giao` ở CAPABILITIES-MAP + cột `Wave` ở SCREEN-MAP. Để trống `§backlog` (amendment tương lai đổ vào đây).
 Có UI → **quay lại Bước 8 dựng mockup màn wave 1** (ux-design) rồi mới sang Bước 10.

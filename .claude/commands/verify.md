@@ -16,11 +16,11 @@ description: VERIFY — code review (2 vai) → test case (test-writer viết đ
 ## Bước 1 — Nạp + xác nhận hệ đang chạy
 - `docs/ROADMAP.md` wave-N (AC in-scope) + `docs/feat/FEAT-*` (AC + ca biên) + `docs/CONVENTIONS.md §API` + `arch/{name}.md` (**`kind`** + §API)
 - File nào vừa Read còn **tươi trong context** (chưa qua compact) → **KHÔNG Read lại** — chỉ nạp phần thiếu/đã cũ (nạp đúp = phí context, không thêm thông tin)
-- Hệ chạy thật (từ BUILD), theo `kind`: backend/bff/web → `docker ps` + health 200 (web = nginx container) · mobile → emulator. Chưa chạy → đưa lên trước.
+- Hệ chạy thật (từ BUILD), theo `kind`: backend/bff/web → `docker ps` + health 200 (web = nginx container) · mobile → emulator · desktop → app đã đóng gói đang mở với `--remote-debugging-port=9222` (skill `browse` §7). Chưa chạy → đưa lên trước.
 
 ## Bước 2 — Code review (2 vai góc-nhìn-độc-lập, checklist đúng `kind` — KHÔNG sửa)
 Spawn 2 agent **cùng 1 message (song song), foreground**, **chỉ đọc code, trả finding** — hai vai soi hai câu hỏi KHÁC nhau:
-> **Cả 2 agent nạp thêm skill `review-<kind>`** (review-backend/web/bff/mobile — checklist review theo `kind` của target đang review) BÊN CẠNH `stack-<x> §review`.
+> **Cả 2 agent nạp thêm skill `review-<kind>`** (review-backend/web/bff/mobile/desktop — checklist review theo `kind` của target đang review) BÊN CẠNH `stack-<x> §review`.
 
 **`reviewer` — code có AN TOÀN chạy + BẢO TRÌ được không?** (senior/team-lead, **2 trục** — chi tiết `.claude/agents/reviewer.md`)
 - **Trục A · An toàn/đúng** (hỏng = hại NGAY → BLOCKER/MAJOR): bảo mật (secret · validate **server** · SQL nối chuỗi · lộ entity/lỗi nội bộ) · phân quyền dữ liệu (id kèm owner/tenant) · **forbidden patterns** stack · toàn vẹn transaction · lệch `DECISIONS`/`arch`/`TECHSTACK` đã chốt (stack/version khớp mức TECHSTACK khai).

@@ -10,6 +10,7 @@ Bạn thử sản phẩm ở **những trạng thái không phải happy path** 
 
 **Cách làm việc**
 - **Trình duyệt = slot A** (`mcp__browser__browser_*`) — dùng chung với vai khác chạy KHÁC lúc: **việc đầu tiên `browser_close`** (xoá phiên đăng nhập/tab của vai trước), **xong việc `browser_close`** (trả Chromium).
+- **Target desktop** → theo `browse` §7: dùng slot `desktop` (`mcp__desktop__browser_*`) thay slot trên · **KHÔNG `browser_close`** (đóng luôn app — MAIN mở lại giữa các vai) · lăng kính vai này cho desktop ở `/dogfood` §Target desktop.
 - Duyệt web theo skill `browse` (đọc `.claude/skills/browse/SKILL.md`). Thao tác **thật**. **Không hỏi ai.**
 - Mô phỏng mạng bằng `browser_run_code_unsafe` — công thức sẵn ở skill browse §3: `setOffline(true)` mất mạng · `page.route('**/api/**', r => r.abort())` giả API hỏng · CDP `Network.emulateNetworkConditions` mạng chậm.
 - Đọc lỗi thật bằng `browser_console_messages` và `browser_network_requests`, đừng đoán từ giao diện.

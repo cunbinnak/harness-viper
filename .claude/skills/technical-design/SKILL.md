@@ -1,6 +1,6 @@
 ---
 name: technical-design
-description: Vai SA — Architecture cho /document Bước 6 (sau event-storming + boundary-charter + system-design, phản ánh OVERVIEW §5) — chốt kind, ĐỀ XUẤT stack (chốt ở Bước 7 bằng hỏi Author), ADR kiến trúc (docs/adr), điền chi tiết arch/{name}.md theo TEMPLATE.arch (§1 data · §2 luồng · §3 API · §4 kiến trúc/ranh giới · §5 events · §6 ca biên TRA), integrations, docker-compose skeleton. UX/UI là bước riêng (kind web/mobile).
+description: Vai SA — Architecture cho /document Bước 6 (sau event-storming + boundary-charter + system-design, phản ánh OVERVIEW §5) — chốt kind, ĐỀ XUẤT stack (chốt ở Bước 7 bằng hỏi Author), ADR kiến trúc (docs/adr), điền chi tiết arch/{name}.md theo TEMPLATE.arch (§1 data · §2 luồng · §3 API · §4 kiến trúc/ranh giới · §5 events · §6 ca biên TRA), integrations, docker-compose skeleton. UX/UI là bước riêng (kind web/mobile/desktop).
 ---
 
 # Architecture Method (bước ARCHITECTURE của /document)
@@ -16,7 +16,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `do
 
 ## Deliverable
 1. **ADR** `docs/adr/ADR-NNN-*.md` — theo chủ đề (backend-architecture [Layered/Hexagonal], **api-error-convention [envelope + generic codes chung]**, event/messaging…). **Stack · ui-kit · auth · lưu file · cache KHÔNG tự chốt ở đây** — ghi đề xuất + phương án, chốt bằng lượt hỏi Author ở `/document` Bước 7 rồi mới viết ADR tương ứng. Theo `templates/TEMPLATE.decisions.md`/ADR: context · decision · **Alternatives considered ≥2 (lý do reject)** · consequences.
-2. **Boundary decomposition** — chốt các **target**: mỗi target + **kind** (`backend`/`bff`/`web`/`mobile`) + **stack đề xuất** (chốt ở Bước 7; version lấy từ description skill `stack-<tên>`, không từ trí nhớ). Ghi nhận **tech situational per-target** (phát/nhận event, dùng cache/lock, external đặc thù) — input cho bước chia wave gắn `ref_skills`.
+2. **Boundary decomposition** — chốt các **target**: mỗi target + **kind** (`backend`/`bff`/`web`/`mobile`/`desktop` — desktop: app cài trên Windows · §3 ghi **hợp đồng IPC** (kênh · tham số · kết quả · mã lỗi) thay REST nội bộ · §1 dữ liệu cục bộ · §4 quyền hệ điều hành: thư mục được đọc/ghi · tiến trình con · dịch vụ ngoài gọi kèm key) + **stack đề xuất** (chốt ở Bước 7; version lấy từ description skill `stack-<tên>`, không từ trí nhớ). Ghi nhận **tech situational per-target** (phát/nhận event, dùng cache/lock, external đặc thù) — input cho bước chia wave gắn `ref_skills`.
 3. **`docs/arch/OVERVIEW.md`** — §2 tích hợp cross-boundary + **luồng E2E chính** · §3 hạ tầng dùng chung (danh sách — căn cứ ở §5). §1 (target · kind · depends_on) do `boundary-charter` chốt — đọc, không viết lại.
 4. **Per target** — `docs/arch/{name}.md` (frontmatter `kind`/`stack`/`consumes` — theo `templates/TEMPLATE.arch.md`), điền chi tiết vào file `boundary-charter` đã khởi tạo (§0 Mission có rồi — KHÔNG viết lại):
    - **§2 Luồng xử lý (kỹ thuật)** — mỗi bước thao tác trên hệ thống của luồng nghiệp vụ (`INTERVIEW §Luồng nghiệp vụ đã xác nhận`) mở ra ≥1 luồng xử lý: request → ghi/đọc → response (happy + critical error), ghi `Phục vụ: <luồng> bước N`; bước nghiệp vụ không có luồng xử lý = thiếu thiết kế, luồng xử lý không phục vụ bước nào = thừa · consistency & transaction *(nếu multi-write/event)* · failure & resilience *(nếu outbound)*.
@@ -29,7 +29,7 @@ Input: `docs/PRD.md` + `docs/feat/*` (AC + §3 Ràng buộc nghiệp vụ) + `do
 5. **Integrations** — cross-target (sync HTTP / async event) + external, ghi trong `docs/arch/OVERVIEW.md §2` + frontmatter `consumes` của target gọi — **≥ 1**.
 6. **`deployment/local/docker-compose.yml`** skeleton local dev (service + DB/cache/broker cho target trong scope).
 
-> UX/UI cho FE target (kind web/mobile): **bước riêng của `/document`** (skill `ux-design`) chạy sau khi §API sẵn — sinh `docs/ux/` + mockups + `docs/DESIGN-SYSTEM.md`. Architect chỉ đảm bảo FE target có `arch/{name}.md` (§2 luồng + §4 ranh giới) + BE contract đủ cho UX consume.
+> UX/UI cho FE target (kind web/mobile/desktop): **bước riêng của `/document`** (skill `ux-design`) chạy sau khi §API sẵn — sinh `docs/ux/` + mockups + `docs/DESIGN-SYSTEM.md`. Architect chỉ đảm bảo FE target có `arch/{name}.md` (§2 luồng + §4 ranh giới) + BE contract đủ cho UX consume.
 
 ## Enterprise cross-cutting concerns (PHẢI address)
 Mỗi concern ghi rõ ở ADR / `arch/{name}.md` (§2/§4) / §API (không để hở):
@@ -71,7 +71,7 @@ Thiết kế xong PHẢI **tự trace 6 chiều** trước khi trình — Author
 2. **API → AC**: chiều ngược — endpoint không phục vụ AC nào = thừa (YAGNI, cắt) hoặc AC bị sót chưa viết.
 3. **Endpoint đủ ruột**: mỗi dòng §3 đủ method/path + request/response + error codes (ref catalog) + status + authz (vai nào gọi được — đối chiếu ma trận PERSONAS §2) + pagination nếu list. Ô nào trống = contract chưa xong, consumer sẽ đoán.
    - **API tìm kiếm/danh sách**: **≥ 3 tiêu chí lọc**, hoặc có lọc mảng/khoảng (`statuses[]`, `fromDate–toDate`) → `POST /{resources}/search`, body `{Resource}SearchRequest` (tiêu chí + `page`/`size`/`sort`), trả trang — chỉ đọc, không đổi state. Ít hơn (≤ 2 lọc bằng-giá-trị) → `GET /{resources}?…&page&size&sort`. Ghi rõ method ở §3 — BUILD làm theo contract, chọn sai ở đây là sửa wave sau.
-4. **Consumer ↔ provider**: SA khai `consumes` ở frontmatter `arch` của MỌI target consumer (web/bff/mobile — FEAT không khai) → mỗi mục có endpoint THẬT ở arch BE §3 (tên khớp). Trỏ hụt = FE lúc code sẽ bịa endpoint. (Vế màn nháp ↔ API đã rà ở chiều 1; vế **mockup ↔ API** (`data-api` + gate `mockup_api_gaps`) rà ở Bước 8 và PRE-LOCK — lưới chặn cuối.)
+4. **Consumer ↔ provider**: SA khai `consumes` ở frontmatter `arch` của MỌI target consumer (web/bff/mobile/desktop — FEAT không khai) → mỗi mục có endpoint THẬT ở arch BE §3 (tên khớp). Trỏ hụt = FE lúc code sẽ bịa endpoint. (Vế màn nháp ↔ API đã rà ở chiều 1; vế **mockup ↔ API** (`data-api` + gate `mockup_api_gaps`) rà ở Bước 8 và PRE-LOCK — lưới chặn cuối.)
 5. **Luồng E2E không đứt**: luồng chính (OVERVIEW) đi xuyên target — mỗi bước chuyển target có contract (REST/event) nêu tên; kèm nhánh lỗi ở điểm gãy (downstream chết thì bước đó trả gì).
 6. **Lifecycle & seam (soi cái VẮNG MẶT — 5 chiều trên chỉ soi cái đã viết)**: mọi **cạnh chuyển trạng thái** của entity chính (state machine §1, kể cả cạnh ngoài-hạnh-phúc) có AC/luồng chủ hoặc `n/a` tường minh · mọi **seam FEAT→FEAT** có CƠ CHẾ truyền được viết (output đến tay actor bên kia bằng gì) · đối chiếu **6 họ luồng phổ quát** (`pre-mortem` Cách săn 3) + **danh sách luồng chuẩn ngành** (PRD §6) — mỗi dòng map hoặc out-of-scope, không bỏ trắng.
 

@@ -11,7 +11,7 @@ auto-test chỉ chạy **TC đã viết** → chỉ tìm thứ ai đó đã ngh�
 cảnh rỗng không nói gì · lỗi nuốt im lặng · bấm 2 lần ra 2 bản ghi · vai A chạm dữ liệu vai B · nút chính tràn màn nhỏ.
 
 ## Điều kiện vào
-Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend/bff/web · emulator cho mobile). Chết → STOP, quay `/build`.
+Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend/bff/web · emulator cho mobile · app đã đóng gói cho desktop). Chết → STOP, quay `/build`.
 **Không dogfood ảo** — 1 lượt trên hệ chết còn tệ hơn không chạy (để lại vết "đã kiểm"). Cần `docs/PERSONAS.md` có
 **ma trận vai×hành động** (phép thử của `breaker`) + persona cho mỗi vai.
 
@@ -26,6 +26,23 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend
 7. Gộp phát hiện (**MAIN Bước 3 + 6 vai**) → soi **dấu hiệu dogfood giả** → vai nào dính thì chạy lại vai đó.
 8. Agent **TRẢ VỀ** phát hiện → **MAIN ghi `STATE §Findings`** (chống hai agent đè file).
 9. Lập **mẫu tổng kết** (dưới). Đang trong `/verify` → **KHÔNG dừng báo Authority ở đây**: còn finding → `/verify` Bước 5 fix-loop; sạch → `/verify` Bước cuối (tổng kết đi chung báo cáo cuối). Chạy `/dogfood` lẻ ngoài VERIFY → báo tổng kết luôn.
+
+## Target desktop (`kind: desktop`)
+Cùng quy trình (MAIN tự dùng trước · 2 đợt · ghi §Findings), khác 3 chỗ — cách điều khiển ở skill `browse` §7:
+- **Hệ đang chạy** = app ĐÃ ĐÓNG GÓI (`npm run package`), MAIN mở với `--remote-debugging-port=9222` → mọi vai dùng slot `desktop`.
+- **Lần lượt từng vai** (không chạy song song) · giữa 2 vai MAIN tắt + mở lại app (không `browser_close`) · DB sạch = tắt app, xoá thư mục `userData` của app **trên máy dev**, mở lại.
+- **Lăng kính từng vai cho desktop:**
+
+| Vai | Web | Desktop |
+|---|---|---|
+| edge | màn rỗng · lỗi | lần đầu mở: chưa có API key · chưa có dữ liệu · mất mạng |
+| newbie | đi luồng chính không đọc hướng dẫn | như web + tự cấu hình lần đầu (nhập key, chọn thư mục) |
+| picky | khớp mockup | giữ nguyên |
+| rushed | bấm 2 lần · back giữa chừng | bấm 2 lần · **tắt app khi đang xử lý dở** (`taskkill`) rồi mở lại: dữ liệu còn không · mở app lần 2 khi đang chạy |
+| breaker | quyền · input bậy | file độc / đuôi giả / đường dẫn lạ · API key có lộ ra log hay giao diện không · IPC có làm được việc ngoài quyền không |
+| mobile | màn 375 | **cửa sổ nhỏ** (`browser_resize` 1024×700 và cỡ nhỏ nhất app cho phép) + phóng to chữ — DPI 150% thật kiểm ở bước cài máy sạch (`specialist-testing` §Desktop) |
+
+Kiểm **cài đặt** (máy sạch · cập nhật · gỡ) KHÔNG thuộc dogfood — là TC của `test-writer`.
 
 ## Vì sao 2 đợt (KHÔNG phải dàn tải)
 Các vai dùng chung **1 hệ + 1 DB**: `breaker` đổ dữ liệu bậy, `rushed` tạo bản ghi trùng NGAY giữa lúc `newbie` nhìn màn →

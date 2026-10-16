@@ -156,3 +156,18 @@ Báo "không thấy vấn đề gì" mà không kèm được thao tác đã là
 | Lần đầu chạy rất lâu | Đang tải Chromium. Chạy trước `npx playwright install chromium` cho xong một lần |
 | Trang trắng | App chưa chạy. `make dev` trước, và lấy đúng cổng (Next.js 3000 · Spring 8080) |
 | Không thấy tool `browser_*` | Chưa duyệt server MCP cho dự án này (máy mới clone → Claude Code hỏi trust/approve một lần). Kiểm bằng `/mcp`; lỡ từ chối → `claude mcp reset-project-choices` |
+
+## 7. Target desktop (Electron, Windows)
+
+App desktop không mở trong trình duyệt riêng — persona điều khiển **chính bản app đã đóng gói** qua cổng gỡ lỗi (Chrome DevTools Protocol). Đã chạy thử: Playwright nối vào, bấm, đọc snapshot như trang web.
+
+| | Web | Desktop |
+|---|---|---|
+| Slot | A `browser` · B `browser-2` | **`desktop`** (`mcp__desktop__browser_*`) — `.mcp.json` nối `--cdp-endpoint http://127.0.0.1:9222` |
+| Chạy song song | ≤2 vai (A + B) | **Lần lượt từng vai** — một app, một cổng |
+| Mở hệ | URL server dev | MAIN mở app đã đóng gói: `env -u ELECTRON_RUN_AS_NODE "out/<App>-win32-x64/<App>.exe" --remote-debugging-port=9222` (VS Code đặt sẵn `ELECTRON_RUN_AS_NODE=1` → không bỏ thì Electron chạy như Node, không có cửa sổ) |
+| Giữa 2 vai | `browser_close` | **KHÔNG `browser_close`** (đóng luôn app) — MAIN tắt app rồi mở lại |
+| DB sạch | reset schema DB local | Tắt app → xoá thư mục `userData` của app (`%APPDATA%\<App>`) **trên máy dev** → mở lại |
+| Tool | đủ | không dùng `browser_navigate` (app tự điều hướng) · `browser_resize` = đổi cỡ vùng hiển thị · hộp thoại chọn file của hệ điều hành KHÔNG điều khiển được → app cần cho kéo-thả hoặc ô nhập đường dẫn; thiếu thì ghi finding |
+
+Lăng kính từng vai cho desktop: `/dogfood` §Target desktop. Kiểm **cài đặt** (máy sạch · cập nhật · gỡ) là TC của `test-writer` (`specialist-testing` §Desktop), không thuộc dogfood.

@@ -5,11 +5,12 @@ description: SHIP — (opt-in theo wave) prod-ready → deploy production → sm
 
 > Phase **opt-in**: chỉ khi `docs/ROADMAP.md` wave này khai `phases` có `SHIP`. Không khai → báo đi thẳng `/next-wave`.
 > Deploy = **ngoại lệ được hỏi** (hành động ra ngoài, không đảo ngược) — xác nhận Authority trước khi đẩy production.
+> **Target desktop**: không deploy lên server — Bước 3 `make deploy` = **phát hành bản mới** (bộ cài lên nơi phát hành theo ADR) · Bước 4 smoke = cài bản vừa phát hành trên máy giả lập sạch (nếu có) + `--smoke` · **rollback = phát hành lại bản trước**. PRODUCTION-READY thêm nhóm 5 *Phát hành desktop*.
 
 **Việc ĐẦU TIÊN**: kiểm ROADMAP wave có `SHIP` không? Không → **dừng**, gợi ý `/next-wave`. Có → sửa `STATE.md` → `Phase hiện tại: SHIP`.
 
 ## Bước 1 — Production-ready
-`docs/PRODUCTION-READY.md` 4 nhóm xanh (secret/env · bảo mật theo `SECURITY.md` · observability · vận hành) — mục *(sau deploy)* tick sau Bước 4 (gate SHIP đòi đủ).
+`docs/PRODUCTION-READY.md` 4 nhóm xanh (secret/env · bảo mật theo `SECURITY.md` · observability · vận hành · *phát hành desktop* nếu có target desktop) — mục *(sau deploy)* tick sau Bước 4 (gate SHIP đòi đủ).
 *(tuỳ)* spawn `reviewer`/`bug-hunter` lượt cuối — trả finding, MAIN sửa.
 
 ## Bước 2 — Backward-compat (wave ≥2)

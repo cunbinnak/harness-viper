@@ -58,7 +58,7 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 - [ ] `make check` xanh + health 2xx → **`python scripts/capture_proof.py`** sinh `proof.json` (gate đọc, MÁY-verify không tin tick)
 - [ ] **Đã commit code** (ngoài commit khởi tạo) — build/test pass mà không commit = coi như CHƯA làm
 - [ ] Chạy thật: `docker up`, health 200 (để VERIFY có hệ mà đánh)
-- [ ] **Mọi target wave khai đã build + chạy thật** — gate đối chiếu `ROADMAP §1` cột Target ↔ `proof.json`: mỗi target container hoá (backend/bff/web) có entry `healthy`; **thiếu/không-healthy = đỏ** (chống "khai 2 làm 1"). Mobile: tick tay (emulator)
+- [ ] **Mọi target wave khai đã build + chạy thật** — gate đối chiếu `ROADMAP §1` cột Target ↔ `proof.json`: mỗi target backend/bff/web (docker) và desktop (`make doctor` bản đóng gói) có entry `healthy`; **thiếu/không-healthy = đỏ** (chống "khai 2 làm 1"). Mobile: tick tay (emulator)
 
 ### VERIFY (wave hiện tại) — rời phase khi:
 - [ ] **auto-test**: `tracking/wave-N/test-cases.md` — mọi AC in-scope có TC **PASS**, không TC **FAIL / BLOCKED / CHƯA CHẠY** · (wave ≥2) TC `@regression` wave trước PASS · black-box hệ đang chạy · `make test` xanh · contract-test cho consumer

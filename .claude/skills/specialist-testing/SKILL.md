@@ -74,9 +74,10 @@ TC đợt sâu ghi chung `test-cases.md` (cột `loại` tương ứng), gắn `
 | `e2e` | CHỈ full-stack (BE+FE chạy thật) | dài: nhiều màn hình UI→DB | `feat/FEAT-*.md` + `ux/` + FEAT |
 | `performance` | backend-heavy / FEAT high-load | metric cụ thể (p95<Xms, RPS≥Y) | `arch/{name}.md` perf targets + ADR scaling + `PRD.md` NFR |
 | `security` | mọi wave chạm auth/payment/PII | negative testing là chính | `docs/SECURITY.md` + `adr/` security + FEAT phân quyền |
+| `install` | CHỈ target desktop | cài · chạy lần đầu · cập nhật · gỡ trên máy giả lập sạch | `arch/{name}.md` (desktop) + `PRODUCTION-READY` nhóm 5 — §Desktop |
 | `accessibility` | CHỈ full-stack FE (WCAG 2.1 AA) | FE-only, ref WCAG criterion ID | `docs/ux/` + FEAT |
 
-Ngoài 6 dòng trên, `loại` còn dùng: `contract` · `resilience` · `migration` · `isolation` (rigor ở §Rigor per loại; tenant isolation ghi `security`). `@smoke` / `@regression` là **tag**, không phải loại.
+Ngoài 7 dòng trên, `loại` còn dùng: `contract` · `resilience` · `migration` · `isolation` (rigor ở §Rigor per loại; tenant isolation ghi `security`). `@smoke` / `@regression` là **tag**, không phải loại.
 
 ## Dựng tiền đề (Arrange) — seed / fixture / mock / sandbox
 > Mọi TC = **Arrange→Act→Assert**. "Thiếu data để test" **KHÔNG phải lý do bỏ TC** — dựng tiền đề là bước Arrange, **việc của test-writer**. Ghi "không test được, dựa unit test" khi chỉ thiếu data = **né việc** (anti-pattern thật đã gặp: TC bù lương tháng này cần bảng lương tháng trước → phải seed tháng trước rồi chạy bù, không phải bỏ).
@@ -126,6 +127,22 @@ Ngoài 6 dòng trên, `loại` còn dùng: `contract` · `resilience` · `migrat
 - **resilience/chaos** (khi NFR availability): inject downstream fail/timeout → verify timeout + circuit-breaker mở + fallback đúng; partial failure (DB commit nhưng event/cache fail) → reconcile/outbox bù.
 - **migration** (khi đổi schema): chạy migration forward trên DB có data + verify **rollout an toàn** (thêm column NULLABLE → backfill → enforce NOT NULL ở migration sau); KHÔNG mất data, KHÔNG khoá bảng lâu.
 - **architecture-drift** (tuỳ chọn — KHÔNG có trong khung, tự cài khi cần): đo coupling/cohesion + drift khỏi `arch/{name}.md` bằng **số** (metric). Mặc định `reviewer`/`bug-hunter` soi "logic sai tầng / ranh giới module" **định tính** là đủ. Project multi-boundary phức tạp cần đo bằng số → tự thêm skill wrap tool ngoài, vd [arcade-agent](https://github.com/lemduc/arcade-agent) (đa ngôn ngữ, MCP + CI drift-check). Cân dep nặng (tree-sitter) vs lợi ích trước khi thêm.
+
+## Desktop — TC trên app đã đóng gói + TC cài đặt (target `kind: desktop`)
+- **TC chức năng** chạy như web nhưng trên **app ĐÃ ĐÓNG GÓI** MAIN đang mở với `--remote-debugging-port=9222`: script tạm (ngoài repo, luật #9) nối `chromium.connectOverCDP('http://127.0.0.1:9222')`. Cột `cách chạy` ghi đủ bước để tái hiện.
+- **TC cài đặt** (`loại` = `install`) chạy trên **máy giả lập sạch** — đóng vai máy người dùng mới, KHÔNG phải máy dev (máy dev có sẵn Node/runtime/dữ liệu cũ nên che lỗi). Windows Sandbox (Windows 10/11 Pro trở lên: file `.wsb` tạm ngoài repo, `LogonCommand` cài im lặng + chạy `--smoke` + ghi kết quả ra thư mục map) · không có Sandbox → máy ảo. Lần đầu dùng trong dự án: chạy thử một vòng, báo cách chạy được trong report → MAIN ghi `knowledge-base/{name}.md`.
+
+| TC | Kiểm |
+|---|---|
+| Cài lần đầu | Máy không có Node / ffmpeg / runtime → cài xong, mở được, `--smoke` exit 0 |
+| Không quyền admin | Tài khoản thường cài + chạy được (cài theo user) |
+| Đường dẫn khó | Tài khoản / thư mục có dấu cách + tiếng Việt |
+| Lần chạy đầu | Chưa có key / cấu hình → app dẫn người dùng, không văng lỗi |
+| Cập nhật | Cài bản cũ → lên bản mới → dữ liệu + key còn nguyên |
+| Gỡ | Gỡ xong không còn file cài / shortcut; dữ liệu `userData` xử đúng `DECISIONS` (giữ hay xoá) |
+| Cảnh báo hệ điều hành | Bản chưa ký → SmartScreen hiện đúng như rủi ro đã chấp nhận ở `PRODUCTION-READY`; không bị diệt virus chặn |
+
+- **Không có máy giả lập sạch** → KHÔNG viết nhóm `install` (không ghi PASS/BLOCKED giả); báo trong report "chưa kiểm cài đặt trên máy sạch" → MAIN ghi rủi ro chấp nhận ở `DECISIONS` + `PRODUCTION-READY` nhóm 5.
 
 ## Done
 - `tracking/wave-N/test-cases.md` đúng khung template: TC từ đủ 3 nguồn (AC · CS · TD) · kỹ thuật đã áp (ngưỡng có giá trị biên · trạng thái có cạnh cấm + 1 TC vòng đời) · mọi PASS đạt chuẩn kiểm · (wave ≥ 2) regression đã chạy lại. Contract/perf/security/resilience/migration chỉ thêm khi contract phức tạp / NFR yêu cầu / có đổi schema.

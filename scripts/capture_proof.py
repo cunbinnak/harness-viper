@@ -12,6 +12,7 @@ Ghi kèm commit code mới nhất của `services/` + còn sửa dở không →
 Health PER-TARGET tự suy: đọc ROADMAP §1 cột Target (name+kind) + `docker compose ps` (health Docker tự chấm
 per service; service-name = target-name theo convention infra-local-dev/ref-*-config) → không cần gõ URL/port.
 Thiếu/không-healthy target container hoá (backend/bff/web) nào = proof đỏ. Mobile (emulator) không proof qua docker.
+Desktop: chạy `make -C services/desktop/<name> doctor` (bản đóng gói `--smoke`, exit 0 = healthy).
 
 Usage: python scripts/capture_proof.py [--wave N] [--compose deployment/local/docker-compose.yml]
 """
@@ -19,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -122,6 +124,24 @@ def docker_health(compose: str) -> tuple[dict, str | None]:
     return m, None
 
 
+def desktop_health(name: str) -> dict:
+    """Desktop: `make -C services/desktop/<name> doctor` — bản đóng gói chạy `--smoke`, exit 0 = khoẻ."""
+    d = ROOT / "services" / "desktop" / name
+    if not (d / "Makefile").exists():
+        return {"state": "missing", "health": "", "healthy": False, "note": f"không thấy services/desktop/{name}/Makefile"}
+    env = {k: v for k, v in os.environ.items() if k != "ELECTRON_RUN_AS_NODE"}   # VS Code đặt sẵn → Electron chạy như Node
+    try:
+        p = subprocess.run(["make", "-s", "-C", str(d), "doctor"], cwd=ROOT, capture_output=True, text=True,
+                           encoding="utf-8", errors="replace", timeout=600, env=env)
+    except FileNotFoundError:
+        return {"state": "missing", "health": "", "healthy": False, "note": "không có `make` — cài theo README §Yêu cầu máy"}
+    except Exception as e:
+        return {"state": "error", "health": "", "healthy": False, "note": str(e)[:150]}
+    ok = p.returncode == 0
+    return {"state": "smoke", "health": "pass" if ok else f"fail rc={p.returncode}", "healthy": ok,
+            "note": (p.stdout + p.stderr)[-200:]}
+
+
 def build_targets(wave: str, compose: str) -> tuple[list[dict], str | None]:
     """Mỗi target ROADMAP → entry tagged {target, kind, state, health, healthy}."""
     targets = wave_targets(wave)
@@ -131,6 +151,9 @@ def build_targets(wave: str, compose: str) -> tuple[list[dict], str | None]:
         if kind == "mobile":
             out.append({"target": name, "kind": kind, "healthy": None,
                         "note": "emulator — không proof qua docker (dựa ô tick STATE)"})
+            continue
+        if kind == "desktop":   # app cài trên máy — không Docker
+            out.append({"target": name, "kind": kind, **desktop_health(name)})
             continue
         info = hmap.get(name)
         if info is None:
@@ -180,7 +203,7 @@ def main(argv: list[str]) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(proof, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    cont = [t for t in targets if t["kind"] in ("backend", "bff", "web")]
+    cont = [t for t in targets if t["kind"] in ("backend", "bff", "web", "desktop")]
     ok = check["ok"] and not code["dirty"] and bool(targets) and all(t["healthy"] for t in cont)
     tsum = ", ".join(f"{t['target']}:{'✓' if t.get('healthy') else ('n/a' if t.get('healthy') is None else '✗')}" for t in targets) or "(không đọc được target từ ROADMAP)"
     print(f"[proof wave {wave}] make check: {'✓' if check['ok'] else '✗ (' + str(check['code']) + ')'} · targets: {tsum}")

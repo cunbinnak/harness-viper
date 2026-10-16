@@ -108,9 +108,9 @@ def main() -> int:
     check(not bad, f"frontmatter agent/command/skill parse được YAML ({len(fm_files)} file)"
           + (f" — HỎNG: {', '.join(bad)} (bọc description trong \"…\")" if bad else ""))
 
-    stacks = {"stack-spring-boot", "stack-nextjs", "stack-bff", "stack-flutter"}
+    stacks = {"stack-spring-boot", "stack-nextjs", "stack-bff", "stack-flutter", "stack-electron"}
     have_sk = {p.name for p in (ROOT / ".claude/skills").glob("*") if p.is_dir()}
-    check(stacks <= have_sk, f"4 stack skill đủ ({len(stacks & have_sk)}/4)")
+    check(stacks <= have_sk, f"{len(stacks)} stack skill đủ ({len(stacks & have_sk)}/{len(stacks)})")
     check(len(have_sk) >= 20, f"skill library ({len(have_sk)} skill — ref/review/method chắt lọc)")
 
     # 5. file khung

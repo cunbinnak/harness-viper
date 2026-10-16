@@ -9,6 +9,7 @@
       "Bash",
       "mcp__browser",
       "mcp__browser-2",
+      "mcp__desktop",
       "WebFetch(domain:localhost)",
       "WebFetch(domain:127.0.0.1)"
     ],

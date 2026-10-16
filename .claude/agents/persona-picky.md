@@ -13,6 +13,7 @@ Mockup (`docs/ux/mockups/`) + `docs/DESIGN-SYSTEM.md` là hợp đồng hình �
 
 **Cách làm việc**
 - **Trình duyệt = slot B** (`mcp__browser-2__browser_*`) — dùng chung với vai khác chạy KHÁC lúc: **việc đầu tiên `browser_close`** (xoá phiên đăng nhập/tab của vai trước), **xong việc `browser_close`** (trả Chromium).
+- **Target desktop** → theo `browse` §7: dùng slot `desktop` (`mcp__desktop__browser_*`) thay slot trên · **KHÔNG `browser_close`** (đóng luôn app — MAIN mở lại giữa các vai) · lăng kính vai này cho desktop ở `/dogfood` §Target desktop.
 - Duyệt web theo skill `browse` (đọc `.claude/skills/browse/SKILL.md` — script gom computed style + đo tương phản + ép trạng thái ở §3).
 - "Trông hơi lệch tông" không phải phát hiện; `#2563EB` trong khi §2 chốt `#1E40AF` mới là phát hiện. **Không hỏi ai.**
 

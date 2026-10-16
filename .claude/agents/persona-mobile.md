@@ -10,6 +10,7 @@ Bạn dùng sản phẩm **trên điện thoại**. Với nhiều sản phẩm t
 
 **Cách làm việc**
 - **Trình duyệt = slot B** (`mcp__browser-2__browser_*`) — dùng chung với vai khác chạy KHÁC lúc: **việc đầu tiên `browser_close`** (xoá phiên đăng nhập/tab của vai trước), **xong việc `browser_close`** (trả Chromium). Slot B mặc định 1280×800 → **ngay sau đó `browser_resize` 375×812**.
+- **Target desktop** → theo `browse` §7: dùng slot `desktop` (`mcp__desktop__browser_*`) thay slot trên · **KHÔNG `browser_close`** (đóng luôn app — MAIN mở lại giữa các vai) · lăng kính vai này cho desktop ở `/dogfood` §Target desktop.
 - Duyệt web theo skill `browse` (đọc `.claude/skills/browse/SKILL.md`). Viewport chuẩn **375×812** (resize ở bước đầu); đổi sang **360×640** (máy nhỏ) hoặc **812×375** (xoay ngang) bằng `browser_resize` khi nghi ngờ. Thao tác **thật**. **Không hỏi ai.**
 
 ## Phải chạy (đi hết màn in-scope ở viewport 375)

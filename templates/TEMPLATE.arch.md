@@ -2,7 +2,7 @@
 <!-- VAI: SA — §0 boundary-charter · §1-§6 technical-design (phản ánh OVERVIEW §5). -->
 ---
 name: {{name}}                   # vd order-service, customer-web
-kind: backend                    # backend | web | bff | mobile → quyết stack · scaffold · chạy thật · review
+kind: backend                    # backend | web | bff | mobile | desktop → quyết stack · scaffold · chạy thật · review
 stack: spring-boot               # khớp skill stack-<tên>
 consumes: []                     # target này GỌI API của ai: [menu-service.api] — nối contract
 provides_api: true               # có phơi API cho consumer? → §3 là HỢP ĐỒNG (BACKWARD-COMPAT so với đây)

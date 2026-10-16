@@ -23,6 +23,10 @@ STATE = ROOT / "STATE.md"
 
 # kind chạy dưới dạng container (có health qua docker) — mobile chạy emulator, không proof qua docker.
 CONTAINERIZED = {"backend", "bff", "web"}
+# kind có proof máy-sinh: container (docker) + desktop (bản đóng gói chạy `--smoke` qua `make doctor`).
+PROVEN = CONTAINERIZED | {"desktop"}
+# kind có giao diện → màn ở SCREEN-MAP phải có mockup + fidelity.
+UI_KINDS = {"web", "mobile", "desktop"}
 
 # Windows console (cp1252) không in được Unicode — ép UTF-8.
 try:
@@ -168,6 +172,12 @@ def _screen_map_rows() -> list[dict]:
     return rows
 
 
+def target_kind(name: str) -> str:
+    """kind của target, đọc frontmatter `docs/arch/<name>.md` (rỗng nếu không đọc được)."""
+    m = re.search(r"^kind\s*:\s*(\w+)", read(f"docs/arch/{name}.md"), flags=re.M) if name else None
+    return m.group(1).lower() if m else ""
+
+
 def wave_screens(wave: str) -> list[dict]:
     """Màn UI in-scope wave. Format mới (cột `wave` + `mã màn`): lọc theo cột Wave.
     Format cũ: tag `(Wave N)` ô Mockup > FEAT in-scope > tên màn nêu trong hàng ROADMAP."""
@@ -184,7 +194,9 @@ def wave_screens(wave: str) -> list[dict]:
             in_scope = (tag.group(1) == str(wave)) if tag else (
                 any(f in text for f in feats)
                 or any(re.search(rf"(?<![\w-]){re.escape(s)}(?![\w-])", wave_text) for s in stems))
-        if in_scope and re.search(r"\b(web|mobile)\b", text):
+        kind = target_kind(r.get("target", "").strip())
+        is_ui = kind in UI_KINDS if kind else bool(re.search(r"\b(web|mobile|desktop)\b", text))
+        if in_scope and is_ui:
             r["_code"] = r.get("mã màn") or next(iter(r.values()), "?")
             out.append(r)
     return out
@@ -610,7 +622,7 @@ def _check_proof(r: Report, wave: str) -> None:
         r.check(False, f"ROADMAP §1 wave {wave}: cột Target không parse được target nào (không xác nhận được phủ đủ)")
     ptargets = {t.get("target"): t for t in proof.get("targets", [])}
     for name, kind in declared:
-        if kind in CONTAINERIZED:
+        if kind in PROVEN:
             t = ptargets.get(name)
             r.check(bool(t) and bool(t.get("healthy")), f"target `{name}` ({kind}) chạy thật — proof healthy")
         else:  # mobile — không proof qua docker, dựa tick STATE (emulator)

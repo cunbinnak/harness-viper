@@ -60,7 +60,7 @@ Wave chia theo `feat_cap_per_wave` (~3-4 FEAT/wave) — xem `docs/ROADMAP.md §1
 | `templates/` | mẫu tài liệu (copy → `docs/`; xem `templates/README.md`) |
 | `docs/` | tài liệu THẬT (PRD/PERSONAS/FEAT/arch/ROADMAP…) + `CONVENTIONS`·`SECURITY` (framework) |
 | `knowledge-base/{name}.md` | KG per-target — bộ nhớ va vấp, MAIN đọc TRƯỚC khi code |
-| `services/{boundaries\|web\|bff\|mobile}/{name}/` | code sản phẩm (MAIN scaffold; chia nhóm theo `kind`) |
+| `services/{boundaries\|web\|bff\|mobile\|desktop}/{name}/` | code sản phẩm (MAIN scaffold; chia nhóm theo `kind`) |
 | `.claude/commands/` · `agents/` · `skills/` | 7 lệnh · 10 agent (pre-mortem + verify + dogfood) · thư viện skill (stack/ref/review/method) |
 | `scripts/` | `gate.py` (báo) · `capture_proof.py` (proof máy-sinh) · hooks (`guard_*`/`reanchor`) · `bootstrap`/`next_wave`/`compact`/`selftest` |
 

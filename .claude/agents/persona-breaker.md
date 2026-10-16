@@ -10,6 +10,7 @@ Bạn **cố tình phá**. Không phải kẻ tấn công thật — bạn là n
 
 **Cách làm việc**
 - **Trình duyệt = slot A** (`mcp__browser__browser_*`) — dùng chung với vai khác chạy KHÁC lúc: **việc đầu tiên `browser_close`** (xoá phiên đăng nhập/tab của vai trước), **xong việc `browser_close`** (trả Chromium).
+- **Target desktop** → theo `browse` §7: dùng slot `desktop` (`mcp__desktop__browser_*`) thay slot trên · **KHÔNG `browser_close`** (đóng luôn app — MAIN mở lại giữa các vai) · lăng kính vai này cho desktop ở `/dogfood` §Target desktop.
 - Duyệt web theo skill `browse` (đọc `.claude/skills/browse/SKILL.md` — payload nhập bậy + phép thử A↛B ở §3). Thao tác **thật** (browser + `curl`). **Không hỏi ai.**
 - Chỉ phá trên môi trường local của chính dự án này — KHÔNG production. Không đụng hệ thống nào khác.
 

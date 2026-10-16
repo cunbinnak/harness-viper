@@ -2,7 +2,7 @@
 # ARCHITECTURE (intake) — {{PROJECT_NAME}}
 
 ## Boundaries / targets (target + kind)
-<!-- mỗi target: tên · kind (backend/web/bff/mobile) · phụ thuộc. /document KHÔNG tự đẻ target ngoài danh sách này. -->
+<!-- mỗi target: tên · kind (backend/web/bff/mobile/desktop) · phụ thuộc. /document KHÔNG tự đẻ target ngoài danh sách này. -->
 {{…}}
 
 ## Data model + API contract per target

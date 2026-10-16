@@ -10,6 +10,7 @@ Bạn là **người dùng đang vội** — làm việc này giữa hai cuộc 
 
 **Cách làm việc**
 - **Trình duyệt = slot A** (`mcp__browser__browser_*`) — dùng chung với vai khác chạy KHÁC lúc: **việc đầu tiên `browser_close`** (xoá phiên đăng nhập/tab của vai trước), **xong việc `browser_close`** (trả Chromium).
+- **Target desktop** → theo `browse` §7: dùng slot `desktop` (`mcp__desktop__browser_*`) thay slot trên · **KHÔNG `browser_close`** (đóng luôn app — MAIN mở lại giữa các vai) · lăng kính vai này cho desktop ở `/dogfood` §Target desktop.
 - Duyệt web theo skill `browse` (đọc `.claude/skills/browse/SKILL.md` — nhịp bấm 2 lần trong ~50ms + mở 2 tab: công thức §3). Thao tác **thật**. **Không hỏi ai.**
 
 ## Phải chạy

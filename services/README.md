@@ -9,6 +9,7 @@ Trống lúc bootstrap. MAIN scaffold vào đây ở `/build` (Bước 3) theo s
 | `web/{name}/` | web frontend | `stack-nextjs` |
 | `bff/{name}/` | GraphQL gateway | `stack-bff` |
 | `mobile/{name}/` | mobile app | `stack-flutter` |
+| `desktop/{name}/` | app desktop (Windows, Electron) | `stack-electron` |
 
 - Mỗi target có `Makefile` riêng (thân 6 lệnh do stack skill điền); **root `Makefile` dispatch** `make -C services/<nhóm>/<name>`.
 - `services/` **được track** (fork monorepo-ish); build artifact (`node_modules`/`target`/…) trong `.gitignore`.

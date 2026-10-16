@@ -1,6 +1,6 @@
 ---
 name: ux-design
-description: UX/UI cho web target (bước 8 mockup của /document) — user flow, MOCKUP HTML tĩnh 1 file/MODULE, mỗi màn + tab/modal/form là section có mã, bấm được (design bằng HTML, không ASCII), UI states đầy đủ, design tokens + Visual polish, a11y WCAG 2.1 AA, permission-based UI. Sinh docs/ux/SCREEN-MAP.md (Mã màn nối mockup↔FE↔picky) + docs/ux/mockups/{name}/<module>.html; token ở docs/DESIGN-SYSTEM.md §2.
+description: UX/UI cho web/desktop target (bước 8 mockup của /document) — user flow, MOCKUP HTML tĩnh 1 file/MODULE, mỗi màn + tab/modal/form là section có mã, bấm được (design bằng HTML, không ASCII), UI states đầy đủ, design tokens + Visual polish, a11y WCAG 2.1 AA, permission-based UI. Sinh docs/ux/SCREEN-MAP.md (Mã màn nối mockup↔FE↔picky) + docs/ux/mockups/{name}/<module>.html; token ở docs/DESIGN-SYSTEM.md §2.
 ---
 
 # UX Design Skill
@@ -10,6 +10,7 @@ description: UX/UI cho web target (bước 8 mockup của /document) — user fl
 
 > Load ở /document (Bước 8 mockup) + persona-picky đối chiếu. Phương pháp: mockup HTML tĩnh · neutral-first · anti-pattern "demo đẹp chạy xấu" (vá E1).
 Chạy SAU khi DOCUMENT đã chốt target + `docs/arch/{name}.md §3 API` (UX consume contract, không bịa endpoint).
+> Target `desktop` (Electron): dựng mockup y như web (HTML tĩnh · cùng token · `_shell.html` = khung cửa sổ app) + vẽ thêm phần riêng của app: kích thước cửa sổ tối thiểu · menu · hộp thoại chọn file (vẽ nút mở + trạng thái sau khi chọn) · màn cấu hình lần chạy đầu.
 Input: `PRD.md` (persona, platform, design system / ADR ui-kit + **§6 Glossary + §7 Dữ liệu mẫu**) + `feat/FEAT-*.md` (user story + AC) + `PERSONAS.md` + `docs/arch/{name}.md §3 API` (contract target phục vụ).
 
 > **BÁM NGHIỆP VỤ — nội dung mockup phải có NGUỒN**: chữ/số trên màn lấy từ **PRD §7 Dữ liệu mẫu** (giá trị thật ngoài đời) + thuật ngữ đúng **PRD §6 Glossary** + ca thật trong INTERVIEW. **CẤM bịa placeholder generic** ("Nguyễn Văn A", "Sản phẩm 1", "Lorem") — mockup generic là mockup Authority không soi nổi nghiệp vụ, duyệt cũng vô nghĩa. Thiếu dữ liệu mẫu cho màn đang vẽ → báo PO bổ sung PRD §7 trước (PRD là mục PO; không bịa tại chỗ).
@@ -161,7 +162,7 @@ Phản hồi **chức năng** ("thêm cột", "thêm bộ lọc", "bỏ tab", "n
 5. Ghi dòng vào bảng `## Chốt` (cột Xử: màn nháp/AC/API/màn nào đổi). Sau khoá scope thì không sửa tại chỗ — vào `ROADMAP §backlog`, làm ở `/document` top-up wave sau.
 
 Khoá scope `/document` đòi dòng `Chốt bởi user: <ISO>` khi có target
-web/mobile. Chưa chốt = chưa mở cổng wave.
+web/mobile/desktop. Chưa chốt = chưa mở cổng wave.
 
 Khuôn ghi ở cuối `SCREEN-MAP.md`:
 
