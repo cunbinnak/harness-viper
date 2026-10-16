@@ -2,6 +2,7 @@
 
 > Định nghĩa CHUẨN của quy trình. [STATE.md](STATE.md) là bản thao tác; lệch nhau thì **PROTOCOL.md thắng**.
 > Router ngắn mỗi phiên: `CLAUDE.md`.
+> **Authority** (trong skill/agent và nhãn nguồn hay viết **Author**) = MỘT người: chủ dự án — gọi lệnh, quyết nghiệp vụ · phạm vi · go/pivot/kill. MAIN = phiên Claude chính (viết tài liệu + code); agent = phiên phụ chỉ để kiểm.
 >
 > **Trạng thái: HOÀN THIỆN — khung đã dựng, selftest xanh** (7 command · gate.py · 10 agent · hooks · skill library).
 > Bộ khung tinh gọn: 1 lớp doc · MAIN tự code · inline prompt · ít script + gate nhìn thấy được.
@@ -58,7 +59,25 @@ không để trôi); go/pivot/kill so **ngưỡng ghi trước** (không sửa s
 
 1. **Scope khoá sau DOCUMENT.** Phát sinh → `docs/ROADMAP.md §backlog`, không chèn vào wave này.
 2. **Sau khi khoá scope: toàn quyền, không hỏi lại.** `AskUserQuestion` **chỉ ở DOCUMENT** (trước khoá scope — phỏng vấn/quyết định); BUILD/VERIFY/SHIP/NEXT-WAVE bị `guard_ask` chặn (ô Scope khoá tick = chốt, chặn luôn dù phase còn ghi DOCUMENT). **Hỏi bằng LỜI cũng là hỏi** — sau khoá scope chỉ được DỪNG chờ Authority ở 2 chỗ: (a) đóng wave (go/pivot/kill, `/next-wave`) · (b) hành động ra-ngoài/không-đảo-ngược (deploy, xoá dữ liệu thật, gửi ra ngoài). Mọi thứ khác — thứ tự làm, có chạy bước kế không, có ghi backlog không, sửa hết hay để lại, nới tiêu chí gate, mockup hay app đúng — **tự quyết theo §2.3, ghi lại, làm tiếp**. Kết lượt giữa phase bằng "bạn muốn…?" / "khi bạn muốn" / "cần bạn quyết" = vi phạm.
-3. **Chỗ chưa rõ → 3 tầng, CẤM đoán không nguồn.** (1) Có bằng chứng (INTERVIEW · bảng luồng đã ký · mockup · AC đã khoá) → làm theo. (2) Là **sự thật bên ngoài** (luật · quy định · chuẩn kỹ thuật) hoặc thông lệ ngành có nguồn cụ thể → research, làm theo, ghi `DECISIONS` loại `chuẩn-ngành` **kèm link**. **Lựa chọn thiết kế chính sách** (hạn chót · hạn mức · ngoại lệ…) — không ai công bố cách làm sản phẩm của họ → **research lấy dấu vết + suy luận chuyên môn** (4 phép thử `domain-ba` A.6) → đề xuất mặc định có lập luận; DOCUMENT: Author chọn · sau khoá scope: như tầng 3. Ghi nguồn trung thực (`suy luận`), KHÔNG gọi suy luận là chuẩn ngành. **Author không cần biết trước luật — MAIN mang chuyên môn, Author chỉ quyết.** (3) Chỉ Author biết (chính sách riêng, thị trường không thống nhất, lệch chuẩn) → **DOCUMENT: hỏi** · sau khoá scope: `STATE §Blocker`/`ROADMAP §backlog`, không tự quyết. Quyết định kỹ thuật nội bộ → `DECISIONS` loại `kỹ-thuật`, ghi lý do. **Vòng đời `DECISIONS`**: trước khoá scope **sửa tại chỗ** (1 chủ đề = 1 dòng, không thêm dòng lật dòng cũ); sau khoá **supersede** — dòng cũ `Trạng thái: thay bởi DEC-x`, dòng mới ghi `thay DEC-y`.
+3. **Chỗ chưa rõ → phân loại theo bảng dưới, rồi research + suy luận. CẤM đoán không nguồn.**
+
+| Loại chỗ chưa rõ | Ví dụ | Ở DOCUMENT | Sau khoá scope (BUILD trở đi) |
+|---|---|---|---|
+| **Đã có bằng chứng** | INTERVIEW · bảng luồng đã ký · mockup · AC đã khoá | Làm theo | Làm theo |
+| **Quy định bên ngoài** — ràng buộc có sẵn, không phụ thuộc Authority | luật · nghị định · chuẩn kỹ thuật bắt buộc | Research **phải ra văn bản nguồn** → suy luận áp vào sản phẩm ("luật nói X → hệ thống phải chặn Y"). Không tìm được văn bản → ghi `chưa xác minh — <điều nhớ được>`, Authority xác nhận | Có văn bản → làm theo + `DECISIONS` loại `chuẩn-ngành` kèm link · không có → `ROADMAP §backlog` |
+| **Lựa chọn thiết kế** — Authority không đủ chuyên môn để tự quyết | hạn chót · hạn mức · ngoại lệ · thứ tự làm các mảng · ngưỡng go/pivot/kill · NFR có số | Research → **suy luận ra đề xuất** → Authority chọn | Không đổi luật nghiệp vụ (ai được làm gì · khi nào · bao nhiêu) và có thông lệ rõ kèm link → làm theo + `DECISIONS` loại `chuẩn-ngành` · còn lại → `ROADMAP §backlog`, KHÔNG chọn thay Authority |
+| **Chỉ Authority biết** | chính sách riêng của đơn vị · cách đơn vị đang làm · sở thích · ngân sách | Hỏi Authority bằng **câu hỏi bối cảnh** (`discovery-hypothesis`) | `STATE §Blocker` / `ROADMAP §backlog` |
+| **Kỹ thuật nội bộ** | tên field · cấu trúc code · thư viện có trong TECHSTACK | MAIN tự quyết (lựa chọn Authority sẽ thấy / phải vận hành / tốn tiền → hỏi ở `/document` Bước 7) | MAIN tự quyết + `DECISIONS` loại `kỹ-thuật` kèm lý do |
+
+**Research luôn đi kèm suy luận.** Research chỉ là nguyên liệu: không ai công bố cách làm sản phẩm của họ, kết quả tìm kiếm thường chung chung. Suy luận là bước **bắt buộc ngay sau research**, không phải bước dự phòng khi research thiếu. Có hai loại:
+- **Suy luận ra đề xuất** (trước khi hỏi Authority): nguyên liệu research + **kiến thức chuyên môn đã có** → áp vào bối cảnh của Authority qua bộ phép thử của chỗ đó (chính sách: `domain-ba` A.6 · thứ tự mảng: `discovery-hypothesis`) → đề xuất.
+- **Suy luận lắp ráp** (sau mỗi lượt Authority trả lời): ghép các câu trả lời với nhau qua 4 phép thử — **kéo theo** (câu trả lời đòi thêm dữ liệu / chức năng nào chưa ai nhắc) · **chọi nhau** (hai câu trả lời mâu thuẫn) · **chỗ nối** (đầu ra phần này đi vào phần nào, bằng cách gì, lúc nào) · **còn hở** (thiếu mảnh nào thì luồng không chạy tròn) → bức tranh tổng + câu hỏi mới → đọc lại cho Authority, hỏi tiếp. Dừng khi một lượt lắp ráp không sinh câu hỏi mới.
+
+**Mỗi đề xuất trình đủ 3 phần**: (1) research cho thấy gì — link, hoặc ghi "không tìm thấy" · (2) áp vào bối cảnh này ra sao — trích phép thử nào · (3) đề xuất mặc định + phương án khác + hệ quả nếu chọn sai. Thiếu phần (2) = chép lại research hoặc đoán, chưa phải suy luận.
+
+**Nhãn nguồn chung** (mọi cột Bằng chứng / Nguồn): `Author` (kèm vị trí, vd `§1 dòng N`) · `[quy định] <link>` · `research <link> + suy luận` · `suy luận` (research không ra gì) · `intake/<file>` · `chưa xác minh — <điều nhớ được>`. Lựa chọn thiết kế đã được chọn → thêm `→ Author chọn`. KHÔNG gọi suy luận là chuẩn ngành; KHÔNG gắn link chung chung để thành `[quy định]`.
+
+**Authority không cần biết trước — MAIN mang chuyên môn, Authority chỉ quyết.** **Vòng đời `DECISIONS`**: trước khoá scope **sửa tại chỗ** (1 chủ đề = 1 dòng, không thêm dòng lật dòng cũ); sau khoá **supersede** — dòng cũ `Trạng thái: thay bởi DEC-x`, dòng mới ghi `thay DEC-y`.
 4. **Doc là nguồn sự thật — ĐÓNG BĂNG sau khoá scope.** Code lệch doc → **KHÔNG sửa doc spec lúc BUILD/VERIFY** (guard_doc chặn); ghi `ROADMAP §backlog` → wave sau `/document` top-up đồng bộ. **Ngoại lệ DUY NHẤT — `amend-arch`** (§3): `docs/arch/*.md` thiếu/sai KỸ THUẬT làm **kẹt luồng** của AC đã khoá → bổ sung `arch` tại chỗ theo 6 điều kiện ở §3. Mơ hồ → `DECISIONS.md` (sổ sống, được ghi). Giữ hợp đồng ổn định để review/dogfood đánh, tránh "vừa code vừa vặn doc".
 5. **Cỡ sản phẩm theo đường vào** (§0).
 6. **Không secret trong code, không bypass test/lint. Đã code xong → git commit** (không commit = coi như chưa làm).
@@ -74,7 +93,7 @@ Sau khoá scope doc spec **đóng băng** (§2.4 — guard_doc chặn); doc wave
 
 ```
 ├─ Code sai so với spec đã chốt                → sửa CODE. Xong. (không đụng doc)
-├─ Spec mơ hồ (không nói rõ ca này)            → 3 tầng §2.3: kỹ thuật/chuẩn ngành → DECISIONS (có nguồn), đi tiếp · ý-Author → backlog, KHÔNG tự bịa. KHÔNG hỏi
+├─ Spec mơ hồ (không nói rõ ca này)            → bảng §2.3 cột "Sau khoá scope": có nguồn → DECISIONS, đi tiếp · cần Authority quyết → backlog, KHÔNG tự bịa. KHÔNG hỏi
 ├─ (A) arch lệch thực tế, KHÔNG kẹt luồng      → code bám arch đã khoá · DECISIONS `kỹ-thuật` + backlog đồng bộ doc wave sau
 │      (tên field, kiểu dữ liệu, index…)
 ├─ (B) arch thiếu/sai KỸ THUẬT làm KẸT luồng   → `amend-arch`: bổ sung docs/arch/*.md tại chỗ, cùng commit với code

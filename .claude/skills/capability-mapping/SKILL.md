@@ -15,7 +15,7 @@ Input: `docs/PRD.md` (vision/problem/hypotheses) + `docs/PERSONAS.md` (persona +
 
 Cách hỏi: như `discovery-hypothesis` (khám phá = hội thoại mở, KHÔNG AskUserQuestion · quyết định = AskUserQuestion + đánh đổi).
 
-Lỗ hổng → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → làm · chuẩn ngành → research, ghi `[C]` + link · chỉ Author biết → hỏi, đừng treo.
+Lỗ hổng → phân loại theo bảng chỗ chưa rõ PROTOCOL §2.3 (lựa chọn thiết kế → đề xuất, Authority chọn · chỉ Authority biết → hỏi), đừng treo.
 
 ## Deliverable
 
@@ -28,7 +28,7 @@ Lỗ hổng → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → 
 ## Phương pháp map
 1. **ĐỌC persona**: lấy danh sách persona + ma trận vai × hành động từ `docs/PERSONAS.md` (đã có, read-only). Không phát minh persona mới; capability không dẫn được về persona nào → hỏi Authority (persona thiếu hay capability thừa).
 2. **Capability**: mỗi persona "làm được gì?" (verb-noun: 'pay invoice', 'view order'). Tách capability rộng ("manage orders") thành atomic ("place order", "track order", "cancel order").
-3. **Outcome + priority**: mỗi capability → outcome + vì sao persona muốn + gắn **MVP / Phase 2 / Phase N** (feed wave-sequencing khi chia wave).
+3. **Outcome + priority**: mỗi capability → outcome + vì sao persona muốn + gắn **MVP / Phase 2 / Phase N** (feed wave-sequencing khi chia wave). Gắn nhãn bằng **suy luận ra đề xuất** (PROTOCOL §2.3) với 4 phép thử thứ tự của `discovery-hypothesis` (phụ thuộc dữ liệu · tần suất đau · rủi ro pháp lý · độ khó) → Authority chọn ở playback.
 4. **Candidate domain** (§2, gợi ý): capability chia sẻ core entity → 1 domain (group theo data/event similarity, KHÔNG theo tech). Chỉ là điểm xuất phát — SA gộp/tách/thêm ở `event-storming`.
 5. **Anti-capability**: nêu rõ cái NOT supported.
 

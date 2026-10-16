@@ -19,7 +19,7 @@
 ## Luồng nghiệp vụ đã xác nhận  *(cả 2 đường vào — domain-ba mục A; Authority đọc từng dòng rồi ký)*
 <!-- Ai LÀM = người thao tác trong hệ thống → actor của AC + ô `có` ma trận PERSONAS §2.
      Ai NHỜ/duyệt = người nêu nhu cầu hoặc phê duyệt — KHÔNG phải actor, trừ khi có thao tác riêng (dòng riêng).
-     Bằng chứng = `§1 dòng N` · `[C] <link>` (chuẩn ngành) · `intake/<file>`. Không có → `CHƯA HỎI` = câu hỏi kế tiếp. -->
+     Bằng chứng (nhãn chung PROTOCOL §2.3) = `§1 dòng N` · `research <link> + suy luận` · `intake/<file>`. Không có → `CHƯA HỎI` = câu hỏi kế tiếp. -->
 **Luồng: {{Tuyển dụng}}** — chốt bởi Authority: {{ngày ISO}}
 | # | Ai LÀM | Làm gì | Ai NHỜ / duyệt | Đầu vào → đầu ra | Bằng chứng |
 |---|---|---|---|---|---|
@@ -34,10 +34,10 @@ Màn nháp:
 Chính sách từng hành động:
 <!-- domain-ba A.6 — mỗi dòng bảng luồng có thao tác trên hệ thống = 1 dòng. Research lấy dấu vết + suy luận 4 phép thử
      (lạm dụng · hạ nguồn chốt lúc nào · xung đột · vòng đời) → đề xuất mặc định, Author chọn. Không ô trống; không áp dụng → `n/a — <lý do>`.
-     Nguồn: `Author` · `[luật] <link>` · `suy luận → Author chọn` · `suy luận + tham khảo <link> → Author chọn`. -->
+     Nguồn (nhãn chung PROTOCOL §2.3): `Author` · `[quy định] <link>` · `research <link> + suy luận → Author chọn` · `suy luận → Author chọn`. -->
 | Hành động | Khi nào được làm | Ai | Giới hạn | Trạng thái tiền đề | Trùng / xung đột | Vi phạm thì | Ngoại lệ | Nguồn |
 |---|---|---|---|---|---|---|---|---|
-| {{Đăng ký làm từ xa}} | {{trước 17h ngày làm việc liền trước · không đăng ký lùi ngày}} | {{nhân viên}} | {{≤ 2 ngày/tuần}} | {{n/a — tạo mới}} | {{ngày đã có phép duyệt · ngày lễ}} | {{chặn, báo lý do}} | {{HR đăng ký hộ, bắt buộc ghi lý do}} | {{suy luận → Author chọn (chấm công chốt cuối ngày; không chặn thì đăng ký lùi để hợp thức hoá ngày vắng)}} |
+| {{Đăng ký làm từ xa}} | {{trước 17h ngày làm việc liền trước · không đăng ký lùi ngày}} | {{nhân viên}} | {{≤ 2 ngày/tuần}} | {{n/a — tạo mới}} | {{ngày đã có phép duyệt · ngày lễ}} | {{chặn, báo lý do}} | {{HR đăng ký hộ, bắt buộc ghi lý do}} | {{suy luận → Author chọn (hạ nguồn: chấm công chốt cuối ngày · lạm dụng: không chặn thì đăng ký lùi để hợp thức hoá ngày vắng)}} |
 
 Câu hỏi còn mở (hệ quả lên màn):
 - {{Ai duyệt CV? A: HR → REC-DETAIL chỉ HR có nút duyệt · B: Trưởng phòng → thêm hàng chờ duyệt cho trưởng phòng}}

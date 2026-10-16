@@ -22,7 +22,9 @@
 **Rủi ro chính:**
 - {{rủi ro · tác động · giảm thiểu}}
 
-<!-- §3: NFR CÓ SỐ — không bịa, chưa rõ thì hỏi user. -->
+<!-- §3: NFR CÓ SỐ — không bịa. Authority không biết đặt số → MAIN suy luận ra đề xuất (PROTOCOL §2.3), Authority chọn:
+     tải = số người dùng × tần suất dùng × giờ cao điểm · mức sẵn sàng = hậu quả khi chậm/sập (mất tiền? dừng việc?) ·
+     mức bảo mật = loại dữ liệu (lương · CCCD · sức khoẻ). -->
 ## §3 NFR (phi chức năng — CÓ SỐ)
 - **Perf**: {{vd: p95 < 300ms cho API lõi}}
 - **Availability**: {{vd: 99.5% uptime tháng}}

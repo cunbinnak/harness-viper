@@ -34,7 +34,7 @@ Bước 5 **nhịp 1** của `/document`, sau CAPABILITIES-MAP (Bước 4). PO c
 - Không ghi tên class / bảng / công nghệ ở bất cứ mục nào — đó là việc SA.
 
 ## Chỗ chưa rõ
-Không hỏi lại điều Authority đã trả lời (INTERVIEW · bảng luồng đã ký). Chỗ còn thiếu → xử theo **3 tầng** (PROTOCOL §2.3): có bằng chứng → làm · chuẩn ngành → research, ghi `[C]` + link · chỉ Author biết → hỏi.
+Không hỏi lại điều Authority đã trả lời (INTERVIEW · bảng luồng đã ký). Chỗ còn thiếu → phân loại theo bảng chỗ chưa rõ PROTOCOL §2.3.
 
 ## Quy tắc
 - ID `FEAT-<slug>`. Cross-ref bằng ID canonical đầy đủ (không rút gọn).

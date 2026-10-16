@@ -23,10 +23,11 @@ Với mỗi FEAT + mỗi luồng, hỏi từng trục — **trục nào FEAT CH�
 - **Kỹ thuật**: **rỗng/đầy/biên** · **lỗi/timeout** · **quyền/tenant** · **đồng thời** (2 người/gửi 2 lần/race) · **thời gian/kỳ** (hết hạn/ranh giới kỳ/timezone) · **tiền/số** (làm tròn/âm) · **idempotency** (retry/lặp) · **partial-failure** (ghi DB xong nhưng event/email fail) · **thứ tự** sự kiện.
 - **Nghiệp vụ**: **vòng đời TRỌN VẸN của đối tượng** (khai sinh → sửa → hủy → lưu trữ — doc thường chỉ tả đoạn giữa; ai tạo cái đầu tiên? cái cuối đi đâu?) · **chu kỳ/định kỳ** (chốt ca/chốt tháng/kiểm kê/gia hạn — thứ chỉ xảy ra theo kỳ nên Author quên) · **luồng NGƯỢC** (hoàn tiền/hủy đơn đã xử lý/sửa bản ghi đã duyệt — mọi hành động tiến có đường lùi chưa, và lùi thì dữ liệu liên đới ra sao?) · **việc giấy-tờ-tay phần mềm phải thay** (INTERVIEW tả họ đang làm gì bằng sổ/Excel/Zalo — phần mềm có thay HẾT chưa hay còn khúc phải chạy ngoài?).
 
-Thêm 3 câu xuyên-luồng (thứ chỉ lộ khi ghép, Author dễ miss):
+Thêm 4 câu xuyên-luồng (thứ chỉ lộ khi ghép, Author dễ miss):
 1. **Kẽ giữa 2 luồng**: luồng A đang dở thì luồng B chạm cùng dữ liệu → sao?
 2. **Vòng đời trạng thái**: mọi chuyển trạng thái có lối ra? có trạng thái kẹt (không ai đưa ra được)?
 3. **Persona × ma trận**: mỗi ô `cấm` có AC chặn ở server? mỗi persona đi hết được luồng của họ?
+4. **Lắp ráp độc lập** (PROTOCOL §2.3): ghép các câu trả lời đã ký (INTERVIEW · bảng luồng · bảng chính sách) — có cặp nào **chọi nhau**? có **chỗ nối** nào giữa hai luồng chưa nói chuyển bằng cách gì, lúc nào?
 
 ## Cách săn 2 — đối chiếu NGOÀI (bắt mảng Author MISS TRẮNG — taxonomy không thấy vì không FEAT nào chạm)
 Cách săn 1 chỉ soi được cái ĐÃ VIẾT. Thiếu sót nghiệp vụ đắt nhất là **mảng không có FEAT nào chạm** — HRMS quên thử việc, bán hàng quên đổi-trả, đặt bàn quên no-show. Bắt bằng kiến thức NGOÀI doc:
@@ -59,7 +60,7 @@ Khác cách săn 2 (luồng ngành, biến thiên theo domain): 6 họ này tồ
 ## Cách săn 5 — CHÍNH SÁCH TỪNG HÀNH ĐỘNG (ý kiến chuyên gia thứ hai — `INTERVIEW` bảng chính sách, `domain-ba` A.6)
 Chạy lại **độc lập** 4 phép thử cho mỗi hành động trong bảng luồng — đừng tin bảng của MAIN là đủ:
 (1) **Lạm dụng** — tự do hoàn toàn thì ai lợi dụng? · (2) **Hạ nguồn** — dữ liệu này ai dùng, chốt lúc nào, làm sau mốc chốt thì hạ nguồn sai gì? · (3) **Xung đột** — cùng người/thời gian/tài nguyên còn nghiệp vụ nào? · (4) **Vòng đời** — sửa/huỷ sau duyệt / sau khi đã dùng?
-Báo: hành động có thao tác mà **không có dòng** · ô `n/a` mà phép thử cho thấy cần luật · lập luận yếu/không trích phép thử · ô `suy luận` gắn nhãn "chuẩn ngành" mà không có nguồn thật · ô có giá trị mà **không AC nào** chặn/kiểm. Đề xuất kèm lập luận + phương án mặc định để MAIN hỏi Authority.
+Báo: hành động có thao tác mà **không có dòng** · ô `n/a` mà phép thử cho thấy cần luật · đề xuất thiếu phần (2) của PROTOCOL §2.3 (không trích phép thử — chỉ chép research) · nhãn `research <link> + suy luận` mà không có lập luận · quy định bên ngoài thiếu `[quy định] <link>` hoặc `chưa xác minh` · suy luận bị gắn nhãn "chuẩn ngành" · ô có giá trị mà **không AC nào** chặn/kiểm. Đề xuất kèm lập luận + phương án mặc định để MAIN hỏi Authority.
 
 ## Cách săn 4 — SYSTEM DESIGN khớp thực tế (`docs/arch/OVERVIEW.md §5` ↔ `arch/*` ↔ PRD §3)
 - Mục 5.x trống hoặc `n/a` không lý do · thiếu một trong năm thứ **luôn bắt buộc**: số instance · đứng sau proxy · môi trường · phân loại dữ liệu · bảng lớn.
@@ -74,7 +75,7 @@ Báo: hành động có thao tác mà **không có dòng** · ô `n/a` mà phép
 Hai loại nghi vấn — MAIN xử khác nhau (thiếu AC = vá FEAT · thiếu mảng = hỏi Authority/backlog, có thể đổi scope):
 ```
 Đã nạp: <file/skill thực đọc>
-Đã quét: <n> FEAT × <taxonomy kỹ thuật + nghiệp vụ> + 3 câu xuyên-luồng + đối chiếu ngoài (<nguồn research/demo đã xem, kèm link>) + 6 họ phổ quát (<họ nào map · họ nào n/a · họ nào THIẾU>) + bảng chính sách (<n> hành động × 4 phép thử)
+Đã quét: <n> FEAT × <taxonomy kỹ thuật + nghiệp vụ> + 4 câu xuyên-luồng + đối chiếu ngoài (<nguồn research/demo đã xem, kèm link>) + 6 họ phổ quát (<họ nào map · họ nào n/a · họ nào THIẾU>) + bảng chính sách (<n> hành động × 4 phép thử)
 
 [cao|vừa] <case Author có thể MISS>
   FEAT/luồng: <ở đâu>

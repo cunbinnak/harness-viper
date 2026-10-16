@@ -7,7 +7,7 @@
 ## NON-NEGOTIABLES
 1. **Đọc `STATE.md` trước khi làm** (phase · wave · gate đang mở). Không rõ đang ở đâu → `/status`.
 2. **Chuyển phase qua slash command**; **gate mỗi chốt** chặn "đi tiếp khi chưa đủ" — **chốt đỏ thì DỪNG**, báo thiếu gì, KHÔNG `force`.
-3. **Sau khoá scope (DOCUMENT): KHÔNG hỏi Authority** (BUILD trở đi) — chỗ chưa rõ → 3 tầng (PROTOCOL §2.3: có bằng chứng · chuẩn ngành có link · ý-Author thì backlog, không đoán) · tắc cứng → `STATE §Blocker` · ngoài scope → `ROADMAP §backlog`. (Ngoại lệ: hành động ra-ngoài / không-đảo-ngược thì hỏi thật.)
+3. **Sau khoá scope (DOCUMENT): KHÔNG hỏi Authority** (BUILD trở đi) — chỗ chưa rõ → bảng PROTOCOL §2.3 cột "Sau khoá scope" (có bằng chứng → làm · có nguồn → làm + `DECISIONS` · cần Authority quyết → backlog; không đoán) · tắc cứng → `STATE §Blocker` · ngoài scope → `ROADMAP §backlog`. (Ngoại lệ: hành động ra-ngoài / không-đảo-ngược thì hỏi thật.)
 4. **Quyết định non-trivial → artifact NGAY** (DECISIONS/ADR/FEAT), không để trong chat.
 5. **Sửa doc đã chốt = wave sau**: `ROADMAP §backlog` → `/next-wave` → `/document` top-up. Ngoại lệ duy nhất: **`amend-arch`** — `docs/arch` thiếu/sai kỹ thuật làm kẹt luồng của AC đã khoá → bổ sung tại chỗ theo 6 điều kiện PROTOCOL §3. Doc wave đã ship (`archive/`) **bất biến**; đổi surface đã giao = **additive** (BACKWARD-COMPAT).
 6. **Không bypass test · không hardcode secret · code xong → git commit · artifact tạm → dọn** (luật #9).

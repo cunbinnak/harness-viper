@@ -9,7 +9,7 @@ description: VERIFY — code review (2 vai) → test case (test-writer viết đ
 > · `test-writer` → **QA độc lập, chỉ ghi `tracking/wave-N/test-cases.md`** — **KHÔNG viết code, kể cả test code**; script cần để chạy TC (Playwright `.mjs` · k6) là file tạm ngoài repo, dọn ngay.
 > Mọi agent thấy product code sai → **TRẢ finding**, MAIN sửa (**góc nhìn độc lập** — *fresh eyes*: người kiểm không phải người viết, nên MAIN không tự-chấm-bài-mình). *Không tự chấm* ≠ *không được test*: MAIN vẫn tự dùng (dogfood — đóng persona chính, Bước 4) — chỉ là kết quả nghiệm thu `test-cases.md` do `test-writer` ra đề + chạy + chấm.
 > **THU ĐỦ → SỬA SAU**: finding từ Bước 2/3/4 chỉ **GOM** vào `STATE §Findings` — MAIN **CẤM đụng product code trước Bước 5**. Sửa sớm = phá snapshot mà test-writer/dogfood đang đo trên đó → finding các nguồn không map được nhau + rebuild lắt nhắt nhiều lượt thay vì 1 lượt batch.
-> **Không dừng hỏi Authority, kể cả bằng lời** (PROTOCOL §2.2 — chỉ dừng ở Bước cuối báo kết quả): chỗ chưa rõ → 3 tầng §2.3 · ngoài scope → `ROADMAP §backlog` · chặn cứng → `STATE §Blocker`. Bước kế bắt buộc (dogfood, re-run, re-review) thì **LÀM**, không mời Authority quyết.
+> **Không dừng hỏi Authority, kể cả bằng lời** (PROTOCOL §2.2 — chỉ dừng ở Bước cuối báo kết quả): chỗ chưa rõ → bảng §2.3 cột "Sau khoá scope" · ngoài scope → `ROADMAP §backlog` · chặn cứng → `STATE §Blocker`. Bước kế bắt buộc (dogfood, re-run, re-review) thì **LÀM**, không mời Authority quyết.
 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: VERIFY`.
 
