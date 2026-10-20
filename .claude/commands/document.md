@@ -44,7 +44,7 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 - **INTERVIEW**: → **Nạp `Skill("discovery-hypothesis")` trước, đọc xong mới hỏi** (4 luật đào sâu + probe nghiệp vụ hóc búa + cược đo được). Authority không kể được nghiệp vụ / trả lời "không biết" → đi đường **§Authority chưa có kinh nghiệm** của skill (MAIN dẫn từ bản đồ nghiệp vụ xuống, hỏi bằng câu hỏi bối cảnh). Phỏng vấn Authority tới khi đủ dựng PRD/persona/capability (không trần số câu; đây là chỗ được hỏi). Kết tinh vào `docs/INTERVIEW.md` **theo đợt**: DOCUMENT đầu ghi khối `### Wave 1`; top-up sau
   `/next-wave` **thêm khối `### Wave N`** (không sửa khối cũ), mỗi mục có dòng `Bằng chứng:` + gắn FEAT nó phục vụ.
   > **Cách hỏi** (DOCUMENT = chỗ DUY NHẤT `AskUserQuestion` được phép — guard_ask cho qua):
-  > · **Khám phá** (pain/persona/ca biên/rỗng-lỗi) → **hội thoại MỞ bằng lời**, KHÔNG dùng `AskUserQuestion` (option mớm lời → Authority bấm cái nghe hợp lý thay vì kể thật).
+  > · **Khám phá** (pain/persona/ca biên/rỗng-lỗi/gu giao diện lượt 1) → **hội thoại MỞ bằng lời**, KHÔNG dùng `AskUserQuestion` (option mớm lời → Authority bấm cái nghe hợp lý thay vì kể thật).
   > · **Quyết định** (phạm vi bản đầu/lựa chọn thiết kế/stack/auth/thu tiền/deploy) → `AskUserQuestion` với **option cụ thể + đánh đổi** ("Clerk 20' có phí vs Auth.js 1-2h free").
 - **INTAKE**: đọc `intake/*.md` — **KHÔNG phỏng vấn lại**. Dịch/render sang doc set bên dưới, lập **bảng truy
   vết** `intake → FEAT` trong `docs/INTERVIEW.md`. `intake/TECHSTACK` **thắng** default của stack skill.
@@ -86,7 +86,7 @@ nếu project khác default → sửa thẳng file + ghi `DECISIONS.md`.
   đồng bộ bằng **contract-test** (VERIFY) + **BACKWARD-COMPAT** (SHIP). (Skill `stack-*` lo idiom CODE.)
 
 ## Bước 8 — Design system + UX · *UX*  → **Nạp `Skill("ux-design")` trước** (nếu có UI; backend-only → ghi marker `KHÔNG CÓ UI`, bỏ qua bước này)
-Thứ tự bắt buộc: `docs/DESIGN-SYSTEM.md` (token — **khoá TRƯỚC**, cả dự án) → `docs/ux/SCREEN-MAP.md` (mục lục
+**Việc đầu tiên: hỏi gu giao diện** (`ux-design` Phương pháp bước 0 — Authority có bộ nhận diện / template / giao diện mẫu nào không; không có thì MAIN tra rồi đề xuất 2–3 hướng cho Authority chọn) — gu là sở thích của Authority, không đoán rồi chờ chốt cuối. Thứ tự bắt buộc: `docs/DESIGN-SYSTEM.md` (token — **khoá TRƯỚC**, cả dự án) → `docs/ux/SCREEN-MAP.md` (mục lục
 **mọi màn** ↔ target ↔ FEAT ↔ wave, cả dự án) → **DỪNG, sang Bước 9 chia wave** (cột `Wave` của SCREEN-MAP điền ở Bước 9) → quay lại dựng `docs/ux/mockups/<target>/<module>.html` **chỉ màn in-scope
 wave đang mở** (ở DOCUMENT = wave 1; màn wave sau để trống, `/document` top-up khi `/next-wave` mở wave đó —
 vẽ tới đâu duyệt tới đó, không phí công mockup wave xa dễ đổi) → **rà nhất quán cross-màn** (app shell — sidebar/nav/logo/user-menu — phải giống hệt mọi mockup; lệch = sửa khớp `_shell.html` canonical, xem `ux-design §Nhất quán cross-màn`) → **Authority chốt mockup của wave đó**.

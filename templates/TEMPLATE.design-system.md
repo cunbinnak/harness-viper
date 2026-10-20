@@ -3,6 +3,9 @@
 # DESIGN-SYSTEM — {{PROJECT_NAME}}
 
 ## §1 Nguyên tắc
+<!-- Gu giao diện (ux-design Phương pháp bước 0) — ghi TRƯỚC khi chọn token. Nguồn: Authority | MAIN đề xuất → Authority chọn | `Authority không yêu cầu`. -->
+- **Gu giao diện**: {{Authority đưa: bộ nhận diện / template (tên + URL + license) / giao diện mẫu · hoặc hướng đã chọn (tên + URL) · hoặc `Authority không yêu cầu`}}
+- **Ràng buộc cứng**: {{bắt buộc màu thương hiệu · cần chế độ tối · thiết bị chính · … hoặc `không`}}
 - **Neutral-first**: nền trung tính, màu = nhấn ~10%, `danger` CHỈ cho lỗi. Ô trống im lặng, hover mới hiện affordance.
 
 <!-- §2: token — tương phản AA · không token ngoài bảng · không hardcode màu. gate DOCUMENT tra token ở bảng này để tính tương phản · guard_ds chặn hex thô ngoài :root. -->

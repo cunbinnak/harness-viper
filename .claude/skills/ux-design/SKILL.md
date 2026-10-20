@@ -29,7 +29,7 @@ Input: `PRD.md` (persona, platform, design system / ADR ui-kit + **§6 Glossary 
 3. **Token-hoá**: rút palette/spacing/radius của template vào **`:root` token §2** (SoT + qua `guard_ds` — hex chỉ được ở `:root`); class giữ nguyên, giá trị trỏ `var(--…)`. Đổi ý về màu sau này = sửa token, lan mọi màn.
 4. **Thay nội dung** bằng dữ liệu mẫu `PRD §7` + thuật ngữ `§6 Glossary` (luật BÁM NGHIỆP VỤ ở trên) — template đẹp mà nội dung generic vẫn vô nghĩa.
 5. Vẫn đủ chuẩn mockup: HTML tĩnh `file://` (gỡ JS/CDN của template) · 3 khuôn rỗng/lỗi/tải · `data-screen`/`data-ds` · responsive.
-User đưa template cụ thể → **dùng đúng cái đó**. Không tìm được template hợp → mới tự vẽ theo archetype + §Visual polish bên dưới.
+Authority đưa template cụ thể (lượt hỏi gu giao diện, Phương pháp bước 0) → **dùng đúng cái đó**. Không tìm được template hợp → mới tự vẽ theo archetype + §Visual polish bên dưới.
 
 ## Design system trước khi vẽ
 - Project có design system / **ADR ui-kit** → TUÂN THEO (layout, color, component pattern, mobile nav).
@@ -65,6 +65,11 @@ Ghi vào `docs/DESIGN-SYSTEM.md §3` (kho component — dev implement + reviewer
 - **Elevation + depth**: card/modal dùng `--shadow-*` + `--radius-*` nhất quán — phân lớp rõ, không phẳng lì cũng không bóng đổ hỗn loạn.
 
 ## Phương pháp
+0. **Hỏi gu giao diện — TRƯỚC khi tra tham chiếu và trước khi chọn token** (ở DOCUMENT được hỏi). Gu giao diện (bộ nhận diện, màu, độ dày thông tin, sáng/tối, kiểu điều hướng) là sở thích hoặc ràng buộc của Authority — MAIN không suy ra được từ tài liệu (PROTOCOL §2.3: loại "chỉ Authority biết"). Vẽ theo gu MAIN rồi chờ chốt cuối là vẽ lại. Hai lượt:
+   - **Lượt 1 — hỏi mở bằng lời** (khám phá, KHÔNG `AskUserQuestion` — option mớm lời): *Bạn có sẵn gì để giao diện bám theo không?* — bộ nhận diện (logo · màu thương hiệu · font) · giao diện của sản phẩm đơn vị đang dùng · template đã mua / bản thiết kế (Figma, ảnh, file) · link ứng dụng bạn thích · hoặc không có gì. Kèm ràng buộc cứng nếu có: bắt buộc màu thương hiệu · cần chế độ tối · thiết bị chính (máy tính / màn nhỏ) · người dùng đọc chữ nhỏ có khó không.
+   - **Lượt 2 — chỉ khi Authority không có gì để bám**: MAIN tra (bước 1 dưới), rồi đề xuất **2–3 hướng cụ thể** — mỗi hướng: tên sản phẩm/template + link + đặc điểm sẽ vay mượn + 1 dòng đánh đổi (đề xuất đủ 3 phần PROTOCOL §2.3, hướng MAIN khuyên đứng đầu) → Authority chọn bằng `AskUserQuestion`.
+   - Authority nói "sao cũng được" → KHÔNG hỏi thêm: MAIN chọn theo bước 1, ghi `Authority không yêu cầu` ở `DESIGN-SYSTEM §1`; Authority xem và chỉnh một lần ở chốt mockup.
+   - Authority đưa gì → ghi nguyên vào `DESIGN-SYSTEM §1` (nguồn = `Authority`), dùng đúng cái đó (§Đường tắt template). Bước 1 dưới khi đó chỉ **bổ sung** góc nhìn, không thay.
 1. **Research — BẮT BUỘC, không chỉ khi "chưa rõ"**: trước khi chốt token hay vẽ mockup đầu tiên, chủ động tìm THẬT sản phẩm/template cùng loại qua WebSearch/trình duyệt.
    - **Từ khoá tự suy TỪ CHÍNH dự án đang làm** (đọc `PRD.md` + loại màn sắp vẽ). KHÔNG dùng lại cụm từ/link cố định của lần trước hay của dự án khác — vd dự án quản lý kho thì tìm "warehouse/inventory dashboard UI", dự án đặt lịch thì tìm "booking/scheduling app UI".
    - Lấy **ít nhất 2-3 tham chiếu CỤ THỂ** (không mô tả chung chung "hiện đại, sạch sẽ"). Ghi **tên sản phẩm/template + URL + đặc điểm cụ thể định vay mượn** (bố cục thẻ số liệu, cách dùng màu xu hướng, kiểu bảng, spacing…) vào `docs/DESIGN-SYSTEM.md §1` làm **neo tham chiếu** — kể cả khi user chưa đưa ví dụ nào. **Tham chiếu là template mã nguồn mở dùng LUÔN được → đi §Đường tắt template** (lấy làm nền, không chỉ nhìn).
@@ -104,6 +109,7 @@ Mở tất cả mockup của target cạnh nhau, đối chiếu vùng shell — 
 Lệch → **sửa màn lệch cho khớp canonical** (KHÔNG sửa canonical theo 1 màn lẻ, trừ khi chính canonical sai). Ghi phát hiện + cách xử vào `SCREEN-MAP.md §Chốt`.
 
 ## Quality checklist
+- [ ] **Đã hỏi gu giao diện** (Phương pháp bước 0) và `DESIGN-SYSTEM §1` ghi kết quả: Authority đưa gì / chọn hướng nào / `Authority không yêu cầu` — không vẽ khi chưa có một trong ba.
 - [ ] **SCREEN-MAP đủ**: mọi màn nháp của BA + mọi AC `has_ui` có row; mọi màn gán đúng target (mơ hồ đã hỏi user); mọi web target có ≥1 màn.
 - [ ] Mọi row SCREEN-MAP in-scope trỏ `<module>.html#<Mã màn>` **tồn tại** (file + section `id`) — mở `file://…#Mã` tới thẳng; mọi thao tác AC có link/nút dẫn tới section; responsive; đủ section state phụ.
 - [ ] **Shell nhất quán cross-màn** (§Nhất quán cross-màn): mọi mockup của target dùng CÙNG app shell — nav items/thứ tự/nhóm · logo · vị trí user-menu giống hệt, chỉ khác active-state + content. Đã rà cạnh nhau, lệch đã sửa khớp `_shell.html`.
@@ -124,7 +130,7 @@ Lệch → **sửa màn lệch cho khớp canonical** (KHÔNG sửa canonical th
 
 | § | Khai gì | Ai dùng về sau |
 |---|---|---|
-| §1 | **Ba tính từ + neo tham chiếu THẬT** — ưu tiên user chỉ ra ("nhìn như app X"); KHÔNG có thì agent tự tìm (bước Research) và ghi tên + URL + đặc điểm vay mượn, không để trống | chỗ đối chiếu khi cãi nhau đẹp/xấu — không có neo thì tranh luận không có đáy |
+| §1 | **Gu giao diện Authority đã nói** (bước 0: bộ nhận diện · ràng buộc cứng · hoặc `Authority không yêu cầu`) + **ba tính từ + neo tham chiếu THẬT** — ưu tiên Authority chỉ ra ("nhìn như app X"); KHÔNG có thì agent tự tìm (bước Research) và ghi tên + URL + đặc điểm vay mượn, không để trống | chỗ đối chiếu khi cãi nhau đẹp/xấu — không có neo thì tranh luận không có đáy |
 | §2 | Token + **cặp tương phản**: mỗi cặp một dòng `<chữ>` trên `<nền>` (hex hoặc token; chữ lớn ghi `lớn`) | gate `_check_contrast` **tự tính tỉ số WCAG AA** (4.5:1 · lớn 3:1) và **cảnh báo** cặp dưới ngưỡng / dòng sai dạng — không chặn (chuẩn cuối là file thiết kế/Figma) |
 | §3 | **Kho component ĐÓNG** — mỗi khối: dùng ở màn nào + **trạng thái bắt buộc** | vai `picky` ở `/verify` đi kiểm đúng cột này trên app đã render |
 | §4 | **Ba khuôn** rỗng / lỗi / đang tải | năm màn không được đẻ ra năm kiểu báo lỗi |

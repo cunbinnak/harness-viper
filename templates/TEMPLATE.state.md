@@ -38,7 +38,7 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 - [ ] `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md`: frontmatter **`kind`/`stack`/`consumes`** + data model + luồng + API + §ranh-giới (**per target**) · `OVERVIEW §5` system design đủ 5.1–5.9 (5.7/5.8 có dòng)
 - [ ] `docs/TECHSTACK.md` chốt qua lượt hỏi Authority (Bước 7) — không lựa chọn nào Authority quan tâm bị tự quyết
 - [ ] `docs/CONVENTIONS.md` + `docs/SECURITY.md` (**framework có sẵn**) — rà; chỉnh §API error-envelope/header nếu project khác default
-- [ ] Design system: có UI → `docs/DESIGN-SYSTEM.md` (token) + `docs/ux/SCREEN-MAP.md` (MỌI màn, cả dự án)
+- [ ] Design system: có UI → hỏi gu giao diện (bước 0 `ux-design`) rồi `docs/DESIGN-SYSTEM.md` (token) + `docs/ux/SCREEN-MAP.md` (MỌI màn, cả dự án)
       khoá TRƯỚC · mockup **chỉ màn wave đang mở** (wave 1 lúc DOCUMENT; wave sau `/document` top-up), Authority
       chốt · backend-only → marker `KHÔNG CÓ UI`
 - [ ] `docs/ROADMAP.md`: chia wave; mỗi wave khai **target** + **phases chạy** (BUILD,VERIFY[,SHIP])
