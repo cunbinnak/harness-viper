@@ -1,11 +1,11 @@
 ---
 name: specialist-testing
-description: "Phương pháp QA cho test-writer — ba nguồn ra test case (AC · bảng chính sách · thăm dò ngoài tài liệu) + kỹ thuật thiết kế (phân vùng tương đương · giá trị biên · bảng quyết định · chuyển trạng thái) + chuẩn kiểm (điều kiện được ghi PASS) + dữ liệu đối kháng + regression cộng dồn + dựng tiền đề (seed/fixture/mock/sandbox) + rigor chuyên sâu theo loại (contract · perf k6 · security OWASP · resilience · migration). test-writer LUÔN nạp."
+description: "Phương pháp QA cho test-writer — ba nguồn ra test case (AC · bảng chính sách · thăm dò ngoài tài liệu) + kỹ thuật thiết kế (phân vùng tương đương · giá trị biên · bảng quyết định · chuyển trạng thái) + chuẩn kiểm (điều kiện được ghi PASS) + dữ liệu đối kháng + regression theo phạm vi ảnh hưởng + dựng tiền đề (seed/fixture/mock/sandbox) + rigor chuyên sâu theo loại (contract · perf k6 · security OWASP · resilience · migration). test-writer LUÔN nạp."
 ---
 
 # Specialist Testing Skill
 
-> `test-writer` **LUÔN nạp** ở /verify: §Ba nguồn → §Kỹ thuật → §Chuẩn kiểm → §Dữ liệu đối kháng → §Thăm dò → §Regression là phương pháp mọi wave. §Đợt kiểm chuyên sâu: wave có `SHIP`. §Rigor per loại dùng khi vượt CRUD (contract · perf · security · tenant isolation · resilience · migration).
+> `test-writer` **LUÔN nạp** ở /verify: §Ba nguồn → §Kỹ thuật → §Chuẩn kiểm → §Dữ liệu đối kháng → §Thăm dò → §Regression theo phạm vi ảnh hưởng là phương pháp mọi wave ≥ 2. §Đợt kiểm chuyên sâu: wave có `SHIP`. §Rigor per loại dùng khi vượt CRUD (contract · perf · security · tenant isolation · resilience · migration).
 
 ## Hoạt động
 Mỗi TC = **1 dòng** trong `tracking/wave-N/test-cases.md` — khung + nghĩa từng cột ở `templates/TEMPLATE.test-cases.md` (gate đọc theo tên cột). Dòng TC **chính là** báo cáo bug khi FAIL: `cách chạy` = bước tái hiện · `mô tả` = kỳ vọng · `thực tế / bằng chứng` = điều quan sát được — không viết báo cáo riêng.
@@ -53,9 +53,40 @@ Tiếng Việt có dấu · tên rất dài · emoji · khoảng trắng đầu/
 Kết quả: hệ chặn hợp lý → `PASS` (ghi hành vi làm mốc) · hệ **cho phép điều phép thử chỉ ra là có hại** → `CHƯA CÓ QUY ĐỊNH` — nghĩa là *tài liệu (AC + bảng chính sách) không quy định ca này, hệ đang cho phép một việc có thể gây hại* — **KHÔNG phải FAIL** (code đúng tài liệu; thêm quy định hay không là quyết định của Authority): `thực tế / bằng chứng` ghi hành vi + phép thử + hệ quả (vd `201 lúc 18:05 · hạ nguồn: chấm công đã chốt → công ngày đó sai`). MAIN đưa vào báo cáo cuối VERIFY + `ROADMAP §backlog`.
 Giới hạn **~5 thăm dò / hành động**, ưu tiên hành động chạm tiền · công · quyền.
 
-## Regression cộng dồn
-**Gắn `@regression` khi thiết kế**: TC smoke mỗi luồng · TC chạm tiền / số dư / chấm công · TC ô `cấm` · **TC bắt được bug đã sửa** (thêm ở chế độ chạy lại khi xác nhận fix — bug từ review/dogfood cũng viết 1 TC tái hiện).
-**Wave ≥ 2**: lúc **viết đề**, chép MỌI TC `@regression` trong `archive/wave-*/tracking/wave-*/test-cases.md` sang `test-cases.md` wave hiện tại (giữ mã gốc · `nguồn` = `R`); lúc **chạy**, chạy chúng TRƯỚC TC wave mới, ghi kết quả. FAIL = surface đã giao bị phá → **BLOCKER**. TC cũ hết hợp lệ vì AC đã đổi qua top-up → vẫn chép dòng, `kết quả` = `ĐÃ THAY` + `thực tế / bằng chứng` = `AC đổi ở <FEAT vN> → thay bằng <TC mới>`; TC mới gắn `@regression` và phải PASS — không tự xoá dòng cũ (`bug-hunter` rà đề test kiểm TC thay thế có thật).
+## Regression theo phạm vi ảnh hưởng
+**Mục đích**: bắt lỗi *nở ra ở chỗ đã PASS* — wave này đổi thứ X làm vỡ thứ Y đã giao. Bộ regression KHÔNG phải kho TC cộng dồn mãi rồi chạy lại nguyên mỗi wave: mỗi wave **chọn lại**, chỉ chạy lại TC cũ nằm trong vùng mà wave này làm ảnh hưởng tới. Phần lớn TC cũ nằm ở chỗ wave này không chạm tới — chạy lại chúng làm thời gian VERIFY tăng theo số wave mà hiếm khi bắt thêm lỗi.
+
+**Nhãn**: `@regression` = "TC CŨ này được chọn chạy lại ở wave hiện tại" — chỉ gắn khi chép TC cũ sang `test-cases.md` của wave hiện tại. KHÔNG gắn cho TC mới viết ở wave hiện tại (lúc đó chưa biết wave sau sẽ đổi gì; wave sau tự chọn lại). Ngoại lệ duy nhất là `@smoke`: gắn lúc thiết kế cho **1 TC đi trọn mỗi luồng chính** (bảng luồng đã ký); `@smoke` luôn chạy lại mỗi wave và mỗi lượt sửa, không cần phân tích.
+
+**Wave ≥ 2 — làm TRƯỚC khi viết TC mới (bước 3a).** QC đánh giá bằng **ngôn ngữ nghiệp vụ trên tài liệu**, KHÔNG đọc code: phạm vi ảnh hưởng suy từ FEAT / AC, luồng, vai, dữ liệu và bề mặt giao tiếp ghi ở `arch`. Người viết code không phải nguồn khai phạm vi (không tự khoanh phạm vi kiểm bài mình).
+1. **Đọc thay đổi của wave**:
+   - `docs/ROADMAP.md §1` hàng wave này: cột `AC in-scope` (AC cũ nào được top-up "bản 2"), `Phụ thuộc wave trước`, `Legacy được phép phá`; `§2` điều chỉnh khi mở.
+   - **Tài liệu đổi từ lúc đóng wave trước**: mốc là commit đóng wave trước (`git log -1 --format=%H -- archive/wave-<N-1>`); xem `git diff <mốc>..HEAD -- docs/` (chỉ tài liệu, không phải code): FEAT / AC mới hoặc đổi, bảng luồng và bảng chính sách (`INTERVIEW`), vai và hành động (`PERSONAS §2`), bề mặt đã giao bị chạm (`BACKWARD-COMPAT §1`), `arch` (endpoint, event, bảng, mã lỗi, trạng thái thêm hoặc đổi) và các dòng `amend-arch` ở `DECISIONS`.
+   - `knowledge-base/<target>.md` §Gotchas / §Failure-modes: cặp phụ thuộc ngầm đã từng gây lỗi.
+   - Chức năng dùng chung theo nghiệp vụ (đăng nhập, phân quyền, gửi thông báo, lưu và tải file, lịch ngày lễ…): `arch/OVERVIEW.md` (§2 tích hợp · §3 hạ tầng dùng chung) và `arch/<target>.md §4`.
+   - Mục `Chức năng cũ bị chạm` trong báo cáo của `reviewer` (Bước 2; MAIN chuyển nguyên văn trong prompt): nguồn độc lập về phụ thuộc ngầm trong code, đã dịch sang nghiệp vụ — mỗi dòng phải có dòng ảnh hưởng tương ứng ở đoạn `Phạm vi ảnh hưởng`.
+2. **Suy ra TC cũ bị ảnh hưởng** — mỗi thay đổi tìm TC cũ theo bảy quan hệ dưới, trong `archive/wave-*/tracking/wave-*/test-cases.md` (mã TC có ở nhiều wave → lấy bản của wave MỚI NHẤT):
+
+   | Wave này thay đổi | Chọn TC cũ nào | Tìm bằng |
+   |---|---|---|
+   | AC của FEAT đã giao (top-up) | TC cũ của AC đó và các AC cùng FEAT | cột `AC` |
+   | Surface đã giao: thêm / đổi field, endpoint, mã lỗi, trạng thái, event | TC cũ gọi surface đó | endpoint ở cột `cách chạy`, `BACKWARD-COMPAT §1` |
+   | Bảng / dữ liệu dùng chung (migration, thêm cột, thêm trạng thái) | TC cũ ghi, đọc hoặc đi qua trạng thái đó | tên bảng / trạng thái ở `mô tả` |
+   | Gọi hoặc bị gọi bởi chức năng cũ (`Phụ thuộc wave trước`, `consumes`) | TC contract và TC luồng của bên cung cấp / bên dùng | cột `AC`, loại `contract` |
+   | Quyền: hành động hoặc vai mới, đổi điều kiện (phạm vi, trạng thái) | TC phân quyền của hành động / vai đó | tên hành động, vai ở `mô tả` |
+   | Luồng cũ thêm bước, hoặc nối sang luồng mới | TC đi qua điểm nối | bảng luồng `INTERVIEW` |
+   | Chức năng dùng chung mà wave này làm đổi hoặc dùng thêm: đăng nhập / phiên, phân quyền chung, thông báo, lưu file, lịch / múi giờ, khung lỗi | mọi TC dùng chức năng đó | `arch/OVERVIEW.md §2-§3`, `knowledge-base` |
+
+   Không chắc có ảnh hưởng hay không → **chọn**: chạy thừa vài TC rẻ hơn bỏ lọt lỗi nở. Thay đổi chạm chức năng dùng chung (dòng cuối) → chọn rộng, không chỉ `@smoke`.
+3. **Ghi phạm vi** ở đầu `test-cases.md`, trước bảng, đoạn `## Phạm vi ảnh hưởng` (danh sách, KHÔNG phải bảng; khung ở `templates/TEMPLATE.test-cases.md`): mỗi dòng `thay đổi của wave → cái cũ bị ảnh hưởng → TC chọn: <mã>…`; thêm dòng `Luôn chạy: @smoke mọi luồng chính (<n> TC)` và `Không ảnh hưởng: <FEAT / vùng cũ> — <vì sao>`.
+4. **Chép TC cũ được chọn** (cộng `@smoke` mọi luồng) vào bảng: giữ mã gốc · `nguồn` = `R` · `tag` có `@regression` · `kết quả` = `CHƯA CHẠY`. TC cũ hết hợp lệ vì AC đổi qua top-up → vẫn chép dòng, `kết quả` = `ĐÃ THAY` + `thực tế / bằng chứng` = `AC đổi ở <FEAT vN> → thay bằng <TC mới>`; TC mới phải PASS — không tự xoá dòng cũ (`bug-hunter` rà đề kiểm TC thay thế có thật).
+5. Rồi mới **thiết kế TC mới** (AC · CS · TD). TC cho chỗ nối giữa chức năng mới và cũ (dữ liệu, quyền, luồng đi qua cả hai) thiết kế như TC thường.
+
+**Chạy**: TC nguồn `R` và `@smoke` TRƯỚC TC mới. FAIL ở TC `R` = chỗ đã giao bị phá → **BLOCKER**.
+
+**Fix-loop** (cùng phương pháp, quy mô nhỏ): vùng ảnh hưởng của lượt sửa suy từ **các finding vừa sửa** (MAIN chuyển nguyên danh sách mã finding; nội dung finding do reviewer / bug-hunter / persona báo, không phải MAIN khai): lấy AC, Mã màn, hành động, dữ liệu mà finding nêu → chọn TC (cũ và mới) thuộc vùng đó theo bảy quan hệ trên, chạy cùng FAIL + BLOCKED + `@smoke`. Không chạy lại cả bộ.
+
+**Lỗi nở ngoài vùng đã chọn** (dogfood, persona hoặc lượt sau lộ lỗi ở chỗ không được chọn) = phân tích sót một phụ thuộc: viết 1 TC tái hiện (`mô tả` ghi mã finding) và MAIN ghi cặp phụ thuộc đó vào `knowledge-base/<target>.md` §Gotchas — wave sau bước 1 đọc lại.
 
 ## Đợt kiểm chuyên sâu — không chạy đủ mọi wave
 Wave thường: perf · security · tenant isolation · resilience **chỉ** cho AC/NFR mà wave đó chạm (vd AC có ngưỡng thời gian phản hồi → đo đúng endpoint đó).
@@ -64,7 +95,7 @@ Wave thường: perf · security · tenant isolation · resilience **chỉ** cho
 - **security**: đủ nhóm OWASP ở §Rigor + SCA (`docs/SECURITY.md §6`) + mỗi endpoint public không token → 401.
 - **tenant isolation** (sản phẩm nhiều tenant): §Rigor `tenant isolation` cho MỌI endpoint đọc/ghi.
 - **resilience**: mỗi hệ ngoài ở OVERVIEW §5.6 chết/chậm → hệ phản ứng đúng như đã khai.
-TC đợt sâu ghi chung `test-cases.md` (cột `loại` tương ứng), gắn `@regression` cho ca chặn thật (lỗ bảo mật/rò tenant đã vá).
+TC đợt sâu ghi chung `test-cases.md` (cột `loại` tương ứng). Ca chặn thật (lỗ bảo mật / rò tenant đã vá) có TC tái hiện — wave sau chọn lại nếu nằm trong vùng ảnh hưởng.
 
 ## test_type taxonomy — khi nào dùng + scope (SSOT của cột `loại`)
 | group | Khi nào (wave strategy) | Scope | Nguồn input single-repo |
@@ -91,7 +122,7 @@ Ngoài 7 dòng trên, `loại` còn dùng: `contract` · `resilience` · `migrat
 | **Payment gateway** (MoMo/VNPay) | **sandbox + credential test** — test THẬT vs sandbox, KHÔNG mock (mock che mất lỗi ký/callback) |
 | **Email / SMS / push** | fake sink (MailHog/Mailpit) hoặc provider sandbox → assert đã gửi + nội dung |
 | **Webhook / callback từ ngoài** (IPN, event đối tác) | tự `POST` **payload giả đúng schema** (`arch §Events`) vào endpoint nhận — mô phỏng bên ngoài gọi |
-| **Event Kafka** (nhận từ target khác) | EmbeddedKafka / produce event giả đúng schema vào topic |
+| **Event Kafka** (nhận từ target khác) | produce event giả đúng schema vào topic của hệ đang chạy (công cụ dòng lệnh của broker); không viết code test |
 
 **Luật mock:**
 - Mock tại **ranh giới ngoài cùng** (HTTP/SMTP/gateway/broker client) — **KHÔNG** mock service/repo **nội bộ** (mock nội bộ = test cái mock, che bug tích hợp thật).
@@ -101,17 +132,17 @@ Ngoài 7 dòng trên, `loại` còn dùng: `contract` · `resilience` · `migrat
 
 ## Rigor per loại
 - **contract**: verify API/event contract khớp `docs/arch/{name}.md §3 API` / events.
-  - Consumer-driven (Pact hoặc tương đương): consumer định nghĩa expectation → provider verification chạy ở CI provider.
+  - Consumer-driven (Pact hoặc tương đương): consumer định nghĩa expectation → chạy kiểm tra phía provider trên hệ thật (VERIFY chạy local, không có CI).
   - Provider state setup cho từng interaction; verify path/method/field/enum/error code/response shape + event payload schema.
   - **Backward-compat (additive-only)**: thêm field optional / enum value OK; remove/rename/đổi type/bắt buộc field mới = **breaking → FAIL** (bắt sớm trước khi vỡ consumer).
-- **regression**: xem §Regression cộng dồn (tag `@regression`, không phải loại).
+- **regression**: xem §Regression theo phạm vi ảnh hưởng (tag `@regression`, không phải loại).
 - **isolation**: unit/integration biên domain (mock infra) cho logic phức tạp / invariant.
 - **tenant isolation** (`loại` = `security`; sản phẩm nhiều tenant/chi nhánh/công ty): dựng **2 bộ dữ liệu A và B** khác tenant, cùng cấu trúc. Với MỖI endpoint, đăng nhập A rồi:
   - **đọc**: gọi id bản ghi của B → bị chặn (thống nhất **403 hay 404** theo `arch §3` — không lẫn lộn mỗi endpoint một kiểu) · danh sách/tìm kiếm/xuất file/badge đếm của A **không lẫn** dữ liệu B;
   - **ghi**: sửa/xoá/duyệt bản ghi của B → bị chặn, đọc lại bản ghi B không đổi · tạo mới mà body/header tự khai `tenantId` của B → bị bỏ qua hoặc chặn, bản ghi thuộc A;
   - **cache**: A đọc trước, B đọc sau cùng khoá (cùng trang/cùng bộ lọc) → B KHÔNG nhận dữ liệu A từ cache;
   - **job/thông báo**: job chạy theo tenant không gửi/ghi chéo (email của A không tới người dùng B).
-  Bất kỳ ca rò nào = **BLOCKER**, gắn `@regression`.
+  Bất kỳ ca rò nào = **BLOCKER**.
 - **performance** (khi NFR latency): k6, threshold = SLO từ `PRD.md` NFR (p95/p99 + error rate). Phân loại: **smoke** (vài VU, sanity) · **load** (tải kỳ vọng) · **stress** (tìm điểm gãy) · **soak** (chạy dài → phát hiện memory leak).
   ```javascript
   import http from 'k6/http'; import { check } from 'k6';
@@ -123,7 +154,7 @@ Ngoài 7 dòng trên, `loại` còn dùng: `contract` · `resilience` · `migrat
   }
   ```
 - **security** (khi NFR security): theo `docs/SECURITY.md` (OWASP) — injection (SQL/JPQL/native), SSRF, mass-assignment, deserialization; authz bypass + tenant leakage; secret trong response/log; **dependency scan (CVE nghiêm trọng)**; FE: XSS/CSRF/token storage; rate-limit/brute-force. Negative test: User A KHÔNG xem được resource User B → 403.
-- **accessibility** (WCAG 2.1 AA, CHỈ full-stack FE): keyboard nav, screen reader, color contrast, focus management; tool axe/Lighthouse; ref WCAG criterion ID (vd 2.1.1, 4.1.2). FE-isolated dễ false positive → defer sang full-stack wave.
+- **accessibility** (WCAG 2.1 AA, CHỈ full-stack FE): keyboard nav, screen reader, color contrast, focus management; tool axe/Lighthouse; ref WCAG criterion ID (vd 2.1.1, 4.1.2). Chạy trên web đã nối backend thật. Không hoãn sang wave sau: AC a11y in-scope phải có TC PASS.
 - **resilience/chaos** (khi NFR availability): inject downstream fail/timeout → verify timeout + circuit-breaker mở + fallback đúng; partial failure (DB commit nhưng event/cache fail) → reconcile/outbox bù.
 - **migration** (khi đổi schema): chạy migration forward trên DB có data + verify **rollout an toàn** (thêm column NULLABLE → backfill → enforce NOT NULL ở migration sau); KHÔNG mất data, KHÔNG khoá bảng lâu.
 - **architecture-drift** (tuỳ chọn — KHÔNG có trong khung, tự cài khi cần): đo coupling/cohesion + drift khỏi `arch/{name}.md` bằng **số** (metric). Mặc định `reviewer`/`bug-hunter` soi "logic sai tầng / ranh giới module" **định tính** là đủ. Project multi-boundary phức tạp cần đo bằng số → tự thêm skill wrap tool ngoài, vd [arcade-agent](https://github.com/lemduc/arcade-agent) (đa ngôn ngữ, MCP + CI drift-check). Cân dep nặng (tree-sitter) vs lợi ích trước khi thêm.
@@ -144,5 +175,8 @@ Ngoài 7 dòng trên, `loại` còn dùng: `contract` · `resilience` · `migrat
 
 - **Không có máy giả lập sạch** → KHÔNG viết nhóm `install` (không ghi PASS/BLOCKED giả); báo trong report "chưa kiểm cài đặt trên máy sạch" → MAIN ghi rủi ro chấp nhận ở `DECISIONS` + `PRODUCTION-READY` nhóm 5.
 
+## Mobile (target `kind: mobile`) — chưa tự động
+Khung chưa có công cụ lái emulator. TC gọi API của backend chạy như thường. TC UI của mobile do MAIN chạy tay trên emulator, ghi kết quả ngay tại dòng và gắn tag `@thủ-công` (`verify.md` Bước 3c). Không ghi PASS cho dòng chưa ai chạy.
+
 ## Done
-- `tracking/wave-N/test-cases.md` đúng khung template: TC từ đủ 3 nguồn (AC · CS · TD) · kỹ thuật đã áp (ngưỡng có giá trị biên · trạng thái có cạnh cấm + 1 TC vòng đời) · mọi PASS đạt chuẩn kiểm · (wave ≥ 2) regression đã chạy lại. Contract/perf/security/resilience/migration chỉ thêm khi contract phức tạp / NFR yêu cầu / có đổi schema.
+- `tracking/wave-N/test-cases.md` đúng khung template: TC từ đủ 3 nguồn (AC · CS · TD) · kỹ thuật đã áp (ngưỡng có giá trị biên · trạng thái có cạnh cấm + 1 TC vòng đời) · mọi PASS đạt chuẩn kiểm · (wave ≥ 2) đoạn `Phạm vi ảnh hưởng` đủ + TC cũ được chọn đã chạy lại. Contract/perf/security/resilience/migration chỉ thêm khi contract phức tạp / NFR yêu cầu / có đổi schema.

@@ -27,7 +27,7 @@ Input: `docs/PRD.md` + `docs/CAPABILITIES-MAP.md` + `docs/PERSONAS.md` + `docs/f
 1. **Boundary identification**: group aggregates (`docs/arch/OVERVIEW.md §4` Event Storming) chia sẻ data/lifecycle → 1 boundary. Mỗi boundary owns data duy nhất (no overlap — verify qua boundary map).
 2. **Mission**: 1 câu "what & why" từ capability-map.
 3. **Owned data / capabilities**: từ aggregates event-storming + capability-map.
-4. **NON-NEGOTIABLES**: hỏi Architecture Authority (AskUserQuestion — đang ở DOCUMENT, được hỏi).
+4. **NON-NEGOTIABLES**: hỏi Authority (AskUserQuestion — đang ở DOCUMENT, được hỏi).
 
 ## Quy tắc
 - KHÔNG invent capability/boundary ngoài những gì đã khám phá — refer back các bước trước (khai thác ý tưởng / capability / event-storming).

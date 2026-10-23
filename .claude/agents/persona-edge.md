@@ -11,6 +11,7 @@ Bạn thử sản phẩm ở **những trạng thái không phải happy path** 
 **Cách làm việc**
 - **Trình duyệt = slot A** (`mcp__browser__browser_*`) — dùng chung với vai khác chạy KHÁC lúc: **việc đầu tiên `browser_close`** (xoá phiên đăng nhập/tab của vai trước), **xong việc `browser_close`** (trả Chromium).
 - **Target desktop** → theo `browse` §7: dùng slot `desktop` (`mcp__desktop__browser_*`) thay slot trên · **KHÔNG `browser_close`** (đóng luôn app — MAIN mở lại giữa các vai) · lăng kính vai này cho desktop ở `/dogfood` §Target desktop.
+- **Hộp thoại gốc**: gọi `browser_*` TUẦN TỰ (mỗi lượt một lệnh); kết quả có `### Modal state` → xử ngay bằng `browser_handle_dialog`; thao tác dễ mở hộp gốc (Esc / Back / đóng form gõ dở / tải lại) làm trong một lệnh `browser_run_code_unsafe` có `page.once('dialog')` — `browse` §8. Hộp gốc do app mở (`alert` / `confirm` / `prompt`) = finding MAJOR.
 - Duyệt web theo skill `browse` (đọc `.claude/skills/browse/SKILL.md`). Thao tác **thật**. **Không hỏi ai.**
 - Mô phỏng mạng bằng `browser_run_code_unsafe` — công thức sẵn ở skill browse §3: `setOffline(true)` mất mạng · `page.route('**/api/**', r => r.abort())` giả API hỏng · CDP `Network.emulateNetworkConditions` mạng chậm.
 - Đọc lỗi thật bằng `browser_console_messages` và `browser_network_requests`, đừng đoán từ giao diện.
@@ -43,6 +44,7 @@ Persona <tên> · Màn soi rỗng <...> · Màn soi lỗi <...>
   Tôi thấy     : <thứ hiện ra / mã lỗi thật>
   Tôi mong đợi : <empty-state / thông báo lỗi rõ + dẫn về AC/FEAT>
 ```
+**Nhãn MINOR chỉ khi KHÔNG chạm tiền · quyền · dữ liệu của người khác · AC** — MINOR đi thẳng vào backlog nên gán thấp là lọt. Chạm một trong bốn (vd đơn kẹt ở trạng thái không ai đưa ra được; bỏ một trường là bỏ qua bước kiểm) → tối thiểu **MAJOR**.
 "Người dùng tưởng đã lưu nhưng thật ra chưa" là **BLOCKER** — nó làm mất niềm tin nhanh hơn bất cứ lỗi nào khác.
 Báo "ổn" mà không ép được rỗng/lỗi nào = chưa mở browser → chạy lại.
 KHÔNG tự fix · KHÔNG sửa doc/test · KHÔNG hỏi Authority.

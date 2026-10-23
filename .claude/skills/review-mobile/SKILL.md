@@ -27,8 +27,8 @@ Chỉ đọc. Không hỏi user.
 
 Code ở `services/mobile/{name}/`.
 
-- **Vòng 1** — chưa có finding cho boundary này ở `STATE.md §Findings` → soi **cả boundary**.
-- **Re-review** — đã review vòng trước → soi `git diff --stat <mốc>..HEAD` rồi `git diff <mốc>..HEAD`, và với **mỗi**
+- **Vòng 1** (lượt review đầu tiên của wave): wave 1 soi **cả boundary**; wave ≥2 chỉ soi phần code đổi từ lúc đóng wave trước (mốc: `git log -1 --format=%H -- archive/wave-<N-1>`, rồi `git diff --stat <mốc>..HEAD` trong thư mục target ở trên) cộng chỗ cũ mà phần đổi gọi tới.
+- **Re-review** — đã review vòng trước → soi `git diff --stat <mốc>..HEAD` (`<mốc>` = commit MAIN ghi trong prompt, thường là HEAD của lượt trước) rồi `git diff <mốc>..HEAD`, và với **mỗi**
   finding của boundary MAIN báo đã sửa: mở đúng `file:dòng`, lỗi hết thật chưa. Mốc không còn trong git → soi cả boundary.
 
 ## 3. Chạy máy trước — đỏ là finding luôn
@@ -128,8 +128,8 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
 ```
 
 - `[nguồn]`: `[FEAT-X AC-2]` · `[Bảo mật: <nhóm>]` · `[stack-flutter Forbidden: <cột Cấm>]` · `[ux <màn>]` · `[DECISIONS <ngày>]`.
-- **BLOCKER (nặng)** — AC không chạy · lủng bảo mật · ghi trùng khi offline · phá surface đã giao.
-  **MAJOR (vừa)** — nên sửa trước bàn giao. **MINOR/NIT (nhẹ)** — không chặn. **QUESTION** — chưa chắc.
+- **BLOCKER** — AC không chạy · lủng bảo mật · ghi trùng khi offline · phá surface đã giao.
+  **MAJOR** — nên sửa trước bàn giao. **MINOR** — không chặn. Không chắc thì ghi MINOR kèm "cần kiểm chứng: <cách>".
   Ý thích cá nhân không bao giờ là BLOCKER.
 - Re-review: mở đúng `file:dòng` MAIN báo đã sửa, xác nhận; còn lỗi → báo lại vì sao chưa hết.
 
@@ -139,7 +139,7 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
    không chạy · wave trước gãy. Viết không nổi câu này thì không phải finding.
 2. **Trục sạch thì nói sạch** — ghi thẳng "trục N sạch" trong phần trả về; đừng bịa nhận xét cho có.
 3. **Mở file ra đọc** — `file:dòng` phải là dòng đã đọc thật; không suy từ tên hàm.
-4. **Không chắc → `QUESTION`**, cột `suggested fix` ghi **cách kiểm chứng**.
+4. **Không chắc → ghi MINOR kèm "cần kiểm chứng"**, cột `suggested fix` ghi **cách kiểm chứng**.
 
 Góp ý **bảo trì/nhất quán được** (trục B) — khi nêu **chi phí cụ thể** hoặc **trích chuẩn** (cấu trúc chuẩn · `CONVENTIONS` · `DESIGN-SYSTEM`/Glossary). **Vẫn cấm khẩu vị thuần**: thích tên khác không lý do · trừu tượng "để sau dễ mở rộng" · tối ưu chưa đo · coverage%. Style tùy-ca → **mặc định tha**, chỉ nêu khi che mất ý.
 

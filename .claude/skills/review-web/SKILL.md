@@ -27,14 +27,14 @@ Chỉ đọc. Không hỏi user.
 
 Code ở `services/web/{name}/`.
 
-- **Vòng 1** — chưa có finding cho boundary này ở `STATE.md §Findings` → soi **cả boundary**.
-- **Re-review** — đã review vòng trước → soi `git diff --stat <mốc>..HEAD` rồi `git diff <mốc>..HEAD`, và với **mỗi**
+- **Vòng 1** (lượt review đầu tiên của wave): wave 1 soi **cả boundary**; wave ≥2 chỉ soi phần code đổi từ lúc đóng wave trước (mốc: `git log -1 --format=%H -- archive/wave-<N-1>`, rồi `git diff --stat <mốc>..HEAD` trong thư mục target ở trên) cộng chỗ cũ mà phần đổi gọi tới.
+- **Re-review** — đã review vòng trước → soi `git diff --stat <mốc>..HEAD` (`<mốc>` = commit MAIN ghi trong prompt, thường là HEAD của lượt trước) rồi `git diff <mốc>..HEAD`, và với **mỗi**
   finding của boundary MAIN báo đã sửa: mở đúng `file:dòng`, lỗi hết thật chưa. Mốc không còn trong git → soi cả boundary.
 
 ## 3. Chạy máy trước — đỏ là finding luôn
 
 ```bash
-UI=$(ls -d src/pages src/app src/components src/features 2>/dev/null)   # Vite (pages) hoặc Next App Router (app) — dùng $UI ở mọi lệnh dưới
+UI=$(ls -d src/pages src/app src/components src/features 2>/dev/null)   # Vite (pages / components / features) — dùng $UI ở mọi lệnh dưới
 # script phải tồn tại — `npm run -s` thiếu script thì exit 1 KHÔNG in gì, `&&` chặn luôn lệnh sau. Thiếu = BLOCKER
 for s in typecheck lint build test; do node -e "process.exit(require('./package.json').scripts?.['$s']?0:1)" || echo "MISSING script: $s"; done
 npx tsc --noEmit -p . --incremental false
@@ -42,11 +42,13 @@ npm run lint; npm run build
 # coverage THẬT: include toàn bộ src — thiếu include thì Vitest chỉ đếm file mà test có nạp (số ảo). Thiếu provider = BLOCKER
 npx vitest run --coverage --coverage.include='src/**/*.{ts,tsx}' --coverage.reporter=text-summary
 npm run codegen && git diff --exit-code    # chỉ khi đi qua BFF: codegen phải không đổi gì
-# a11y: app đang chạy → npx @axe-core/cli <url màn chính>; không chạy được → job a11y của CI
+# a11y: app đang chạy → npx @axe-core/cli <url màn chính>; không chạy được → ghi MINOR "cần kiểm chứng" kèm lý do
 # bỏ qua test (luật #6) — BLOCKER
 grep -nE '\|\| *true|--passWithNoTests' Makefile package.json 2>/dev/null
 # component import thẳng api/actions — phải qua hooks/ (MAJOR)
 grep -rnE "from ['\"]((\.\./)+|@/)(api/|app/.*actions)" src/components
+# SSR / Server Action / Route Handler — web là SPA tĩnh trên nginx, không chạy được (MAJOR)
+grep -rnE "['\"]use server['\"]|getServerSideProps|getStaticProps|app/api/" src
 # token CSS dùng mà chưa định nghĩa — var() rỗng (BLOCKER)
 comm -23 <(grep -rhoE "var\(--[a-z0-9-]*[a-z0-9]" src | sed 's/var(//' | sort -u) <(grep -rhoE -- "--[a-z0-9-]*[a-z0-9]\s*:" src | sed -E 's/\s*://' | sort -u)
 # hex hardcode ngoài chỗ định nghĩa token (MAJOR)
@@ -67,7 +69,7 @@ grep -rlE "httpOnly: *true" src | xargs -r grep -L "secure"
 grep -rnE "(localStorage|sessionStorage)\.setItem\(" src | grep -v "\.test\."
 # source map ở prod (MINOR)
 grep -nE "sourcemap: *true|productionBrowserSourceMaps: *true" vite.config.* next.config.* 2>/dev/null
-# SCA — high = MAJOR; không chạy được (mạng) → QUESTION, không im lặng bỏ qua
+# SCA — high = MAJOR; không chạy được (mạng) → ghi MINOR "cần kiểm chứng", không im lặng bỏ qua
 npm audit --omit=dev --audit-level=high || echo "npm audit đỏ hoặc không chạy được"
 ```
 Đỏ → BLOCKER `type=test`. Coverage < 60% → BLOCKER. axe có critical → BLOCKER. Mỗi lệnh grep ra dòng → mở file xác nhận, ghi **1 finding gộp/luật kèm số đếm + 2–3 `file:dòng`**; severity theo comment.
@@ -119,6 +121,8 @@ grep -rnE ":\s*any\b|as any|@ts-ignore" src                   # any / ts-ignore
 grep -rn -e "console.log" -e debugger src                     # debug sót
 grep -rnE "#[0-9a-fA-F]{3,8}\b" src --include=*.css --include=*.scss --include=*.tsx   # hex hardcode (ngoài file token)
 grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effect: dependency đúng chưa
+grep -rnE "\b(window\.)?(alert|confirm|prompt)\(" src --include=*.ts --include=*.tsx | grep -vE "\.(test|spec)\."   # hộp gốc chặn công cụ tự động (MAJOR)
+grep -rn -e beforeunload src                                  # chỉ khi form dirty, gỡ khi lưu / huỷ
 ```
 
 ### Trục 4 — Data layer và contract
@@ -136,8 +140,8 @@ grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effe
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
-| Mọi màn có data: loading · empty · error · success (· disabled theo quyền) | `grep -rln -e isLoading -e isError -e isPending $UI` (Next App Router: thêm route thiếu `loading.tsx`) → màn nào không có | MAJOR |
-| Action không im lặng; toast không thay field error; hành động xoá/huỷ có confirm; chống double submit | Đọc form + nút | MAJOR |
+| Mọi màn có data: loading · empty · error · success (· disabled theo quyền) | `grep -rln -e isLoading -e isError -e isPending $UI`  → màn nào không có | MAJOR |
+| Action không im lặng; toast không thay field error; hành động xoá/huỷ có xác nhận bằng modal trong app (component kho `DESIGN-SYSTEM §3`, KHÔNG `window.confirm`); chống double submit | Đọc form + nút | MAJOR |
 | Có cơ chế styling: CSS/SCSS, tailwind hoặc CSS-in-JS. `className` khắp nơi mà 0 stylesheet = UI không định dạng | `find src -name "*.css" -o -name "*.scss"` · `ls tailwind.config.*` · `grep -rl -e "styled." -e "@emotion" src` | BLOCKER |
 | Token `DESIGN-SYSTEM §2` được **dùng** và được **định nghĩa** trong bundle (`design-tokens.css` import ở entry) — `var(--x)` không định nghĩa resolve rỗng | `grep -rn -e "--color-" -e "--space-" -e "--font-" src` · `grep -rl design-tokens src` | BLOCKER |
 | Đúng ui-kit ADR: dùng component của library + map token qua theme; tự dựng lại Button/Table/Modal song song | `grep -rn -e "from 'antd'" -e ConfigProvider src` | MAJOR |
@@ -149,12 +153,12 @@ grep -rn -A6 "useEffect" src | grep -E "fetch|axios"          # fetch trong effe
 ### Trục 6 — a11y, cấu trúc, test
 
 > **BƯỚC 6.0 — SOI HÌNH DẠNG CÂY TRƯỚC (đọc nội dung code KHÔNG thay được).**
-> (1) pattern FE chốt ở `arch §4`/ADR + `ref-frontend-pattern` là gì? · (2) `find src -maxdepth 2 -type d` dump cây THẬT · (3) **phân loại**: ra `pages/components/hooks/api/stores/router` (Vite §1) · `app/` route + `loading.tsx` + `actions.ts` (Next App Router §1b) · hoặc feature-based đã chốt hay **phẳng/tự chế** (mọi thứ 1 folder · tên tự đặt)? · (4) cây THẬT phải khớp pattern đã chốt — lệch = **BLOCKER**. Chưa làm 6.0 mà kết luận "cấu trúc ổn" = chưa soi cấu trúc.
+> (1) pattern FE chốt ở `arch §4`/ADR + `ref-frontend-pattern` là gì? · (2) `find src -maxdepth 2 -type d` dump cây THẬT · (3) **phân loại**: ra `pages/components/hooks/api/stores/router` (Vite §1) · hoặc feature-based đã chốt hay **phẳng/tự chế** (mọi thứ 1 folder · tên tự đặt)? · (4) cây THẬT phải khớp pattern đã chốt — lệch = **BLOCKER**. Chưa làm 6.0 mà kết luận "cấu trúc ổn" = chưa soi cấu trúc.
 
 | Kiểm gì | Tìm ở đâu | Nặng |
 |---|---|---|
 | a11y: contrast · label · role · focus order; semantic HTML; icon button có `aria-label`; modal focus trap + Escape; màu không là tín hiệu duy nhất | axe (mục 3) · `grep -rn "<div[^>]*onClick" src` | critical = BLOCKER · khác = MAJOR |
-| **(6.0)** Cây THẬT khớp pattern đã chốt (`ref-frontend-pattern` §1 Vite `pages`·`components`·`hooks`·`api`·`stores`·`router` · §1b Next App Router · hoặc feature-based) — không phẳng/tự chế | `find src -maxdepth 2 -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch = BLOCKER |
+| **(6.0)** Cây THẬT khớp pattern đã chốt (`ref-frontend-pattern` §1 Vite `pages`·`components`·`hooks`·`api`·`stores`·`router` · hoặc feature-based) — không phẳng/tự chế | `find src -maxdepth 2 -type d` → **phân loại hình dạng** vs `arch §4`/ADR | lệch = BLOCKER |
 | Không file/folder thừa: component/hook mồ côi, scaffold mẫu, import chết | `npx knip` nếu có; không có → grep tên export không ai import | MAJOR |
 | Hằng số đặt đúng chỗ theo bảng 4 loại ở `stack-nextjs §3 Hằng số`: **(a)** role/status/type khai `string` thay union type — kể cả khi union đã có mà không dùng (ghi finding ở **field gốc**, không liệt kê từng chỗ so) · **(b)** route path / query key viết literal lặp ở nhiều file thay vì `constants/`. Hằng số nội bộ 1 file dùng = **đúng, KHÔNG ghi finding**. Format ngày/tiền dùng helper chung; text qua i18n nếu project có | Khối "hằng số" ở §3 Chạy máy | (a) (b) MAJOR · format/i18n MINOR |
 | Test (`ref-frontend-test`): hành vi người dùng (query theo role/label/text, không className/testId); mock ở network (MSW/MockedProvider) — **dữ liệu mock có kiểu contract, path/mã lỗi đúng `arch §3`, `onUnhandledRequest: 'error'`** (mock lệch hệ thật = test xanh giả); mỗi màn chính có success · loading · error · submit lỗi · permission; không snapshot lớn; sửa bug có regression test | `grep -rn -e getByTestId -e toMatchSnapshot src` | MAJOR |
@@ -179,8 +183,8 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
 ```
 
 - `[nguồn]`: `[FEAT-X AC-2]` · `[Bảo mật: <nhóm>]` · `[stack-nextjs Forbidden: <cột Cấm>]` · `[DESIGN-SYSTEM §2 token]` · `[mockup <màn>]` · `[DECISIONS <ngày>]`.
-- **BLOCKER (nặng)** — AC không chạy · lủng bảo mật · UI không định dạng · lệch cấu trúc · phá surface đã giao.
-  **MAJOR (vừa)** — nên sửa trước bàn giao. **MINOR/NIT (nhẹ)** — không chặn. **QUESTION** — chưa chắc.
+- **BLOCKER** — AC không chạy · lủng bảo mật · UI không định dạng · lệch cấu trúc · phá surface đã giao.
+  **MAJOR** — nên sửa trước bàn giao. **MINOR** — không chặn. Không chắc thì ghi MINOR kèm "cần kiểm chứng: <cách>".
   Ý thích cá nhân không bao giờ là BLOCKER.
 - Re-review: mở đúng `file:dòng` MAIN báo đã sửa, xác nhận; còn lỗi → báo lại vì sao chưa hết.
 
@@ -190,7 +194,7 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
    không chạy · wave trước gãy. Viết không nổi câu này thì không phải finding.
 2. **Trục sạch thì nói sạch** — ghi thẳng "trục N sạch" trong phần trả về; đừng bịa nhận xét cho có.
 3. **Mở file ra đọc** — `file:dòng` phải là dòng đã đọc thật; không suy từ tên hàm.
-4. **Không chắc → `QUESTION`**, cột `suggested fix` ghi **cách kiểm chứng**.
+4. **Không chắc → ghi MINOR kèm "cần kiểm chứng"**, cột `suggested fix` ghi **cách kiểm chứng**.
 
 Góp ý **bảo trì/nhất quán được** (trục B) — khi nêu **chi phí cụ thể** hoặc **trích chuẩn** (cấu trúc chuẩn · `CONVENTIONS` · `DESIGN-SYSTEM`/Glossary). **Vẫn cấm khẩu vị thuần**: thích tên khác không lý do · trừu tượng "để sau dễ mở rộng" · tối ưu chưa đo · coverage%. Style tùy-ca → **mặc định tha**, chỉ nêu khi che mất ý.
 

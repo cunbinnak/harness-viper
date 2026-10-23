@@ -1,7 +1,7 @@
 ---
 name: browse
 description: >
-  Duyệt web thật để dùng thử sản phẩm ở localhost hoặc production — mở trang, bấm, gõ, chụp màn hình,
+  Duyệt web thật để dùng thử sản phẩm ở localhost (production chỉ cho smoke đọc-chỉ ở /ship) — mở trang, bấm, gõ, chụp màn hình,
   đọc lỗi console và lời gọi mạng. Chạy bằng Playwright MCP (@playwright/mcp), khai ngay trong khung nên
   không phụ thuộc công cụ ngoài. Nạp skill này khi chạy /dogfood, khi cần kiểm một luồng bấm được thật
   hay không, hoặc khi đóng vai persona dùng thử (persona-*). Gồm: cách gọi, các tool có sẵn, công thức cho
@@ -51,7 +51,7 @@ Còn lại: `browser_resize` · `browser_press_key` · `browser_navigate_back` �
 ## 3. Công thức cho từng vai dogfood
 
 ### Màn hình nhỏ (`persona-mobile`)
-Frontmatter đã đặt `--viewport-size 375,812`. Đổi cỡ giữa chừng:
+Slot B mở ở 1280×800, nên việc đầu tiên là `browser_resize` 375×812. Đổi cỡ giữa chừng:
 ```
 browser_resize  width=360 height=640     # máy nhỏ
 browser_resize  width=812 height=375     # xoay ngang
@@ -143,7 +143,7 @@ Báo "không thấy vấn đề gì" mà không kèm được thao tác đã là
 
 ## 5. Ranh giới
 
-- Chỉ thao tác trên **localhost của dự án này** hoặc **URL production của chính nó**. Không đụng trang nào khác.
+- Chỉ thao tác trên **localhost của dự án này**. Production chỉ được mở để smoke đọc-chỉ ở `/ship` (luật khung: KHÔNG dogfood trên production; persona không bao giờ chạy ở đó). Không đụng trang nào khác.
 - Không sửa file dự án. Sáu vai `persona-*` đã bị chặn `Write`/`Edit` bằng frontmatter — phát hiện thì **báo**, việc sửa là của phiên chính (MAIN ghi §Findings + sửa).
 - `browser_run_code_unsafe` chạy code tuỳ ý trong ngữ cảnh trang: dùng cho mô phỏng mạng và nhịp bấm, **không** dùng để đi tắt qua UI rồi kết luận "luồng chạy được". Đi tắt là hết dogfood.
 - Screenshot/trace dùng xong dọn ngay (luật #9), không commit.
@@ -156,6 +156,7 @@ Báo "không thấy vấn đề gì" mà không kèm được thao tác đã là
 | Lần đầu chạy rất lâu | Đang tải Chromium. Chạy trước `npx playwright install chromium` cho xong một lần |
 | Trang trắng | App chưa chạy. `make dev` trước, và lấy đúng cổng (Next.js 3000 · Spring 8080) |
 | Không thấy tool `browser_*` | Chưa duyệt server MCP cho dự án này (máy mới clone → Claude Code hỏi trust/approve một lần). Kiểm bằng `/mcp`; lỡ từ chối → `claude mcp reset-project-choices` |
+| Một lệnh `browser_*` đứng im hàng chục phút | Hộp gốc (`alert` / `confirm` / `beforeunload`) đang mở mà không ai bấm, hoặc phát nhiều lệnh `browser_*` trong cùng một lượt. Cách xử: bấm đóng hộp trên cửa sổ trình duyệt thật; quy tắc ở §8 |
 
 ## 7. Target desktop (Electron, Windows)
 
@@ -171,3 +172,14 @@ App desktop không mở trong trình duyệt riêng — persona điều khiển 
 | Tool | đủ | không dùng `browser_navigate` (app tự điều hướng) · `browser_resize` = đổi cỡ vùng hiển thị · hộp thoại chọn file của hệ điều hành KHÔNG điều khiển được → app cần cho kéo-thả hoặc ô nhập đường dẫn; thiếu thì ghi finding |
 
 Lăng kính từng vai cho desktop: `/dogfood` §Target desktop. Kiểm **cài đặt** (máy sạch · cập nhật · gỡ) là TC của `test-writer` (`specialist-testing` §Desktop), không thuộc dogfood.
+
+## 8. Hộp thoại gốc (`alert` / `confirm` / `prompt` / `beforeunload`)
+
+Hộp thoại gốc của trình duyệt **chặn trang** cho tới khi có người bấm. Lệnh `browser_*` đang chạy lúc hộp mở sẽ **không trả kết quả** — agent đứng chờ và không tự cứu được (ca thật: một lệnh `browser_press_key` đứng im 70 phút vì app dùng `window.confirm` khi đóng hộp "Từ chối" đang gõ dở; người phải bấm hộ).
+
+Quy tắc cho mọi vai dùng trình duyệt (và MAIN khi tự dùng):
+1. **Gọi `browser_*` TUẦN TỰ** — mỗi lượt MỘT lệnh, đọc kết quả rồi mới gọi lệnh kế. KHÔNG phát nhiều lệnh `browser_*` trong cùng một lượt: một trang là một dòng thao tác; hộp mở ở lệnh trước làm các lệnh sau đứng im, và agent không thấy được kết quả trung gian.
+2. **Kết quả có `### Modal state`** (`dialog` / `beforeunload` / `File chooser`) → xử NGAY, trước mọi thao tác khác: `browser_handle_dialog` (chấp nhận hay bỏ qua theo kỳ vọng của TC; ghi lại `message` của hộp) · `browser_file_upload` cho file chooser.
+3. **Thao tác dễ mở hộp gốc** — Esc / Back / đóng form đang gõ dở / tải lại / rời trang khi form chưa lưu — làm trong MỘT lệnh `browser_run_code_unsafe` có `page.once('dialog', d => …)` đặt TRƯỚC thao tác (ghi `d.message()` rồi `d.dismiss()` hoặc `d.accept()` theo kỳ vọng), để hộp mở ra được bắt ngay trong lệnh đó.
+4. **Hộp gốc do APP mở (`alert` / `confirm` / `prompt`) là finding MAJOR** (`stack-nextjs §review`) — ghi `message` của hộp và thao tác mở nó. Riêng `beforeunload` (đóng tab / F5 khi form chưa lưu) trình duyệt bắt buộc dùng hộp của nó → chỉ cần xử đúng quy tắc 2–3, không phải finding.
+5. **Lệnh đứng im > 2 phút** = nghi hộp gốc đang mở hoặc trình duyệt treo. Agent đang bị chặn nên không tự xử được, và MAIN cũng đang đứng chờ agent nên không bấm được: người dùng phải bấm đóng hộp trên cửa sổ trình duyệt thật, rồi MAIN ghi finding hạ tầng.

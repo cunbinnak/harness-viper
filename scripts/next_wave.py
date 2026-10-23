@@ -55,6 +55,33 @@ def gate_ok(phase: str) -> bool:
     return p.returncode == 0
 
 
+def accept_ok(dec_id: str) -> tuple[bool, str]:
+    """`--accept-red=<DEC-id>`: dòng DECISIONS phải có thật, thuộc loại `ý-Authority` và ghi rõ 'KHÔNG ĐẠT'
+    (không chỉ cần chuỗi id xuất hiện đâu đó trong file)."""
+    dec = ROOT / "docs" / "DECISIONS.md"
+    text = dec.read_text(encoding="utf-8") if dec.exists() else ""
+    row = next((ln for ln in text.splitlines() if re.match(rf"\|\s*{re.escape(dec_id)}\s*\|", ln)), "")
+    if not row:
+        return False, f"không thấy dòng {dec_id} trong docs/DECISIONS.md"
+    low = row.lower()
+    if "ý-authority" not in low or "không đạt" not in low:
+        return False, f"dòng {dec_id} phải thuộc loại `ý-Authority` và ghi rõ 'KHÔNG ĐẠT' (Authority quyết đóng dù chưa đạt)"
+    return True, ""
+
+
+def rearm_bc() -> bool:
+    """Bỏ tick BACKWARD-COMPAT §3 (checklist rà mỗi wave) để wave mới rà lại. §1 (sổ hợp đồng) KHÔNG đụng."""
+    p = ROOT / "docs" / "BACKWARD-COMPAT.md"
+    if not p.exists():
+        return False
+    t = p.read_text(encoding="utf-8")
+    m = re.search(r"^## §3.*?(?=^## |\Z)", t, flags=re.M | re.S)
+    if not m or not re.search(r"- \[[xX]\]", m.group(0)):
+        return False
+    p.write_text(t[:m.start()] + re.sub(r"- \[[xX]\]", "- [ ]", m.group(0)) + t[m.end():], encoding="utf-8")
+    return True
+
+
 def reset_state(text: str, next_wave: int) -> str:
     if not TEMPLATE.exists():
         return _reset_state_legacy(text, next_wave)
@@ -118,11 +145,12 @@ def main(argv: list[str]) -> int:
     red = [ph for ph in ["VERIFY"] + (["SHIP"] if "SHIP" in roadmap_phases(n) else []) if not gate_ok(ph)]
     accept = next((a.split("=", 1)[1] for a in argv if a.startswith("--accept-red=")), "")
     if red:
-        dec = ROOT / "docs" / "DECISIONS.md"
-        if not accept or accept not in (dec.read_text(encoding="utf-8") if dec.exists() else ""):
+        ok, why = accept_ok(accept) if accept else (False, "")
+        if not ok:
             print(f"✗ gate {' + '.join(red)} wave {n} còn ĐỎ — từ chối đóng wave.\n"
-                  f"  Authority quyết đóng dù KHÔNG ĐẠT → 1 dòng docs/DECISIONS.md (DEC-x) + chuyển mọi TC FAIL/BLOCKED"
-                  f" + finding BLOCKER/MAJOR còn mở vào ROADMAP §3 (Xử = wave {n+1}) → chạy lại với --accept-red=DEC-x")
+                  f"  Authority quyết đóng dù KHÔNG ĐẠT → 1 dòng docs/DECISIONS.md loại `ý-Authority`, ghi rõ 'KHÔNG ĐẠT' + lý do,"
+                  f" rồi chuyển mọi TC FAIL/BLOCKED và finding BLOCKER/MAJOR còn mở vào ROADMAP §3 (Xử = wave {n+1})"
+                  f" → chạy lại với --accept-red=DEC-x" + (f"\n  ({why})" if why else ""))
             return 1
         print(f"! gate {' + '.join(red)} còn đỏ — đóng theo {accept} (Authority quyết; phần đỏ đã sang backlog wave {n+1})")
 
@@ -133,6 +161,7 @@ def main(argv: list[str]) -> int:
     for s in srcs:
         print(f"    · {s}")
     print(f"  Reset STATE: dựng lại gate BUILD/VERIFY/SHIP/NEXT-WAVE + 3 log từ template · Wave → {n+1}")
+    print("  Bỏ tick BACKWARD-COMPAT §3 (checklist rà mỗi wave) — sổ §1 giữ nguyên")
     print("  KHÔNG đụng: docs/ sống · archive cũ · knowledge-base · DECISIONS")
     if not go:
         return 0
@@ -143,6 +172,8 @@ def main(argv: list[str]) -> int:
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copytree(src, dst) if src.is_dir() else shutil.copy2(src, dst)
     STATE.write_text(reset_state(text, n + 1), encoding="utf-8")
+    if rearm_bc():
+        print("  ✓ đã bỏ tick BACKWARD-COMPAT §3 — wave mới rà lại")
     print(f"\n✓ Đã snapshot + mở wave {n+1}. Bước kế (MAIN): RÀ LẠI kế hoạch wave {n+1} + stamp ngày vào ô `Rà lại` của wave {n+1} (ROADMAP §1) + `git commit` archive → /build hoặc /document top-up.")
     return 0
 

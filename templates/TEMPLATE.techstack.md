@@ -11,7 +11,7 @@
 ## §2 Hạ tầng
 {{PostgreSQL · Redis · Kafka}}
 
-<!-- §3: biến môi trường — đồng bộ với application.yml + docker-compose + .env.example (PRODUCTION-READY Nhóm 1). -->
+<!-- §3: biến môi trường — ghi lúc DOCUMENT. Từ BUILD, nguồn thật là application.yml + docker-compose + .env.example (PRODUCTION-READY Nhóm 1); file này đã đóng băng nên không cập nhật theo. -->
 ## §3 Biến môi trường
 | Biến | Target | Mô tả |
 |---|---|---|

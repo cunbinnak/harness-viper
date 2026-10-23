@@ -1,6 +1,6 @@
 ---
 name: ux-design
-description: UX/UI cho web/desktop target (bước 8 mockup của /document) — user flow, MOCKUP HTML tĩnh 1 file/MODULE, mỗi màn + tab/modal/form là section có mã, bấm được (design bằng HTML, không ASCII), UI states đầy đủ, design tokens + Visual polish, a11y WCAG 2.1 AA, permission-based UI. Sinh docs/ux/SCREEN-MAP.md (Mã màn nối mockup↔FE↔picky) + docs/ux/mockups/{name}/<module>.html; token ở docs/DESIGN-SYSTEM.md §2.
+description: UX/UI cho web / mobile / desktop target (bước 8 mockup của /document) — user flow, MOCKUP HTML tĩnh 1 file/MODULE, mỗi màn + tab/modal/form là section có mã, bấm được (design bằng HTML, không ASCII), UI states đầy đủ, design tokens + Visual polish, a11y WCAG 2.1 AA, permission-based UI. Sinh docs/ux/SCREEN-MAP.md (Mã màn nối mockup↔FE↔picky) + docs/ux/mockups/{name}/<module>.html; token ở docs/DESIGN-SYSTEM.md §2.
 ---
 
 # UX Design Skill
@@ -10,7 +10,7 @@ description: UX/UI cho web/desktop target (bước 8 mockup của /document) —
 
 > Load ở /document (Bước 8 mockup) + persona-picky đối chiếu. Phương pháp: mockup HTML tĩnh · neutral-first · anti-pattern "demo đẹp chạy xấu" (vá E1).
 Chạy SAU khi DOCUMENT đã chốt target + `docs/arch/{name}.md §3 API` (UX consume contract, không bịa endpoint).
-> Target `desktop` (Electron): dựng mockup y như web (HTML tĩnh · cùng token · `_shell.html` = khung cửa sổ app) + vẽ thêm phần riêng của app: kích thước cửa sổ tối thiểu · menu · hộp thoại chọn file (vẽ nút mở + trạng thái sau khi chọn) · màn cấu hình lần chạy đầu.
+> Target `desktop` (Electron): dựng mockup y như web (HTML tĩnh · cùng token · `_shell.html` = khung cửa sổ app) + vẽ thêm phần riêng của app: kích thước cửa sổ tối thiểu · menu · hộp thoại chọn file (vẽ nút mở + trạng thái sau khi chọn) · màn cấu hình lần chạy đầu. `data-api` của desktop ghi kênh IPC theo hợp đồng ở `arch §3`, dạng `data-api="IPC transcribe"` (gate đối chiếu từng kênh).
 Input: `PRD.md` (persona, platform, design system / ADR ui-kit + **§6 Glossary + §7 Dữ liệu mẫu**) + `feat/FEAT-*.md` (user story + AC) + `PERSONAS.md` + `docs/arch/{name}.md §3 API` (contract target phục vụ).
 
 > **BÁM NGHIỆP VỤ — nội dung mockup phải có NGUỒN**: chữ/số trên màn lấy từ **PRD §7 Dữ liệu mẫu** (giá trị thật ngoài đời) + thuật ngữ đúng **PRD §6 Glossary** + ca thật trong INTERVIEW. **CẤM bịa placeholder generic** ("Nguyễn Văn A", "Sản phẩm 1", "Lorem") — mockup generic là mockup Authority không soi nổi nghiệp vụ, duyệt cũng vô nghĩa. Thiếu dữ liệu mẫu cho màn đang vẽ → báo PO bổ sung PRD §7 trước (PRD là mục PO; không bịa tại chỗ).
@@ -39,7 +39,7 @@ Authority đưa template cụ thể (lượt hỏi gu giao diện, Phương phá
 - **Shared design tokens:** `docs/DESIGN-SYSTEM.md §2` là SoT token dùng chung MỌI web target (`--color-*`/`--font-*`/`--space-*`/`--radius-*` + dark/hc theme). Mockup tham chiếu token NÀY (không bịa palette per-target). Web FE consume qua `var(--...)`; mobile map `ThemeData`/`ColorScheme`. Hook `guard_ds` ép plain-CSS phải dùng `var(--...)`.
 
 ## Chuẩn chuyên nghiệp + ANTI-PATTERNS (bắt buộc — mockup xấu = fail review)
-**BƯỚC 0 — neo phong cách qua ARCHETYPE màn** (áp cho MỌI đề bài): 1 Dashboard · 2 Bảng danh sách · 3 Form · 4 Trang chi tiết · 5 Timeline/lịch tài nguyên · 6 Feedback states. Mỗi màn sắp vẽ: xác định thuộc archetype nào (hoặc ghép archetype nào) → đối chiếu về bố cục/mật độ/màu/states — đó là mức chất lượng TỐI THIỂU. **Research tham chiếu BẮT BUỘC** (quy định ở §Phương pháp bước 1): tìm 2-3 sản phẩm tham chiếu THẬT qua WebSearch/trình duyệt (xem §Phương pháp bước 1) và ghi vào `docs/DESIGN-SYSTEM.md §1`. KHÔNG copy nội dung — chỉ neo phong cách. Vẽ xong tự so với archetype: thua chuẩn = làm lại trước khi trình user.
+**Neo phong cách qua ARCHETYPE màn** (áp cho MỌI đề bài): 1 Dashboard · 2 Bảng danh sách · 3 Form · 4 Trang chi tiết · 5 Timeline/lịch tài nguyên · 6 Feedback states. Mỗi màn sắp vẽ: xác định thuộc archetype nào (hoặc ghép archetype nào) → đối chiếu về bố cục/mật độ/màu/states — đó là mức chất lượng TỐI THIỂU. **Research tham chiếu BẮT BUỘC** (quy định ở §Phương pháp bước 1): tìm 2-3 sản phẩm tham chiếu THẬT qua WebSearch/trình duyệt (xem §Phương pháp bước 1) và ghi vào `docs/DESIGN-SYSTEM.md §1`. KHÔNG copy nội dung — chỉ neo phong cách. Vẽ xong tự so với archetype: thua chuẩn = làm lại trước khi trình user.
 
 **LUẬT MÀU — neutral-first (lỗi hay phạm nhất):**
 - NỀN luôn trung tính (`--color-surface`/`--color-surface-alt`). **CẤM sơn màu semantic (xanh lá/đỏ/vàng) lên mảng lớn** — màu chỉ để NHẤN (block/badge/button/status), chiếm ~10% màn hình.
@@ -65,7 +65,7 @@ Ghi vào `docs/DESIGN-SYSTEM.md §3` (kho component — dev implement + reviewer
 - **Elevation + depth**: card/modal dùng `--shadow-*` + `--radius-*` nhất quán — phân lớp rõ, không phẳng lì cũng không bóng đổ hỗn loạn.
 
 ## Phương pháp
-0. **Hỏi gu giao diện — TRƯỚC khi tra tham chiếu và trước khi chọn token** (ở DOCUMENT được hỏi). Gu giao diện (bộ nhận diện, màu, độ dày thông tin, sáng/tối, kiểu điều hướng) là sở thích hoặc ràng buộc của Authority — MAIN không suy ra được từ tài liệu (PROTOCOL §2.3: loại "chỉ Authority biết"). Vẽ theo gu MAIN rồi chờ chốt cuối là vẽ lại. Hai lượt:
+0. **Gu giao diện — hỏi ở Bước 7 cùng lượt TECHSTACK (ở đây đọc lại); chưa hỏi thì hỏi ngay, TRƯỚC khi tra tham chiếu và trước khi chọn token** (ở DOCUMENT được hỏi). Gu giao diện (bộ nhận diện, màu, độ dày thông tin, sáng/tối, kiểu điều hướng) là sở thích hoặc ràng buộc của Authority — MAIN không suy ra được từ tài liệu (PROTOCOL §2.3: loại "chỉ Authority biết"). Vẽ theo gu MAIN rồi chờ chốt cuối là vẽ lại. Hai lượt:
    - **Lượt 1 — hỏi mở bằng lời** (khám phá, KHÔNG `AskUserQuestion` — option mớm lời): *Bạn có sẵn gì để giao diện bám theo không?* — bộ nhận diện (logo · màu thương hiệu · font) · giao diện của sản phẩm đơn vị đang dùng · template đã mua / bản thiết kế (Figma, ảnh, file) · link ứng dụng bạn thích · hoặc không có gì. Kèm ràng buộc cứng nếu có: bắt buộc màu thương hiệu · cần chế độ tối · thiết bị chính (máy tính / màn nhỏ) · người dùng đọc chữ nhỏ có khó không.
    - **Lượt 2 — chỉ khi Authority không có gì để bám**: MAIN tra (bước 1 dưới), rồi đề xuất **2–3 hướng cụ thể** — mỗi hướng: tên sản phẩm/template + link + đặc điểm sẽ vay mượn + 1 dòng đánh đổi (đề xuất đủ 3 phần PROTOCOL §2.3, hướng MAIN khuyên đứng đầu) → Authority chọn bằng `AskUserQuestion`.
    - Authority nói "sao cũng được" → KHÔNG hỏi thêm: MAIN chọn theo bước 1, ghi `Authority không yêu cầu` ở `DESIGN-SYSTEM §1`; Authority xem và chỉnh một lần ở chốt mockup.
@@ -111,6 +111,7 @@ Lệch → **sửa màn lệch cho khớp canonical** (KHÔNG sửa canonical th
 ## Quality checklist
 - [ ] **Đã hỏi gu giao diện** (Phương pháp bước 0) và `DESIGN-SYSTEM §1` ghi kết quả: Authority đưa gì / chọn hướng nào / `Authority không yêu cầu` — không vẽ khi chưa có một trong ba.
 - [ ] **SCREEN-MAP đủ**: mọi màn nháp của BA + mọi AC `has_ui` có row; mọi màn gán đúng target (mơ hồ đã hỏi user); mọi web target có ≥1 màn.
+- [ ] **AC có hành vi cảnh báo / xác nhận / giữ dữ liệu khi rời màn → có hộp tương ứng trong mockup** (lắp từ kho §3: hộp xác nhận · khuôn "chưa lưu"): mỗi AC như vậy trỏ được tới một hộp (`data-ds`) ở màn nào. Mọi form tạo / sửa có khuôn "chưa lưu"; mọi hành động xoá / huỷ / từ chối có hộp xác nhận. Thiếu = chưa vẽ → dev sẽ tự bịa UI lúc sửa lỗi.
 - [ ] Mọi row SCREEN-MAP in-scope trỏ `<module>.html#<Mã màn>` **tồn tại** (file + section `id`) — mở `file://…#Mã` tới thẳng; mọi thao tác AC có link/nút dẫn tới section; responsive; đủ section state phụ.
 - [ ] **Shell nhất quán cross-màn** (§Nhất quán cross-màn): mọi mockup của target dùng CÙNG app shell — nav items/thứ tự/nhóm · logo · vị trí user-menu giống hệt, chỉ khác active-state + content. Đã rà cạnh nhau, lệch đã sửa khớp `_shell.html`.
 - [ ] Mọi mockup có **bản kê**: `data-screen` khớp SCREEN-MAP · mọi khối có `data-ds` thuộc §3 · cột "Dùng ở màn" của §3 khớp hai chiều với mockup · đủ `data-state` theo **§4 (ba khuôn rỗng/lỗi/tải)** của component trên màn.
@@ -135,7 +136,7 @@ Lệch → **sửa màn lệch cho khớp canonical** (KHÔNG sửa canonical th
 | §3 | **Kho component ĐÓNG** — mỗi khối: dùng ở màn nào + **trạng thái bắt buộc** | vai `picky` ở `/verify` đi kiểm đúng cột này trên app đã render |
 | §4 | **Ba khuôn** rỗng / lỗi / đang tải | năm màn không được đẻ ra năm kiểu báo lỗi |
 
-**§3 là mục dễ bỏ nhất và đắt nhất khi bỏ.** Thiếu trạng thái "đang gửi (khoá lại)" chính là cái bấm-hai-lần mà vai `rushed` sẽ tìm thấy — và lúc đó đã code xong. Component không dùng ở màn nào → **xoá dòng**, đừng giữ cho đủ bộ.
+**§3 là mục dễ bỏ nhất và đắt nhất khi bỏ.** Thiếu trạng thái "đang gửi (khoá lại)" chính là cái bấm-hai-lần mà vai `rushed` sẽ tìm thấy — và lúc đó đã code xong. Component không dùng ở màn nào → **xoá dòng**, đừng giữ cho đủ bộ. Ngoại lệ: hai dòng mặc định của template (hộp xác nhận · khuôn "chưa lưu") giữ nguyên khi dự án có form hoặc hành động cần xác nhận — chúng là chỗ trỏ tới cho mọi AC "cảnh báo / xác nhận", thay cho hộp gốc của trình duyệt (`alert` / `confirm`).
 
 Mockup chỉ được **lắp từ kho §3** và dùng `var(--…)` từ token §2. Cần khối mới → thêm dòng ở §3 trước, không vẽ khối lạ tại chỗ. Thiếu token → thêm vào `docs/DESIGN-SYSTEM.md §2`, không gõ thẳng hex.
 

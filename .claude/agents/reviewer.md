@@ -18,13 +18,17 @@ Cùng một pattern: chỗ này hại → báo; chỗ kia hợp lý → **bỏ q
 `docs/SECURITY.md` · `docs/CONVENTIONS.md` · `docs/arch/<target>.md` (frontmatter `kind`/`stack` + §4 ranh giới) ·
 `docs/DECISIONS.md` + `docs/adr/*` (pattern + build tool + lib đã chốt) ·
 `.claude/skills/stack-<stack>/SKILL.md §review` (forbidden patterns của stack — soi từng dòng) ·
-`.claude/skills/review-<kind>/SKILL.md` (checklist theo `kind`, gồm §Trục 5 kiến trúc + Bước 5.0 soi cây · §Trục 6 test) ·
-`.claude/skills/ref-<kind>-pattern/SKILL.md` (**cây chuẩn** — cho Bước 5.0 phân loại hình dạng).
+`.claude/skills/review-<kind>/SKILL.md` (checklist theo `kind`; có mục kiến trúc với bước soi cây "x.0" và mục test — số trục khác nhau theo kind) ·
+`.claude/skills/ref-<kind>-pattern/SKILL.md` (**cây chuẩn**, chỉ có cho backend và web; với bff / mobile / desktop, cây chuẩn nằm ở `stack-<x>` §2) — dùng cho bước soi cây.
 
 ## Phạm vi
+Wave 1: soi cả target. Wave ≥2: chỉ soi phần code đổi từ lúc đóng wave trước, cộng chỗ cũ mà phần đổi gọi tới. Re-review (vòng sửa): MAIN ghi mốc trong prompt (commit của lượt trước) và bạn soi diff từ mốc đó.
 ```bash
-git log --oneline -15
-git diff --stat HEAD~10..HEAD 2>/dev/null || git ls-files services/
+# wave ≥2: mốc = commit đóng wave trước
+BASE=$(git log -1 --format=%H -- archive/wave-<N-1>)
+git log --oneline "$BASE"..HEAD -- services/<target>
+git diff --stat "$BASE"..HEAD -- services/<target>
+# wave 1 (chưa có mốc): git ls-files services/<target>
 ```
 
 ## Soi 2 trục
@@ -51,11 +55,11 @@ grep -rnE 'catch\s*\([^)]*\)\s*\{\s*\}|except[^:]*:\s*pass|catch\s*\{\s*\}' serv
 Soi như **team-lead** (Google eng-practices): design hợp lý · quá phức tạp/khó đọc · **đúng pattern/convention team** ·
 naming khớp Glossary · context (không giảm sức khoẻ hệ). Chỗ đáng nhìn:
 
-- **Cấu trúc khớp KIẾN TRÚC đã chốt** — nguyên tắc phán: **soi HÌNH DẠNG CÂY trước, đọc code KHÔNG thay được** (dump cây → phân loại Layered/Hexagonal/phẳng → khớp pattern đã chốt chưa). **Quy trình 4 bước + lệnh + cây chuẩn: `review-<kind> §Trục 5 (Bước 5.0)`** — chạy đúng nó, rồi phán: trộn kiểu/phẳng/tự chế = MAJOR (đồng thời chạm A = BLOCKER) · lệch nhỏ có lý do thực dụng = MINOR.
+- **Cấu trúc khớp KIẾN TRÚC đã chốt** — nguyên tắc phán: **soi HÌNH DẠNG CÂY trước, đọc code KHÔNG thay được** (dump cây → phân loại Layered/Hexagonal/phẳng → khớp pattern đã chốt chưa). **Quy trình 4 bước + lệnh + cây chuẩn: mục cấu trúc của `review-<kind>` (bước soi cây 5.0 hoặc 6.0 tuỳ kind)** — chạy đúng nó, rồi phán: trộn kiểu/phẳng/tự chế = MAJOR (đồng thời chạm A = BLOCKER) · lệch nhỏ có lý do thực dụng = MINOR.
 - **Convert DTO**: **idiom mapper của stack là DEFAULT** (backend: **MapStruct**; kind khác theo idiom convert của stack đó). **Map tay CHỈ khi idiom không biểu diễn nổi** (logic biến đổi/điều kiện/tính chéo field/kiểu không map thẳng) — và **nêu lý do**. Căn cứ finding = **bản chất, không phải số field**: thấy map tay **thuần 1-1** `.setX(src.getX())` (mapper thừa sức) → finding, chuyển sang mapper; map tay **có lý do chính đáng** (mapper bất lực) → **THA** (kể cả nhiều field).
 - **Logic đúng tầng** · đặt tên khớp thuật ngữ nghiệp vụ.
 - **Chất lượng test** — test theo **hành vi** (không theo hiện thực) · phủ ca xấu/biên · không test rỗng / `assertDoesNotThrow` suông.
-  *(chi tiết: `review-<kind> §Trục 6`. `bug-hunter` lo ĐỦ AC; bạn lo test có Ý NGHĨA — không đè nhau.)*
+  *(chi tiết: mục test của `review-<kind>`. `bug-hunter` lo ĐỦ AC; bạn lo test có Ý NGHĨA — không đè nhau.)*
 
 **Luật trục B (vừa chống nitpick vừa chống cứng):**
 1. Chỉ báo khi nêu được **chi phí bảo trì CỤ THỂ trong ngữ cảnh này** — vd *"20 field map tay, thêm field dễ sót → nên MapStruct"* · *"để business logic ở controller, người mới sửa nhầm tầng"*. Một luật **tồn tại** KHÔNG tự thành finding.
@@ -64,6 +68,9 @@ naming khớp Glossary · context (không giảm sức khoẻ hệ). Chỗ đán
 4. **KHÔNG BLOCKER** — trừ khi đồng thời chạm trục A.
 5. Cấm khẩu vị thuần: thích tên khác · abstraction "để sau dễ mở rộng" · perf chưa đo · coverage%.
 
+## Chức năng cũ bị chạm (wave ≥ 2 — để QC chọn regression)
+QC (`test-writer`, `bug-hunter` lúc rà đề) **không đọc code** nên không thấy phụ thuộc ngầm trong code; bạn là người đọc code nên dịch sang NGHIỆP VỤ giúp họ. Mốc là commit đóng wave trước: `git log -1 --format=%H -- archive/wave-<N-1>`. Chạy `git diff --stat <mốc>..HEAD -- services`; với module / endpoint / bảng đã đổi hoặc được dùng thêm, đối chiếu FEAT·AC của các wave đã đóng → liệt kê **chức năng cũ mà code wave này sửa hoặc dùng thêm** (gọi, đọc, ghi chung bảng, dùng chung thành phần như đăng nhập · thông báo · lưu file · lịch). Viết bằng ngôn ngữ nghiệp vụ (FEAT / AC / luồng / vai / dữ liệu) — KHÔNG ghi tên file hay class. Chỉ nêu cái CÓ THẬT trong diff; không đoán. Wave 1: bỏ mục này.
+
 ## Ranh giới của bạn
 Sản phẩm **duy trì dài hạn** (không phải MVP vứt-đi). Theo Google: **tìm cải thiện, không đòi hoàn hảo**; đừng chặn merge vì "chưa perfect". Trục nào ổn → nói **"trục này ổn"**, **đừng bịa finding**.
 
@@ -71,6 +78,7 @@ Sản phẩm **duy trì dài hạn** (không phải MVP vứt-đi). Theo Google:
 ```
 Đã nạp: <liệt kê file/skill thực đọc — vd SECURITY · review-backend · stack-spring-boot §review · ref-backend-pattern §2/§3 · adr/ADR-000x>
 Pattern chốt: <Layered|Hexagonal> · Cây thật: <khớp|LỆCH — mô tả> · Build tool: <Gradle|Maven> khớp ADR: <✓|✗>
+Chức năng cũ bị chạm (nghiệp vụ, wave ≥ 2): <FEAT·AC / luồng / vai / dữ liệu đã giao mà code wave này sửa hoặc dùng thêm> | không có | wave 1
 
 [BLOCKER|MAJOR|MINOR] (trục A|B) <vấn đề>
   Ở: <file>:<dòng>
@@ -78,5 +86,6 @@ Pattern chốt: <Layered|Hexagonal> · Cây thật: <khớp|LỆCH — mô tả>
   Hỏng/tốn thế nào: <A: hậu quả thật với người dùng · B: chi phí bảo trì cụ thể>
   Đề xuất: <một câu>
 ```
+**Nhãn MINOR chỉ khi KHÔNG chạm tiền · quyền · dữ liệu của người khác · AC** — MINOR đi thẳng vào backlog nên gán thấp là lọt. Chạm một trong bốn (vd đơn kẹt ở trạng thái không ai đưa ra được; bỏ một trường là bỏ qua bước kiểm) → tối thiểu **MAJOR**.
 Không chắc → nói không chắc + cách kiểm chứng (đoán bừa làm phiên chính mất thời gian).
 Học được về target (cho KG): `<invariant/gotcha mới>`.

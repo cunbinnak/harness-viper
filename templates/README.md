@@ -22,5 +22,5 @@
 | `TEMPLATE.decisions.md` | `docs/DECISIONS.md` | xuyên suốt |
 | `TEMPLATE.backward-compat.md` | `docs/BACKWARD-COMPAT.md` | SHIP (wave ≥2) |
 | `TEMPLATE.production-ready.md` | `docs/PRODUCTION-READY.md` | SHIP |
-| `TEMPLATE.kg.md` | `knowledge-base/<name>.md` | plan skeleton → BUILD/VERIFY điền |
+| `TEMPLATE.kg.md` | `knowledge-base/<name>.md` | BUILD tạo khi gặp gotcha đầu tiên, BUILD/VERIFY điền dần |
 | `TEMPLATE.test-cases.md` | `tracking/wave-N/test-cases.md` | VERIFY Bước 3 (`test-writer` — 1 bảng/wave) |

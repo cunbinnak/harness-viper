@@ -26,8 +26,8 @@ Chỉ đọc. Không hỏi user.
 
 Code ở `services/boundaries/{name}/`.
 
-- **Vòng 1** — chưa có finding cho boundary này ở `STATE.md §Findings` → soi **cả boundary**.
-- **Re-review** — đã review vòng trước → soi `git diff --stat <mốc>..HEAD` rồi `git diff <mốc>..HEAD`, và với **mỗi**
+- **Vòng 1** (lượt review đầu tiên của wave): wave 1 soi **cả boundary**; wave ≥2 chỉ soi phần code đổi từ lúc đóng wave trước (mốc: `git log -1 --format=%H -- archive/wave-<N-1>`, rồi `git diff --stat <mốc>..HEAD` trong thư mục target ở trên) cộng chỗ cũ mà phần đổi gọi tới.
+- **Re-review** — đã review vòng trước → soi `git diff --stat <mốc>..HEAD` (`<mốc>` = commit MAIN ghi trong prompt, thường là HEAD của lượt trước) rồi `git diff <mốc>..HEAD`, và với **mỗi**
   finding của boundary MAIN báo đã sửa: mở đúng `file:dòng`, lỗi hết thật chưa. Mốc không còn trong git → soi cả boundary.
 
 ## 3. Chạy máy trước — đỏ là finding luôn
@@ -112,8 +112,8 @@ grep -rnE 'log\.(info|warn|error|debug|trace)\(.*\b\w*([eE]mail|[pP]hone|nationa
 grep -rnE 'PageRequest\.of\(\s*page\s*,\s*size' --include=*.java src/main
 # mã hoá at-rest: 0 trong khi PRD/arch yêu cầu mã hoá = MAJOR
 grep -rnE 'AttributeConverter|@Convert\(|Cipher\.getInstance' --include=*.java src/main | wc -l
-# SCA — CVE high = MAJOR; không chạy được (mạng / thiếu plugin) → QUESTION, không im lặng bỏ qua
-./gradlew dependencyCheckAnalyze || echo "SCA KHÔNG chạy được → QUESTION"
+# SCA — CVE high = MAJOR; không chạy được (mạng / thiếu plugin) → ghi MINOR "cần kiểm chứng", không im lặng bỏ qua
+./gradlew dependencyCheckAnalyze || echo "SCA KHÔNG chạy được → ghi MINOR cần kiểm chứng"
 ```
 **Khối quy ước Java + hằng số**: mỗi luật ra dòng = **1 finding GỘP** kèm **số đếm + 2–3 ví dụ `file:dòng`** — vi phạm hàng loạt không được bỏ vì "MINOR". **Khối bảo mật**: dòng nào ra kết quả → mở file xác nhận, severity theo comment; không ra dòng ≠ an toàn, Trục 2 vẫn phải đọc.
 Build/test đỏ → BLOCKER `type=test`, dẫn tên test + dòng lỗi. Coverage < 80% → BLOCKER.
@@ -155,7 +155,7 @@ Có mapstruct trong build mà **0 `@Mapper`** = finding MINOR ngay (dep chết +
 | Đường ra | Không lộ stack trace/SQL/message nội bộ | `grep -rn -e include-stacktrace -e include-message src/main/resources` · `grep -rn "getMessage()" --include=*Handler*.java src/main` | MAJOR |
 | | CORS không `*` khi có credential; CSRF bật nếu cookie session; security headers | `grep -rn -e allowedOrigins -e allowedOriginPatterns -e "@CrossOrigin" -e csrf J` | BLOCKER |
 | | Actuator/endpoint nhạy cảm không public | `grep -rn -A3 "exposure" src/main/resources` → `include: "*"` không auth = finding | MAJOR |
-| | Rate limit: đăng nhập · đăng ký · quên mật khẩu · gửi OTP/email/SMS | `grep -rni -e login -e signin -e register -e signup -e otp -e forgot --include=*Controller.java src/main` → có rate limiter (theo ADR)? ADR không nói → QUESTION kèm cách kiểm | MAJOR |
+| | Rate limit: đăng nhập · đăng ký · quên mật khẩu · gửi OTP/email/SMS | `grep -rni -e login -e signin -e register -e signup -e otp -e forgot --include=*Controller.java src/main` → có rate limiter (theo ADR)? ADR không nói → MINOR "cần kiểm chứng" kèm cách kiểm | MAJOR |
 | Dữ liệu | Response không thừa field nhạy cảm (hash, cờ nội bộ, dữ liệu người khác) | Mở từng `*Response` so với `arch/{name}.md §3 API` | MAJOR |
 | | Chỉ thu dữ liệu AC cần; PII mã hoá at-rest khi arch/PRD NFR yêu cầu; chỉ qua TLS | Cột trong migration so với AC — cột cá nhân không AC nào dùng = finding | MINOR · thiếu mã hoá khi yêu cầu = MAJOR |
 | Phụ thuộc | Không lib có CVE nghiêm trọng; không thêm lib vì một hàm | Có plugin thì `./gradlew dependencyCheckAnalyze`; không có → đọc dependency mới trong `git diff <mốc>..HEAD -- build.gradle*` | MAJOR |
@@ -259,7 +259,7 @@ ArchUnit gác layer/package/cycle (`gradle test` chạy nó). Bạn soi thứ n�
 | Thư viện/kiểu kiến trúc khác ADR | Dependencies trong `build.gradle*` so với ADR tech-stack | MAJOR |
 | **Build tool khác ADR** (chốt Gradle → phải `build.gradle`+`gradlew`, KHÔNG `pom.xml`; chốt Maven → ngược lại) | `ls build.gradle* gradlew pom.xml` so với ADR/TECHSTACK — sai công cụ = **MAJOR** (cả CI/Dockerfile/lệnh sai theo) | MAJOR |
 | Framework/version khác `TECHSTACK.md` khai (soi tới đúng mức khai — vd khai `3.4` thì code phải `3.4.x`) | `build.gradle*`/`pom.xml` version vs `docs/TECHSTACK.md §1` | MAJOR |
-| **Lệch System design đã khai** (`docs/arch/OVERVIEW.md §5`): 5.8 ≥ 2 instance mà `@Scheduled` không lock · 5.8 sau proxy mà rate limit/audit dùng `getRemoteAddr()` không `forward-headers-strategy` · 5.4 bảng lớn mà list nạp cả bảng / không trần size · 5.7 dữ liệu nhạy cảm mà cột không mã hoá / log không che · 5.4 cache khai TTL mà code không có | Đọc §5 → đối chiếu kết quả các khối Chạy máy (job lock · IP · tìm kiếm · bảo mật) — có §5 làm căn cứ thì không ghi QUESTION | bảo mật/dữ liệu = BLOCKER · còn lại MAJOR |
+| **Lệch System design đã khai** (`docs/arch/OVERVIEW.md §5`): 5.8 ≥ 2 instance mà `@Scheduled` không lock · 5.8 sau proxy mà rate limit/audit dùng `getRemoteAddr()` không `forward-headers-strategy` · 5.4 bảng lớn mà list nạp cả bảng / không trần size · 5.7 dữ liệu nhạy cảm mà cột không mã hoá / log không che · 5.4 cache khai TTL mà code không có | Đọc §5 → đối chiếu kết quả các khối Chạy máy (job lock · IP · tìm kiếm · bảo mật) — có §5 làm căn cứ thì không ghi "cần kiểm chứng" | bảo mật/dữ liệu = BLOCKER · còn lại MAJOR |
 | Thuật ngữ lệch: FEAT/Glossary gọi "lịch hẹn" mà code chỗ `booking` chỗ `schedule` | `grep` tên class/bảng | MINOR |
 | TODO/FIXME chặn một AC; code chết để dạng comment | `grep -rn -e TODO -e FIXME -e HACK J` | chặn AC = MAJOR |
 
@@ -272,9 +272,9 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
 ```
 
 - `[nguồn]`: `[FEAT-X AC-2]` · `[BR-...]` · `[Bảo mật: <nhóm>]` · `[stack-spring-boot Forbidden: <cột Cấm>]` · `[arch/{name}.md §6 <ca>]` · `[DECISIONS <ngày>]`.
-- **BLOCKER (nặng)** — sai nghiệp vụ · lủng bảo mật/tenant · hỏng dữ liệu/transaction · phá hợp đồng không có yêu
+- **BLOCKER** — sai nghiệp vụ · lủng bảo mật/tenant · hỏng dữ liệu/transaction · phá hợp đồng không có yêu
   cầu · thiếu idempotency ở luồng tiền · secret · sửa migration đã chạy · query không giới hạn.
-  **MAJOR (vừa)** — nên sửa trước bàn giao. **MINOR/NIT (nhẹ)** — không chặn. **QUESTION** — chưa chắc.
+  **MAJOR** — nên sửa trước bàn giao. **MINOR** — không chặn. Không chắc thì ghi MINOR kèm "cần kiểm chứng: <cách>".
   Ý thích cá nhân không bao giờ là BLOCKER.
 - Re-review: mở đúng `file:dòng` MAIN báo đã sửa, xác nhận; còn lỗi → báo lại vì sao chưa hết.
 - Ít thời gian thì theo thứ tự: AC/BR → bảo mật & tenant → giao dịch/dữ liệu → hợp đồng → idempotency →
@@ -287,7 +287,7 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
    Viết không nổi **một trong hai** thì không phải finding.
 2. **Trục sạch thì nói sạch** — ghi thẳng "trục N sạch" trong phần trả về; đừng bịa nhận xét cho có.
 3. **Mở file ra đọc** — `file:dòng` phải là dòng đã đọc thật; không suy từ tên hàm.
-4. **Không chắc → `QUESTION`**, cột `suggested fix` ghi **cách kiểm chứng** (vd "gọi API bằng token A với
+4. **Không chắc → ghi MINOR kèm "cần kiểm chứng"**, cột `suggested fix` ghi **cách kiểm chứng** (vd "gọi API bằng token A với
    id bản ghi của B, xem có trả 200 không").
 
 Góp ý **bảo trì/nhất quán được** (trục B) — khi nêu **chi phí cụ thể** hoặc **trích chuẩn** (cây thư mục · `CONVENTIONS` · Glossary). **Vẫn cấm khẩu vị thuần**: thích tên khác không lý do · trừu tượng "để sau dễ mở rộng" · tối ưu chưa đo · coverage%. Style tùy-ca (map 2–3 field tay) → **mặc định tha** (`var` KHÔNG thuộc diện này — `stack-spring-boot §3` cấm, khối quy ước Java ở §3 Chạy máy), chỉ nêu khi che mất ý.

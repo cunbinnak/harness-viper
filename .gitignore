@@ -22,7 +22,6 @@ playwright-report/
 .playwright-mcp/
 test-results/
 *-trace.zip
-.viper/
 
 # --- IDE / OS ---
 .idea/
@@ -32,11 +31,10 @@ test-results/
 Thumbs.db
 *.swp
 
-# --- Bản tham chiếu (đọc để học, KHÔNG track) ---
+# --- Gói nén / bản tải về (không track) ---
 *.zip
-edu-grounding-viper/
 
-# services/ KHÔNG ignore — MAIN code trực tiếp + commit (fork = monorepo-ish).
+# services/ KHÔNG ignore — MAIN code trực tiếp + commit (MAIN code trực tiếp trong repo).
 # Build artifact BÊN TRONG services/ vẫn bị bắt bởi pattern global ở trên.
 
 # reanchor audit log (local)

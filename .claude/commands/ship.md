@@ -20,7 +20,7 @@ description: SHIP — (opt-in theo wave) prod-ready → deploy production → sm
 **Xác nhận Authority** (deploy = ra ngoài, không đảo ngược) → `make deploy` → production sống → health 200.
 
 ## Bước 4 — Smoke + rollback
-- Smoke test luồng nghiệp vụ trên **production THẬT** (không phải staging/local).
+- Smoke test luồng nghiệp vụ trên **production THẬT** (không phải staging/local). Dùng tài khoản và dữ liệu thử gỡ được, hoặc chỉ đi luồng đọc; ghi cách dọn dữ liệu smoke vào báo cáo.
 - **Thử rollback MỘT lần** theo đường rollback ghi ở `docs/arch/OVERVIEW.md §5.8` → `make doctor` kiểm hệ sau rollback — chưa thử = chưa chắc rollback được.
 
 ## Bước cuối — Chốt

@@ -14,6 +14,7 @@ Mockup (`docs/ux/mockups/`) + `docs/DESIGN-SYSTEM.md` là hợp đồng hình �
 **Cách làm việc**
 - **Trình duyệt = slot B** (`mcp__browser-2__browser_*`) — dùng chung với vai khác chạy KHÁC lúc: **việc đầu tiên `browser_close`** (xoá phiên đăng nhập/tab của vai trước), **xong việc `browser_close`** (trả Chromium).
 - **Target desktop** → theo `browse` §7: dùng slot `desktop` (`mcp__desktop__browser_*`) thay slot trên · **KHÔNG `browser_close`** (đóng luôn app — MAIN mở lại giữa các vai) · lăng kính vai này cho desktop ở `/dogfood` §Target desktop.
+- **Hộp thoại gốc**: gọi `browser_*` TUẦN TỰ (mỗi lượt một lệnh); kết quả có `### Modal state` → xử ngay bằng `browser_handle_dialog`; thao tác dễ mở hộp gốc (Esc / Back / đóng form gõ dở / tải lại) làm trong một lệnh `browser_run_code_unsafe` có `page.once('dialog')` — `browse` §8. Hộp gốc do app mở (`alert` / `confirm` / `prompt`) = finding MAJOR.
 - Duyệt web theo skill `browse` (đọc `.claude/skills/browse/SKILL.md` — script gom computed style + đo tương phản + ép trạng thái ở §3).
 - "Trông hơi lệch tông" không phải phát hiện; `#2563EB` trong khi §2 chốt `#1E40AF` mới là phát hiện. **Không hỏi ai.**
 
@@ -54,6 +55,7 @@ Khuôn:      rỗng<✓/✗> lỗi<✓/✗> tải<✓/✗>
 
 [BLOCKER|MAJOR|MINOR] <vấn đề> · Ở <màn/selector> · Chốt <mockup/§2> · Thật <giá trị/ảnh> · Đề xuất <1 câu>
 ```
+**Nhãn MINOR chỉ khi KHÔNG chạm tiền · quyền · dữ liệu của người khác · AC** — MINOR đi thẳng vào backlog nên gán thấp là lọt. Chạm một trong bốn (vd đơn kẹt ở trạng thái không ai đưa ra được; bỏ một trường là bỏ qua bước kiểm) → tối thiểu **MAJOR**.
 > Dọn screenshot sau khi phân tích (luật #9), không commit.
 **Báo "khớp hết" mà không nêu được một computed-style/ảnh nào = chưa mở browser → phiên chính cho chạy lại.**
 KHÔNG tự fix · KHÔNG sửa mockup/token cho khớp code (đúng anti-pattern cần chống) · KHÔNG hỏi Authority.

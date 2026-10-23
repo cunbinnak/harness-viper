@@ -2,7 +2,7 @@
 # BACKWARD-COMPAT — {{PROJECT_NAME}}
 
 <!-- §1: SỔ HỢP ĐỒNG — surface đã ship (API/bảng/event/webhook/format export). TÍCH LUỸ VĨNH VIỄN, không wave nào xoá.
-     Mỗi surface TRỎ VỀ `arch/<target>.md §3 API` (nguồn contract). Thêm dòng khi ship, KHÔNG xoá dòng cũ. -->
+     Mỗi surface TRỎ VỀ `arch/<target>.md §3 API` (nguồn contract). MAIN thêm dòng ở /next-wave Bước 1 cho MỌI wave đã đóng (không chỉ wave có SHIP), KHÔNG xoá dòng cũ. -->
 ## §1 Sổ hợp đồng (tích luỹ)
 | Surface | Loại | Nguồn (arch §3 API) | Wave giao | Ghi chú |
 |---|---|---|---|---|
@@ -14,7 +14,7 @@
 - **DB**: thêm bảng / cột nullable / index OK · đổi/xoá cột đang dùng đi 2 bước.
 - **Event / webhook / format export**: y hệt — thêm được, đổi/xoá phải migrate + ghi `DECISIONS.md` + đường rollback.
 
-<!-- §3: CHECKLIST rà mỗi wave (≥2). /next-wave RE-ARM (bỏ tick §3, KHÔNG đụng §1). guard_bc chặn deploy tới khi §3 xanh. -->
+<!-- §3: CHECKLIST rà mỗi wave (≥2). next_wave.py tự bỏ tick §3 khi mở wave mới (KHÔNG đụng §1). guard_bc chặn deploy tới khi §3 xanh. -->
 ## §3 Checklist rà tương thích (wave hiện tại)
 - [ ] Mọi surface §1 mà wave này ĐỤNG vẫn additive (đối chiếu §2)
 - [ ] TC / contract-test của consumer cũ vẫn **PASS** (regression)

@@ -7,8 +7,8 @@ description: Cấu trúc backend boundary — DEFAULT Layered (classic Spring 3-
 # Reference: Backend Structure (Layered | Hexagonal)
 
 > **Purpose:** Layout chuẩn 1 backend boundary để BUILD/verify scaffold đồng nhất.
-> **Load khi:** BUILD backend target — scaffold cấu trúc boundary (stack-spring-boot §situational trỏ tới).
-> **Quan hệ:** `stack-spring-boot` là convention bắt buộc và trỏ sang file này cho cấu trúc; file này KHÔNG lặp lại rule, chỉ mô tả nơi đặt từng artifact (thuật ngữ khớp `stack-spring-boot §Layering`).
+> **Load khi:** BUILD backend target — scaffold cấu trúc boundary (`build.md` Bước 3 nêu khi nào nạp).
+> **Quan hệ:** `stack-spring-boot` là convention bắt buộc và trỏ sang file này cho cấu trúc; file này KHÔNG lặp lại rule, chỉ mô tả nơi đặt từng artifact (thuật ngữ khớp phần Layering trong `stack-spring-boot` §3).
 > **Tách bạch:** cấu trúc = file này · config chi tiết (application.yml, security, kafka…) = `ref-backend-config`.
 > **Tuning:** mô hình + layer/package của boundary **đã chốt ở `docs/arch/{name}.md`** (theo ADR backend-architecture). File này KHÔNG quyết lại — chỉ cung cấp layout chuẩn cho mô hình mà arch doc đã chốt. Cây thư mục dưới là khung tối thiểu — package tùy chọn (`event/`, `scheduler/`, `util/`…) chỉ thêm khi boundary cần.
 > **Cache/Redis:** có ref skill riêng (pattern interface + impl adapter), KHÔNG mô tả ở file này.

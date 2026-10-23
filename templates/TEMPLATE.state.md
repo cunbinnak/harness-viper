@@ -33,12 +33,12 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 - [ ] `docs/PRD.md`: vấn đề + đối tượng + out-of-scope + ≥1 success metric có số + **§6 Nguồn có ≥1 link research** (đã tra domain, không hỏi mù)
 - [ ] `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`: bảng luồng + màn nháp + bảng chính sách mọi nghiệp vụ, Authority ký, không ô `CHƯA HỎI`, bảng chính sách không ô trống (domain-ba A)
 - [ ] `docs/PERSONAS.md`: persona + ma trận vai×hành động (không ô trống) — sinh từ bảng luồng
-- [ ] `docs/CAPABILITIES-MAP.md`: capability→outcome→FEAT; mọi FEAT truy về 1 capability
-- [ ] `docs/feat/FEAT-*.md`: mỗi FEAT có khung PO (§1 · §Ngoài phạm vi) + AC (BDD, **gồm ca biên**) + §3 Ràng buộc nghiệp vụ điền; mỗi dòng §3 có dòng `arch §6` chặn nó
+- [ ] `docs/CAPABILITIES-MAP.md`: ≥5 capability, capability→outcome→FEAT; mọi FEAT truy về 1 capability
+- [ ] `docs/feat/FEAT-*.md`: mỗi FEAT có khung PO (§1 · §Ngoài phạm vi) + ≥4 AC (BDD, **gồm ca biên**) + §3 Ràng buộc nghiệp vụ điền; mỗi dòng §3 có dòng `arch §6` chặn nó
 - [ ] `docs/arch/OVERVIEW.md` + `docs/arch/{name}.md`: frontmatter **`kind`/`stack`/`consumes`** + data model + luồng + API + §ranh-giới (**per target**) · `OVERVIEW §5` system design đủ 5.1–5.9 (5.7/5.8 có dòng)
-- [ ] `docs/TECHSTACK.md` chốt qua lượt hỏi Authority (Bước 7) — không lựa chọn nào Authority quan tâm bị tự quyết
+- [ ] `docs/TECHSTACK.md` chốt qua lượt hỏi Authority (Bước 7) — không lựa chọn nào Authority quan tâm bị tự quyết; có UI thì lượt này gồm gu giao diện (ghi vào `INTERVIEW §1`)
 - [ ] `docs/CONVENTIONS.md` + `docs/SECURITY.md` (**framework có sẵn**) — rà; chỉnh §API error-envelope/header nếu project khác default
-- [ ] Design system: có UI → hỏi gu giao diện (bước 0 `ux-design`) rồi `docs/DESIGN-SYSTEM.md` (token) + `docs/ux/SCREEN-MAP.md` (MỌI màn, cả dự án)
+- [ ] Design system: có UI → `docs/DESIGN-SYSTEM.md` (token; §1 ghi gu giao diện Authority đã nói ở Bước 7) + `docs/ux/SCREEN-MAP.md` (MỌI màn, cả dự án)
       khoá TRƯỚC · mockup **chỉ màn wave đang mở** (wave 1 lúc DOCUMENT; wave sau `/document` top-up), Authority
       chốt · backend-only → marker `KHÔNG CÓ UI`
 - [ ] `docs/ROADMAP.md`: chia wave; mỗi wave khai **target** + **phases chạy** (BUILD,VERIFY[,SHIP])
@@ -61,7 +61,7 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 - [ ] **Mọi target wave khai đã build + chạy thật** — gate đối chiếu `ROADMAP §1` cột Target ↔ `proof.json`: mỗi target backend/bff/web (docker) và desktop (`make doctor` bản đóng gói) có entry `healthy`; **thiếu/không-healthy = đỏ** (chống "khai 2 làm 1"). Mobile: tick tay (emulator)
 
 ### VERIFY (wave hiện tại) — rời phase khi:
-- [ ] **auto-test**: `tracking/wave-N/test-cases.md` — mọi AC in-scope có TC **PASS**, không TC **FAIL / BLOCKED / CHƯA CHẠY** · (wave ≥2) TC `@regression` wave trước PASS · black-box hệ đang chạy · `make test` xanh · contract-test cho consumer
+- [ ] **auto-test**: `tracking/wave-N/test-cases.md` — mọi AC in-scope có TC **PASS**, không TC **FAIL / BLOCKED / CHƯA CHẠY** · (wave ≥2) có `Phạm vi ảnh hưởng` + TC cũ được chọn (nguồn `R`) PASS · black-box hệ đang chạy · `make test` xanh · contract-test cho consumer
 - [ ] **dogfood**: 6 persona 2 đợt (DB sạch / DB có data) + tự dùng · phát hiện đã xử hoặc đã ghi §Findings
 - [ ] Không còn finding BLOCKER/MAJOR open
 
@@ -95,7 +95,7 @@ Môi trường production : —   (nơi người dùng thật dùng; chưa có =
 
 ## Findings — review + dogfood chưa xử
 > Finding từ review agent (reviewer/bug-hunter) + dogfood persona ở VERIFY. **BLOCKER/MAJOR phải xử trước khi rời VERIFY.**
-> Nhỏ → sửa ngay · ngoài scope → `docs/ROADMAP.md §backlog`. (TC FAIL nằm ở `tracking/wave-N/test-cases.md`, không lặp ở đây.)
+> **MINOR → để nguyên ở đây, Xử lý = `backlog`** (`/next-wave` gom vào `docs/ROADMAP.md §backlog`) — chỉ sửa trong wave khi: lệch mockup đã chốt · sửa chung một MAJOR (cùng file, vài dòng) · thực chất chạm tiền / quyền / dữ liệu / AC (→ nâng MAJOR). Ngoài scope → `docs/ROADMAP.md §backlog`. (TC FAIL nằm ở `tracking/wave-N/test-cases.md`, không lặp ở đây.)
 
 | Ngày | Nguồn | Severity | Vấn đề | Xử lý |
 |---|---|---|---|---|

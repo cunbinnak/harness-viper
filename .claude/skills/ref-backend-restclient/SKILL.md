@@ -6,7 +6,7 @@ description: Pattern gọi downstream HTTP cho backend — @HttpExchange interfa
 > Situational ref cho stack-spring-boot — load khi boundary gọi external / cross-boundary qua HTTP.
 # Reference: Backend RestClient (downstream HTTP)
 
-> **Purpose:** gọi service external / cross-boundary qua HTTP an toàn, declarative. Load khi BUILD backend target có outbound HTTP (stack-spring-boot §situational trỏ tới).
+> **Purpose:** gọi service external / cross-boundary qua HTTP an toàn, declarative. Load khi BUILD backend target có outbound HTTP (`build.md` Bước 3 nêu khi nào nạp).
 > **Quan hệ:** `stack-spring-boot` = WHAT (rule); file này = HOW (config + factory + error). Security/secret config chung → `ref-backend-config`.
 
 ## 1. Nguyên tắc

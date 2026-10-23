@@ -71,7 +71,7 @@ def table_rows(block: str) -> list[str]:
 # --------------------------------------------------------- hook: nhồi lại ----
 
 def targets_owed(wave: str, target_cell: str) -> list[str]:
-    """Target container hoá (backend/bff/web) khai ở ROADMAP nhưng CHƯA healthy trong proof.json."""
+    """Target có proof máy-sinh (backend/bff/web/desktop) khai ở ROADMAP nhưng CHƯA healthy trong proof.json."""
     healthy = set()
     p = ROOT / "tracking" / f"wave-{wave}" / "proof.json"
     try:
@@ -81,7 +81,7 @@ def targets_owed(wave: str, target_cell: str) -> list[str]:
         pass
     owed = []
     for name, kind in re.findall(r"([\w.\-]+)\s*\(\s*(\w+)\s*\)", target_cell):
-        if kind.lower() in ("backend", "bff", "web") and name not in healthy:
+        if kind.lower() in ("backend", "bff", "web", "desktop") and name not in healthy:
             owed.append(f"{name} ({kind})")
     return owed
 

@@ -6,7 +6,7 @@ description: "BUILD — MAIN tự code 1 wave: đọc KG/context → challenge �
 > Sau khoá scope: **TOÀN QUYỀN, KHÔNG hỏi Authority.** Mơ hồ → tự quyết theo doc → 1 dòng `docs/DECISIONS.md` → đi tiếp.
 > Ngoài scope → `docs/ROADMAP.md §backlog`, không hỏi. Chặn cứng → `STATE.md §Blocker`, báo gộp cuối buổi.
 > Ngoại lệ DUY NHẤT được hỏi: hành động **không đảo ngược / hướng ra ngoài** (xoá data prod, tiêu tiền, đăng ký dịch vụ).
-> **MAIN tự viết 100% product code + unit/integration test. Ở BUILD KHÔNG spawn agent NÀO** — không chỉ "dev-agent": cấm mọi Task subagent để code/scaffold/viết test/"phụ một tay", dù đặt tên gì. MAIN gõ từng dòng. Agent (review/test-writer/persona) **chỉ xuất hiện ở `/verify`**, và chỉ verification — không đụng product code.
+> **MAIN tự viết 100% product code + unit/integration test. Ở BUILD KHÔNG spawn agent NÀO** — cấm mọi subagent để code/scaffold/viết test/"phụ một tay", dù đặt tên gì. MAIN gõ từng dòng. Agent (review/test-writer/persona) **chỉ xuất hiện ở `/verify`**, và chỉ verification — không đụng product code. Hook `guard_agent` chặn mọi spawn ở BUILD.
 
 **Việc ĐẦU TIÊN**: sửa `STATE.md` → `Phase hiện tại: BUILD` + `Wave: <N>` (arg `<wave>`, hoặc dòng `Wave` sẵn có).
 `guard_ask` + `gate.py` đọc dòng này — không sửa thì máy tưởng còn phase cũ, luật "không hỏi" mất hiệu lực.
@@ -60,6 +60,7 @@ Xong → `git add -A && git commit`.
 
 ## Bước 4 — Walking skeleton (thông 1 đường TRƯỚC, đắp thịt sau)
 Bản mỏng nhất **CHẠY được**, theo `kind`:
+> `make dev` là dev server chạy mãi. Chạy từng target ở terminal riêng bằng `make -C services/<nhóm>/<tên> dev`; `make dev` ở gốc chỉ hợp khi wave có đúng 1 target.
 - **backend / bff**: `make dev` (app+db lên) → health 200 → 1 thao tác **ghi→đọc DB** (dù xấu)
 - **web**: `make dev` (dev server, hot-reload — chỉ để code/check nhanh; **hệ container hoá thật ở Bước 6**) → **app shell dịch từ `docs/ux/mockups/<target>/_shell.html`** (Read file đó → dựng Layout: nav items/thứ tự/nhóm/logo/user-menu/icon KHỚP khối SHELL — HTML→JSX, không hook nào chặn code FE) + 1 màn rỗng render TRONG shell → **gọi 1 API thật** (backend đã có) hiện dữ liệu
 - **mobile**: build + chạy **emulator** → 1 màn render → gọi 1 API
@@ -68,7 +69,7 @@ Bản mỏng nhất **CHẠY được**, theo `kind`:
 → `git commit`. Chưa thông đường mỏng này thì **KHÔNG** làm gì khác — đừng đắp UI đẹp lên đường chưa thông.
 **Wave nhiều target — THỨ TỰ theo chiều phụ thuộc, KHÔNG song song:** **provider TRƯỚC, consumer SAU.**
 Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được** (health 200 + gọi được) TRƯỚC → rồi web/bff/mobile/desktop mới build **gọi API thật đó** (FE gọi theo `consumes` ở frontmatter `arch` của nó). Skeleton = **1 đường xuyên suốt qua cụm ĐÚNG chiều phụ thuộc** (backend luồng nghiệp vụ → frontend luồng nghiệp vụ), nhánh còn lại nối sau.
-**CẤM code BE và FE "song song mỗi cái một nửa"** · **CẤM mock API để FE chạy trước** khi backend chưa có endpoint thật — FE dựng trên contract chưa chạy = đường CHƯA THÔNG, đắp thịt lên đó là retro. Provider chưa thông thì consumer chưa được bắt đầu.
+**CẤM code BE và FE "song song mỗi cái một nửa"** · **CẤM mock API để FE chạy trước** khi backend chưa có endpoint thật — FE dựng trên contract chưa chạy = đường CHƯA THÔNG, đắp thêm code lên đó là xây trên nền chưa vững. Provider chưa thông thì consumer chưa được bắt đầu.
 
 ## Bước 5 — Luồng nghiệp vụ (mỗi AC in-scope)
 `làm → tự bấm thử ở local → tick ROADMAP → commit`. Trong lúc làm:
@@ -84,13 +85,13 @@ Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được
 - Mơ hồ → `DECISIONS.md` 1 dòng · ngoài AC → `ROADMAP §backlog` · commit nhỏ, message tiếng Việt
 - **Gặp gotcha / vá bug lúc code** (env nông · config · quirk contract · schema drift...) → **append NGAY** `knowledge-base/{name}.md` §Gotchas/§Failure-modes. Đây là **nguồn KG nhiều nhất** (lúc code mới va) — không ghi = mất, wave/rebuild sau lặp lại.
 
-**Viết unit/integration test CÙNG LÚC code** (chạy `make test` — lưới an toàn của MAIN; code smell/checkstyle sạch) — nạp **`ref-<kind>-test`** (`ref-backend-test` · `ref-frontend-test` · `ref-bff-test`): tầng test · đặt tên · mẫu · đồng hồ tiêm được (để QC test hạn chót trên hệ thật) · mock khớp contract.
+**Viết unit/integration test CÙNG LÚC code** (chạy `make test` — lưới an toàn của MAIN; code smell/checkstyle sạch) — nạp **`ref-<kind>-test`** (`ref-backend-test` · `ref-frontend-test` · `ref-bff-test` · `ref-desktop-test`; mobile dùng `flutter_test` theo `stack-flutter`): tầng test · đặt tên · mẫu · đồng hồ tiêm được (để QC test hạn chót trên hệ thật) · mock khớp contract.
 **KHÔNG** làm ở phase này: tối ưu hiệu năng · UI đẹp quá mức đủ dùng · **black-box test-case + dogfood (để VERIFY — `test-writer` chủ trì)** · tính năng "tiện tay".
 
 ## Bước 6 — Chạy thật (theo `kind` — VERIFY sẽ đánh trên đây)
 - **backend / bff**: `docker compose -f deployment/local/docker-compose.yml up -d --build` → health 200
 - **web**: `docker compose -f deployment/local/docker-compose.yml up -d --build` → health 200 (nginx serve `dist/`, trỏ backend thật)
-- **mobile**: build + chạy **emulator** (KHÔNG docker)
+- **mobile**: build + chạy **emulator** (KHÔNG docker; VERIFY mobile chưa tự động, xem `dogfood.md`)
 - **desktop**: `npm run package` → mở bản đóng gói (`env -u ELECTRON_RUN_AS_NODE "out/<App>-win32-x64/<App>.exe"`) · `make doctor` exit 0 (KHÔNG docker)
 
 ## Bước cuối — Chốt
@@ -104,4 +105,4 @@ Backend (cấp API theo `arch §3`) phải có **endpoint THẬT chạy được
 - **Không đổi stack / version / bỏ ADR** (đã chốt ở DOCUMENT = phá luật): dùng đúng `TECHSTACK.md` version + `docs/adr/*` + skill `stack-<tên>`/`ref-<kind>-pattern`. Bất khả thi → ghi đánh đổi rõ `DECISIONS.md`, KHÔNG tự lệch.
 - **Nhiều target: KHÔNG code BE+FE song song** (Bước 4) — provider (API thật, health 200) trước, consumer sau. FE bám contract đã chạy, KHÔNG mock để chạy trước.
 - Viết unit/integration (lưới an toàn MAIN) — nhưng **black-box test-case + dogfood để VERIFY** (`test-writer`); không tối ưu sớm
-- **Không spawn agent NÀO ở BUILD để code/scaffold/viết test** (dev-agent hay bất kỳ tên nào) — MAIN tự viết hết; agent chỉ ở `/verify` và chỉ verification. Spawn bằng **Task tool + prompt ngắn tay**, **KHÔNG `build_prompt`**.
+- **Không spawn agent NÀO ở BUILD để code/scaffold/viết test** (bất kỳ tên nào) — MAIN tự viết hết; agent chỉ ở `/verify` và chỉ verification. Spawn bằng tool Agent với prompt ngắn viết tay, truyền `run_in_background: false`.

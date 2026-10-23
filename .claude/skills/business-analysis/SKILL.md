@@ -33,6 +33,7 @@ Phương pháp phân tích (research ngành · actor · bảng luồng · use ca
 - [ ] BR-* có nguồn tham chiếu + ≥2 ví dụ + `related_features` ≥1.
 - [ ] Scope rõ (§Ngoài phạm vi đủ cho QC); bounded context rõ.
 - [ ] Ca biên/nhánh use case ở bảng luồng (domain-ba A.4) đều có AC tương ứng — không sót nhánh.
+- [ ] AC có hành vi cảnh báo / xác nhận / giữ dữ liệu khi rời màn nêu rõ lựa chọn của người dùng và kết quả của từng lựa chọn — không "có cảnh báo" chung chung (UX cần để vẽ đúng hộp).
 - [ ] **Bảng chính sách (domain-ba A.6)**: mọi hành động có thao tác trong bảng luồng có dòng · không ô trống · ô `n/a` có lý do đứng được · ô cần chọn có đề xuất đủ 3 phần (PROTOCOL §2.3 — trích phép thử nào) + Authority đã chọn · mỗi ô có giá trị → có BR/AC tương ứng (giới hạn số/thời gian có ca biên giá trị biên).
 - [ ] **Không lẫn vai**: FEAT không chứa chặn ở đâu / contract / tên class-bảng-công nghệ (việc SA ở `arch`); AC không viết cho điều PO đã ghi ở §Ngoài phạm vi.
 

@@ -40,6 +40,7 @@ check   : flutter analyze && flutter test
 test    : flutter test
 build   : flutter build apk --debug
 ```
+Ba lệnh còn lại của hợp đồng 6 lệnh cũng phải có thân: `migrate` (không có), `deploy` (chỉ chạy qua `/ship`) và `doctor` (kiểm emulator và bản build còn chạy). Mobile chưa có đường VERIFY tự động: xem `dogfood.md`.
 
 ## §review  (reviewer/bug-hunter soi TỪNG DÒNG — forbidden patterns Flutter/mobile)
 | Cấm | Hậu quả thật | Thay bằng |

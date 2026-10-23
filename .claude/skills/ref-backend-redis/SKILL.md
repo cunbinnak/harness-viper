@@ -6,7 +6,7 @@ description: Pattern Redis cho backend — config đầy đủ (Lettuce connecti
 > Situational ref cho stack-spring-boot — load khi boundary dùng Redis.
 # Reference: Backend Redis (Spring Data Redis)
 
-> **Load khi:** BUILD backend target dùng Redis (stack-spring-boot §situational trỏ tới).
+> **Load khi:** BUILD backend target dùng Redis (`build.md` Bước 3 nêu khi nào nạp).
 > **Quan hệ:** convention bắt buộc → `stack-spring-boot`; config nâng cao (cluster/sentinel) → `ref-backend-config`.
 > **Nguyên tắc:** truy cập Redis qua **interface `RedisService`** + impl (`RedisServiceImpl`) ở `infrastructure/` (Layered) hoặc `adapter/out/cache` (Hexagonal). KHÔNG rải `RedisTemplate` trong service/controller.
 

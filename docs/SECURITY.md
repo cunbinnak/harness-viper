@@ -34,7 +34,7 @@
 
 ## §6 Phụ thuộc
 - Chạy audit package manager trước publish; lỗ hổng nghiêm trọng → vá hoặc đổi thư viện. Không cài thư viện lạ chỉ vì một hàm tiện.
-- **SCA bắt buộc ở VERIFY**: `./gradlew dependencyCheckAnalyze` (hoặc osv-scanner) + `npm audit --omit=dev --audit-level=high`. Không chạy được (mạng, thiếu plugin) → ghi QUESTION, không im lặng bỏ qua.
+- **SCA bắt buộc ở VERIFY**: `./gradlew dependencyCheckAnalyze` (hoặc osv-scanner) + `npm audit --omit=dev --audit-level=high`. Không chạy được (mạng, thiếu plugin) → ghi MINOR kèm "cần kiểm chứng", không im lặng bỏ qua.
 
 ## §7 Ngoại lệ đã chấp nhận
 > Mục nào cố tình bỏ qua thì ghi đây kèm điều kiện làm lại. Để trống mà lờ đi là cách sản phẩm chết.

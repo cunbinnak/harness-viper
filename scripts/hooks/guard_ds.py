@@ -3,6 +3,7 @@
 
 PreToolUse(Write|Edit): file trong docs/ux/mockups/**.html hoặc docs/DESIGN-SYSTEM.md —
 cấm mã màu hex THÔ ngoài khối `:root {}` (phải dùng `var(--color-*)`; token là SoT). exit 2 = deny. Fail-open.
+Mockup .html có thẻ HTML: chỉ soi vùng CSS (`<style>`, thuộc tính `style=`) — chữ hiển thị như "Đơn #1042" không phải mã màu.
 """
 import json
 import re
@@ -28,6 +29,10 @@ def main() -> int:
     body = re.sub(r":root\s*\{.*?\}", "", content, flags=re.DOTALL)      # bỏ khối định nghĩa token
     body = re.sub(r"/\*.*?\*/", "", body, flags=re.DOTALL)              # bỏ comment CSS
     body = re.sub(r"^\s*\|\s*`?--[\w-]+`?\s*\|.*$", "", body, flags=re.MULTILINE)  # dòng bảng token §2 (| --x | #hex |) = chỗ định nghĩa
+    if path.endswith(".html") and re.search(r"<[a-zA-Z]", body):
+        body = "\n".join(re.findall(r"<style\b[^>]*>(.*?)</style>", body, flags=re.DOTALL | re.I)
+                         + re.findall(r'\bstyle\s*=\s*"([^"]*)"', body, flags=re.I)
+                         + re.findall(r"\bstyle\s*=\s*'([^']*)'", body, flags=re.I))
     hexes = re.findall(r"[:\s]#[0-9a-fA-F]{3,8}\b", body)
     if hexes:
         sys.stderr.write(

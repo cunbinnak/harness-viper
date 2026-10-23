@@ -11,9 +11,11 @@ description: NEXT-WAVE — đóng wave (snapshot, KHÔNG reset) → rà lại + 
 
 ## Bước 1 — Chốt kết quả wave vừa xong
 - Xác nhận gate VERIFY xanh (wave khai SHIP: cả gate SHIP) — `next_wave.py` tự chạy lại và **TỪ CHỐI đóng** nếu đỏ.
-  **Wave KHÔNG ĐẠT** mà Authority quyết vẫn đóng → 1 dòng `docs/DECISIONS.md` (Authority quyết đóng dù KHÔNG ĐẠT + lý do) · chuyển MỌI TC FAIL/BLOCKED + finding BLOCKER/MAJOR còn mở vào `ROADMAP §3` (cột Xử = `wave N+1`) · chạy script với `--accept-red=<DEC-id>`.
+  **Wave KHÔNG ĐẠT** mà Authority quyết vẫn đóng → 1 dòng `docs/DECISIONS.md` (loại `ý-Authority`, ghi rõ "KHÔNG ĐẠT" + lý do; script kiểm đúng hai điều này) · chuyển MỌI TC FAIL/BLOCKED + finding BLOCKER/MAJOR còn mở vào `ROADMAP §3` (cột Xử = `wave N+1`) · chạy script với `--accept-red=<DEC-id>`.
 - Trình Authority **go / pivot / kill** — **LUÔN, không phụ thuộc metric**: wave có metric → so **số thật vs ngưỡng ghi TRƯỚC** (ở FEAT/ROADMAP), **KHÔNG chỉnh ngưỡng sau khi nhìn số**; wave không metric → vẫn phải có lời chốt của Authority mới đóng. Ghi kết quả → `docs/DECISIONS.md`.
 - Gom vào `docs/ROADMAP.md §backlog` **TRƯỚC khi xoá trắng STATE** (không để mất): amendment trong wave (luồng thiếu, scope mới) + **finding minor còn lại** ở §Findings + blocker treo + **TC `CHƯA CÓ QUY ĐỊNH`** (Authority đã quyết ở báo cáo VERIFY: thêm quy định → top-up bảng chính sách · không cần → ghi lý do).
+- Ghi **bề mặt đã giao** của wave vừa đóng (API · bảng · event · format xuất) vào `docs/BACKWARD-COMPAT.md §1`. Làm ở MỌI wave, không chỉ wave có SHIP: sổ này là chỗ đối chiếu "chỉ được thêm" cho các wave sau và là đầu vào chọn regression (`specialist-testing`).
+- Chạy `python scripts/compact.py` (chỉ đọc) xem `DECISIONS` và backlog đã phình chưa. Nếu có thì gấp tay các dòng của wave đã đóng sang `archive/ledger/`.
 
 ## Bước 2 — Snapshot + reset wave-scoped: **CHẠY `python scripts/next_wave.py --go`**
 Script làm trọn: copy HẾT vào `archive/wave-N/` · dựng lại gate BUILD/VERIFY/SHIP/NEXT-WAVE + 3 log từ `templates/TEMPLATE.state.md` · `Wave: N+1` · `Phases wave này` từ ROADMAP §1 · từ chối nếu wave đã đóng hoặc gate VERIFY (+ SHIP nếu khai) còn đỏ (trừ `--accept-red=<DEC-id>`, Bước 1). **CẤM làm tay** (chép archive tay, sửa tay dòng `Wave`) — đóng tay từng bỏ sót reset: ô VERIFY wave cũ còn `[x]` → gate wave mới "xanh" mà chưa dogfood. Xong → **`git add archive/wave-N STATE.md && git commit`** (archive chưa commit = snapshot có thể mất). Authority nói "đóng wave" trong chat → vẫn chạy lệnh này, không tự đóng.
@@ -35,7 +37,7 @@ Nội dung snapshot `archive/wave-N/` — **chép HẾT, không chọn lọc** (
    chỉnh ROADMAP wave kế nếu lệch (**phần bù chen vào wave kế, tính năng đã xếp lùi ra sau — không dồn ra cuối**) →
    ghi dòng `điều chỉnh khi mở` nếu có đổi → **stamp `<ngày ISO>` vào ô `Rà lại` của wave N+1** (ROADMAP §1).
    *(Gate `wave_reviewed` ở `/build` đòi ô này đã điền — còn trống = chạy mù, không cho code.)*
-2. **Re-arm `BACKWARD-COMPAT.md §3`** (checklist rà mỗi wave): bỏ tick §3 để wave mới rà lại. **§1 (sổ hợp đồng) KHÔNG đụng** — surface wave 1 giao vẫn là hợp đồng ở wave 9.
+2. **`BACKWARD-COMPAT.md §3`** (checklist rà mỗi wave): `next_wave.py` đã bỏ tick giúp bạn để wave mới rà lại, không làm tay. **§1 (sổ hợp đồng) KHÔNG đụng** — surface wave 1 giao vẫn là hợp đồng ở wave 9.
 3. Phần **wave-scoped** của `STATE.md` (gate BUILD/VERIFY/SHIP · `§Findings` · log · `Wave`) đã được `next_wave.py` reset ở Bước 2 — **không làm tay**.
 4. **Amendment thành hiện thực** (đây là điểm định tuyến của "sửa doc = wave sau" — PROTOCOL §3):
    > **Nối từ mục 1 — luật cứng**: item backlog tag `nghi thiếu AC` hoặc cần mockup/màn mới, **xếp vào wave nào** (kể cả wave làm mịn UI-only) → **BẮT BUỘC `/document` top-up TRƯỚC `/build` wave đó** — không được đi nhánh "chỉ đổi thứ tự". Gate BUILD chặn bằng máy (`pending_topup` + `missing_wave_mockups`). Ghi 1 dòng ROADMAP §2 *"đường đã chọn + lý do"* cho wave kế.

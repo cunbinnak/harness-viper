@@ -12,7 +12,7 @@ description: >
 # Reference — Backend Config Patterns
 
 > Situational ref cho stack-spring-boot — load khi target backend cần config pattern cụ thể.
-> Config patterns cho backend service. Consult khi scaffold target backend mới hoặc cần config cụ thể (stack-spring-boot §situational trỏ tới).
+> Config patterns cho backend service. Consult khi scaffold target backend mới hoặc cần config cụ thể (`build.md` Bước 3 nêu khi nào nạp).
 
 > **Version = `docs/TECHSTACK.md` + ADR CHỐT (nguồn sự thật); skill này chỉ THAM CHIẾU.** Mẫu dưới cho **Spring Boot 4.1** (bản đang được hỗ trợ, 9/2026). Dòng **3.x đã EOL 30/6/2026** (bản OSS cuối 3.5.16) — chỉ dùng khi bảo trì codebase cũ, KHÔNG chọn cho dự án mới. Nâng 3.x→4.x là **major, KHÔNG phải đổi số**: Jackson 2→3 (đổi groupId/annotation), `@MockBean`/`@SpyBean`→`@MockitoBean`/`@MockitoSpyBean`, vài property đổi tên → chạy `spring-boot-properties-migrator` dò, gỡ Undertow/JUnit4. Java baseline vẫn **21**.
 
@@ -236,7 +236,7 @@ logging:
     console: '%d{ISO8601} [%thread] %-5level %logger{36} [traceId=%X{traceId}] - %msg%n'
 ```
 
-## 10. Forbidden Actions
+## 8. Forbidden Actions
 
 - KHÔNG hardcode secrets trong config files
 - KHÔNG commit `.env` với real production values (use `.env.example` template)
@@ -244,7 +244,7 @@ logging:
 - KHÔNG set production defaults without env var override path
 - KHÔNG ignore profile activation logic
 
-## 11. Build tool setup (Gradle = default)
+## 9. Build tool setup (Gradle = default)
 
 > **Build tool do ADR `tech-stack` CHỐT** (Maven hoặc Gradle). Mẫu dưới là **Gradle (default harness)**. Nếu ADR chọn **Maven** → dùng `pom.xml` với cùng plugin/dependency tương đương (spring-boot-starter-*, jacoco, test scope…); KHÔNG dùng `build.gradle`. Dev theo đúng build tool ADR chốt, không tự đổi.
 
@@ -304,7 +304,7 @@ check.dependsOn jacocoTestCoverageVerification
 > ```
 > Production cân nhắc tắt `swagger-ui` qua profile.
 
-## 12. Spring Security — OAuth2 Resource Server
+## 10. Spring Security — OAuth2 Resource Server
 
 > SecurityConfig đầy đủ (filterChain, JWT converter, TenantContextFilter, HMAC, SpEL sandbox) → xem `docs/SECURITY.md` + `stack-spring-boot §review` (baseline + forbidden patterns)
 
@@ -318,7 +318,7 @@ spring:
           jwk-set-uri: ${JWKS_URI}
 ```
 
-## 13. Dockerfile
+## 11. Dockerfile
 
 ```dockerfile
 FROM eclipse-temurin:21-jdk-alpine AS builder
@@ -341,7 +341,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 
 > Hoặc tắt plain jar trong `build.gradle` (`jar { enabled = false }`) thay vì rename.
 
-## 13.1 RSA Key Generation (optional — chỉ khi service cần load key từ file)
+## 11.1 RSA Key Generation (optional — chỉ khi service cần load key từ file)
 
 ```bash
 # infra/scripts/generate-keys.sh — chạy một lần trước docker compose up
@@ -363,7 +363,7 @@ volumes:
 
 `.gitignore`: thêm `infra/keys/` và `*.pem`.
 
-## 14. .gitignore
+## 12. .gitignore
 
 ```gitignore
 build/
@@ -386,5 +386,6 @@ logs/
 | Date | Summary |
 |---|---|
 | 2026-05-02 | Initial backend-config reference skill |
-| 2026-05-07 | Add §11 Gradle, §12 Spring Security OAuth2, §13 Dockerfile, §14 .gitignore |
+| 2026-05-07 | Add §11 Gradle, §12 Spring Security OAuth2, §13 Dockerfile, §14 .gitignore (số mục sau này được đánh lại: xem dòng 2026-10-23) |
+| 2026-10-23 | Đánh lại số mục cho liền (trước đây nhảy từ 7 sang 10): Forbidden = §8, Build tool = §9, Spring Security = §10, Dockerfile = §11, .gitignore = §12. Sửa trỏ "stack-spring-boot §situational" thành build.md Bước 3 |
 | 2026-09-22 | Bump Boot 3.4→4.1 (plugin 4.1.1 · dep-mgmt 1.1.7 · springdoc 3.0.1); reframe version = TECHSTACK/ADR SoT; ghi chú 3.x EOL + delta migration (Jackson 3 · @MockitoBean · properties-migrator) |

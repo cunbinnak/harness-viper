@@ -54,7 +54,7 @@ Ghi kết quả vào `STATE.md` dòng `Đường vào`.
 Vấn đề (pain) + đối tượng cụ thể + **out-of-scope tường minh** + ≥1 success metric **có số**.
 
 ## Bước 3 — Phân tích BA: bảng luồng + màn nháp → business-rule → PERSONAS · *BA*  → **Nạp `Skill("domain-ba")` trước**
-**Trình tự PO → BA → yêu cầu**: khám phá (Bước 1-2) là việc PO; Bước 3 là BA **phân tích quy trình TRƯỚC khi ai viết AC** — (A) dựng bảng luồng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`, ô `CHƯA HỎI` → hỏi Authority ngay (cả 2 đường vào) + **bảng chính sách từng hành động** (khi nào · ai · giới hạn · trùng gì · ngoại lệ — research lấy dấu vết + suy luận 4 phép thử → đề xuất mặc định, Authority chọn; Authority không cần biết trước luật), **Authority ký bảng** → (B) business-rule (sinh từ cả bảng chính sách) → (C) persona + ma trận sinh TỪ bảng. Từ đây actor của AC (Bước 5), ô ma trận, luồng nghiệp vụ mà build/verify/dogfood đi theo **chỉ lấy từ bảng** — chống suy diễn \"người có nhu cầu = người thao tác\".
+**Trình tự PO → BA → yêu cầu**: khám phá (Bước 1-2) là việc PO; Bước 3 là BA **phân tích quy trình TRƯỚC khi ai viết AC** — (A) dựng bảng luồng `Ai LÀM · Làm gì · Ai NHỜ/duyệt · Đầu vào→đầu ra · Bằng chứng` cho từng nghiệp vụ vào `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`, ô `CHƯA HỎI` → hỏi Authority ngay (cả 2 đường vào) + **bảng chính sách từng hành động** (khi nào · ai · giới hạn · trùng gì · ngoại lệ — research lấy dấu vết + suy luận 4 phép thử → đề xuất mặc định, Authority chọn; Authority không cần biết trước luật), **Authority ký bảng** → (B) business-rule (sinh từ cả bảng chính sách) → (C) persona + ma trận sinh TỪ bảng. Từ đây actor của AC (Bước 5), ô ma trận, luồng nghiệp vụ mà build/verify/dogfood đi theo **chỉ lấy từ bảng** — chống suy diễn "người có nhu cầu = người thao tác".
 Persona + năng lực được cấp + **ma trận vai × hành động** — mỗi ô `có`/`cấm`, **KHÔNG ô trống**
 (đây là spec phân quyền khi code + nguồn TC âm khi test + danh sách phép thử của vai `breaker` ở dogfood).
 
@@ -76,7 +76,8 @@ FEAT **không** chứa chặn ở đâu / contract / tên class-bảng-công ngh
 
 ## Bước 7 — TECHSTACK (`docs/TECHSTACK.md`) · *SA đề xuất · Authority chốt*
 **Chỗ DUY NHẤT chốt tech** (Bước 6 chỉ đề xuất, không tự chốt). Lựa chọn Authority sẽ thấy / phải vận hành / tốn tiền (stack · UI kit · đăng nhập & phiên · lưu file · cache · email/SMS · build tool · deploy) mà Authority CHƯA nói → **hỏi bằng `AskUserQuestion`**, mỗi câu 2-3 option + đánh đổi 1 dòng + mặc định đề xuất. Authority đã nói / intake đã khai → giữ nguyên, không hỏi lại. Chi tiết thuần nội bộ → tự quyết, `DECISIONS` loại `kỹ-thuật`. Kết quả → `docs/TECHSTACK.md` + ADR.
-> **VERSION mỗi stack: Read dòng `description` của skill `stack-<tên>` tương ứng lấy default + note EOL — CẤM điền version từ trí nhớ.** Knowledge cutoff của model CŨ hơn thực tại: "version mình nhớ là mới nhất" thường đã lỗi thời/EOL. Authority không chỉ định version → dùng default của skill + 1 dòng `DECISIONS.md`; Authority chỉ định khác default → theo Authority, ghi ADR.
+> **Có UI → hỏi gu giao diện TRƯỚC khi hỏi UI kit** (`ux-design` Phương pháp bước 0, lượt 1). Hỏi mở bằng lời, không dùng `AskUserQuestion`: Authority có bộ nhận diện, template đã mua, bản thiết kế hay ứng dụng mẫu nào muốn bám theo không? Gu quyết UI kit, nên hỏi ngược lại sẽ phải sửa TECHSTACK và ADR. Ghi câu trả lời vào `INTERVIEW §1` (khối wave hiện tại, dòng `Bằng chứng:`); Bước 8 chép sang `DESIGN-SYSTEM §1`.
+> **VERSION mỗi stack: lấy default ở dòng `description` của skill `stack-<tên>` nếu có (kèm ghi chú EOL); skill chưa ghi thì tra WebSearch (trang chính thức, npm, pub.dev). CẤM điền version từ trí nhớ.** Knowledge cutoff của model CŨ hơn thực tại: "version mình nhớ là mới nhất" thường đã lỗi thời/EOL. Authority không chỉ định version → dùng default của skill (hoặc bản ổn định mới nhất tra được) + 1 dòng `DECISIONS.md` nêu nguồn; Authority chỉ định khác default → theo Authority, ghi ADR.
 > **Quét FEAT tìm feature NGẦM đòi tech/infra chưa chốt** (danh sách: `pre-mortem` mục "Feature NGẦM ĐÒI tech/infra") → đưa vào lượt hỏi ở trên.
 
 ## Bước 7b — Quy ước chung  *(đã có sẵn — framework default, KHÔNG author lại)*
@@ -86,7 +87,7 @@ nếu project khác default → sửa thẳng file + ghi `DECISIONS.md`.
   đồng bộ bằng **contract-test** (VERIFY) + **BACKWARD-COMPAT** (SHIP). (Skill `stack-*` lo idiom CODE.)
 
 ## Bước 8 — Design system + UX · *UX*  → **Nạp `Skill("ux-design")` trước** (nếu có UI; backend-only → ghi marker `KHÔNG CÓ UI`, bỏ qua bước này)
-**Việc đầu tiên: hỏi gu giao diện** (`ux-design` Phương pháp bước 0 — Authority có bộ nhận diện / template / giao diện mẫu nào không; không có thì MAIN tra rồi đề xuất 2–3 hướng cho Authority chọn) — gu là sở thích của Authority, không đoán rồi chờ chốt cuối. Thứ tự bắt buộc: `docs/DESIGN-SYSTEM.md` (token — **khoá TRƯỚC**, cả dự án) → `docs/ux/SCREEN-MAP.md` (mục lục
+**Việc đầu tiên: đọc gu giao diện Authority đã nói ở Bước 7** (`INTERVIEW §1`) rồi chép vào `DESIGN-SYSTEM §1`. Chưa hỏi được ở Bước 7 thì hỏi ngay bây giờ (`ux-design` Phương pháp bước 0). Authority không có gì để bám thì MAIN tra rồi đề xuất 2–3 hướng cho Authority chọn. Gu là sở thích của Authority, không đoán rồi chờ chốt cuối. Thứ tự bắt buộc: `docs/DESIGN-SYSTEM.md` (token — **khoá TRƯỚC**, cả dự án) → `docs/ux/SCREEN-MAP.md` (mục lục
 **mọi màn** ↔ target ↔ FEAT ↔ wave, cả dự án) → **DỪNG, sang Bước 9 chia wave** (cột `Wave` của SCREEN-MAP điền ở Bước 9) → quay lại dựng `docs/ux/mockups/<target>/<module>.html` **chỉ màn in-scope
 wave đang mở** (ở DOCUMENT = wave 1; màn wave sau để trống, `/document` top-up khi `/next-wave` mở wave đó —
 vẽ tới đâu duyệt tới đó, không phí công mockup wave xa dễ đổi) → **rà nhất quán cross-màn** (app shell — sidebar/nav/logo/user-menu — phải giống hệt mọi mockup; lệch = sửa khớp `_shell.html` canonical, xem `ux-design §Nhất quán cross-màn`) → **Authority chốt mockup của wave đó**.
@@ -94,7 +95,7 @@ Token là thứ **DUY NHẤT chép nguyên** sang code ở BUILD.
 
 ## Bước 9 — Chia wave (`docs/ROADMAP.md`) · *PM*
 Bảng wave: mỗi wave khai **target** (kind: backend/web/bff/mobile/desktop) + **phases chạy** (`BUILD,VERIFY[,SHIP]`) + **AC in-scope**.
-**FEAT-cap** = `feat_cap_per_wave` (frontmatter `docs/ROADMAP.md`, **mặc định ~3-4 FEAT/wave ≈ 15-20 AC**) — ngưỡng để **một phiên BUILD của MAIN làm nổi** (MAIN-code-hết, không dev-agent). KHUYẾN KHÍCH, **tròn luồng thắng con số**: tách mà đứt luồng → giữ tròn + 1 dòng `DECISIONS.md` nêu lý do; 1 FEAT quá to (nhiều AC) → **báo PO tách** (`domain-po`), PM không tự tách. **SỐ WAVE = số dòng §1** (phái sinh từ scope ÷ cap + phụ thuộc — không đặt tay). → **Nạp `Skill("implementation-plan")` để chia**. Điền cột
+**FEAT-cap** = `feat_cap_per_wave` (frontmatter `docs/ROADMAP.md`, **mặc định ~3-4 FEAT/wave ≈ 15-20 AC**) — ngưỡng để **một phiên BUILD của MAIN làm nổi** (MAIN tự code hết). KHUYẾN KHÍCH, **tròn luồng thắng con số**: tách mà đứt luồng → giữ tròn + 1 dòng `DECISIONS.md` nêu lý do; 1 FEAT quá to (nhiều AC) → **báo PO tách** (`domain-po`), PM không tự tách. **SỐ WAVE = số dòng §1** (phái sinh từ scope ÷ cap + phụ thuộc — không đặt tay). → **Nạp `Skill("implementation-plan")` để chia**. Điền cột
 `Wave giao` ở CAPABILITIES-MAP + cột `Wave` ở SCREEN-MAP. Để trống `§backlog` (amendment tương lai đổ vào đây).
 Có UI → **quay lại Bước 8 dựng mockup màn wave 1** (ux-design) rồi mới sang Bước 10.
 
@@ -111,7 +112,7 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 - **UI↔AC 2 chiều — chấm TỪNG AC, không chấm gộp per-FEAT**: lập danh sách 2 cột **mọi AC `has_ui` in-scope** ↔ **màn + phần tử/khuôn xử nó** (từ SCREEN-MAP) — AC không có dòng = **màn con thiếu** (form/detail/modal bị lười), bổ sung mockup + API cho nó TRƯỚC khi khoá ("FEAT có 1 màn list" KHÔNG phải bằng chứng phủ). Chiều ngược: mỗi phần tử tương tác trong mockup (search/filter/sort/nút/phân trang) có 1 AC — phần tử **không AC = quyết NGAY** (thêm AC · hoặc bỏ khỏi mockup), **KHÔNG silent-defer wave sau**. Kèm: mỗi **vùng dữ liệu** trên mockup (kể cả read-only) có API fetch trong `arch §3` (khai ở SCREEN-MAP behavior).
 
 **(2) Không thiếu — completeness** (con mắt ĐỘC LẬP, bù điểm mù Authority + MAIN-tự-vấn):
-- **Spawn `pre-mortem`** (sub-agent độc lập MAIN) → quét mỗi FEAT/luồng qua **taxonomy ca biên** (`domain-ba` D) + 3 câu xuyên-luồng + 6 họ luồng phổ quát + đối chiếu ngành → trả **nghi vấn case Authority MISS**.
+- **Spawn `pre-mortem`** (sub-agent độc lập MAIN) → quét mỗi FEAT/luồng qua **taxonomy ca biên** (`domain-ba` D) + 4 câu xuyên-luồng + 6 họ luồng phổ quát + đối chiếu ngành → trả **nghi vấn case Authority MISS**.
 - MAIN nhận nghi vấn → mỗi cái **quyết**: thêm AC (CASCADE) · hỏi Authority (còn DOCUMENT nên được hỏi) · chuẩn ngành có link → `DECISIONS` (PROTOCOL §2.3). **KHÔNG bỏ lửng, không đoán.**
 - Nghi vấn **đổi luồng** (thiếu bước · sai Ai LÀM · thiếu nhánh) → **sửa bảng luồng `INTERVIEW` TRƯỚC** (thêm dòng, Bằng chứng = câu Authority vừa trả lời), Authority **ký lại** bảng đó (cập nhật ngày `chốt bởi Authority`) → rồi mới CASCADE xuống AC · ma trận · SCREEN-MAP. Chỉ thêm AC mà bảng không đổi = vai/màn/luồng dogfood thiếu theo.
 
@@ -119,14 +120,14 @@ Ghi mỗi vòng vào `STATE.md §Challenge log`.
 >
 > **Tick ô `PRE-LOCK AUDIT PASS` (STATE §Gate DOCUMENT) CHỈ khi xong CẢ 2 phần** — xong mỗi (1) chưa được tick. Tick rồi mà còn sửa spec doc (Authority nhận xét thêm) → `trace_docsync` TỰ BỎ TICK: xử CASCADE xong, tới lời chốt kế phải **re-run audit trên bản mới** rồi mới tick lại.
 >
-> **Re-run có trọng tâm** (đỡ phí — tick rụng như nhau, khác độ SÂU lượt audit lại): sửa chữ nghĩa/trình bày không đổi AC/field/luồng → re-trace quanh vùng đổi là đủ, khỏi re-spawn. Đổi AC/luồng/field/màn → re-trace + spawn `pre-mortem` quét lại FEAT/luồng bị ảnh hưởng (+3 câu xuyên-luồng nếu luồng đổi).
+> **Re-run có trọng tâm** (đỡ phí — tick rụng như nhau, khác độ SÂU lượt audit lại): sửa chữ nghĩa/trình bày không đổi AC/field/luồng → re-trace quanh vùng đổi là đủ, khỏi re-spawn. Đổi AC/luồng/field/màn → re-trace + spawn `pre-mortem` quét lại FEAT/luồng bị ảnh hưởng (+4 câu xuyên-luồng nếu luồng đổi).
 
 ## Bước cuối — Chốt + khoá scope
 1. **Trình Authority đọc** toàn bộ doc set → nhận xét → sửa (CASCADE, `trace_docsync` nhắc + rụng tick nếu có) → lặp tới khi Authority nói **"chốt scope" / "chốt tài liệu"**.
-2. **Lời chốt = ỦY QUYỀN, không phải bằng chứng** — nó KÍCH HOẠT lượt kiểm cuối, không nhảy cóc qua được:
+2. **Ngay khi nghe lời chốt: làm nốt việc sửa spec doc, TRƯỚC khi audit.** Sửa spec doc nào cũng làm hook bỏ tick `PRE-LOCK AUDIT PASS`, nên hai việc này phải xong trước: ≥2 dòng `docs/DECISIONS.md` (sổ sống, không làm rụng tick), và **PO** đổi `status` mọi FEAT in-scope `DRAFT → APPROVED` (Authority đã đọc và chốt).
+3. **Lời chốt = ỦY QUYỀN, không phải bằng chứng** — nó KÍCH HOẠT lượt kiểm cuối, không nhảy cóc qua được:
    · `python scripts/gate.py` (phase DOCUMENT) phải **xanh mọi mục TRỪ dòng `Scope khoá`** (ô đó tick cuối cùng, bước 4).
    · **CHẠY PRE-LOCK AUDIT NGAY LÚC NÀY — LUÔN LUÔN, kể cả ô đang tick** (tick không phải vé skip — có thể là tick chay đời trước, hoặc doc bị sửa ngoài tool mà hook không thấy). Trên ĐÚNG bản sẽ khoá (khối Bước 10: trace 6 chiều + UI↔AC + spawn `pre-mortem`). Độ sâu: lời chốt ĐẦU → đủ CẢ 2 phần; lời chốt lặp (đã audit đủ ở lời chốt trước, chỉ sửa theo nhận xét) → re-run có trọng tâm (khối Bước 10). Nghi vấn xử hết (thêm AC / hỏi Authority — vẫn DOCUMENT nên còn được hỏi / DECISIONS) → mới tick. KHÔNG tick chay.
-3. ≥2 dòng `docs/DECISIONS.md`. **PO** đổi `status` mọi FEAT in-scope `DRAFT → APPROVED` (Authority đã đọc + chốt).
 4. Rà TỪNG ô gate DOCUMENT — ô nào chưa tick thì **làm cho đạt rồi mới tick** (KHÔNG tick gộp cho đủ bộ) → cuối cùng tick `Scope khoá` trong `STATE.md`. **Từ đây không hỏi Authority nữa.**
 5. Báo: tài liệu xong — **đã chia thành N wave** (đọc `docs/ROADMAP.md §1`, liệt kê `w1: <target/FEAT> · w2: … · wN: …`), chạy `/build 1` để vào wave đầu.
 

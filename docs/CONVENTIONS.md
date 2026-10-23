@@ -29,7 +29,7 @@
 ## §5 Trạng thái & hành động
 - Mọi màn fetch data xử đủ **loading · empty · error · success**. KHÔNG action "im lặng" (click phải có phản hồi: spinner/toast/inline/navigation).
 - **Idempotency**: consumer / webhook / callback / job (BE) dedup theo id · FE **chống double-submit** (disable khi pending).
-- **Confirm** hành động phá huỷ (xoá / huỷ / reset) nếu có nguy cơ mất dữ liệu.
+- **Confirm** hành động phá huỷ (xoá / huỷ / reset) nếu có nguy cơ mất dữ liệu. Hộp xác nhận nằm trong app (component của design system), không dùng hộp gốc của trình duyệt hay hệ điều hành (`alert` / `confirm` / `prompt` / `dialog`).
 
 ## §6 Comment (agent-first)
 - Giải thích **VÌ SAO**, không WHAT (tên đã nói). Làm khác lẽ thường → ref: `// BR-… / ADR-… / FEAT-… AC-… / xem DECISIONS.md <ngày>`.

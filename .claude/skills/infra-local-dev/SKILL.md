@@ -26,6 +26,7 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/app_dev
       REDIS_URL: redis://redis:6379
       KAFKA_SERVER_HOST: kafka:9092
+      APP_CLOCK_FIXED: ${APP_CLOCK_FIXED:-}   # chỉ profile local: QC đặt giờ giả để test hạn chót (ref-backend-test §3); thiếu dòng này thì container không nhận biến
     depends_on:
       postgres: { condition: service_healthy }
     healthcheck: { test: ["CMD","curl","-f","http://localhost:8080/health/ready"], interval: 10s, retries: 12 }
@@ -57,9 +58,9 @@ volumes: { pg_data: {} }
 ```
 
 ## Reuse-first — kiểm tra ĐÃ CÓ GÌ trước khi dựng/tải (KHÔNG cài/pull/build thừa)
-> Nguyên tắc: env dev tồn tại lâu, nhiều thứ đã sẵn từ lần handoff/wave trước. Dựng lại từ đầu = tải lại rác + chậm. **Quét trước, chỉ bù cái THIẾU.**
+> Nguyên tắc: env dev tồn tại lâu, nhiều thứ đã sẵn từ lần dựng trước hoặc wave trước. Dựng lại từ đầu = tải lại rác + chậm. **Quét trước, chỉ bù cái THIẾU.**
 ```bash
-docker compose ps                                   # service nào đang UP rồi (re-run handoff → có thể đã healthy)
+docker compose ps                                   # service nào đang UP rồi (chạy lại lần 2 → có thể đã healthy)
 docker images --format '{{.Repository}}:{{.Tag}}'   # image nền (postgres/redis/kafka) đã pull chưa
 docker volume ls                                    # volume DB đã tồn tại (giữ data) — KHÔNG tạo trùng
 ```

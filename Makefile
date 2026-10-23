@@ -8,8 +8,10 @@
 .PHONY: help dev check test migrate deploy doctor gate infra-up infra-down
 
 COMPOSE := deployment/local/docker-compose.yml
+# Máy không có python3 (vd Windows chỉ có launcher `py`): make gate PYTHON="py -3"  — hoặc đặt biến môi trường PYTHON. Không cần sửa file này.
 PYTHON  ?= python3
-TARGETS := $(shell find services -mindepth 2 -maxdepth 2 -name Makefile -exec dirname {} \; 2>/dev/null)
+# Target = services/<nhóm>/<tên>/Makefile (độ sâu 3). Makefile cấp nhóm (services/<nhóm>/Makefile) KHÔNG phải target.
+TARGETS := $(shell find services -mindepth 3 -maxdepth 3 -name Makefile -exec dirname {} \; 2>/dev/null)
 
 # Chưa scaffold target nào → BÁO LỖI. KHÔNG để `make check` xanh-giả khi TARGETS rỗng
 # (vòng lặp rỗng exit 0 → capture_proof ghi check.ok=true dù chưa có code → gate BUILD qua oan).
@@ -27,6 +29,8 @@ infra-up:   ## db/redis/kafka local lên (nếu có compose)
 infra-down: ## dừng hạ tầng (giữ volume)
 	@[ -f $(COMPOSE) ] && docker compose -f $(COMPOSE) stop || true
 
+# `make dev` ở gốc chạy LẦN LƯỢT từng target; dev server chạy mãi nên chỉ hợp khi wave có 1 target.
+# Nhiều target: mỗi target một terminal — `make -C services/<nhóm>/<tên> dev`.
 dev: infra-up   ## hạ tầng + dev từng target — VERIFY đánh trên đây
 	$(GUARD)
 	@for t in $(TARGETS); do echo ">> dev $$t"; "$(MAKE)" -s -C "$$t" dev || exit 1; done
@@ -49,7 +53,7 @@ deploy:  ## deploy production — guard_bc canh ở đây (BACKWARD-COMPAT §3)
 
 doctor:  ## health check / smoke / rollback readiness mọi target
 	$(GUARD)
-	@for t in $(TARGETS); do echo ">> doctor $$t"; "$(MAKE)" -s -C "$$t" doctor; done
+	@rc=0; for t in $(TARGETS); do echo ">> doctor $$t"; "$(MAKE)" -s -C "$$t" doctor || rc=1; done; exit $$rc
 
 gate:    ## kiểm gate phase hiện tại (make gate  hoặc  make gate P=BUILD)
 	@$(PYTHON) scripts/gate.py $(P)

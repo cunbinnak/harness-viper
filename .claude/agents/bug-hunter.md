@@ -38,13 +38,13 @@ Cái nào chặn AC → finding. Cái nào nợ tương lai → ghi chú riêng.
 
 ## Chế độ RÀ ĐỀ TEST (`/verify` Bước 3b — spawn LẦN 2, SAU khi `test-writer` viết đề xong, TRƯỚC khi chạy)
 > Lần 1 (Bước 2, phần trên) soi CODE khi chưa có TC. Lần này soi ĐỀ TEST — không đọc code; prompt spawn ghi rõ "chế độ RÀ ĐỀ TEST". Đề lúc này mọi dòng `CHƯA CHẠY`.
-QC cũng không được tự chấm bài mình: `test-writer` vừa ra đề vừa chấm → bạn rà **đề** của nó trước khi chạy (không rà code). Nạp thêm: `tracking/wave-N/test-cases.md` · `docs/INTERVIEW.md` bảng chính sách · `.claude/skills/specialist-testing/SKILL.md` (§Kỹ thuật · §Chuẩn kiểm).
+QC cũng không được tự chấm bài mình: `test-writer` vừa ra đề vừa chấm → bạn rà **đề** của nó trước khi chạy (không rà code). Nạp thêm: `tracking/wave-N/test-cases.md` · `docs/INTERVIEW.md` bảng chính sách · `.claude/skills/specialist-testing/SKILL.md` (§Kỹ thuật · §Chuẩn kiểm · §Regression theo phạm vi ảnh hưởng) · wave ≥ 2: `git diff <commit đóng wave trước>..HEAD -- docs/` (tài liệu đổi; commit lấy bằng `git log -1 --format=%H -- archive/wave-<N-1>`).
 1. **Phủ**: mỗi AC in-scope · mỗi ô có giá trị của bảng chính sách · mỗi ô `cấm` ma trận vai · mỗi dòng `arch §6` không `n/a` → có ≥1 TC? Thiếu = liệt kê.
 2. **Kỹ thuật**: chỗ có ngưỡng (số/thời gian/độ dài) có đủ 3 điểm giá trị biên? Entity có trạng thái có TC cạnh cấm + 1 TC vòng đời? Ô `có` của ma trận có 3 chiều (đúng phạm vi · sai phạm vi · sai trạng thái)?
 3. **Chuẩn kiểm (ở mức đề)**: `mô tả` TC ghi dữ liệu mà kỳ vọng chỉ có status/toast, không có **đọc lại dữ liệu đã lưu** · TC ca bị chặn không có điểm kiểm **"không sinh dữ liệu"** · dữ liệu theo người/tenant không có điểm kiểm **phía người khác không thấy**.
 4. **Thăm dò**: hành động chạm tiền/công/quyền mà không có TC nguồn `TD` nào.
-5. **Regression** (wave ≥ 2): thiếu TC `@regression` nào của wave trước · dòng `ĐÃ THAY` mà TC thay thế không có trong đề / AC không thật sự đổi (đối chiếu FEAT version) = trốn regression.
-Trả về danh sách thiếu (**không sửa file** — người sửa đề là `test-writer`; rỗng thì nói rõ "đề đủ" + đã soi gì) → MAIN chuyển nguyên danh sách cho `test-writer` **chế độ CHẠY** (sửa đề theo danh sách rồi chạy toàn bộ). Mỗi mục ghi rõ là **thêm TC mới** hay **sửa TC <mã>**. Format: `[thiếu TC|biên|cạnh cấm|3 chiều|chuẩn kiểm|thăm dò|regression] <AC/ô chính sách/TC> — <thiếu gì> — đề xuất TC: <1 dòng>`.
+5. **Phạm vi ảnh hưởng** (wave ≥ 2): đối chiếu đoạn `## Phạm vi ảnh hưởng` của đề với thay đổi THẬT của wave (tự xem `git diff <commit đóng wave trước>..HEAD -- docs/` — tài liệu, không phải code): (a) **thiếu** — thay đổi nào (AC top-up · surface · bảng dùng chung · phụ thuộc wave trước · quyền · điểm nối luồng · chức năng dùng chung) chưa có dòng ảnh hưởng; TC cũ đáng chọn mà không có; `@smoke` chưa đủ mọi luồng chính; (b) **thừa / sai** — TC cũ được chọn mà lý do không đứng vững; (c) **"Không ảnh hưởng" sai** — vùng được khai không ảnh hưởng nhưng tài liệu đổi chạm vào đó; (d) dòng `ĐÃ THAY` mà TC thay thế không có trong đề / AC không thật sự đổi (đối chiếu FEAT version) = trốn regression; (e) mục `Chức năng cũ bị chạm` của `reviewer` (MAIN đưa kèm trong prompt) có dòng nào chưa được phản ánh ở đoạn `Phạm vi ảnh hưởng`.
+Trả về danh sách thiếu (**không sửa file** — người sửa đề là `test-writer`; rỗng thì nói rõ "đề đủ" + đã soi gì) → MAIN chuyển nguyên danh sách cho `test-writer` **chế độ CHẠY** (sửa đề theo danh sách rồi chạy toàn bộ). Mỗi mục ghi rõ là **thêm TC mới** hay **sửa TC <mã>**. Format: `[thiếu TC|biên|cạnh cấm|3 chiều|chuẩn kiểm|thăm dò|phạm vi ảnh hưởng] <AC/ô chính sách/TC> — <thiếu gì> — đề xuất TC: <1 dòng>`.
 
 ## TRẢ VỀ (final message — MAIN ghi `STATE §Findings`)
 ```
@@ -56,5 +56,6 @@ Trả về danh sách thiếu (**không sửa file** — người sửa đề l�
   Hỏng thế nào: <tình huống → kết quả sai>
   Đề xuất: <một câu>
 ```
+**Nhãn MINOR chỉ khi KHÔNG chạm tiền · quyền · dữ liệu của người khác · AC** — MINOR đi thẳng vào backlog nên gán thấp là lọt. Chạm một trong bốn (vd đơn kẹt ở trạng thái không ai đưa ra được; bỏ một trường là bỏ qua bước kiểm) → tối thiểu **MAJOR**.
 Mức: **BLOCKER** = mất dữ liệu / lỗ phân quyền / AC không chạy · **MAJOR** = ca biên chưa xử / lỗi nuốt · **MINOR** = việc dở / lệch quy ước.
 Không chắc → nói không chắc + cách kiểm chứng. Học được về target (cho KG): `<...>`.

@@ -27,6 +27,9 @@ CONTAINERIZED = {"backend", "bff", "web"}
 PROVEN = CONTAINERIZED | {"desktop"}
 # kind có giao diện → màn ở SCREEN-MAP phải có mockup + fidelity.
 UI_KINDS = {"web", "mobile", "desktop"}
+# mức tối thiểu của DOCUMENT (domain-ba D · capability-mapping): ≥5 capability, mỗi FEAT ≥4 AC (happy · validation · error · a11y).
+MIN_CAPABILITIES = 5
+MIN_AC_PER_FEAT = 4
 
 # Windows console (cp1252) không in được Unicode — ép UTF-8.
 try:
@@ -307,7 +310,11 @@ API_TAGS = re.compile(r"<(?:button|form|table|select)\b[^>]*>|<a\b[^>]*\bdownloa
 
 
 def _norm_api(s: str) -> str:
-    """`GET /api/v1/leave/{id}?x=1` → `GET /leave/{}` (bỏ tiền tố /api[/vN], query, tên tham số)."""
+    """`GET /api/v1/leave/{id}?x=1` → `GET /leave/{}` (bỏ tiền tố /api[/vN], query, tên tham số).
+    Kind desktop: hợp đồng IPC — `IPC transcribe` → `IPC transcribe` (tên kênh giữ nguyên, phân biệt hoa thường)."""
+    ipc = re.match(r"\s*IPC\s+([\w.:/\-]+)", s, re.I)
+    if ipc:
+        return f"IPC {ipc.group(1)}"
     m = re.match(r"\s*(GET|POST|PUT|PATCH|DELETE)\s+(\S+)", s, re.I)
     if not m:
         return ""
@@ -319,8 +326,11 @@ def _norm_api(s: str) -> str:
 def arch_endpoints() -> set[str]:
     eps = set()
     for p in (ROOT / "docs" / "arch").glob("*.md"):
-        for m in re.finditer(r"\b(GET|POST|PUT|PATCH|DELETE)\s+(/[^\s`|]*)", p.read_text(encoding="utf-8", errors="ignore")):
+        text = p.read_text(encoding="utf-8", errors="ignore")
+        for m in re.finditer(r"\b(GET|POST|PUT|PATCH|DELETE)\s+(/[^\s`|]*)", text):
             eps.add(_norm_api(f"{m.group(1)} {m.group(2)}"))
+        for m in re.finditer(r"\bIPC\s+([\w.:/\-]+)", text):   # kind desktop: arch §3 ghi hợp đồng IPC dạng `IPC <kênh>`
+            eps.add(_norm_api(f"IPC {m.group(1)}"))
     return eps
 
 
@@ -379,17 +389,18 @@ def pending_topup(wave: str) -> list[str]:
 
 
 def tc_rows(text: str) -> list[dict]:
-    """test-cases.md → [{tc, ac, tag, res}] đọc theo TÊN cột (khung TEMPLATE.test-cases.md; cột cũ `kết quả` vẫn đọc được)."""
+    """test-cases.md → [{tc, ac, tag, src, res}] đọc theo TÊN cột (khung TEMPLATE.test-cases.md; cột cũ `kết quả` vẫn đọc được)."""
     lines = [ln.strip() for ln in text.splitlines() if ln.strip().startswith("|")]
     if not lines:
         return []
     head = [c.strip().lower() for c in lines[0].strip("|").split("|")]
     col = lambda name: next((i for i, h in enumerate(head) if h.startswith(name)), None)
-    i_tc, i_ac, i_tag, i_res = col("tc"), col("ac"), col("tag"), col("kết quả")
+    i_tc, i_ac, i_tag, i_res, i_src = col("tc"), col("ac"), col("tag"), col("kết quả"), col("nguồn")
     out = []
     for row in table_rows("\n".join(lines)):
         get = lambda i: row[i].strip() if i is not None and i < len(row) else ""
         out.append({"tc": get(i_tc), "ac": get(i_ac), "tag": get(i_tag).lower(),
+                    "src": get(i_src).upper().replace("`", ""),
                     "res": get(i_res).upper().replace("`", "")})
     return out
 
@@ -424,14 +435,21 @@ def parse_ac_cell(cell: str, expand: bool = True) -> list[tuple[str, str]]:
     return out
 
 
-def regression_ids(wave: int) -> list[str]:
-    """Mã TC gắn @regression trong test-cases.md của mọi wave đã đóng (archive/wave-k, k < wave)."""
-    ids = []
-    for k in range(1, wave):
-        for p in sorted((ROOT / "archive" / f"wave-{k}").glob("tracking/wave-*/test-cases.md")):
-            ids += [x["tc"] for x in tc_rows(p.read_text(encoding="utf-8", errors="ignore"))
-                    if "@regression" in x["tag"] and x["tc"]]
-    return list(dict.fromkeys(ids))
+def archived_tc_ids() -> set[str]:
+    """Mã TC có mặt trong test-cases.md của mọi wave đã đóng (archive/wave-*)."""
+    ids: set[str] = set()
+    for p in (ROOT / "archive").glob("wave-*/tracking/wave-*/test-cases.md"):
+        ids |= {x["tc"] for x in tc_rows(p.read_text(encoding="utf-8", errors="ignore")) if x["tc"]}
+    return ids
+
+
+def impact_block(text: str) -> list[str]:
+    """Các dòng danh sách của đoạn `## Phạm vi ảnh hưởng` trong test-cases.md (hết đoạn ở heading kế tiếp / dòng bảng đầu tiên)."""
+    m = re.search(r"^#{1,4}\s*Phạm vi ảnh hưởng[^\n]*\n(.*?)(?=^#{1,4}\s|^\||\Z)", text, flags=re.M | re.S)
+    if not m:
+        return []
+    body = re.sub(r"<!--.*?-->", "", m.group(1), flags=re.S)
+    return [ln.strip() for ln in body.splitlines() if re.match(r"\s*[-*]\s+\S", ln)]
 
 
 def _wave_ac_cell(wave: str, roadmap: str) -> str:
@@ -484,6 +502,40 @@ def wave_declares_ship(wave: str) -> bool:
     return bool(row) and idx is not None and idx < len(row) and "SHIP" in row[idx].upper()
 
 
+def feat_ac_shortfalls() -> list[str]:
+    """FEAT có ít hơn MIN_AC_PER_FEAT AC (`### AC-n`). FEAT `status: deferred|dropped` không tính."""
+    d = ROOT / "docs" / "feat"
+    out = []
+    for p in sorted(d.glob("FEAT-*.md")) if d.exists() else []:
+        txt = read_live(f"docs/feat/{p.name}")
+        st = re.search(r"^status\s*:\s*(\w+)", txt, flags=re.M)
+        if st and st.group(1).lower() in ("deferred", "dropped"):
+            continue
+        n = len(re.findall(r"^#{2,4}\s*AC-\d+", txt, flags=re.M))
+        if n < MIN_AC_PER_FEAT:
+            out.append(f"{p.stem} ({n} AC)")
+    return out
+
+
+def tracking_extras(wave: str) -> list[str]:
+    """File thừa trong tracking/wave-N/ — luật #9: chỉ test-cases.md · fidelity.md · proof.json (còn lại là artifact tạm, để NGOÀI repo)."""
+    d = ROOT / "tracking" / f"wave-{wave}"
+    if not d.exists():
+        return []
+    ok = {"test-cases.md", "fidelity.md", "proof.json"}
+    return sorted(p.relative_to(d).as_posix() for p in d.rglob("*")
+                  if p.is_file() and p.relative_to(d).as_posix() not in ok)
+
+
+def bc_has_wave(wave: str) -> bool:
+    """BACKWARD-COMPAT §1 (sổ hợp đồng) có ≥1 dòng cột `Wave giao` = wave."""
+    sec = section("docs/BACKWARD-COMPAT.md", "§1")
+    head = next((ln for ln in sec.splitlines() if ln.strip().startswith("|")), "")
+    cols = [c.strip() for c in head.strip().strip("|").split("|")]
+    idx = next((i for i, c in enumerate(cols) if "Wave giao" in c), None)
+    return idx is not None and any(len(row) > idx and re.sub(r"\D", "", row[idx]) == str(wave) for row in table_rows(sec))
+
+
 # ------------------------------------------------------------------ report ---
 
 class Report:
@@ -532,6 +584,10 @@ def gate_document(r: Report) -> None:
     # mọi dòng CAPABILITIES có CAP-
     caps = table_rows(section("docs/CAPABILITIES-MAP.md", "§1"))
     r.check(bool(caps) and all("CAP-" in row[0] for row in caps), "CAPABILITIES: mọi dòng có CAP-")
+    r.check(len(caps) >= MIN_CAPABILITIES, f"CAPABILITIES §1: {len(caps)} capability (tối thiểu {MIN_CAPABILITIES})")
+    thin = feat_ac_shortfalls()
+    r.check(not thin, f"mỗi FEAT ≥{MIN_AC_PER_FEAT} AC (happy · validation · error · a11y)"
+            + (f" — THIẾU: {', '.join(thin[:6])}" if thin else ""))
     # ROADMAP có wave + phases
     waves = roadmap_all_waves()
     r.check(bool(waves), "ROADMAP §1 có ≥1 wave")
@@ -629,11 +685,36 @@ def _check_proof(r: Report, wave: str) -> None:
             r.note(f"target `{name}` ({kind}) — emulator, không proof docker; dựa ô tick STATE")
 
 
+def _check_impact(r: "Report", wave: str, rows: list[dict], text: str) -> None:
+    """Wave ≥ 2: TC cũ chạy lại được CHỌN theo phạm vi ảnh hưởng của wave — không chạy lại cả bộ cộng dồn."""
+    block = impact_block(text)
+    ok_block = bool(block) and not any("{{" in ln for ln in block)
+    r.check(ok_block, "test-cases.md có đoạn `## Phạm vi ảnh hưởng` (thay đổi của wave → cái cũ bị ảnh hưởng → TC chọn)"
+            + ("" if ok_block else " — THIẾU hoặc chưa điền: phân tích phạm vi ảnh hưởng TRƯỚC khi viết TC mới "
+                                  "(specialist-testing §Regression theo phạm vi ảnh hưởng)"))
+    carried = [x for x in rows if x["src"] == "R"]
+    row, idx = roadmap_wave_row(wave), _col_index("Phụ thuộc wave trước")
+    dep = row[idx].strip() if row and idx is not None and idx < len(row) else ""
+    depends = dep not in ("", "—", "-", "–")
+    r.check(bool(carried) or not depends, f"wave {wave} phụ thuộc wave trước → có ≥1 TC cũ chọn chạy lại (nguồn R)"
+            + ("" if (carried or not depends) else " — 0 TC nguồn R: wave dùng thứ đã giao mà không chạy lại TC nào"))
+    known = archived_tc_ids()
+    fake = [x["tc"] for x in carried if x["tc"] not in known]
+    r.check(not fake, "mọi TC nguồn R có mặt trong archive/ (giữ mã gốc)"
+            + (f" — KHÔNG có trong archive: {', '.join(fake[:6])}" if fake else ""))
+    if known:
+        r.note(f"TC cũ chọn chạy lại: {len(carried)} / {len(known)} TC ở archive")
+
+
 def gate_verify(r: Report) -> None:
     wave = state_wave()
     tc = f"tracking/wave-{wave}/test-cases.md"
-    rows = tc_rows(read(tc))   # khung templates/TEMPLATE.test-cases.md — đọc theo TÊN cột
+    txt = read(tc)
+    rows = tc_rows(txt)   # khung templates/TEMPLATE.test-cases.md — đọc theo TÊN cột
     r.check(exists(tc) and bool(rows), f"{tc}: có bảng TC (khung TEMPLATE.test-cases.md)")
+    extra = tracking_extras(wave)
+    r.check(not extra, f"tracking/wave-{wave}/ chỉ có 3 file (luật #9: test-cases.md · fidelity.md · proof.json)"
+            + (f" — THỪA: {', '.join(extra[:5])} (script/ảnh/log là file tạm → để NGOÀI repo, dọn đi)" if extra else ""))
     # không còn TC chưa xong: FAIL · BLOCKED · CHƯA CHẠY · trống (CHƯA CÓ QUY ĐỊNH không tính — không phải bug, đi backlog)
     bad = [f"{x['tc']}:{x['res'] or 'trống'}" for x in rows
            if not x["res"] or x["res"].startswith(("FAIL", "BLOCKED", "CHƯA CHẠY"))]
@@ -647,13 +728,10 @@ def gate_verify(r: Report) -> None:
             + (f" — CHƯA: {', '.join(uncovered[:8])}" if uncovered else "")
             + ("" if acs else " — không đọc được AC in-scope (ROADMAP §1 cột AC in-scope + docs/feat/)"))
     _check_ac_baseline(r, wave)
-    # regression: mọi TC @regression của wave đã đóng phải được chạy lại + PASS ở wave này
+    # regression: TC cũ chạy lại được CHỌN theo phạm vi ảnh hưởng (TC nguồn R không FAIL/BLOCKED/CHƯA CHẠY đã nằm ở kiểm trên;
+    # ĐÃ THAY = TC cũ hết hợp lệ vì AC đổi qua top-up, có TC thay thế — bug-hunter rà đề kiểm TC thay có thật)
     if wave.isdigit() and int(wave) >= 2:
-        cur = {x["tc"]: x["res"] for x in rows}
-        # ĐÃ THAY = TC hết hợp lệ vì AC đổi qua top-up, có TC thay thế (bug-hunter rà đề test kiểm TC thay có thật)
-        miss = [t for t in regression_ids(int(wave)) if not cur.get(t, "").startswith(("PASS", "ĐÃ THAY"))]
-        r.check(not miss, "TC @regression của wave trước đã chạy lại + PASS (hoặc ĐÃ THAY)"
-                + (f" — CHƯA/ĐỎ: {', '.join(miss[:8])}" if miss else ""))
+        _check_impact(r, wave, rows, txt)
     gap = [x["tc"] for x in rows if x["res"].startswith("CHƯA CÓ QUY ĐỊNH")]
     if gap:
         r.note(f"CHƯA CÓ QUY ĐỊNH: {len(gap)} TC ({', '.join(gap[:6])}) — không chặn gate; báo Authority + ROADMAP §backlog")
@@ -663,6 +741,12 @@ def gate_verify(r: Report) -> None:
                   and not re.search(r"fixed.*xác nhận|backlog", row[4], re.I)]
     r.check(not open_major, "§Findings: hết BLOCKER/MAJOR chưa xử (Xử lý = `fixed — <agent> xác nhận` hoặc `backlog`)"
             + (f" — CÒN {len(open_major)}" if open_major else ""))
+    bare = [row for row in table_rows(section("STATE.md", "Findings"))
+            if len(row) >= 5 and re.search(r"BLOCKER|MAJOR", row[2].upper()) and re.search(r"backlog", row[4], re.I)
+            and not re.search(r"nghi thiếu ac|ngoài scope|chưa có quy định", " ".join(row[3:5]), re.I)]
+    if bare:
+        r.note(f"{len(bare)} BLOCKER/MAJOR đẩy `backlog` mà không ghi lý do (nghi thiếu AC · ngoài scope · CHƯA CÓ QUY ĐỊNH) "
+               "— backlog chỉ hợp lệ cho 3 lý do đó, còn lại phải sửa (verify.md Bước 5)")
     if wave_screens(wave):   # có màn UI in-scope → picky phải phủ đủ + khớp (bằng chứng ở fidelity.md)
         absent, off = fidelity_gaps(wave)
         r.check(not absent, f"tracking/wave-{wave}/fidelity.md phủ đủ màn in-scope"
@@ -671,6 +755,10 @@ def gate_verify(r: Report) -> None:
                 + (f" — LỆCH: {', '.join(off)}" if off else ""))
     _check_proof(r, wave)   # vòng sửa đổi code → proof phải chụp lại đúng commit mới nhất
     _state_checkboxes(r, "VERIFY")
+    rounds = [int(n) for n in re.findall(r"\blượt\s*([1-9])\b", section("STATE.md", "Findings"), flags=re.I)]   # "lượt 3", không bắt "lượt 30s"
+    if rounds and max(rounds) >= 3 and not r.ok:
+        r.note(f"§Findings đã ghi tới lượt {max(rounds)} — ngưỡng cắt vòng (verify.md Bước 5): DỪNG, kết luận KHÔNG ĐẠT, "
+               "báo Authority; không sửa thêm lượt")
 
 
 def gate_ship(r: Report) -> None:
@@ -683,6 +771,8 @@ def gate_ship(r: Report) -> None:
     r.check(exists("docs/PRODUCTION-READY.md") and unchecked == 0,
             "PRODUCTION-READY 4 nhóm xanh — kể cả mục (sau deploy)" + (f" — CÒN {unchecked} mục" if unchecked else ""))
     if wave.isdigit() and int(wave) >= 2:
+        # thiếu sổ KHÔNG được tính là xanh: section() trả rỗng thì bc3 = 0 (deploy không đảo ngược mà chưa có hợp đồng nào)
+        r.check(exists("docs/BACKWARD-COMPAT.md"), "docs/BACKWARD-COMPAT.md tồn tại (sổ hợp đồng — wave ≥2 bắt buộc trước khi deploy)")
         bc3 = len(re.findall(r"^- \[ \]", section("docs/BACKWARD-COMPAT.md", "§3"), flags=re.MULTILINE))
         r.check(bc3 == 0, "BACKWARD-COMPAT §3 xanh (guard_bc)")
     _state_checkboxes(r, "SHIP")   # deploy/smoke/rollback tick tay — gate soi như BUILD/VERIFY
@@ -701,6 +791,9 @@ def gate_next_wave(r: Report) -> None:
         _check_reviewed(r, wave)
     else:
         r.note(f"ROADMAP không còn wave {wave} → hết wave: teardown `docker compose down --volumes`, báo dự án xong")
+    if prev and not bc_has_wave(prev):
+        r.note(f"BACKWARD-COMPAT §1 chưa có dòng nào của wave {prev} — ghi bề mặt đã giao (API · bảng · event) của wave vừa đóng "
+               "(next-wave.md Bước 1); wave không giao bề mặt mới thì bỏ qua")
 
 
 # --------------------------------------------------------------- helpers -----

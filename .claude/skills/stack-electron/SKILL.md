@@ -54,6 +54,7 @@ doctor  : env -u ELECTRON_RUN_AS_NODE "out/<App>-win32-x64/<App>.exe" --smoke   
 | Việc nặng chạy trên main process | Cửa sổ treo, người dùng tắt ngang làm hỏng dữ liệu | Tiến trình con / `utilityProcess` + tiến độ |
 | Bản phát hành để fuse `RunAsNode` bật / mở cổng gỡ lỗi | Phần mềm khác trên máy điều khiển được app | Fuse tắt; cổng gỡ lỗi chỉ ở dogfood |
 | Log chứa key / nội dung người dùng | Lộ khi người dùng gửi file log | Che key/PII trước khi ghi |
+| `dialog.showMessageBox` / `showErrorBox` cho xác nhận hoặc cảnh báo thường | Hộp của hệ điều hành: công cụ tự động (CDP) không điều khiển được → đứng im; a11y kém | Hộp trong renderer (modal của ui-kit); `dialog.showOpenDialog` chọn file phải có đường thay thế: kéo-thả hoặc ô nhập đường dẫn |
 
 ## §done
 typecheck/lint/package/test pass, coverage ≥60%; `make doctor` (bản đóng gói `--smoke`) exit 0; mặc định an toàn giữ nguyên; IPC khớp `arch §3`; không business logic quan trọng ở renderer; file chỉ trong `services/desktop/{name}/`.

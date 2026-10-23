@@ -6,7 +6,7 @@ description: "Vai SA — /document Bước 6, chạy giữa boundary-charter và
 # System Design (Bước 6 — giữa chia ranh giới và thiết kế contract)
 
 > **Vai: SA** · **Viết**: `docs/arch/OVERVIEW.md §5 System design` (5.1–5.9) · ADR cho quyết định lớn (`docs/adr/`)
-> **KHÔNG viết**: PRD §3 NFR (PO — thiếu số thì hỏi Authority, PO ghi vào PRD §3, SA không tự bịa số) · contract chi tiết `arch/{name}.md` §1–§6 (`technical-design`) · FEAT / bảng luồng (PO · BA)
+> **KHÔNG viết**: PRD §3 NFR (PO — thiếu số thì PO đề xuất, Authority chọn, PO ghi vào PRD §3, SA không tự bịa số) · contract chi tiết `arch/{name}.md` §1–§6 (`technical-design`) · FEAT / bảng luồng (PO · BA)
 
 ## Khi dùng
 Bước 6 của `/document`, **sau** `boundary-charter` (đã có danh sách service + dữ liệu mỗi service sở hữu ở OVERVIEW §1) và **trước** `technical-design`. DDD (event-storming → boundary) trả lời *chia thành mấy phần, phần nào sở hữu dữ liệu nào*; skill này trả lời *mỗi phần chạy trên hạ tầng nào, chịu tải ra sao, hỏng thì thế nào, bảo vệ dữ liệu gì*. `technical-design` đọc §5 để ghi xuống contract (phân trang, cache, outbox, mã hoá cột, lock job…).
@@ -30,7 +30,7 @@ Vì sao bắt buộc: thiếu lớp này thì code đúng nghiệp vụ nhưng g
 KHÔNG thiết kế thừa: không thêm Kafka/Redis/replica khi 5.2 không đòi. Mỗi thành phần hạ tầng phải trỏ được về một con số ở 5.1/5.2.
 
 ## Phương pháp — ghi vào `OVERVIEW §5`, đúng thứ tự
-1. **5.1 NFR → quyết định**: mỗi NFR ở PRD §3 viết thành kịch bản đo được (*"500 người chấm công lúc 8h, p95 < 500ms"*) + quyết định thiết kế nó kéo theo. NFR không kéo theo quyết định nào → ghi "không đổi thiết kế". PRD §3 thiếu số → hỏi Authority (đang DOCUMENT), PO ghi vào PRD §3.
+1. **5.1 NFR → quyết định**: mỗi NFR ở PRD §3 viết thành kịch bản đo được (*"500 người chấm công lúc 8h, p95 < 500ms"*) + quyết định thiết kế nó kéo theo. NFR không kéo theo quyết định nào → ghi "không đổi thiết kế". PRD §3 thiếu số → PO đề xuất theo phép thử ở comment §3 của `TEMPLATE.prd.md`, Authority chọn (đang DOCUMENT), PO ghi vào PRD §3.
 2. **5.2 Ước lượng tải** (ghi phép tính, không chỉ kết quả): người dùng × hành vi → req/s đọc/ghi lúc cao điểm · tỉ lệ đọc/ghi · dữ liệu 1–3 năm theo bảng lớn nhất · file. Kết luận mức Nhỏ/Vừa/Lớn.
 3. **5.3 Sơ đồ thành phần** (mermaid, mức container của C4): client → proxy/gateway → service (theo §1) → DB/cache/queue/storage → hệ ngoài. Đánh dấu đường đi của luồng nghiệp vụ chính.
 4. **5.4 Lưu trữ & mở rộng theo nhóm dữ liệu**: owner service · mẫu truy cập (đọc gì nhiều nhất) · kho · lớn tới đâu sau 3 năm · cache (TTL, invalidation) · index/partition · lưu giữ/xoá. Bảng đánh dấu **lớn** → `technical-design` bắt buộc phân trang ở DB + trần size, cấm nạp cả bảng.

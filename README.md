@@ -6,8 +6,8 @@
 ---
 
 ## Ý tưởng cốt lõi
-- **MAIN viết toàn bộ code sản phẩm.** Agent chỉ để **verification** (review + dogfood), không dev-agent.
-- **1 lớp `docs/`** — nguồn sự thật duy nhất, không dịch 2 lớp business↔eng.
+- **MAIN viết toàn bộ code sản phẩm.** Agent chỉ để **verification** (review + dogfood).
+- **1 lớp `docs/`** — nguồn sự thật duy nhất.
 - **Gate mỗi chốt** (`scripts/gate.py`) chỉ **BÁO thiếu gì**, không chặn; hook (`guard_*`) mới chặn cứng.
 - **Loop engineering**: plan toàn dự án ở DOCUMENT → mỗi wave rà lại kế hoạch đối chiếu kết quả wave trước.
 
@@ -30,12 +30,14 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE          (SHIP opt-in th
 - **intake** — tài liệu phân tích sẵn thả vào `intake/` → `/document` dịch (marker `NGUỒN: INTAKE`).
 
 ## Yêu cầu máy
-`make` (GNU make) + shell POSIX `sh` · Docker · Python 3. Lệnh `make` gọi 6 lệnh của từng target, thân lệnh viết cho `sh`.
+`make` (GNU make) + shell POSIX `sh` · Docker · Python 3 (PyYAML chỉ cần cho `selftest`: `pip install pyyaml`). Lệnh `make` gọi 6 lệnh của từng target, thân lệnh viết cho `sh`.
 | Hệ điều hành | Cài |
 |---|---|
 | Windows | Git for Windows (Git Bash có `sh`, `find`) + `winget install ezwinports.make` (hoặc `choco install make` / `scoop install make`). **Chạy `make` trong Git Bash**, không từ PowerShell/cmd. Đường dẫn user có dấu cách (vd `C:\Users\Nguyen Van A`) vẫn chạy được: Makefile gốc đã bọc `"$(MAKE)"`; Makefile per-target cũng phải bọc ngoặc kép mọi đường dẫn. Đặt `git config core.autocrlf input` để script `gradlew`/`mvnw`/Makefile không bị đổi sang CRLF. |
 | macOS | `xcode-select --install` (nếu chưa có `make`) |
 | Linux | `sudo apt install make` (hoặc `build-essential`) |
+
+**Lệnh Python:** tài liệu viết `python`, hook trong `.claude/settings.json` gọi `py -3` (Windows), Makefile dùng `python3`. Máy thiếu cái nào thì ghi đè mà không sửa file: `make gate PYTHON="py -3"`; trên Mac/Linux đổi `command` của hook về `python3`.
 
 `python scripts/selftest.py` cảnh báo nếu thiếu công cụ. Ở BUILD, MAIN tự cài `make`/`sh` theo bảng trên khi thiếu (`/build` Bước 3).
 
@@ -63,6 +65,7 @@ Wave chia theo `feat_cap_per_wave` (~3-4 FEAT/wave) — xem `docs/ROADMAP.md §1
 | `services/{boundaries\|web\|bff\|mobile\|desktop}/{name}/` | code sản phẩm (MAIN scaffold; chia nhóm theo `kind`) |
 | `.claude/commands/` · `agents/` · `skills/` | 7 lệnh · 10 agent (pre-mortem + verify + dogfood) · thư viện skill (stack/ref/review/method) |
 | `scripts/` | `gate.py` (báo) · `capture_proof.py` (proof máy-sinh) · hooks (`guard_*`/`reanchor`) · `bootstrap`/`next_wave`/`compact`/`selftest` |
+| `intake/` · `deployment/` · `archive/` · `tracking/` · `Makefile` · `.mcp.json` | khay tài liệu intake · docker-compose local · snapshot wave đã đóng · bằng chứng wave đang chạy (3 file) · hợp đồng 6 lệnh make · slot trình duyệt cho dogfood |
 
 ## Đọc gì khi cần
 - **Đang ở đâu / thiếu gì** → `/status` · `STATE.md`

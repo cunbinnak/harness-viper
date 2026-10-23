@@ -32,29 +32,9 @@ services/web/{name}/
 └── package.json
 ```
 
-## 1b. Biến thể Next.js App Router (khi ADR chọn Next)
+## 1b. Next.js
 
-```
-services/web/{name}/src/
-├── app/                          # ROUTE = thư mục; mỗi màn ~ 1 Mã màn trong docs/ux/SCREEN-MAP.md
-│   ├── layout.tsx · providers.tsx · error.tsx · not-found.tsx
-│   ├── (auth)/login/page.tsx     # route group theo vùng — không ăn vào URL
-│   ├── (app)/                    # vùng đã đăng nhập: layout.tsx chứa app shell (khớp _shell.html)
-│   │   └── {resource}/
-│   │       ├── page.tsx          # Server Component: lấy data lần đầu, KHÔNG business logic
-│   │       ├── loading.tsx       # BẮT BUỘC cho route có data (trạng thái tải)
-│   │       ├── error.tsx         # lỗi theo route (khuôn lỗi)
-│   │       ├── {Resource}Client.tsx   # 'use client' — tương tác, gọi hooks/
-│   │       └── actions.ts        # 'use server' — Server Action: CHỈ gọi api/, không business logic, trả kết quả có kiểu
-│   └── api/                      # Route Handler — chỉ cho BFF mỏng/auth callback; KHÔNG thay backend
-├── components/{ui,layout,domain}/  # như §1 — KHÔNG import api/ hay app/**/actions trực tiếp
-├── hooks/                        # React Query hooks (client) — query key từ constants/
-├── api/                          # api-client + {resource}-service (§2) — dùng chung server & client
-├── constants/ · types/ · lib/ · styles/
-```
-- Server Component đọc qua `api/` (chạy server, token từ cookie httpOnly); Client Component đọc qua `hooks/` → `api/`. Không `fetch` rải rác.
-- Thư mục `components/ui` · `components/domain` · `hooks` rỗng = scaffold mồ côi → xoá hoặc dùng.
-- Review soi cây theo biến thể này khi `app/` tồn tại (review-web 6.0).
+Web là SPA tĩnh: build ra `dist/` rồi nginx phục vụ (PROTOCOL §4). Nếu ADR chọn Next thì chỉ dùng chế độ xuất tĩnh (`output: 'export'`) và giữ cây thư mục ở §1. Không dùng `app/` với Server Component, Server Action hay Route Handler: nginx không chạy được chúng (xem `stack-nextjs` §2).
 
 ## 2. Data layer — REST default | BFF optional
 - **REST (default)**: `api/api-client.ts` (Axios/fetch wrapper + auth interceptor) + `api/{resource}-service.ts` gọi contract `docs/arch/{backend}.md §3 API`. `types/` viết tay khớp DTO.

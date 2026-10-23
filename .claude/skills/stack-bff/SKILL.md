@@ -38,6 +38,7 @@ check   : npm run build && npm run typecheck && npm run lint && npm test   # + s
 schema  : npm run schema:check    # script BẮT BUỘC (review §3 chạy): in SDL từ code-first + diff với bản đã giao (vd graphql-inspector) — chỉ được thêm
 test    : npm test                                             # vitest
 ```
+Ba lệnh còn lại của hợp đồng 6 lệnh cũng phải có thân: `migrate` (BFF không có DB: in một dòng rồi thoát 0), `deploy` (chỉ chạy qua `/ship`) và `doctor` (curl health của container).
 
 ## §review  (reviewer/bug-hunter soi TỪNG DÒNG — forbidden patterns BFF GraphQL)
 | Cấm | Hậu quả thật | Thay bằng |

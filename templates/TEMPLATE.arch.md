@@ -23,7 +23,8 @@ provides_api: true               # có phơi API cho consumer? → §3 là HỢP
 ## §2 Luồng xử lý (kỹ thuật)
 {{luồng}}
 
-<!-- §3: API = CONTRACT consumer đọc. Theo docs/CONVENTIONS.md §API (error envelope · status · header X-Tenant-ID · versioning). -->
+<!-- §3: API = CONTRACT consumer đọc. Theo docs/CONVENTIONS.md §API (error envelope · status · header X-Tenant-ID · versioning).
+     Kind desktop: ghi hợp đồng IPC, mỗi kênh một dòng ở cột Method + Path dạng `IPC <tên-kênh>` (vd `IPC transcribe`); gate đối chiếu với `data-api` trên mockup. -->
 ## §3 API (contract)
 | Method + Path | Request | Response | Ghi chú |
 |---|---|---|---|

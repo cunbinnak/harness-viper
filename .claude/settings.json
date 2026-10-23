@@ -27,7 +27,14 @@
       "Bash(render:*)",
       "Bash(docker compose down --volumes:*)",
       "Bash(docker compose down -v:*)",
-      "Bash(docker volume rm:*)"
+      "Bash(docker volume rm:*)",
+      "Bash(docker volume prune:*)",
+      "Bash(docker system prune:*)",
+      "Bash(docker push:*)",
+      "Bash(kubectl:*)",
+      "Bash(terraform:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)"
     ],
     "deny": [
       "Read(.env)",
@@ -52,7 +59,11 @@
     ]
   },
   "enableAllProjectMcpServers": true,
-  "$comment_hooks": "10 hook ở 5 điểm móc (gọi thẳng, không dispatcher). (1) SessionStart 'compact': reanchor.py nhồi lại PROTOCOL §2 + STATE sau compact. (2) PreToolUse 'AskUserQuestion': guard_ask.py — AskUserQuestion chỉ ở DOCUMENT; Scope khoá ✓ hoặc phase≠DOCUMENT → exit 2. (3) PreToolUse 'Bash': guard_bc.py — mọi 'make … deploy' → buộc hỏi Authority (permissionDecision ask); PRODUCTION-READY (trừ mục sau deploy) hoặc BACKWARD-COMPAT §3 (wave ≥2) chưa xanh thì exit 2. (4) PreToolUse 'Write|Edit|MultiEdit' (5 guard): guard_ds (mockup/DESIGN-SYSTEM cấm hex thô ngoài :root) · guard_archive (cấm sửa archive/**) · guard_proof (cấm sửa *proof.json) · guard_makefile (cấm sửa ROOT Makefile — điền per-target) · guard_doc (cấm sửa doc SPEC đã khoá ngoài phase DOCUMENT — dồn ROADMAP §backlog). (5) PostToolUse 'Write|Edit|MultiEdit': guard_shell — mockup có app shell lệch _shell.html canonical (nav/logo/user-menu/icon) → cảnh báo model (exit 2, file vẫn ghi; đọc trọn file trên đĩa) · trace_docsync — sửa spec doc (feat/arch/ux/PRD/PERSONAS/CAPABILITIES/INTERVIEW/DESIGN-SYSTEM) ở pha DOCUMENT (kể cả top-up) → nhắc CASCADE propagate + re-run trace 6 chiều + UI↔AC (chống point-edit lệch doc) + tự bỏ tick PRE-LOCK/Scope khoá đã cũ; exit 2 đưa nhắc lại model, KHÔNG undo. gate.py KHÔNG hook (chỉ báo).",
+  "$comment_env": "MCP: ngắt lệnh browser_* nếu im lặng quá 10 phút (mặc định của stdio là 30 phút). Đơn vị mili-giây. Ca thật: persona treo 70 phút vì hộp thoại gốc của app.",
+  "env": {
+    "CLAUDE_CODE_MCP_TOOL_IDLE_TIMEOUT": "600000"
+  },
+  "$comment_hooks": "12 hook ở 6 điểm móc (gọi thẳng, không dispatcher). (1) SessionStart 'compact': reanchor.py nhồi lại PROTOCOL §2 + STATE sau compact. (2) PreToolUse 'AskUserQuestion': guard_ask.py — AskUserQuestion chỉ ở DOCUMENT; Scope khoá ✓ hoặc phase≠DOCUMENT → exit 2. (3) PreToolUse 'Bash': guard_bc.py — mọi 'make … deploy' → buộc hỏi Authority (permissionDecision ask); PRODUCTION-READY (trừ mục sau deploy) hoặc BACKWARD-COMPAT §3 (wave ≥2) chưa xanh (hoặc thiếu file) thì exit 2; chỉ canh lệnh GỌI chương trình thật, không canh chữ nằm trong chuỗi hay commit message. (3b) PreToolUse 'Agent|Task': guard_agent.py — pha BUILD cấm mọi spawn; mọi pha đòi truyền run_in_background:false. (4) PreToolUse 'Write|Edit|MultiEdit' (6 guard): guard_ds (mockup/DESIGN-SYSTEM cấm hex thô ngoài :root) · guard_archive (cấm sửa archive/**) · guard_proof (cấm sửa *proof.json) · guard_makefile (cấm sửa ROOT Makefile — điền per-target) · guard_doc (cấm sửa doc SPEC đã khoá ngoài phase DOCUMENT — dồn ROADMAP §backlog) · guard_qa (agent_type=test-writer chỉ được ghi tracking/wave-N/test-cases.md trong repo). (5) PostToolUse 'Write|Edit|MultiEdit': guard_shell — mockup có app shell lệch _shell.html canonical (nav/logo/user-menu/icon) → cảnh báo model (exit 2, file vẫn ghi; đọc trọn file trên đĩa) · trace_docsync — sửa spec doc (feat/arch/ux/PRD/PERSONAS/CAPABILITIES/INTERVIEW/DESIGN-SYSTEM) ở pha DOCUMENT (kể cả top-up) → nhắc CASCADE propagate + re-run trace 6 chiều + UI↔AC (chống point-edit lệch doc) + tự bỏ tick PRE-LOCK/Scope khoá đã cũ; exit 2 đưa nhắc lại model, KHÔNG undo. gate.py KHÔNG hook (chỉ báo).",
   "hooks": {
     "SessionStart": [
       {
@@ -76,13 +87,20 @@
         ]
       },
       {
+        "matcher": "Agent|Task",
+        "hooks": [
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_agent.py"] }
+        ]
+      },
+      {
         "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_ds.py"] },
           { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_archive.py"] },
           { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_proof.py"] },
           { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_makefile.py"] },
-          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_doc.py"] }
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_doc.py"] },
+          { "type": "command", "command": "py", "args": ["-3", "${CLAUDE_PROJECT_DIR}/scripts/hooks/guard_qa.py"] }
         ]
       }
     ],

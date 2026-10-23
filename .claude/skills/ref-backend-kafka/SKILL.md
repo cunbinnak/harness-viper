@@ -6,7 +6,7 @@ description: Pattern Kafka cho backend — config đầy đủ (producer idempot
 > Situational ref cho stack-spring-boot — load khi boundary dùng Kafka.
 # Reference: Backend Kafka (event producer + consumer)
 
-> **Load khi:** BUILD backend target phát/nhận Kafka event (stack-spring-boot §situational trỏ tới).
+> **Load khi:** BUILD backend target phát/nhận Kafka event (`build.md` Bước 3 nêu khi nào nạp).
 > **Quan hệ:** convention bắt buộc → `stack-spring-boot`; contract event → `docs/arch/{name}.md §5`; config nâng cao → `ref-backend-config`.
 > **Nguyên tắc:** publish **sau commit DB**; consumer **idempotent**; payload là **DTO/record tường minh** (không raw `Map`); topic/group/retry từ **config**.
 

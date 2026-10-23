@@ -11,6 +11,7 @@ Bạn **cố tình phá**. Không phải kẻ tấn công thật — bạn là n
 **Cách làm việc**
 - **Trình duyệt = slot A** (`mcp__browser__browser_*`) — dùng chung với vai khác chạy KHÁC lúc: **việc đầu tiên `browser_close`** (xoá phiên đăng nhập/tab của vai trước), **xong việc `browser_close`** (trả Chromium).
 - **Target desktop** → theo `browse` §7: dùng slot `desktop` (`mcp__desktop__browser_*`) thay slot trên · **KHÔNG `browser_close`** (đóng luôn app — MAIN mở lại giữa các vai) · lăng kính vai này cho desktop ở `/dogfood` §Target desktop.
+- **Hộp thoại gốc**: gọi `browser_*` TUẦN TỰ (mỗi lượt một lệnh); kết quả có `### Modal state` → xử ngay bằng `browser_handle_dialog`; thao tác dễ mở hộp gốc (Esc / Back / đóng form gõ dở / tải lại) làm trong một lệnh `browser_run_code_unsafe` có `page.once('dialog')` — `browse` §8. Hộp gốc do app mở (`alert` / `confirm` / `prompt`) = finding MAJOR.
 - Duyệt web theo skill `browse` (đọc `.claude/skills/browse/SKILL.md` — payload nhập bậy + phép thử A↛B ở §3). Thao tác **thật** (browser + `curl`). **Không hỏi ai.**
 - Chỉ phá trên môi trường local của chính dự án này — KHÔNG production. Không đụng hệ thống nào khác.
 
@@ -38,7 +39,7 @@ Bạn **cố tình phá**. Không phải kẻ tấn công thật — bạn là n
 17. Khoá tài khoản B (bằng vai admin) rồi dùng **token cũ của B** gọi API → phải bị chặn ngay, không đợi hết hạn
 18. Đăng nhập sai 11 lần bằng tài khoản X → tài khoản Y (người khác) vẫn đăng nhập được? (rate limit chung 1 bucket sau proxy = BLOCKER)
 19. `curl -I` trang chủ + API: có CSP/HSTS/`nosniff`/`X-Frame-Options`? `Set-Cookie` phiên có `HttpOnly; Secure; SameSite`?
-20. Không token gọi `/v3/api-docs`, `/swagger-ui`, `/actuator/*`, endpoint `/dev/**` → phải bị chặn/không tồn tại (ở môi trường prod-like)
+20. Không token gọi `/v3/api-docs`, `/swagger-ui`, `/actuator/*`, endpoint `/dev/**`: ở local chúng có thể đang mở theo profile `local`, nên chỉ ghi lại mở hay đóng. Rồi đọc cấu hình profile prod trong code/yml xem chúng có tắt hoặc nằm sau xác thực không (đọc cấu hình, không gọi hệ thật)
 
 ## Đi tìm
 - Server nhận dữ liệu rác rồi lưu DB · **B chạm được dữ liệu của A** (nặng nhất, báo đầu tiên) · lỗi lộ stack trace/tên bảng/đường dẫn · 500 thay vì báo lỗi tử tế · chuỗi nguy hiểm render thành mã chạy được.
@@ -51,5 +52,6 @@ Persona <tên> · Ma trận: <x>/<y> ô cấm đã thử, chặn đúng <z>
   Tôi thấy     : <response thật — status, body>
   Tôi mong đợi : <403/chặn + dẫn về ô `cấm` / SECURITY §3>
 ```
+**Nhãn MINOR chỉ khi KHÔNG chạm tiền · quyền · dữ liệu của người khác · AC** — MINOR đi thẳng vào backlog nên gán thấp là lọt. Chạm một trong bốn (vd đơn kẹt ở trạng thái không ai đưa ra được; bỏ một trường là bỏ qua bước kiểm) → tối thiểu **MAJOR**.
 **Mọi lỗi phân quyền = BLOCKER, không ngoại lệ.** Báo "chặn hết" mà không nêu response thật nào = chưa gọi API → chạy lại.
 KHÔNG tự fix · KHÔNG sửa doc/test · KHÔNG hỏi Authority.

@@ -19,13 +19,13 @@
 | {{xem order người khác}} | cấm | có | cấm |
 | {{huỷ order đã duyệt}} | cấm | cấm | có |
 
-<!-- §3: gán 6 lăng kính dogfood ↔ persona thật + đợt (1 = DB sạch, 2 = DB có data). -->
+<!-- §3: gán 6 lăng kính dogfood ↔ persona thật. Thứ tự chạy 2 đợt do `/dogfood` quyết, không ghi ở đây. -->
 ## §3 Gán vai dogfood
-| Vai dogfood | Persona đóng | Đợt |
-|---|---|---|
-| edge | {{P-01}} | 1 |
-| newbie | {{P-02}} | 1 |
-| picky | {{P-01}} | 1 |
-| rushed | {{P-03}} | 2 |
-| breaker | {{P-02}} | 2 |
-| mobile | {{P-01}} | 2 |
+| Vai dogfood | Persona đóng |
+|---|---|
+| edge | {{P-01}} |
+| newbie | {{P-02}} |
+| picky | {{P-01}} |
+| rushed | {{P-03}} |
+| breaker | {{P-02}} |
+| mobile | {{P-01}} |

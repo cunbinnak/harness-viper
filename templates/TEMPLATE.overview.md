@@ -20,7 +20,7 @@
 {{PostgreSQL · Redis · Kafka · …}}
 
 <!-- §4: event-storming ghi vào đây — mỗi domain SA đã chốt (gợi ý ở CAPABILITIES §2) một khối con `### <domain>`.
-     Làm từng domain một; events ≥ vài cái (past-tense, chronological) · commands+actor · aggregates · hot-spots · external. -->
+     Làm từng domain một; ≥10 event (past-tense, theo thời gian) · commands+actor · aggregates · hot-spots · external. -->
 ## §4 Event Storming
 ### {{order}}
 - **Events** (past-tense, theo thời gian): {{OrderPlaced}} · {{OrderPaid}} · {{OrderShipped}} · {{OrderCancelled}} · …

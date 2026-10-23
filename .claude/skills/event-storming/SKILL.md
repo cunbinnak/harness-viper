@@ -9,12 +9,12 @@ description: Phương pháp event-storming cho /document — vai SA — đọc c
 > **KHÔNG viết**: bảng luồng / actor (BA — event không map được dòng bảng nào thì báo BA, không tự thêm actor)
 
 ## Khi load
-Phương pháp **event-storming** cho `/document` (Architecture + Business). Facilitate event storming cho **MỘT domain mỗi lần**. `docs/CAPABILITIES-MAP.md §2` chỉ là **gợi ý** của PO — **SA chốt danh sách domain** ở đây: gộp/tách/thêm theo event và dữ liệu thật, domain lệch gợi ý thì ghi 1 dòng lý do đầu khối `### <domain>`. Interactive — dùng AskUserQuestion nhiều.
+Phương pháp **event-storming** cho `/document` (Architecture + Business). Facilitate event storming cho **MỘT domain mỗi lần**. `docs/CAPABILITIES-MAP.md §2` chỉ là **gợi ý** của PO — **SA chốt danh sách domain** ở đây: gộp/tách/thêm theo event và dữ liệu thật, domain lệch gợi ý thì ghi 1 dòng lý do đầu khối `### <domain>`. Interactive — hỏi Authority bằng AskUserQuestion (≤5 lượt cho mỗi domain).
 
 Input: `docs/CAPABILITIES-MAP.md §2` (candidate domains — gợi ý) + **bảng luồng `docs/INTERVIEW.md §Luồng nghiệp vụ đã xác nhận`** (actor + bước đã ký — không hỏi lại "ai issue").
 
 ## Deliverable
-Ghi vào `docs/arch/OVERVIEW.md §4 Event Storming` — **mỗi domain SA đã chốt một khối con** `### <domain>`. (Nếu domain phức tạp và tách file riêng thuận tiện hơn thì đặt tại `docs/arch/{domain}.md`; mặc định gom vào OVERVIEW §4.)
+Ghi vào `docs/arch/OVERVIEW.md §4 Event Storming` — **mỗi domain SA đã chốt một khối con** `### <domain>`. (Luôn gom vào OVERVIEW §4. KHÔNG tách ra `docs/arch/{domain}.md`: thư mục `docs/arch/` chỉ dành cho file của từng target, gate và BUILD coi mỗi file ở đó là một target.)
 
 Mỗi khối con `### <domain>`:
 - **Events**: **≥10 event** (numbered/list, past-tense, chronological).
@@ -22,7 +22,7 @@ Mỗi khối con `### <domain>`:
 - **Aggregates** (≥1, state machine proto).
 - **External systems** (≥1).
 - **Hot-spots** (unresolved — output giá trị nhất).
-- **Open questions** cho Architecture Authority (hand-off sang phương pháp boundary-charter).
+- **Open questions** cho Authority (hand-off sang phương pháp boundary-charter).
 
 ## Phương pháp (4 phase)
 1. **Events (past tense)**: "Sự kiện gì xảy ra trong domain? (OrderPlaced, RefundIssued...)". Thu 10-30, đừng over-constrain sớm.

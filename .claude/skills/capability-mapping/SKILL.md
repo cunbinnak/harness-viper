@@ -30,7 +30,7 @@ Lỗ hổng → phân loại theo bảng chỗ chưa rõ PROTOCOL §2.3 (lựa c
 2. **Capability**: mỗi persona "làm được gì?" (verb-noun: 'pay invoice', 'view order'). Tách capability rộng ("manage orders") thành atomic ("place order", "track order", "cancel order").
 3. **Outcome + priority**: mỗi capability → outcome + vì sao persona muốn + gắn **MVP / Phase 2 / Phase N** (feed wave-sequencing khi chia wave). Gắn nhãn bằng **suy luận ra đề xuất** (PROTOCOL §2.3) với 4 phép thử thứ tự của `discovery-hypothesis` (phụ thuộc dữ liệu · tần suất đau · rủi ro pháp lý · độ khó) → Authority chọn ở playback.
 4. **Candidate domain** (§2, gợi ý): capability chia sẻ core entity → 1 domain (group theo data/event similarity, KHÔNG theo tech). Chỉ là điểm xuất phát — SA gộp/tách/thêm ở `event-storming`.
-5. **Anti-capability**: nêu rõ cái NOT supported.
+5. **Anti-capability**: nêu rõ cái KHÔNG hỗ trợ — ghi ở `PRD §4 Out-of-scope` (PO sở hữu), không cần thêm mục nào trong CAPABILITIES-MAP.
 
 ## Capability-map là bảng SỐNG, không chết sau khi map
 
@@ -60,7 +60,7 @@ không lặp lại ở đây; chỉ chỉ ra capability nào chưa dẫn đượ
 - [ ] Mỗi capability truy về ≥1 persona có trong `docs/PERSONAS.md`.
 - [ ] ≥1 candidate domain (§2) đặt tên rõ để event-storming dùng.
 - [ ] Mỗi capability gắn MVP/Phase priority.
-- [ ] Anti-capability listed.
+- [ ] Anti-capability có trong `PRD §4 Out-of-scope`.
 
 ## Done
 - `docs/CAPABILITIES-MAP.md` §1 + §2 đầy đủ; đã playback; user confirm → tiếp Bước 5 `domain-po` (cắt capability §1 thành khung FEAT) rồi `domain-ba` D (viết AC); §2 Candidate domains để dành cho `event-storming` ở Bước 6.

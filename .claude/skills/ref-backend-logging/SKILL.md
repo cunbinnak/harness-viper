@@ -6,7 +6,7 @@ description: Pattern logging backend — config (JSON structured + level theo pr
 > Situational ref cho stack-spring-boot — load khi boundary cần chuẩn hóa logging.
 # Reference: Backend Logging
 
-> **Load khi:** BUILD backend target setup/chuẩn hóa logging (stack-spring-boot §situational trỏ tới).
+> **Load khi:** BUILD backend target setup/chuẩn hóa logging (`build.md` Bước 3 nêu khi nào nạp).
 > **Quan hệ:** convention bắt buộc → `stack-spring-boot` (§Logging & security); observability/tracing nâng cao → `ref-backend-config`.
 > **Nguyên tắc:** structured log (JSON) ở môi trường thật; correlation qua MDC (`traceId`); KHÔNG log dữ liệu nhạy cảm; log exception 1 chỗ với context.
 

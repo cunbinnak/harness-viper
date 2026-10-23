@@ -26,8 +26,8 @@ Chỉ đọc. Không hỏi user.
 
 Code ở `services/desktop/{name}/`.
 
-- **Vòng 1** — chưa có finding cho target này ở `STATE.md §Findings` → soi **cả target**.
-- **Re-review** — đã review vòng trước → soi `git diff --stat <mốc>..HEAD` rồi `git diff <mốc>..HEAD`, và với **mỗi**
+- **Vòng 1** (lượt review đầu tiên của wave): wave 1 soi **cả target**; wave ≥2 chỉ soi phần code đổi từ lúc đóng wave trước (mốc: `git log -1 --format=%H -- archive/wave-<N-1>`, rồi `git diff --stat <mốc>..HEAD` trong thư mục target ở trên) cộng chỗ cũ mà phần đổi gọi tới.
+- **Re-review** — đã review vòng trước → soi `git diff --stat <mốc>..HEAD` (`<mốc>` = commit MAIN ghi trong prompt, thường là HEAD của lượt trước) rồi `git diff <mốc>..HEAD`, và với **mỗi**
   finding MAIN báo đã sửa: mở đúng `file:dòng`, lỗi hết thật chưa. Mốc không còn trong git → soi cả target.
 
 ## 3. Chạy máy trước — đỏ là finding luôn
@@ -35,7 +35,7 @@ Code ở `services/desktop/{name}/`.
 ```bash
 npm run typecheck && npm run lint
 npm run test -- --coverage           # ngưỡng desktop 60%
-npm run package && make doctor       # bản đóng gói chạy --smoke, exit 0
+make doctor       # bản đóng gói đã có từ BUILD, chạy --smoke, exit 0. KHÔNG chạy lại npm run package: app đang mở khoá thư mục out/
 ```
 Đỏ → BLOCKER `type=test`. Coverage < 60% → BLOCKER.
 
@@ -75,6 +75,7 @@ thể cho chỗ này), `suggested fix` từ cột `Thay bằng`. Lệnh tìm cho
 grep -rnE "getPath\(['\"](exe|appPath)|process\.cwd\(\)|C:\\\\" src     # ghi cạnh file cài / đường dẫn cứng
 grep -rnE "readFileSync|writeFileSync|execSync" src/main                 # việc chặn main process
 grep -rniE "price|total|discount|eligib" src/renderer                    # nghiệp vụ trong renderer
+grep -rnE "dialog\.(showMessageBox|showErrorBox)|\b(alert|confirm|prompt)\(" src   # hộp gốc / hộp OS chặn công cụ tự động
 ```
 
 ### Trục 4 — IPC và dữ liệu cục bộ
@@ -114,7 +115,7 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
 
 - `[nguồn]`: `[FEAT-X AC-2]` · `[Bảo mật: <nhóm>]` · `[stack-electron Forbidden: <cột Cấm>]` · `[ux <màn>]` · `[DECISIONS <ngày>]`.
 - **BLOCKER** — AC không chạy · lủng bảo mật · mất dữ liệu người dùng · phá surface đã giao.
-  **MAJOR** — nên sửa trước bàn giao. **MINOR** — không chặn. **QUESTION** — chưa chắc.
+  **MAJOR** — nên sửa trước bàn giao. **MINOR** — không chặn. Không chắc thì ghi MINOR kèm "cần kiểm chứng: <cách>".
   Ý thích cá nhân không bao giờ là BLOCKER.
 - Re-review: mở đúng `file:dòng` MAIN báo đã sửa, xác nhận; còn lỗi → báo lại vì sao chưa hết.
 
@@ -124,7 +125,7 @@ Trả finding về cho phiên chính — MAIN ghi vào `STATE.md §Findings`. M�
    không chạy · wave trước gãy. Viết không nổi câu này thì không phải finding.
 2. **Trục sạch thì nói sạch** — ghi thẳng "trục N sạch" trong phần trả về; đừng bịa nhận xét cho có.
 3. **Mở file ra đọc** — `file:dòng` phải là dòng đã đọc thật; không suy từ tên hàm.
-4. **Không chắc → `QUESTION`**, cột `suggested fix` ghi **cách kiểm chứng**.
+4. **Không chắc → ghi MINOR kèm "cần kiểm chứng"**, cột `suggested fix` ghi **cách kiểm chứng**.
 
 ## 7. Kết luận
 

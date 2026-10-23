@@ -49,6 +49,7 @@ check   : ./gradlew clean build            # compile + test + (spotless/checksty
 test    : ./gradlew test
 migrate : ./gradlew flywayMigrate          # hoặc chạy lúc bootRun
 ```
+Hai lệnh còn lại của hợp đồng 6 lệnh cũng phải có thân: `deploy` (chỉ chạy qua `/ship`; chưa tới SHIP thì in lý do rồi thoát lỗi) và `doctor` (curl `/health/ready` của app đang chạy).
 
 ## §5 Config
 - `application.yml` + profile (`local/dev/prod`); env placeholder `${DB_URL}` (đồng bộ TECHSTACK §3 + docker-compose + .env.example).

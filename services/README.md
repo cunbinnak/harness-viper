@@ -12,5 +12,5 @@ Trống lúc bootstrap. MAIN scaffold vào đây ở `/build` (Bước 3) theo s
 | `desktop/{name}/` | app desktop (Windows, Electron) | `stack-electron` |
 
 - Mỗi target có `Makefile` riêng (thân 6 lệnh do stack skill điền); **root `Makefile` dispatch** `make -C services/<nhóm>/<name>`.
-- `services/` **được track** (fork monorepo-ish); build artifact (`node_modules`/`target`/…) trong `.gitignore`.
+- `services/` **được track** trong git; build artifact (`node_modules`/`target`/…) trong `.gitignore`.
 - Hạ tầng dùng chung (db/redis/kafka) ở `deployment/local/docker-compose.yml`.

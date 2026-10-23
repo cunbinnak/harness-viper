@@ -44,6 +44,12 @@ Cùng quy trình (MAIN tự dùng trước · 2 đợt · ghi §Findings), khác
 
 Kiểm **cài đặt** (máy sạch · cập nhật · gỡ) KHÔNG thuộc dogfood — là TC của `test-writer`.
 
+## Target mobile (`kind: mobile`) — chưa tự động
+Khung chưa có công cụ lái emulator Android hoặc iOS: Playwright chỉ lái được trình duyệt và app Electron. Vì vậy với target mobile:
+- Hệ đang chạy là app trên emulator do MAIN mở. 6 persona KHÔNG chạy, vì tất cả đều dùng Playwright.
+- MAIN đóng persona chính, tự dùng tay đi hết luồng nghiệp vụ của wave trên emulator, rồi ghi bằng chứng ba phần (đã làm gì · thấy gì · mong đợi gì) vào `§Findings`.
+- Gate mobile vẫn tick tay. Muốn dogfood tự động cho mobile thì phải thêm công cụ (Flutter web + Playwright, hoặc Appium / `flutter drive`). Đó là việc của một wave riêng, không làm ngầm.
+
 ## Vì sao 2 đợt (KHÔNG phải dàn tải)
 Các vai dùng chung **1 hệ + 1 DB**: `breaker` đổ dữ liệu bậy, `rushed` tạo bản ghi trùng NGAY giữa lúc `newbie` nhìn màn →
 người này thấy cảnh người kia. Nặng nhất: **trạng thái rỗng (thứ `edge` coi trọng nhất) chết ngay khi vai nào tạo bản ghi đầu**.

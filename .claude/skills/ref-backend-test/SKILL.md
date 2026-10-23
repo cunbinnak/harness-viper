@@ -6,7 +6,7 @@ description: Pattern test cho MAIN viết ở BUILD — backend Java/Spring (uni
 # Reference: Backend Test (MAIN viết ở BUILD)
 
 > Đây là **lưới an toàn của người làm** — chạy bằng `make test`, không thay được TC nghiệm thu của `test-writer` (`test-writer.md` — ba tầng bằng chứng). Viết CÙNG LÚC code (`/build` Bước 5), không dồn cuối.
-> Config dependency + JaCoCo: `ref-backend-config §11`. ArchUnit: `ref-backend-pattern §7.5`. Forbidden: `stack-spring-boot §review`.
+> Config dependency + JaCoCo: `ref-backend-config §9`. ArchUnit: `ref-backend-pattern §7.5`. Forbidden: `stack-spring-boot §review`.
 
 ## 1. Tầng test + đặt ở đâu
 | Tầng | Thư mục (`src/test/java/.../{name}/`) | Chạy gì | Không làm |
@@ -35,7 +35,7 @@ class ClockConfig {
 }
 ```
 - Unit test: `Clock.fixed(Instant.parse("2026-10-15T10:00:01Z"), ZoneId.of("Asia/Ho_Chi_Minh"))` (= 17:00:01 giờ VN) → test đủ 3 điểm biên.
-- **QC test được hạn chót trên hệ thật**: `application-local.yml` đọc `app.clock.fixed: ${APP_CLOCK_FIXED:}` → `test-writer` đặt env `APP_CLOCK_FIXED=2026-10-15T17:00:01+07:00`, restart container, chạy TC. Property này **chỉ khai ở profile local** — profile prod không có (không endpoint đổi giờ, SECURITY §4).
+- **QC test được hạn chót trên hệ thật**: `application-local.yml` đọc `app.clock.fixed: ${APP_CLOCK_FIXED:}` → `test-writer` đặt env `APP_CLOCK_FIXED=2026-10-15T17:00:01+07:00`, restart container, chạy TC. Property này **chỉ khai ở profile local** — profile prod không có (không endpoint đổi giờ, SECURITY §4). Compose phải chuyển biến này vào container: khai `APP_CLOCK_FIXED: ${APP_CLOCK_FIXED:-}` ở `environment` của service (mẫu ở `infra-local-dev`). Không khai thì QC đặt biến nào container cũng không nhận.
 
 ## 4. Unit — mẫu
 ```java
@@ -74,7 +74,7 @@ abstract class IntegrationTestBase {
 - `ArchitectureTest` theo `ref-backend-pattern §7.5`.
 
 ## 7. Coverage + chạy
-`./gradlew test jacocoTestReport` · `check.dependsOn jacocoTestCoverageVerification` (≥ 80% — `ref-backend-config §11`). Coverage là sàn, không phải mục tiêu: test chỉ để tăng % (getter, assert rỗng, `assertDoesNotThrow` suông) = cấm.
+`./gradlew test jacocoTestReport` · `check.dependsOn jacocoTestCoverageVerification` (≥ 80% — `ref-backend-config §9`). Coverage là sàn, không phải mục tiêu: test chỉ để tăng % (getter, assert rỗng, `assertDoesNotThrow` suông) = cấm.
 
 ## 8. Cấm
 H2 · `@SpringBootTest` cho unit · mock repository/service nội bộ trong integration · `Thread.sleep` · `LocalDate.now()` trong code nghiệp vụ · test phụ thuộc thứ tự · `@Disabled` không lý do · sửa test cho xanh khi code sai.

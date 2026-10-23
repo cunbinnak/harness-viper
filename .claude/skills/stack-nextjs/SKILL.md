@@ -1,6 +1,6 @@
 ---
 name: stack-nextjs
-description: Stack web frontend React 19 + Vite/Next — scaffold · convention · make · §review (forbidden patterns cho reviewer/bug-hunter). Load khi target kind=web stack=nextjs/react.
+description: Stack web frontend React 19 + Vite (SPA tĩnh; Next chỉ ở chế độ xuất tĩnh) — scaffold · convention · make · §review (forbidden patterns cho reviewer/bug-hunter). Load khi target kind=web stack=nextjs/react.
 ---
 
 # stack-nextjs
@@ -12,7 +12,8 @@ description: Stack web frontend React 19 + Vite/Next — scaffold · convention 
 BUILD target web (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§review**; picky đọc để đối chiếu mockup).
 
 ## §2 Scaffold
-- Vào `services/web/<name>/`. Dùng CLI chính chủ (Vite/Next create). TypeScript `strict: true`.
+- Vào `services/web/<name>/`. Dùng CLI chính chủ: Vite (`npm create vite`) là mặc định; chọn Next thì chỉ chế độ xuất tĩnh (`output: 'export'`). TypeScript `strict: true`.
+- **Web luôn là SPA tĩnh**: build ra `dist/` rồi nginx phục vụ (PROTOCOL §4). Không dùng Server Component, Server Action, Route Handler hay SSR — nginx không chạy được chúng, và khung không có đường chạy thật cho chúng.
 - Layout: `pages`/`components`/`hooks`/`api`/`stores`/`router`.
 - **Design token**: nếu ADR chọn ui-kit (khuyến nghị **Ant Design 5**) → map `docs/DESIGN-SYSTEM.md §2` vào theme (`ConfigProvider`), dùng component library thật. Nếu **Tailwind** → map token vào `theme.extend.colors/spacing/borderRadius` trong `tailwind.config` — **CẤM dùng palette mặc định** (`blue-600`...): primary trên màn phải là token §2, không phải màu Tailwind gốc. Nếu plain-CSS → copy token vào `:root`, dùng `var(--...)`. Map **trước màn đầu tiên** — theme config là việc của scaffold, không phải "để sau".
 
@@ -29,7 +30,7 @@ BUILD target web (scaffold/code) · VERIFY (reviewer/bug-hunter đọc **§revie
 
 - **KHÔNG business logic ở FE** (giá/điểm/điều kiện → backend). Role-gate FE **chỉ UX**, backend enforce.
 - **Component nhỏ**: UI render + emit event; container/page fetch + orchestrate. Không mutate props/state (immutable).
-- **UX states**: mỗi màn fetch đủ **loading · empty · error · success**; KHÔNG action im lặng; **confirm** destructive; lỗi field hiện **gần field** (toast không thay).
+- **UX states**: mỗi màn fetch đủ **loading · empty · error · success**; KHÔNG action im lặng; **confirm** destructive bằng **modal trong app** (ui-kit), KHÔNG `window.alert/confirm/prompt`; lỗi field hiện **gần field** (toast không thay).
 - **Form**: validate khai báo, không `if` tay rải rác — form của ui-kit (antd `Form`) dùng **`rules`** của nó; form không thuộc ui-kit dùng schema Zod/Yup. FE validate chỉ UX (server vẫn validate); chống double-submit (disable khi pending).
 - **Auth**: token theo auth design (**KHÔNG localStorage** — httpOnly/in-memory); logout `queryClient.clear()`.
 - **a11y**: semantic HTML (`button`/`a`/`label`/`input`); icon button có `aria-label`; màu không là tín hiệu duy nhất. axe 0 critical.
@@ -43,6 +44,7 @@ dev     : npm run dev                 # trỏ backend thật
 check   : npm run typecheck && npm run lint && npm run build && npm run test
 test    : npm run test
 ```
+Ba lệnh còn lại của hợp đồng 6 lệnh cũng phải có thân: `migrate` (web không có migration: in một dòng rồi thoát 0), `deploy` (chỉ chạy qua `/ship`) và `doctor` (curl health của nginx container).
 
 ## §review  (reviewer/bug-hunter soi TỪNG DÒNG — forbidden patterns React/TS)
 | Cấm | Hậu quả thật | Thay bằng |
@@ -62,6 +64,9 @@ test    : npm run test
 | Định nghĩa lại type API bằng tay | Lệch contract sau vài ngày | Type từ spec/codegen |
 | `useEffect` fetch dependency array sai | Gọi API vô hạn, dội tải BE | Server-state lib |
 | Đăng xuất không xoá cache server-state | Người sau thấy dữ liệu người trước | `queryClient.clear()` khi logout |
+| `window.alert` / `confirm` / `prompt` trong code sản phẩm | Hộp gốc chặn trang: persona và QC (công cụ tự động) đứng im tới khi có người bấm — ca thật 70 phút; không tuỳ biến được, a11y kém | Modal trong app (antd `Modal.confirm`…); chặn rời trang khi chưa lưu = router blocker + modal |
+| `beforeunload` gắn cả khi form không có gì chưa lưu, hoặc không gỡ sau khi lưu / huỷ | Hộp gốc hiện oan khi đóng tab / F5; tự động hoá đứng im | Chỉ gắn khi form đang sửa dở (dirty), gỡ ngay khi lưu / huỷ |
+| SSR / Server Action / Route Handler (`'use server'`, `getServerSideProps`, `app/api`) | Web chạy sau nginx chỉ phục vụ file tĩnh: lên hệ thật là 404/500 mà `make check` không bắt được | SPA tĩnh: gọi backend qua `api/`; phần cần server thì để ở backend hoặc BFF |
 
 ## §done
-typecheck/build/lint/test pass, coverage ≥60%, a11y clean; đủ loading/empty/error/success; không `console.log`/`any`; API type khớp contract; không business logic quan trọng ở FE; file chỉ trong `services/web/{name}/`.
+typecheck/build/lint/test pass, coverage ≥60%, a11y clean; đủ loading/empty/error/success; không `console.log`/`any`/`alert`/`confirm`; API type khớp contract; không business logic quan trọng ở FE; file chỉ trong `services/web/{name}/`.
