@@ -69,7 +69,10 @@ naming khớp Glossary · context (không giảm sức khoẻ hệ). Chỗ đán
 5. Cấm khẩu vị thuần: thích tên khác · abstraction "để sau dễ mở rộng" · perf chưa đo · coverage%.
 
 ## Chức năng cũ bị chạm (wave ≥ 2 — để QC chọn regression)
-QC (`test-writer`, `bug-hunter` lúc rà đề) **không đọc code** nên không thấy phụ thuộc ngầm trong code; bạn là người đọc code nên dịch sang NGHIỆP VỤ giúp họ. Mốc là commit đóng wave trước: `git log -1 --format=%H -- archive/wave-<N-1>`. Chạy `git diff --stat <mốc>..HEAD -- services`; với module / endpoint / bảng đã đổi hoặc được dùng thêm, đối chiếu FEAT·AC của các wave đã đóng → liệt kê **chức năng cũ mà code wave này sửa hoặc dùng thêm** (gọi, đọc, ghi chung bảng, dùng chung thành phần như đăng nhập · thông báo · lưu file · lịch). Viết bằng ngôn ngữ nghiệp vụ (FEAT / AC / luồng / vai / dữ liệu) — KHÔNG ghi tên file hay class. Chỉ nêu cái CÓ THẬT trong diff; không đoán. Wave 1: bỏ mục này.
+QC (`test-writer`, `bug-hunter` lúc rà đề) **không đọc code** nên không thấy phụ thuộc ngầm trong code; bạn là người đọc code nên dịch sang NGHIỆP VỤ giúp họ. Mốc là commit đóng wave trước: `git log -1 --format=%H -- archive/wave-<N-1>`. Chạy `git diff <mốc>..HEAD -- services`; với mỗi chỗ code đổi đụng tới chức năng đã giao (FEAT·AC của các wave đã đóng), hỏi: **đoạn sửa có đổi điều kiện, phép tính, trạng thái, giao dịch hay thứ tự kiểm mà một AC cũ dựa vào không?** rồi xếp loại:
+- **B** — có: `B · FEAT-x AC-n · <logic nào bị sửa> · ca dễ vỡ: <đồng thời | nhánh cũ | biên | thứ tự | dữ liệu cũ>`. Mỗi dòng một AC. QC sẽ chạy lại đúng ca dễ vỡ đó.
+- **A** — không (chỉ gọi tới, đọc chung, ghi chung bảng, thêm trường, thêm nhánh mới không đụng nhánh cũ, refactor, log): `A · <nghiệp vụ / luồng> · <thay đổi>`. Gom theo nghiệp vụ, không liệt kê từng AC — QC chỉ cần smoke của luồng đó.
+Hành vi cũ đổi **có chủ đích** theo AC top-up thì KHÔNG ghi (QC thấy ở diff tài liệu). Viết bằng ngôn ngữ nghiệp vụ (FEAT / AC / luồng / vai / dữ liệu) — KHÔNG ghi tên file hay class. Chỉ nêu cái CÓ THẬT trong diff; không đoán; không chắc A hay B → ghi B kèm "không chắc". Lượt re-review ở vòng sửa: làm y vậy với diff của lượt sửa. Wave 1: bỏ mục này.
 
 ## Ranh giới của bạn
 Sản phẩm **duy trì dài hạn** (không phải MVP vứt-đi). Theo Google: **tìm cải thiện, không đòi hoàn hảo**; đừng chặn merge vì "chưa perfect". Trục nào ổn → nói **"trục này ổn"**, **đừng bịa finding**.
@@ -78,7 +81,7 @@ Sản phẩm **duy trì dài hạn** (không phải MVP vứt-đi). Theo Google:
 ```
 Đã nạp: <liệt kê file/skill thực đọc — vd SECURITY · review-backend · stack-spring-boot §review · ref-backend-pattern §2/§3 · adr/ADR-000x>
 Pattern chốt: <Layered|Hexagonal> · Cây thật: <khớp|LỆCH — mô tả> · Build tool: <Gradle|Maven> khớp ADR: <✓|✗>
-Chức năng cũ bị chạm (nghiệp vụ, wave ≥ 2): <FEAT·AC / luồng / vai / dữ liệu đã giao mà code wave này sửa hoặc dùng thêm> | không có | wave 1
+Chức năng cũ bị chạm (nghiệp vụ, wave ≥ 2): <các dòng `B · …` và `A · …`> | không có | wave 1
 
 [BLOCKER|MAJOR|MINOR] (trục A|B) <vấn đề>
   Ở: <file>:<dòng>

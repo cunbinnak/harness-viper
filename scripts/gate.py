@@ -389,19 +389,19 @@ def pending_topup(wave: str) -> list[str]:
 
 
 def tc_rows(text: str) -> list[dict]:
-    """test-cases.md → [{tc, ac, tag, src, res}] đọc theo TÊN cột (khung TEMPLATE.test-cases.md; cột cũ `kết quả` vẫn đọc được)."""
+    """test-cases.md → [{tc, ac, tag, src, res, desc}] đọc theo TÊN cột (khung TEMPLATE.test-cases.md; cột cũ `kết quả` vẫn đọc được)."""
     lines = [ln.strip() for ln in text.splitlines() if ln.strip().startswith("|")]
     if not lines:
         return []
     head = [c.strip().lower() for c in lines[0].strip("|").split("|")]
     col = lambda name: next((i for i, h in enumerate(head) if h.startswith(name)), None)
-    i_tc, i_ac, i_tag, i_res, i_src = col("tc"), col("ac"), col("tag"), col("kết quả"), col("nguồn")
+    i_tc, i_ac, i_tag, i_res, i_src, i_desc = col("tc"), col("ac"), col("tag"), col("kết quả"), col("nguồn"), col("mô tả")
     out = []
     for row in table_rows("\n".join(lines)):
         get = lambda i: row[i].strip() if i is not None and i < len(row) else ""
         out.append({"tc": get(i_tc), "ac": get(i_ac), "tag": get(i_tag).lower(),
                     "src": get(i_src).upper().replace("`", ""),
-                    "res": get(i_res).upper().replace("`", "")})
+                    "res": get(i_res).upper().replace("`", ""), "desc": get(i_desc)})
     return out
 
 
@@ -441,6 +441,23 @@ def archived_tc_ids() -> set[str]:
     for p in (ROOT / "archive").glob("wave-*/tracking/wave-*/test-cases.md"):
         ids |= {x["tc"] for x in tc_rows(p.read_text(encoding="utf-8", errors="ignore")) if x["tc"]}
     return ids
+
+
+def archived_tc_desc() -> dict[str, str]:
+    """Mã TC → `mô tả` ở archive; mã có ở nhiều wave thì lấy bản của wave mới nhất."""
+    def wave_no(p: Path) -> int:
+        m = re.match(r"wave-(\d+)", p.relative_to(ROOT / "archive").parts[0])
+        return int(m.group(1)) if m else 0
+    out: dict[str, str] = {}
+    for p in sorted((ROOT / "archive").glob("wave-*/tracking/wave-*/test-cases.md"), key=wave_no):
+        out.update({x["tc"]: x["desc"] for x in tc_rows(p.read_text(encoding="utf-8", errors="ignore")) if x["tc"]})
+    return out
+
+
+def r_desc_drift(rows: list[dict], archived: dict[str, str]) -> list[str]:
+    """TC nguồn R có `mô tả` khác bản archive (thêm vế / sửa kỳ vọng / chèn lý do) — TC cũ phải chép nguyên văn."""
+    norm = lambda s: re.sub(r"\s+", " ", s or "").strip()
+    return [x["tc"] for x in rows if x["src"] == "R" and x["tc"] in archived and norm(x["desc"]) != norm(archived[x["tc"]])]
 
 
 def impact_block(text: str) -> list[str]:
@@ -702,6 +719,16 @@ def _check_impact(r: "Report", wave: str, rows: list[dict], text: str) -> None:
     fake = [x["tc"] for x in carried if x["tc"] not in known]
     r.check(not fake, "mọi TC nguồn R có mặt trong archive/ (giữ mã gốc)"
             + (f" — KHÔNG có trong archive: {', '.join(fake[:6])}" if fake else ""))
+    drift = r_desc_drift(carried, archived_tc_desc())
+    r.check(not drift, "TC nguồn R chép NGUYÊN VĂN `mô tả` bản archive (hành vi mới → TC mới, không thêm vế vào TC cũ)"
+            + (f" — KHÁC archive: {', '.join(drift[:6])}" + (f" (+{len(drift) - 6})" if len(drift) > 6 else "") if drift else ""))
+    b_empty = [ln[:60] for ln in block if re.match(r"[-*]\s*B\s*·", ln) and not re.search(r"TC-\d+-\d+", ln)]
+    r.check(not b_empty, "mỗi dòng `B ·` (code sửa logic AC cũ) có ≥1 TC chọn"
+            + (f" — CHƯA: {'; '.join(b_empty[:3])}" if b_empty else ""))
+    fresh = [x for x in rows if x["src"] != "R"]
+    if len(carried) > len(fresh):
+        r.note(f"TC cũ chạy lại ({len(carried)}) nhiều hơn TC mới ({len(fresh)}) — rà lại phạm vi: dòng A chỉ cần smoke, "
+               "dòng B chỉ lấy TC trúng ca dễ vỡ, luật chung toàn hệ chỉ cần TC mẫu")
     if known:
         r.note(f"TC cũ chọn chạy lại: {len(carried)} / {len(known)} TC ở archive")
 

@@ -57,6 +57,9 @@ def main() -> int:
               "| TC-1-001 | functional | R | FEAT-a AC-1 | @regression | x | y | PASS | z |\n")
     check(len(gate.impact_block(sample)) == 2, "gate.impact_block đọc đoạn Phạm vi ảnh hưởng (2 dòng danh sách)")
     check([x["src"] for x in gate.tc_rows(sample)] == ["R"], "gate.tc_rows đọc cột nguồn")
+    rr = gate.tc_rows(sample)
+    check(gate.r_desc_drift(rr, {"TC-1-001": " x "}) == [], "gate.r_desc_drift: TC cũ chép nguyên văn → không báo")
+    check(gate.r_desc_drift(rr, {"TC-1-001": "khác"}) == ["TC-1-001"], "gate.r_desc_drift: TC cũ bị sửa mô tả → báo")
 
     # 2. guards
     check(run("scripts/hooks/guard_ask.py", [], "") == 0, "guard_ask (DOCUMENT, scope chưa khoá) → allow")

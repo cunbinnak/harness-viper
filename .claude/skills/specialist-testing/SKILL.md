@@ -54,37 +54,41 @@ Kết quả: hệ chặn hợp lý → `PASS` (ghi hành vi làm mốc) · hệ 
 Giới hạn **~5 thăm dò / hành động**, ưu tiên hành động chạm tiền · công · quyền.
 
 ## Regression theo phạm vi ảnh hưởng
-**Mục đích**: bắt lỗi *nở ra ở chỗ đã PASS* — wave này đổi thứ X làm vỡ thứ Y đã giao. Bộ regression KHÔNG phải kho TC cộng dồn mãi rồi chạy lại nguyên mỗi wave: mỗi wave **chọn lại**, chỉ chạy lại TC cũ nằm trong vùng mà wave này làm ảnh hưởng tới. Phần lớn TC cũ nằm ở chỗ wave này không chạm tới — chạy lại chúng làm thời gian VERIFY tăng theo số wave mà hiếm khi bắt thêm lỗi.
+**Mục đích**: bắt lỗi *nở ra ở chỗ đã PASS* — code wave này sửa làm vỡ hành vi đã giao. Regression chỉ trả lời "cái đã giao còn chạy đúng không", không kiểm hành vi mới. Không chạy lại cả kho TC cũ: chỉ chạy lại chỗ code wave này thật sự sửa vào nghiệp vụ cũ — như người kiểm làm thật: luồng bị tác động thì đi lại happy case, chỗ logic bị sửa thì thêm đúng ca dễ vỡ.
 
-**Nhãn**: `@regression` = "TC CŨ này được chọn chạy lại ở wave hiện tại" — chỉ gắn khi chép TC cũ sang `test-cases.md` của wave hiện tại. KHÔNG gắn cho TC mới viết ở wave hiện tại (lúc đó chưa biết wave sau sẽ đổi gì; wave sau tự chọn lại). Ngoại lệ duy nhất là `@smoke`: gắn lúc thiết kế cho **1 TC đi trọn mỗi luồng chính** (bảng luồng đã ký); `@smoke` luôn chạy lại mỗi wave và mỗi lượt sửa, không cần phân tích.
+**Nhãn**: `@regression` = "TC CŨ này được chọn chạy lại ở wave hiện tại" — chỉ gắn khi chép TC cũ sang `test-cases.md` của wave hiện tại. KHÔNG gắn cho TC mới viết ở wave hiện tại (lúc đó chưa biết wave sau sẽ đổi gì; wave sau tự chọn lại). Ngoại lệ duy nhất là `@smoke`: gắn lúc thiết kế cho **1 TC đi trọn mỗi luồng chính** (bảng luồng đã ký); `@smoke` luôn chạy lại mỗi wave, không cần phân tích; ở lượt sửa chỉ chạy smoke của luồng bị chạm.
 
-**Wave ≥ 2 — làm TRƯỚC khi viết TC mới (bước 3a).** QC đánh giá bằng **ngôn ngữ nghiệp vụ trên tài liệu**, KHÔNG đọc code: phạm vi ảnh hưởng suy từ FEAT / AC, luồng, vai, dữ liệu và bề mặt giao tiếp ghi ở `arch`. Người viết code không phải nguồn khai phạm vi (không tự khoanh phạm vi kiểm bài mình).
-1. **Đọc thay đổi của wave**:
-   - `docs/ROADMAP.md §1` hàng wave này: cột `AC in-scope` (AC cũ nào được top-up "bản 2"), `Phụ thuộc wave trước`, `Legacy được phép phá`; `§2` điều chỉnh khi mở.
-   - **Tài liệu đổi từ lúc đóng wave trước**: mốc là commit đóng wave trước (`git log -1 --format=%H -- archive/wave-<N-1>`); xem `git diff <mốc>..HEAD -- docs/` (chỉ tài liệu, không phải code): FEAT / AC mới hoặc đổi, bảng luồng và bảng chính sách (`INTERVIEW`), vai và hành động (`PERSONAS §2`), bề mặt đã giao bị chạm (`BACKWARD-COMPAT §1`), `arch` (endpoint, event, bảng, mã lỗi, trạng thái thêm hoặc đổi) và các dòng `amend-arch` ở `DECISIONS`.
-   - `knowledge-base/<target>.md` §Gotchas / §Failure-modes: cặp phụ thuộc ngầm đã từng gây lỗi.
-   - Chức năng dùng chung theo nghiệp vụ (đăng nhập, phân quyền, gửi thông báo, lưu và tải file, lịch ngày lễ…): `arch/OVERVIEW.md` (§2 tích hợp · §3 hạ tầng dùng chung) và `arch/<target>.md §4`.
-   - Mục `Chức năng cũ bị chạm` trong báo cáo của `reviewer` (Bước 2; MAIN chuyển nguyên văn trong prompt): nguồn độc lập về phụ thuộc ngầm trong code, đã dịch sang nghiệp vụ — mỗi dòng phải có dòng ảnh hưởng tương ứng ở đoạn `Phạm vi ảnh hưởng`.
-2. **Suy ra TC cũ bị ảnh hưởng** — mỗi thay đổi tìm TC cũ theo bảy quan hệ dưới, trong `archive/wave-*/tracking/wave-*/test-cases.md` (mã TC có ở nhiều wave → lấy bản của wave MỚI NHẤT):
+**Wave ≥ 2 — làm TRƯỚC khi viết TC mới (bước 3a).** QC đánh giá bằng **ngôn ngữ nghiệp vụ**, KHÔNG đọc code. Người viết code (MAIN) không phải nguồn khai phạm vi.
+1. **Gom thay đổi của wave từ hai nguồn**:
+   - **Tài liệu đổi**: mốc là commit đóng wave trước (`git log -1 --format=%H -- archive/wave-<N-1>`); xem `git diff <mốc>..HEAD -- docs/` — FEAT / AC, bảng luồng và bảng chính sách (`INTERVIEW`), ô ma trận (`PERSONAS §2`), bề mặt đã giao (`BACKWARD-COMPAT §1`), `arch`, dòng `amend-arch` ở `DECISIONS`.
+   - **Code đổi**: mục `Chức năng cũ bị chạm` của `reviewer` (MAIN chuyển nguyên văn). Reviewer đọc diff code và đã xếp sẵn từng chỗ vào loại `A` hoặc `B` dưới đây.
+2. **Xếp mỗi thay đổi vào một loại, chọn TC theo loại**:
 
-   | Wave này thay đổi | Chọn TC cũ nào | Tìm bằng |
-   |---|---|---|
-   | AC của FEAT đã giao (top-up) | TC cũ của AC đó và các AC cùng FEAT | cột `AC` |
-   | Surface đã giao: thêm / đổi field, endpoint, mã lỗi, trạng thái, event | TC cũ gọi surface đó | endpoint ở cột `cách chạy`, `BACKWARD-COMPAT §1` |
-   | Bảng / dữ liệu dùng chung (migration, thêm cột, thêm trạng thái) | TC cũ ghi, đọc hoặc đi qua trạng thái đó | tên bảng / trạng thái ở `mô tả` |
-   | Gọi hoặc bị gọi bởi chức năng cũ (`Phụ thuộc wave trước`, `consumes`) | TC contract và TC luồng của bên cung cấp / bên dùng | cột `AC`, loại `contract` |
-   | Quyền: hành động hoặc vai mới, đổi điều kiện (phạm vi, trạng thái) | TC phân quyền của hành động / vai đó | tên hành động, vai ở `mô tả` |
-   | Luồng cũ thêm bước, hoặc nối sang luồng mới | TC đi qua điểm nối | bảng luồng `INTERVIEW` |
-   | Chức năng dùng chung mà wave này làm đổi hoặc dùng thêm: đăng nhập / phiên, phân quyền chung, thông báo, lưu file, lịch / múi giờ, khung lỗi | mọi TC dùng chức năng đó | `arch/OVERVIEW.md §2-§3`, `knowledge-base` |
+   | Loại | Là gì | Nhận ra từ | Chọn TC cũ |
+   |---|---|---|---|
+   | **A — code chỉ đi qua luồng cũ** | gọi tới, đọc chung, ghi chung bảng, thêm trường, thêm nhánh mới không đụng nhánh cũ, refactor | dòng `A` của reviewer | **không chọn thêm** — `@smoke` của luồng đó đã đi qua |
+   | **B — code SỬA logic mà AC cũ dựa vào, AC giữ nguyên** | đổi điều kiện, phép tính, trạng thái, giao dịch, thứ tự kiểm | dòng `B` của reviewer (ghi sẵn AC và ca dễ vỡ) | TC cũ của **đúng AC đó** kiểm **đúng ca dễ vỡ** (thường 1–3 TC). Chưa có TC cũ nào kiểm ca đó → viết 1 TC mới cho AC cũ |
+   | **C — hành vi cũ đổi có chủ đích** | AC top-up, ca biên sửa, ô ma trận đổi | diff tài liệu | **không phải regression**: TC cũ của phần đổi ghi `ĐÃ THAY` + TC mới nguồn `AC`. Phần còn lại của AC không đổi → xét như A / B |
 
-   Không chắc có ảnh hưởng hay không → **chọn**: chạy thừa vài TC rẻ hơn bỏ lọt lỗi nở. Thay đổi chạm chức năng dùng chung (dòng cuối) → chọn rộng, không chỉ `@smoke`.
-3. **Ghi phạm vi** ở đầu `test-cases.md`, trước bảng, đoạn `## Phạm vi ảnh hưởng` (danh sách, KHÔNG phải bảng; khung ở `templates/TEMPLATE.test-cases.md`): mỗi dòng `thay đổi của wave → cái cũ bị ảnh hưởng → TC chọn: <mã>…`; thêm dòng `Luôn chạy: @smoke mọi luồng chính (<n> TC)` và `Không ảnh hưởng: <FEAT / vùng cũ> — <vì sao>`.
-4. **Chép TC cũ được chọn** (cộng `@smoke` mọi luồng) vào bảng: giữ mã gốc · `nguồn` = `R` · `tag` có `@regression` · `kết quả` = `CHƯA CHẠY`. TC cũ hết hợp lệ vì AC đổi qua top-up → vẫn chép dòng, `kết quả` = `ĐÃ THAY` + `thực tế / bằng chứng` = `AC đổi ở <FEAT vN> → thay bằng <TC mới>`; TC mới phải PASS — không tự xoá dòng cũ (`bug-hunter` rà đề kiểm TC thay thế có thật).
-5. Rồi mới **thiết kế TC mới** (AC · CS · TD). TC cho chỗ nối giữa chức năng mới và cũ (dữ liệu, quyền, luồng đi qua cả hai) thiết kế như TC thường.
+   Ba trường hợp riêng:
+   - **Đổi luật chung toàn hệ** (thứ tự kiểm quyền, trần kích thước request, độ dài ô tìm kiếm…): viết TC **mới** cho chính thay đổi + chọn **1 TC cũ mẫu cho mỗi nhóm route**. KHÔNG chép TC của mọi route, mọi ô ma trận.
+   - **Bề mặt đã giao thêm trường / mã lỗi (additive)**: TC contract đối chiếu `BACKWARD-COMPAT §1`, không chép TC chức năng.
+   - **Kiểm sâu của wave có SHIP** (§Đợt kiểm chuyên sâu) không phải regression: ghi một dòng riêng.
+
+   Dòng reviewer không ghi loại hoặc ghi "không chắc" → coi là B nhưng chỉ chọn **1 TC luồng chính** của AC đó. KHÔNG chọn "cả FEAT", "cả chức năng", hay "chọn cho chắc".
+3. **`@smoke`**: 1 TC đi trọn mỗi nghiệp vụ chính trong bảng luồng đã ký — luôn chạy, phủ toàn bộ loại A và cả chỗ reviewer sót. Không cộng dồn qua wave: nghiệp vụ đã có smoke thì không thêm smoke cho cùng nghiệp vụ; nghiệp vụ đổi (C) thì smoke mới thay smoke cũ.
+4. **Ghi phạm vi** ở đầu `test-cases.md`, trước bảng, đoạn `## Phạm vi ảnh hưởng` (danh sách, KHÔNG phải bảng; khung ở `templates/TEMPLATE.test-cases.md`). Mỗi dòng mở đầu bằng loại:
+   - `B · FEAT-x AC-n · <logic bị sửa> · ca dễ vỡ: <…> → TC chọn: <mã>`
+   - `A · <nghiệp vụ> · <thay đổi> → smoke: <mã>`
+   - `C · FEAT-x AC-n · <đổi gì> → ĐÃ THAY: <mã cũ> → TC mới: <mã>`
+   - `Toàn hệ · <thay đổi> → TC mới: <mã> · mẫu: <mã>` · `Contract · …` · `Kiểm sâu SHIP · …`
+   - `Luôn chạy: @smoke (<n> TC)` · `Không ảnh hưởng: <FEAT / vùng cũ> — <vì sao>`
+5. **Chép TC cũ được chọn NGUYÊN VĂN** vào bảng: giữ mã gốc · `nguồn` = `R` · `tag` có `@regression` · `kết quả` = `CHƯA CHẠY` · `mô tả` y bản trong archive (bản của wave mới nhất). **CẤM** thêm vế, sửa kỳ vọng hay chèn lý do chọn vào `mô tả` (lý do đã nằm ở đoạn phạm vi) — gate so `mô tả` với archive. Kỳ vọng cũ không còn đúng = loại C: `kết quả` = `ĐÃ THAY` + `thực tế / bằng chứng` = `AC đổi ở <FEAT vN> → thay bằng <TC mới>`; TC mới phải PASS — không tự xoá dòng cũ (`bug-hunter` rà đề kiểm TC thay thế có thật).
+6. Rồi mới **thiết kế TC mới** (AC · CS · TD). TC cho chỗ nối giữa chức năng mới và cũ (dữ liệu, quyền, luồng đi qua cả hai) thiết kế như TC thường.
 
 **Chạy**: TC nguồn `R` và `@smoke` TRƯỚC TC mới. FAIL ở TC `R` = chỗ đã giao bị phá → **BLOCKER**.
 
-**Fix-loop** (cùng phương pháp, quy mô nhỏ): vùng ảnh hưởng của lượt sửa suy từ **các finding vừa sửa** (MAIN chuyển nguyên danh sách mã finding; nội dung finding do reviewer / bug-hunter / persona báo, không phải MAIN khai): lấy AC, Mã màn, hành động, dữ liệu mà finding nêu → chọn TC (cũ và mới) thuộc vùng đó theo bảy quan hệ trên, chạy cùng FAIL + BLOCKED + `@smoke`. Không chạy lại cả bộ.
+**Fix-loop** (cùng phương pháp, quy mô nhỏ): chạy lại TC FAIL + BLOCKED + `@smoke` của luồng bị chạm + TC (cũ và mới) của AC mà **các finding vừa sửa** nêu, đúng ca finding chạm (MAIN chuyển nguyên danh sách mã finding; nội dung do reviewer / bug-hunter / persona báo, không phải MAIN khai). Lượt re-review có dòng `B` trong `Chức năng cũ bị chạm` (MAIN chuyển kèm) → thêm TC theo dòng B như trên. Không chạy lại cả bộ.
 
 **Lỗi nở ngoài vùng đã chọn** (dogfood, persona hoặc lượt sau lộ lỗi ở chỗ không được chọn) = phân tích sót một phụ thuộc: viết 1 TC tái hiện (`mô tả` ghi mã finding) và MAIN ghi cặp phụ thuộc đó vào `knowledge-base/<target>.md` §Gotchas — wave sau bước 1 đọc lại.
 

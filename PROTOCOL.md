@@ -179,7 +179,7 @@ nằm ở `.claude/agents/<name>.md`.
 | Agent | Vai | Tools | Ghi được |
 |---|---|---|---|
 | `pre-mortem` | DOCUMENT (trước khoá scope): đối kháng SPEC — săn case Authority miss · mảng ngành thiếu · bảng chính sách (4 phép thử) | read-only (không Bash) | — (trả nghi vấn) |
-| `reviewer` | code AN TOÀN + BẢO TRÌ (trục A an toàn: bảo mật/dữ liệu/forbidden · trục B bảo trì: structure/pattern/convention/naming; wave ≥ 2 chỉ soi diff từ lúc đóng wave trước và ghi thêm `Chức năng cũ bị chạm` theo nghiệp vụ cho QC) | read-only | — (trả finding) |
+| `reviewer` | code AN TOÀN + BẢO TRÌ (trục A an toàn: bảo mật/dữ liệu/forbidden · trục B bảo trì: structure/pattern/convention/naming; wave ≥ 2 chỉ soi diff từ lúc đóng wave trước và ghi thêm `Chức năng cũ bị chạm` theo nghiệp vụ cho QC, xếp `A` code đi qua luồng cũ / `B` code sửa logic AC cũ) | read-only | — (trả finding) |
 | `bug-hunter` | 2 chế độ: (1) code ĐÚNG SPEC (AC có impl? ca biên chặn server? phân quyền owner-condition?) · (2) RÀ ĐỀ TEST của `test-writer` trước khi chạy (VERIFY 3b) | read-only | — (trả finding) |
 | `test-writer` | QA độc lập: viết đề black-box `test-cases.md` (phạm vi ảnh hưởng → TC cũ chọn lại + AC + bảng chính sách + thăm dò ngoài tài liệu) → **người duy nhất sửa đề** theo danh sách rà của `bug-hunter` → chạy. **KHÔNG viết code, kể cả test code** — script chạy TC là file tạm ngoài repo, dọn ngay | +Write/Edit **CHỈ `tracking/wave-N/test-cases.md`** (hook `guard_qa` chặn ghi chỗ khác trong repo) | test-cases.md |
 | `persona-{newbie,edge,picky,rushed,breaker,mobile}` | dogfood 2 đợt (đóng persona thật) | browse/Playwright | — (trả finding) |
