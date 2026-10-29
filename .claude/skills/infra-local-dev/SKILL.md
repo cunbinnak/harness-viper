@@ -26,7 +26,7 @@ services:
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/app_dev
       REDIS_URL: redis://redis:6379
       KAFKA_SERVER_HOST: kafka:9092
-      APP_CLOCK_FIXED: ${APP_CLOCK_FIXED:-}   # chỉ profile local: QC đặt giờ giả để test hạn chót (ref-backend-test §3); thiếu dòng này thì container không nhận biến
+      APP_CLOCK_FIXED: ${APP_CLOCK_FIXED:-}   # chỉ profile local: QC đặt giờ giả để test hạn chót (ref-backend-test §3); thiếu dòng này thì container không nhận biến · bản sao QA (scripts/qa_iso.py) chép nguyên environment của service này, chỉ đổi DB + đồng hồ → DB phải đi qua biến jdbc:postgresql://db:5432/<db>
     depends_on:
       postgres: { condition: service_healthy }
     healthcheck: { test: ["CMD","curl","-f","http://localhost:8080/health/ready"], interval: 10s, retries: 12 }

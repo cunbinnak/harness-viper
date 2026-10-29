@@ -61,6 +61,17 @@ def main() -> int:
     check(gate.r_desc_drift(rr, {"TC-1-001": " x "}) == [], "gate.r_desc_drift: TC cũ chép nguyên văn → không báo")
     check(gate.r_desc_drift(rr, {"TC-1-001": "khác"}) == ["TC-1-001"], "gate.r_desc_drift: TC cũ bị sửa mô tả → báo")
 
+    # 1c. qa_iso — bản sao hệ cho TC theo thời gian (phần không cần docker)
+    import datetime as _dt
+    import qa_iso
+    env = qa_iso.swap_db_env(["DB_URL=jdbc:postgresql://db:5432/app", "KC=jdbc:postgresql://db:5432/keycloak",
+                              "APP_CLOCK_FIXED=", "A=1"], "app", "app_iso_t1")
+    check(env == ["DB_URL=jdbc:postgresql://db:5432/app_iso_t1", "KC=jdbc:postgresql://db:5432/keycloak", "A=1"],
+          "qa_iso.swap_db_env: chỉ đổi DB của backend, bỏ APP_CLOCK_FIXED cũ")
+    check(qa_iso.faketime_value(_dt.datetime.fromisoformat("2027-01-01T00:00:50+07:00"),
+                                _dt.datetime(2026, 12, 31, 16, 0, 0, tzinfo=_dt.timezone.utc)) == "+3650",
+          "qa_iso.faketime_value: độ lệch giây đúng múi giờ")
+
     # 2. guards
     check(run("scripts/hooks/guard_ask.py", [], "") == 0, "guard_ask (DOCUMENT, scope chưa khoá) → allow")
     check(run("scripts/hooks/guard_ds.py", [],

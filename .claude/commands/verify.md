@@ -113,4 +113,4 @@ Học được gì → `knowledge-base/{name}.md`.
 - **KHÔNG build/sửa source để test qua** — test black-box đo hành vi thật; lỗi thì sửa ở Bước 5 rồi re-test.
 - Agent (review/persona) **chỉ trả finding** — chỉ MAIN sửa (giữ **góc nhìn độc lập** — *fresh eyes*).
 - Không thả 6 persona cùng lúc (đè trạng thái nhau + trạng thái rỗng chết khi có bản ghi đầu tiên).
-- **Dọn rác** — **luật #9 PROTOCOL §2** (script chạy thử · ảnh · trace · log ngoài repo, dọn ngay; `tracking/wave-N/` chỉ 3 file). Seed test-data → dọn tại **chuyển bước** (Bước 3→4: dogfood đợt 1 cần DB sạch) + cuối phase.
+- **Dọn rác** — **luật #9 PROTOCOL §2** (script chạy thử · ảnh · trace · log ngoài repo, dọn ngay; `tracking/wave-N/` chỉ 3 file). Seed test-data → dọn tại **chuyển bước** (Bước 3→4: dogfood đợt 1 cần DB sạch) + cuối phase. Bản sao hệ của QA → `py -3 scripts/qa_iso.py clean --service <backend>` ở cùng hai thời điểm đó.

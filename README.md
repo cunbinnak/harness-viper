@@ -64,7 +64,7 @@ Wave chia theo `feat_cap_per_wave` (~3-4 FEAT/wave) — xem `docs/ROADMAP.md §1
 | `knowledge-base/{name}.md` | KG per-target — bộ nhớ va vấp, MAIN đọc TRƯỚC khi code |
 | `services/{boundaries\|web\|bff\|mobile\|desktop}/{name}/` | code sản phẩm (MAIN scaffold; chia nhóm theo `kind`) |
 | `.claude/commands/` · `agents/` · `skills/` | 7 lệnh · 10 agent (pre-mortem + verify + dogfood) · thư viện skill (stack/ref/review/method) |
-| `scripts/` | `gate.py` (báo) · `capture_proof.py` (proof máy-sinh) · hooks (`guard_*`/`reanchor`) · `bootstrap`/`next_wave`/`compact`/`selftest` |
+| `scripts/` | `gate.py` (báo) · `capture_proof.py` (proof máy-sinh) · hooks (`guard_*`/`reanchor`) · `bootstrap`/`next_wave`/`compact`/`selftest` · `qa_iso` (bản sao hệ để QA kiểm ca theo thời gian / job định kỳ) |
 | `intake/` · `deployment/` · `archive/` · `tracking/` · `Makefile` · `.mcp.json` | khay tài liệu intake · docker-compose local · snapshot wave đã đóng · bằng chứng wave đang chạy (3 file) · hợp đồng 6 lệnh make · slot trình duyệt cho dogfood |
 
 ## Đọc gì khi cần

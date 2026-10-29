@@ -121,7 +121,7 @@ Ngoài 7 dòng trên, `loại` còn dùng: `contract` · `resilience` · `migrat
 |---|---|
 | **Data lịch sử** (lương/đơn/giao dịch kỳ trước) | Chạy **luồng tạo thật qua API** cho kỳ trước → đúng invariant. Không có API tạo → insert DB / seed migration với data **hợp lệ nghiệp vụ** |
 | **Trạng thái nhiều bước** (đơn đã duyệt+thanh toán+giao) | fixture/factory builder dựng sẵn, hoặc chuỗi API act tuần tự |
-| **Thời gian** (hết hạn · cron · chốt kỳ lương · TTL · hạn chót) | hệ thật: đặt env `APP_CLOCK_FIXED=<ISO +07:00>` rồi restart container (đồng hồ tiêm được, chỉ có ở profile local — `ref-backend-test §3`) · set field ngày trực tiếp — KHÔNG `sleep` chờ thật |
+| **Thời gian** (hết hạn · cron · chốt kỳ lương · TTL · hạn chót) | **bản sao hệ bằng `scripts/qa_iso.py`** (DB clone + container backend thứ hai, không đụng hệ chính): `start <tag> --service <backend> --at <ISO +07:00>` — đồng hồ chạy tiếp, đặt `--at` **vài giây trước** mốc job để job tự chạy · cần đứng yên ở một thời điểm (hạn chót) → `--mode frozen` (`APP_CLOCK_FIXED`, `ref-backend-test §3`) · cần qua mốc sau (thư trễ 15 phút) → `move <tag> --at <mốc sau>`. **Gom các TC cùng mốc giờ vào một bản sao**, tối đa 2 bản sao cùng lúc, `stop` ngay khi xong · set field ngày trực tiếp khi được — KHÔNG `sleep` chờ thật, KHÔNG restart hệ chính để đổi giờ, KHÔNG tự viết Dockerfile / clone DB / container riêng |
 | **External API** có phí / rate-limit / đối tác | stub tại **seam HTTP client** (WireMock/MSW), trả response mẫu theo `arch §API` |
 | **Payment gateway** (MoMo/VNPay) | **sandbox + credential test** — test THẬT vs sandbox, KHÔNG mock (mock che mất lỗi ký/callback) |
 | **Email / SMS / push** | fake sink (MailHog/Mailpit) hoặc provider sandbox → assert đã gửi + nội dung |

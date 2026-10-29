@@ -35,7 +35,7 @@ class ClockConfig {
 }
 ```
 - Unit test: `Clock.fixed(Instant.parse("2026-10-15T10:00:01Z"), ZoneId.of("Asia/Ho_Chi_Minh"))` (= 17:00:01 giờ VN) → test đủ 3 điểm biên.
-- **QC test được hạn chót trên hệ thật**: `application-local.yml` đọc `app.clock.fixed: ${APP_CLOCK_FIXED:}` → `test-writer` đặt env `APP_CLOCK_FIXED=2026-10-15T17:00:01+07:00`, restart container, chạy TC. Property này **chỉ khai ở profile local** — profile prod không có (không endpoint đổi giờ, SECURITY §4). Compose phải chuyển biến này vào container: khai `APP_CLOCK_FIXED: ${APP_CLOCK_FIXED:-}` ở `environment` của service (mẫu ở `infra-local-dev`). Không khai thì QC đặt biến nào container cũng không nhận.
+- **QC test được hạn chót trên hệ thật**: `application-local.yml` đọc `app.clock.fixed: ${APP_CLOCK_FIXED:}` → `test-writer` đặt env `APP_CLOCK_FIXED=2026-10-15T17:00:01+07:00`, restart container, chạy TC. Property này **chỉ khai ở profile local** — profile prod không có (không endpoint đổi giờ, SECURITY §4). Compose phải chuyển biến này vào container: khai `APP_CLOCK_FIXED: ${APP_CLOCK_FIXED:-}` ở `environment` của service (mẫu ở `infra-local-dev`). Không khai thì QC đặt biến nào container cũng không nhận. QC thường không restart hệ chính mà chạy **bản sao** bằng `scripts/qa_iso.py` (`--mode frozen` đặt đúng biến này; `--mode run` gắn libfaketime để job định kỳ tự chạy) — script chép environment của container backend, chỉ đổi DB và đồng hồ, nên backend phải đọc DB qua biến chứa `jdbc:postgresql://…/<db>` và image phải có `sh`.
 
 ## 4. Unit — mẫu
 ```java
