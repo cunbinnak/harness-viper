@@ -64,7 +64,8 @@ def _read(rel: str) -> str:
 def wave_targets(wave: str) -> list[tuple[str, str]]:
     """ROADMAP §1 cột Target của dòng `wave` → [(name, kind)]. Ô: `name (kind), name (kind)`."""
     text = re.sub(r"<!--.*?-->", "", _read("docs/ROADMAP.md"), flags=re.DOTALL)
-    m = re.search(r"§1(.*?)(?=\n##\s|\Z)", text, flags=re.DOTALL)
+    # neo vào DÒNG TIÊU ĐỀ `## §1 …` như gate.section() — "§1" nằm trong câu dẫn ("INTERVIEW §1 dòng 52") từng làm khớp nhầm (DEC-0039 dự án thật)
+    m = re.search(r"^#{1,4}\s*§1.*?$(.*?)(?=^#{1,4}\s|\Z)", text, flags=re.M | re.S)
     block = m.group(1) if m else ""
     rows = []
     for line in block.splitlines():
