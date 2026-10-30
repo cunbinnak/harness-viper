@@ -19,7 +19,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE          (SHIP opt-in th
 |---|---|
 | `/document` | phỏng vấn\|intake → doc set (PRD/PERSONAS/CAPABILITIES/FEAT/arch/UX) → **chia wave** → khoá scope |
 | `/build [<wave>]` | MAIN code 1 wave: đọc KG → challenge → scaffold → walking skeleton → luồng nghiệp vụ → chạy thật |
-| `/verify` | review 2 vai → test case (`test-writer` viết đề → `bug-hunter` rà đề → `test-writer` sửa đề + chạy) → dogfood 6 persona → vòng sửa: MAIN sửa, agent tìm lại → kết luận QC |
+| `/verify` | review 2 vai → test case (`test-writer` viết đề → `bug-hunter` rà đề → `test-writer` sửa đề + chạy) → dogfood 6 persona → vòng sửa tối đa 3 lượt: MAIN sửa, agent rà lại đúng phần bị lỗi, còn lại sang wave sau → kết luận QC |
 | `/ship` | *(chỉ khi wave khai SHIP)* prod-ready → deploy → smoke → thử rollback |
 | `/next-wave` | đóng wave (snapshot, KHÔNG reset) → rà lại + mở wave kế |
 | `/status` | *(mọi lúc)* đang ở phase/wave nào · gate thiếu gì · chốt kế |

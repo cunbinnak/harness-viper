@@ -32,7 +32,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE        (SHIP opt-in theo
 |---|---|
 | `/document` | interview\|intake → PRD/PERSONAS/CAPABILITIES/FEAT/arch/UX → chia wave → **khoá scope** (1 lần cho dự án) |
 | `/build [<wave>]` | **MAIN code** 1 wave: đọc KG/context → challenge → scaffold → walking skeleton → luồng nghiệp vụ → chạy thật |
-| `/verify` | review 2 vai → **test case: `test-writer` viết đề → `bug-hunter` rà đề → `test-writer` sửa đề + chạy** → **dogfood 6 persona** → vòng: MAIN sửa, agent tìm lại tới sạch → kết luận QC |
+| `/verify` | review 2 vai → **test case: `test-writer` viết đề → `bug-hunter` rà đề → `test-writer` sửa đề + chạy** → **dogfood 6 persona** → vòng sửa tối đa 3 lượt: MAIN sửa, agent rà lại đúng phần bị lỗi, còn lại sang wave sau → kết luận QC |
 | `/ship` | *(chỉ khi wave khai SHIP)* prod-ready → deploy → smoke → thử rollback |
 | `/next-wave` | đóng wave (snapshot, **KHÔNG reset**) → **RÀ LẠI** + mở wave kế (loop engineering) |
 | `/status` | *(mọi lúc)* đang ở đâu · gate thiếu gì · chốt kế |
@@ -55,7 +55,7 @@ DOCUMENT → BUILD → VERIFY → [SHIP?] → NEXT-WAVE        (SHIP opt-in theo
 - **KHÔNG** đọc cả `docs/` rồi mới làm.
 
 ## HOOKS (awareness — chi tiết PROTOCOL §8)
-`guard_ask` (AskUserQuestion chỉ ở DOCUMENT; Scope khoá đã tick / ngoài DOCUMENT → chặn) · `guard_bc` (deploy luôn hỏi Authority; chặn khi thiếu hoặc chưa xanh PRODUCTION-READY/BC §3) · `guard_ds` (mockup dùng token, không hex thô) · `guard_shell` (cảnh báo sau khi ghi mockup có app shell lệch `_shell.html` canonical — nav/logo/user-menu/icon) · `guard_archive` (cấm sửa `archive/**`) · `guard_proof` (cấm sửa `*proof.json`) · `guard_makefile` (cấm sửa ROOT Makefile — điền per-target) · `guard_doc` (doc SPEC đóng băng ngoài DOCUMENT → sửa = wave sau) · `guard_agent` (BUILD không spawn agent; mọi spawn phải foreground) · `guard_qa` (test-writer chỉ ghi `test-cases.md` trong repo) · `trace_docsync` (sửa spec doc ở DOCUMENT → nhắc CASCADE + tự bỏ tick PRE-LOCK) · `reanchor` (nhồi lại luật sau compact). `gate.py` chỉ BÁO.
+`guard_ask` (AskUserQuestion chỉ ở DOCUMENT; Scope khoá đã tick / ngoài DOCUMENT → chặn) · `guard_bc` (deploy luôn hỏi Authority; chặn khi thiếu hoặc chưa xanh PRODUCTION-READY/BC §3) · `guard_ds` (mockup dùng token, không hex thô) · `guard_shell` (cảnh báo sau khi ghi mockup có app shell lệch `_shell.html` canonical — nav/logo/user-menu/icon) · `guard_archive` (cấm sửa `archive/**`) · `guard_proof` (cấm sửa `*proof.json`) · `guard_makefile` (cấm sửa ROOT Makefile — điền per-target) · `guard_doc` (doc SPEC đóng băng ngoài DOCUMENT → sửa = wave sau) · `guard_agent` (BUILD không spawn agent; mọi spawn phải foreground) · `guard_qa` (test-writer chỉ ghi `test-cases.md` trong repo · `test-cases.md` chỉ test-writer ghi, trừ dòng `@thủ-công`) · `trace_docsync` (sửa spec doc ở DOCUMENT → nhắc CASCADE + tự bỏ tick PRE-LOCK) · `reanchor` (nhồi lại luật sau compact). `gate.py` chỉ BÁO.
 
 ## ROUTING
 | Câu hỏi | Ở đâu |

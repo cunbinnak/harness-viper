@@ -13,6 +13,7 @@ description: Pattern test cho MAIN viết ở BUILD — web React/TS. Vitest + R
 3. **Hiển thị theo quyền**: vai không có quyền không thấy nút (chỉ là UX — server vẫn phải chặn, QC kiểm phần đó).
 4. Hook / util có logic: format tiền `1.234.567 ₫`, ngày `dd/MM/yyyy`, giờ VN.
 Không test: component chỉ render tĩnh · style · snapshot lớn.
+5. **Test tích hợp theo AC** (`tests/integration/` hoặc `*.integration.test.tsx`): mỗi AC in-scope có UI → ≥1 test đi hết màn theo AC đó (render route thật + MSW handler khớp contract), tên hoặc chú thích nhắc mã `FEAT-x AC-n` — gate BUILD grep theo mã. AC chỉ có backend thì test tích hợp nằm ở backend.
 
 ## 2. Truy vấn theo cách người dùng thấy
 `getByRole('button', { name: 'Gửi đăng ký' })` · `getByLabelText('Ngày làm từ xa')` · `findByText(...)` cho nội dung bất đồng bộ. `data-testid` chỉ khi không có vai trò/nhãn phù hợp. Thao tác bằng `userEvent` (`await user.click(...)`), không `fireEvent`.

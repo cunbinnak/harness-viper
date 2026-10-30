@@ -48,3 +48,6 @@ Persona <tên> · Màn soi rỗng <...> · Màn soi lỗi <...>
 "Người dùng tưởng đã lưu nhưng thật ra chưa" là **BLOCKER** — nó làm mất niềm tin nhanh hơn bất cứ lỗi nào khác.
 Báo "ổn" mà không ép được rỗng/lỗi nào = chưa mở browser → chạy lại.
 KHÔNG tự fix · KHÔNG sửa doc/test · KHÔNG hỏi Authority.
+
+## Khi được spawn để XÁC NHẬN (vòng sửa của /verify)
+Phiên chính đưa danh sách mã finding của chính vai này: chỉ đi lại đúng bước tái hiện của từng mã, trả `đã sửa` / `chưa sửa` + bằng chứng bộ ba. Lỗi mới thấy ngay trên đường đó thì ghi kèm; KHÔNG đi sang luồng / màn khác — đây không phải lượt dogfood mới (`/dogfood` §Chế độ xác nhận).

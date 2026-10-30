@@ -95,7 +95,9 @@ def find_container(service: str, project: str | None) -> dict:
     f = ["ps", "--filter", f"label=com.docker.compose.service={service}", "--format", "{{.ID}}"]
     if project:
         f[1:1] = ["--filter", f"label=com.docker.compose.project={project}"]
-    ids = docker(*f).split()
+    # bản sao kế thừa nhãn com.docker.compose.* từ image → loại container mang nhãn bản sao, chỉ giữ hệ chính
+    ids = [i for i in docker(*f).split()
+           if docker("inspect", "--format", "{{index .Config.Labels \"" + LABEL + "\"}}", i).strip() != "1"]
     if not ids:
         die(f"không thấy container đang chạy của service `{service}`" + (f" (project {project})" if project else "")
             + " — hệ chính phải đang chạy")

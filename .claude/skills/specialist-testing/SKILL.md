@@ -56,6 +56,8 @@ Giới hạn **~5 thăm dò / hành động**, ưu tiên hành động chạm ti
 ## Regression theo phạm vi ảnh hưởng
 **Mục đích**: bắt lỗi *nở ra ở chỗ đã PASS* — code wave này sửa làm vỡ hành vi đã giao. Regression chỉ trả lời "cái đã giao còn chạy đúng không", không kiểm hành vi mới. Không chạy lại cả kho TC cũ: chỉ chạy lại chỗ code wave này thật sự sửa vào nghiệp vụ cũ — như người kiểm làm thật: luồng bị tác động thì đi lại happy case, chỗ logic bị sửa thì thêm đúng ca dễ vỡ.
 
+**Nhãn `@trọng-yếu`** (gắn lúc thiết kế, mọi wave): TC mà FAIL nghĩa là sai tiền · lộ / sai quyền · hỏng dữ liệu của người khác. Hết 3 lượt sửa mà TC này còn FAIL thì KHÔNG được chuyển sang wave sau — kết luận KHÔNG ĐẠT (verify.md Bước 5).
+
 **Nhãn**: `@regression` = "TC CŨ này được chọn chạy lại ở wave hiện tại" — chỉ gắn khi chép TC cũ sang `test-cases.md` của wave hiện tại. KHÔNG gắn cho TC mới viết ở wave hiện tại (lúc đó chưa biết wave sau sẽ đổi gì; wave sau tự chọn lại). Ngoại lệ duy nhất là `@smoke`: gắn lúc thiết kế cho **1 TC đi trọn mỗi luồng chính** (bảng luồng đã ký); `@smoke` luôn chạy lại mỗi wave, không cần phân tích; ở lượt sửa chỉ chạy smoke của luồng bị chạm.
 
 **Wave ≥ 2 — làm TRƯỚC khi viết TC mới (bước 3a).** QC đánh giá bằng **ngôn ngữ nghiệp vụ**, KHÔNG đọc code. Người viết code (MAIN) không phải nguồn khai phạm vi.

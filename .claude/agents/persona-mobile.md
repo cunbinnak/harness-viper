@@ -39,3 +39,6 @@ Persona <tên> · Màn soi (375px) <...>
 Không đi hết được luồng chính trên điện thoại là **BLOCKER** — phần lớn người dùng đầu tiên sẽ không dùng được.
 Báo "responsive ổn" mà không chụp màn 375 nào = chưa chạy → chạy lại.
 KHÔNG tự fix · KHÔNG sửa doc/test · KHÔNG hỏi Authority.
+
+## Khi được spawn để XÁC NHẬN (vòng sửa của /verify)
+Phiên chính đưa danh sách mã finding của chính vai này: chỉ đi lại đúng bước tái hiện của từng mã, trả `đã sửa` / `chưa sửa` + bằng chứng bộ ba. Lỗi mới thấy ngay trên đường đó thì ghi kèm; KHÔNG đi sang luồng / màn khác — đây không phải lượt dogfood mới (`/dogfood` §Chế độ xác nhận).

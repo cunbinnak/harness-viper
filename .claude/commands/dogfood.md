@@ -27,6 +27,13 @@ Hệ **đang chạy thật** (từ BUILD Bước 6: docker container cho backend
 8. Agent **TRẢ VỀ** phát hiện → **MAIN ghi `STATE §Findings`** (chống hai agent đè file).
 9. Lập **mẫu tổng kết** (dưới). Đang trong `/verify` → **KHÔNG dừng báo Authority ở đây**: còn finding → `/verify` Bước 5 fix-loop; sạch → `/verify` Bước cuối (tổng kết đi chung báo cáo cuối). Chạy `/dogfood` lẻ ngoài VERIFY → báo tổng kết luôn.
 
+## Chế độ xác nhận (vòng sửa của `/verify` Bước 5)
+Spawn lại một vai để **xác nhận finding của chính nó đã sửa** — KHÔNG phải dogfood lại:
+- MAIN đưa danh sách mã finding của vai đó (nội dung + bước tái hiện như vai đã báo) + URL hệ đang chạy.
+- Vai chỉ đi lại **đúng các bước tái hiện** đó (cùng persona, cùng dữ liệu), trả mỗi mã: `đã sửa` / `chưa sửa` + bằng chứng bộ ba.
+- Thấy lỗi mới **ngay trên đường đi đó** → ghi kèm; KHÔNG đi sang luồng / màn khác để tìm thêm. Đi rộng ở bước này là lý do vòng sửa không bao giờ hết.
+- Không đợt, không reset DB: các vai xác nhận chạy lần lượt trên dữ liệu hiện có; `edge` cần trạng thái rỗng thì MAIN dựng đúng trạng thái đó trước khi spawn.
+
 ## Target desktop (`kind: desktop`)
 Cùng quy trình (MAIN tự dùng trước · 2 đợt · ghi §Findings), khác 3 chỗ — cách điều khiển ở skill `browse` §7:
 - **Hệ đang chạy** = app ĐÃ ĐÓNG GÓI (`npm run package`), MAIN mở với `--remote-debugging-port=9222` → mọi vai dùng slot `desktop`.

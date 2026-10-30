@@ -192,9 +192,17 @@ def main(argv: list[str]) -> int:
     check = run_check()
     targets, derr = build_targets(wave, args.compose)
     code = code_state()
+    try:   # test tích hợp theo AC (gate BUILD kiểm) — ghi vào proof để đọc được số file + AC còn thiếu ngay trong bằng chứng
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import gate as _gate
+        it_gaps, it_files = _gate.integration_ac_gaps(wave)
+        integration = {"files": it_files, "ac_missing": it_gaps, "h2": _gate.h2_in_tests()}
+    except Exception as e:   # không chặn việc chụp proof
+        integration = {"error": str(e)[:200]}
     proof = {
         "wave": int(wave),
         "check": check,
+        "integration": integration,
         "code": code,         # commit mới nhất chạm services/ + còn sửa dở không — gate đòi đúng commit hiện tại
         "targets": targets,   # per-target tagged: {target, kind, health, healthy} — gate đối chiếu ROADMAP
         "note": "HARNESS capture_proof.py — agent KHÔNG được ghi (guard_proof chặn Write/Edit).",
@@ -206,7 +214,8 @@ def main(argv: list[str]) -> int:
     cont = [t for t in targets if t["kind"] in ("backend", "bff", "web", "desktop")]
     ok = check["ok"] and not code["dirty"] and bool(targets) and all(t["healthy"] for t in cont)
     tsum = ", ".join(f"{t['target']}:{'✓' if t.get('healthy') else ('n/a' if t.get('healthy') is None else '✗')}" for t in targets) or "(không đọc được target từ ROADMAP)"
-    print(f"[proof wave {wave}] make check: {'✓' if check['ok'] else '✗ (' + str(check['code']) + ')'} · targets: {tsum}")
+    print(f"[proof wave {wave}] make check: {'✓' if check['ok'] else '✗ (' + str(check['code']) + ')'} · targets: {tsum}"
+          + (f" · test tích hợp: {integration['files']} file, AC thiếu: {len(integration['ac_missing'])}" if "files" in integration else ""))
     if code["dirty"]:
         print("  ! services/ còn sửa chưa commit — commit rồi chụp lại (gate đòi proof trên code đã commit)")
     if derr:

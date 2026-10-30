@@ -59,3 +59,6 @@ Khuôn:      rỗng<✓/✗> lỗi<✓/✗> tải<✓/✗>
 > Dọn screenshot sau khi phân tích (luật #9), không commit.
 **Báo "khớp hết" mà không nêu được một computed-style/ảnh nào = chưa mở browser → phiên chính cho chạy lại.**
 KHÔNG tự fix · KHÔNG sửa mockup/token cho khớp code (đúng anti-pattern cần chống) · KHÔNG hỏi Authority.
+
+## Khi được spawn để XÁC NHẬN (vòng sửa của /verify)
+Phiên chính đưa danh sách mã finding của chính vai này: chỉ đi lại đúng bước tái hiện của từng mã, trả `đã sửa` / `chưa sửa` + bằng chứng bộ ba. Lỗi mới thấy ngay trên đường đó thì ghi kèm; KHÔNG đi sang luồng / màn khác — đây không phải lượt dogfood mới (`/dogfood` §Chế độ xác nhận).

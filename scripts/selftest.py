@@ -61,6 +61,19 @@ def main() -> int:
     check(gate.r_desc_drift(rr, {"TC-1-001": " x "}) == [], "gate.r_desc_drift: TC cũ chép nguyên văn → không báo")
     check(gate.r_desc_drift(rr, {"TC-1-001": "khác"}) == ["TC-1-001"], "gate.r_desc_drift: TC cũ bị sửa mô tả → báo")
 
+    t = lambda res, src="AC", tag="": {"res": res, "src": src, "tag": tag}
+    check(gate.tc_deferrable(t("FAIL (LƯỢT 2)")) and not gate.tc_deferrable(t("FAIL")),
+          "gate.tc_deferrable: chỉ chuyển TC đã được test-writer chạy lại (có `(lượt k)`)")
+    check(not any(gate.tc_deferrable(x) for x in (t("FAIL (LƯỢT 3)", "R"), t("FAIL (LƯỢT 3)", tag="@smoke"),
+                                                    t("FAIL (LƯỢT 3)", tag="@trọng-yếu"))),
+          "gate.tc_deferrable: không chuyển TC nguồn R / @smoke / @trọng-yếu")
+
+    check(gate.acs_in_text("// FEAT-remote AC-1, AC-3 · FEAT-leave AC-2..4") ==
+          {("FEAT-remote", "1"), ("FEAT-remote", "3"), ("FEAT-leave", "2"), ("FEAT-leave", "3"), ("FEAT-leave", "4")},
+          "gate.acs_in_text: đọc mã AC trong test tích hợp (liệt kê + khoảng)")
+    check(gate._IT_FILE.search("RemoteFlowIT.java") and gate._IT_FILE.search("leave.integration.test.tsx")
+          and not gate._IT_FILE.search("LeaveServiceTest.java"), "gate: nhận diện file test tích hợp theo tên")
+
     # 1c. qa_iso — bản sao hệ cho TC theo thời gian (phần không cần docker)
     import datetime as _dt
     import qa_iso
@@ -121,6 +134,11 @@ def main() -> int:
     check(gq.verdict("test-writer", str(ROOT / "tracking" / "wave-1" / "qa" / "run.mjs")) is not None, "guard_qa: script .mjs trong tracking/ → chặn")
     check(gq.verdict("test-writer", str(Path(tempfile.gettempdir()) / "run.mjs")) is None, "guard_qa: file tạm ngoài repo → cho qua")
     check(gq.verdict("reviewer", str(ROOT / "services" / "a.ts")) is None, "guard_qa: chỉ soi test-writer (agent khác đã bị chặn Write/Edit ở frontmatter)")
+    tcf = str(ROOT / "tracking" / "wave-2" / "test-cases.md")
+    check(gq.verdict("", tcf, {"new_string": "| TC-2-001 | functional | AC | x | | y | z | PASS | ok |"}) is not None,
+          "guard_qa: MAIN tự đổi kết quả TC → chặn (chỉ test-writer xác nhận trạng thái TC)")
+    check(gq.verdict("", tcf, {"new_string": "| TC-2-009 | e2e | AC | x | @thủ-công | y | z | PASS | ok |"}) is None,
+          "guard_qa: MAIN ghi dòng @thủ-công (mobile) → cho qua")
     real_cmds = ["cd services/x && make deploy", "sh -c 'make deploy'", "FOO=1 make -C services/web/x deploy"]
     text_only = ['git commit -m "docs: ghi make deploy"', "grep -rn 'make deploy' docs", "echo make deploy"]
     check(all(gb.real_invocation(c) for c in real_cmds), "guard_bc: nhận ra lệnh deploy thật (sau &&, trong sh -c, sau biến môi trường)")

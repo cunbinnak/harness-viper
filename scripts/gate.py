@@ -13,6 +13,7 @@ Exit: 0 qua · 1 còn thiếu · 2 sai tham số.
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -396,12 +397,13 @@ def tc_rows(text: str) -> list[dict]:
     head = [c.strip().lower() for c in lines[0].strip("|").split("|")]
     col = lambda name: next((i for i, h in enumerate(head) if h.startswith(name)), None)
     i_tc, i_ac, i_tag, i_res, i_src, i_desc = col("tc"), col("ac"), col("tag"), col("kết quả"), col("nguồn"), col("mô tả")
+    i_ev = col("thực tế")
     out = []
     for row in table_rows("\n".join(lines)):
         get = lambda i: row[i].strip() if i is not None and i < len(row) else ""
         out.append({"tc": get(i_tc), "ac": get(i_ac), "tag": get(i_tag).lower(),
                     "src": get(i_src).upper().replace("`", ""),
-                    "res": get(i_res).upper().replace("`", ""), "desc": get(i_desc)})
+                    "res": get(i_res).upper().replace("`", ""), "desc": get(i_desc), "ev": get(i_ev)})
     return out
 
 
@@ -458,6 +460,13 @@ def r_desc_drift(rows: list[dict], archived: dict[str, str]) -> list[str]:
     """TC nguồn R có `mô tả` khác bản archive (thêm vế / sửa kỳ vọng / chèn lý do) — TC cũ phải chép nguyên văn."""
     norm = lambda s: re.sub(r"\s+", " ", s or "").strip()
     return [x["tc"] for x in rows if x["src"] == "R" and x["tc"] in archived and norm(x["desc"]) != norm(archived[x["tc"]])]
+
+
+def tc_deferrable(x: dict) -> bool:
+    """TC FAIL / BLOCKED được chuyển sang wave sau khi hết 3 lượt: test-writer đã chạy lại ≥1 lần trong vòng sửa
+    (kết quả có `(lượt k)`) và không phải @trọng-yếu · @smoke · nguồn R."""
+    return (bool(re.search(r"\(\s*LƯỢT\s*\d", x["res"])) and x["src"] != "R"
+            and not re.search(r"@smoke|@trọng-yếu", x["tag"]))
 
 
 def impact_block(text: str) -> list[str]:
@@ -571,6 +580,59 @@ class Report:
 
 # ------------------------------------------------------------------ gates ----
 
+_SKIP_DIRS = {"node_modules", "build", "target", "dist", ".git", ".gradle", "coverage", ".next", ".dart_tool"}
+_IT_FILE = re.compile(r"(IT|IntegrationTest)\.(java|kt)$|\.(integration|e2e)\.(test|spec)\.[jt]sx?$|_integration_test\.dart$|_test\.dart$")
+
+
+def integration_test_files() -> list[Path]:
+    """Test TÍCH HỢP của MAIN (chạy cả ứng dụng trên DB thật — ref-<kind>-test): file nằm dưới thư mục có chữ
+    `integration` / `integration_test` / `e2e`, hoặc tên file *IT.java · *.integration.test.ts · *_integration_test.dart."""
+    out: list[Path] = []
+    base = ROOT / "services"
+    if not base.is_dir():
+        return out
+    for d, dirs, files in os.walk(base):
+        dirs[:] = [x for x in dirs if x not in _SKIP_DIRS]
+        parts = {p.lower() for p in Path(d).relative_to(base).parts}
+        in_it_dir = bool(parts & {"integration", "integration_test", "integration-tests", "e2e"})
+        for f in files:
+            if in_it_dir and re.search(r"\.(java|kt|ts|tsx|js|dart|py|go)$", f) or _IT_FILE.search(f):
+                out.append(Path(d) / f)
+    return out
+
+
+def acs_in_text(text: str) -> set[tuple[str, str]]:
+    """Mã AC được nhắc trong test: `FEAT-x AC-n` (một FEAT, nhiều AC: `FEAT-x AC-1, AC-3` / `AC-1..3`)."""
+    return set(parse_ac_cell(" ".join(re.findall(r"FEAT-[\w-]+(?:\s*AC-[\d\s,.\-–]+)+", text)), expand=False))
+
+
+def integration_ac_gaps(wave: str) -> tuple[list[str], int]:
+    """(AC in-scope CHƯA có test tích hợp nhắc tới, số file test tích hợp) — gate BUILD: lỗi mức luồng phải bị bắt ở BUILD,
+    unit test có mock không tính (wave 4 dự án thật: 305 unit test xanh, 57% TC mới FAIL ngay lượt đầu)."""
+    files = integration_test_files()
+    covered: set[tuple[str, str]] = set()
+    for p in files:
+        covered |= acs_in_text(p.read_text(encoding="utf-8", errors="ignore"))
+    gaps = [f"{f} AC-{n}" for f, n in in_scope_acs(wave) if (f, n) not in covered]
+    return gaps, len(files)
+
+
+def h2_in_tests() -> list[str]:
+    """File test/cấu hình test dùng H2 thay Postgres thật (ref-backend-test §8 cấm)."""
+    hits = []
+    base = ROOT / "services"
+    for d, dirs, files in os.walk(base) if base.is_dir() else []:
+        dirs[:] = [x for x in dirs if x not in _SKIP_DIRS]
+        if "test" not in Path(d).parts:
+            continue
+        for f in files:
+            if re.search(r"\.(java|kt|yml|yaml|properties|gradle|kts|xml)$", f):
+                t = (Path(d) / f).read_text(encoding="utf-8", errors="ignore")
+                if re.search(r"jdbc:h2:|H2Dialect|com\.h2database", t):
+                    hits.append(str((Path(d) / f).relative_to(ROOT)).replace("\\", "/"))
+    return hits
+
+
 def read_proof(wave: str) -> dict | None:
     p = ROOT / "tracking" / f"wave-{wave}" / "proof.json"
     try:
@@ -667,6 +729,16 @@ def gate_build(r: Report) -> None:
     r.check(not todo, f"backlog xếp wave {wave} cần top-up đều đã top-up"
             + (f" — CHƯA: {' | '.join(todo)} (→ /document top-up, xong ghi `đã top-up → …` ở cột Xử)" if todo else ""))
     _check_proof(r, wave)
+    # test tích hợp theo AC — lỗi mức LUỒNG (nhiều bước · DB thật · job) phải bị bắt ở BUILD, unit test có mock không thấy
+    gaps, n_it = integration_ac_gaps(wave)
+    acs = in_scope_acs(wave)
+    r.check(bool(acs) and not gaps, f"mỗi AC in-scope wave {wave} có ≥1 test TÍCH HỢP nhắc mã `FEAT-x AC-n` "
+            f"(thư mục integration/ · DB thật — ref-<kind>-test; {n_it} file tích hợp)"
+            + (f" — CHƯA: {', '.join(gaps[:8])}" + (f" (+{len(gaps) - 8})" if len(gaps) > 8 else "") if gaps else "")
+            + ("" if acs else " — không đọc được AC in-scope"))
+    h2 = h2_in_tests()
+    r.check(not h2, "test không dùng H2 (Postgres thật qua Testcontainers / compose — ref-backend-test §8)"
+            + (f" — H2 ở: {', '.join(h2[:4])}" if h2 else ""))
     _state_checkboxes(r, "BUILD")
 
 
@@ -742,15 +814,28 @@ def gate_verify(r: Report) -> None:
     extra = tracking_extras(wave)
     r.check(not extra, f"tracking/wave-{wave}/ chỉ có 3 file (luật #9: test-cases.md · fidelity.md · proof.json)"
             + (f" — THỪA: {', '.join(extra[:5])} (script/ảnh/log là file tạm → để NGOÀI repo, dọn đi)" if extra else ""))
+    # hết 3 lượt sửa (verify.md Bước 5): dòng còn mở được chuyển `→ backlog wave N+1` — chỉ nhận khi §Findings đã ghi tới lượt 3
+    rounds = [int(n) for n in re.findall(r"\b(?:lượt|vòng)\s*([1-9])\b", section("STATE.md", "Findings"), flags=re.I)]   # "lượt 3" / "vòng 3", không bắt "lượt 30s"
+    capped = bool(rounds) and max(rounds) >= 3
+    moved = lambda txt: capped and bool(re.search(r"backlog\s*wave", txt or "", re.I))
     # không còn TC chưa xong: FAIL · BLOCKED · CHƯA CHẠY · trống (CHƯA CÓ QUY ĐỊNH không tính — không phải bug, đi backlog)
-    bad = [f"{x['tc']}:{x['res'] or 'trống'}" for x in rows
-           if not x["res"] or x["res"].startswith(("FAIL", "BLOCKED", "CHƯA CHẠY"))]
+    open_tc = [x for x in rows if not x["res"] or x["res"].startswith(("FAIL", "BLOCKED", "CHƯA CHẠY"))]
+    deferred = [x for x in open_tc if x["res"].startswith(("FAIL", "BLOCKED")) and moved(x["ev"]) and tc_deferrable(x)]
+    refused = [x["tc"] for x in open_tc if moved(x["ev"]) and x not in deferred]
+    if refused:
+        r.note(f"{len(refused)} TC ghi `→ backlog` nhưng KHÔNG được chuyển ({', '.join(refused[:6])}) — chưa được test-writer "
+               "chạy lại lần nào trong vòng sửa (kết quả thiếu `(lượt k)`), hoặc là @trọng-yếu / @smoke / nguồn R")
+    bad = [f"{x['tc']}:{x['res'] or 'trống'}" for x in open_tc if x not in deferred]
     r.check(not bad, "không còn TC FAIL / BLOCKED / CHƯA CHẠY (kết quả trống = CHƯA CHẠY)"
             + (f" — {len(bad)}: {', '.join(bad[:6])}" if bad else ""))
+    if deferred:
+        r.note(f"{len(deferred)} TC FAIL / BLOCKED đã chuyển sang wave sau khi hết 3 lượt ({', '.join(x['tc'] for x in deferred[:6])})"
+               " — kết luận tối đa ĐẠT CÓ ĐIỀU KIỆN, liệt kê trong báo cáo")
     # mọi AC in-scope có ≥1 TC PASS (tính TỪNG AC — 1 TC PASS cho cả wave không đủ)
     acs = in_scope_acs(wave)
     passed = {p for x in rows if x["res"].startswith("PASS") for p in parse_ac_cell(x["ac"], expand=False)}
-    uncovered = [f"{f} AC-{n}" for f, n in acs if (f, n) not in passed]
+    held = {p for x in deferred for p in parse_ac_cell(x["ac"], expand=False)}
+    uncovered = [f"{f} AC-{n}" for f, n in acs if (f, n) not in passed and (f, n) not in held]
     r.check(bool(acs) and not uncovered, f"mọi AC in-scope wave {wave} có TC PASS ({len(acs)} AC)"
             + (f" — CHƯA: {', '.join(uncovered[:8])}" if uncovered else "")
             + ("" if acs else " — không đọc được AC in-scope (ROADMAP §1 cột AC in-scope + docs/feat/)"))
@@ -765,27 +850,32 @@ def gate_verify(r: Report) -> None:
     # §Findings: BLOCKER/MAJOR chỉ coi là đã xử khi agent xác nhận đã sửa, hoặc đã đẩy backlog
     open_major = [row for row in table_rows(section("STATE.md", "Findings"))
                   if len(row) >= 5 and re.search(r"BLOCKER|MAJOR", row[2].upper())
-                  and not re.search(r"fixed.*xác nhận|backlog", row[4], re.I)]
-    r.check(not open_major, "§Findings: hết BLOCKER/MAJOR chưa xử (Xử lý = `fixed — <agent> xác nhận` hoặc `backlog`)"
+                  and (not re.search(r"fixed.*xác nhận|backlog", row[4], re.I)
+                       or ("BLOCKER" in row[2].upper() and re.search(r"hết 3 lượt", row[4], re.I)))]   # BLOCKER không được chuyển
+    r.check(not open_major, "§Findings: hết BLOCKER/MAJOR chưa xử (Xử lý = `fixed — <agent> xác nhận` hoặc `backlog`; "
+            "hết 3 lượt chỉ MAJOR được chuyển `backlog — hết 3 lượt`, BLOCKER còn mở = KHÔNG ĐẠT)"
             + (f" — CÒN {len(open_major)}" if open_major else ""))
+    ok_reason = r"nghi thiếu ac|ngoài scope|chưa có quy định" + (r"|hết 3 lượt" if capped else "")
     bare = [row for row in table_rows(section("STATE.md", "Findings"))
             if len(row) >= 5 and re.search(r"BLOCKER|MAJOR", row[2].upper()) and re.search(r"backlog", row[4], re.I)
-            and not re.search(r"nghi thiếu ac|ngoài scope|chưa có quy định", " ".join(row[3:5]), re.I)]
+            and not re.search(ok_reason, " ".join(row[3:5]), re.I)]
     if bare:
-        r.note(f"{len(bare)} BLOCKER/MAJOR đẩy `backlog` mà không ghi lý do (nghi thiếu AC · ngoài scope · CHƯA CÓ QUY ĐỊNH) "
-               "— backlog chỉ hợp lệ cho 3 lý do đó, còn lại phải sửa (verify.md Bước 5)")
+        r.note(f"{len(bare)} BLOCKER/MAJOR đẩy `backlog` mà không ghi lý do (nghi thiếu AC · ngoài scope · CHƯA CÓ QUY ĐỊNH "
+               "· hết 3 lượt) — backlog chỉ hợp lệ cho các lý do đó, còn lại phải sửa (verify.md Bước 5)")
     if wave_screens(wave):   # có màn UI in-scope → picky phải phủ đủ + khớp (bằng chứng ở fidelity.md)
         absent, off = fidelity_gaps(wave)
+        if capped:   # màn LỆCH đã ghi `→ backlog wave N+1` sau 3 lượt
+            fid = {c[0].strip(): " ".join(c) for c in table_rows(read(f"tracking/wave-{wave}/fidelity.md")) if c}
+            off = [c for c in off if not moved(fid.get(c, ""))]
         r.check(not absent, f"tracking/wave-{wave}/fidelity.md phủ đủ màn in-scope"
                 + (f" — THIẾU dòng: {', '.join(absent)} (picky chưa soi)" if absent else ""))
         r.check(not off, "fidelity.md không còn màn LỆCH mockup"
                 + (f" — LỆCH: {', '.join(off)}" if off else ""))
     _check_proof(r, wave)   # vòng sửa đổi code → proof phải chụp lại đúng commit mới nhất
     _state_checkboxes(r, "VERIFY")
-    rounds = [int(n) for n in re.findall(r"\blượt\s*([1-9])\b", section("STATE.md", "Findings"), flags=re.I)]   # "lượt 3", không bắt "lượt 30s"
-    if rounds and max(rounds) >= 3 and not r.ok:
-        r.note(f"§Findings đã ghi tới lượt {max(rounds)} — ngưỡng cắt vòng (verify.md Bước 5): DỪNG, kết luận KHÔNG ĐẠT, "
-               "báo Authority; không sửa thêm lượt")
+    if capped:
+        r.note(f"§Findings đã ghi tới lượt {max(rounds)} — hết 3 lượt (verify.md Bước 5): DỪNG sửa, dòng còn mở → `backlog "
+               "wave N+1`; còn BLOCKER = KHÔNG ĐẠT, không còn = ĐẠT CÓ ĐIỀU KIỆN; báo Authority")
 
 
 def gate_ship(r: Report) -> None:

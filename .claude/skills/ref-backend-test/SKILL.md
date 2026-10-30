@@ -12,7 +12,7 @@ description: Pattern test cho MAIN viết ở BUILD — backend Java/Spring (uni
 | Tầng | Thư mục (`src/test/java/.../{name}/`) | Chạy gì | Không làm |
 |---|---|---|---|
 | **unit** | `unit/` | 1 service/mapper/validator, phụ thuộc mock bằng Mockito — **không Spring context** (`@ExtendWith(MockitoExtension.class)`) | không DB, không `@SpringBootTest` |
-| **integration** | `integration/` | controller → service → repository → **Postgres thật (Testcontainers)**; MockMvc hoặc gọi HTTP | không H2, không mock repository nội bộ |
+| **integration** | `integration/` | controller → service → repository → **Postgres thật (Testcontainers)**; MockMvc hoặc gọi HTTP. **Mỗi AC in-scope ≥1 test ở đây, nhắc mã `FEAT-x AC-n` trong tên / `@DisplayName` / chú thích** (gate BUILD grep) · **mỗi luồng nghiệp vụ của wave 1 test `<Luồng>FlowIT` đi trọn đầu→cuối** (smoke bằng code) | không H2, không mock repository nội bộ |
 | **architecture** | `architecture/ArchitectureTest.java` | ArchUnit — layer/package/cycle | — |
 | **schema drift** | `integration/` | ≥1 test boot context + chạy migration + `ddl-auto: validate` | — |
 

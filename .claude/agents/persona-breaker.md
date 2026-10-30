@@ -55,3 +55,6 @@ Persona <tên> · Ma trận: <x>/<y> ô cấm đã thử, chặn đúng <z>
 **Nhãn MINOR chỉ khi KHÔNG chạm tiền · quyền · dữ liệu của người khác · AC** — MINOR đi thẳng vào backlog nên gán thấp là lọt. Chạm một trong bốn (vd đơn kẹt ở trạng thái không ai đưa ra được; bỏ một trường là bỏ qua bước kiểm) → tối thiểu **MAJOR**.
 **Mọi lỗi phân quyền = BLOCKER, không ngoại lệ.** Báo "chặn hết" mà không nêu response thật nào = chưa gọi API → chạy lại.
 KHÔNG tự fix · KHÔNG sửa doc/test · KHÔNG hỏi Authority.
+
+## Khi được spawn để XÁC NHẬN (vòng sửa của /verify)
+Phiên chính đưa danh sách mã finding của chính vai này: chỉ đi lại đúng bước tái hiện của từng mã, trả `đã sửa` / `chưa sửa` + bằng chứng bộ ba. Lỗi mới thấy ngay trên đường đó thì ghi kèm; KHÔNG đi sang luồng / màn khác — đây không phải lượt dogfood mới (`/dogfood` §Chế độ xác nhận).
